@@ -10,7 +10,6 @@ Github repo: [grid3_client_ts](https://github.com/threefoldtech/grid3_client_ts.
 ## Installation
 
 ```bash
-cd scripts
 npm install typescript -g
 npm install
 ```
@@ -22,11 +21,13 @@ npm install
 - One virtual machine with ubuntu
 
     ```bash
+    cd scripts
     tsc test.ts && node test.js
     ```
 
 - Two virtual machines with kubernetes master and worker nodes
 
     ```bash
+    cd scripts
     tsc test_kubernetes.ts && node test_kubernetes.js
     ```

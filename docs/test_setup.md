@@ -20,6 +20,14 @@ Steps to deploy a test scenario using zos3, yggdrasil,polkadot.
 
         yggdrasil -useconffile /etc/yggdrasil.conf
 - Add the needed [peers](https://publicpeers.neilalexander.dev/) in the config file generated under Peers.
+
+  **example**:
+
+        Peers:
+        [
+        tls://54.37.137.221:11129
+        ]
+
 - Restart yggdrasil by
 
         systemctl restart yggdrasil

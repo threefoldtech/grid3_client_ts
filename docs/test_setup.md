@@ -5,6 +5,7 @@ Steps to deploy a test scenario using zos3, yggdrasil,polkadot.
 ## Create twin
 
 ### 1. Create account on substrate using polkadot
+- Add the required [types in json format](https://github.com/threefoldtech/tfgrid-api-client/blob/master/types.json) to the [developer settings](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fexplorer.devnet.grid.tf%2Fws#/settings/developer) in polkadot. *note: don't forget to save*
 - Click on `Add an account` in [polkadot accounts](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fexplorer.devnet.grid.tf%2Fws#/accounts)
 - Save the mnemonic seed in a safe place
 - Add a name and password for your account (remember the password for future usage)

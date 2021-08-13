@@ -8,6 +8,12 @@ import { TFClient } from "./tf-grid/client"
 import { MessageBusClient } from "./rmb-client/client"
 
 async function main() {
+    const twin_id = 10
+    const mnemonic = "false boss tape wish talent pool ghost token exhibit response hedgehog invite";
+    const url = "wss://explorer.devnet.grid.tf/ws"
+    let node_id = 2;
+    let node_twin_id = 3;
+    const contract_id = 18; // used only in case of updating deployment.
 
     // Create zmount workload
     let zmount = new Zmount();
@@ -140,7 +146,6 @@ async function main() {
     zmachine_workload1.description = "zmachine test1"
 
     // Create deployment
-    const twin_id = 10
     let signature_request = new SignatureRequest();
     signature_request.twin_id = twin_id;
     signature_request.weight = 1;
@@ -160,13 +165,8 @@ async function main() {
 
     console.log(deployment.challenge_hash())
     console.log(deployment.challenge())
-    const mnemonic = "false boss tape wish talent pool ghost token exhibit response hedgehog invite";
-    const url = "wss://explorer.devnet.grid.tf/ws"
     deployment.sign(twin_id, mnemonic)
 
-    let node_id = 2;
-    let node_twin_id = 3;
-    const contract_id = 18;
 
     const tf_client = new TFClient(url, mnemonic);
     await tf_client.connect();

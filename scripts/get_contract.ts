@@ -1,4 +1,4 @@
-import { TFClient } from "./tf-grid/client"
+import { TFClient } from "../tf-grid/client"
 
 
 async function main() {

@@ -60,13 +60,13 @@ To have the successful deployment it should include the following:
 
 - 1 network deployment (znetwork)
 - 2 disk (zmount)
-- 2 virtual machines (zmachine) where one is considered the mastere node and the other is the worker node
+- 2 virtual machines (zmachine) where one is considered the master node and the other is the worker node
 
 ### To deploy
 
 ### 1. Run test script with twinId to deploy 2
 
-The test script can be found and used by following the steps in the README of [zos_typescript repo](../README.md)
+The test script can be found and used by following the steps in the README of [grid3_client_ts repo](../README.md)
 
 ### 2. Wireguard needed to connect to the deployment
 

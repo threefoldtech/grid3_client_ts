@@ -8,6 +8,8 @@ Steps to deploy a test scenario using zos3, yggdrasil,polkadot.
 - Add the required [types in json format](https://github.com/threefoldtech/tfgrid-api-client/blob/master/types.json) to the [developer settings](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fexplorer.devnet.grid.tf%2Fws#/settings/developer) in polkadot. *note: don't forget to save*
 - Click on `Add an account` in [polkadot accounts](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fexplorer.devnet.grid.tf%2Fws#/accounts)
 - Save the mnemonic seed in a safe place
+- Click on `Advanced creation options` and select the keyword crypto type of **`Edwards (ed25519, alternative)`**
+`
 - Add a name and password for your account (remember the password for future usage)
 - Fund the account with test funds (Click on send funds from the account of Alice to your account name)
 

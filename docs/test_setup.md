@@ -83,6 +83,7 @@ To have the successful deployment it should include the following:
 - 1 network deployment (znetwork)
 - 2 disk (zmount)
 - 2 virtual machines (zmachine) where one is considered the master node and the other is the worker node
+- 1 public IP attached to the kubernetes master node
 
 ### To deploy
 
@@ -90,7 +91,46 @@ To have the successful deployment it should include the following:
 
 The test script can be found and used by following the steps in the README of [grid3_client_ts repo](../README.md)
 
-### 2. Wireguard needed to connect to the deployment
+### 2. Connect to the deployment over the public network
+
+Edit `get_deployment.ts` script with the contract ID and Run it to get the deployment result.
+
+```bash
+cd ../scripts
+tsc get_deployment.ts && node get_deployment.js 
+```
+
+And get the public IP from the public IP workload result.
+
+```json
+        ...
+        {
+            "version": 0,
+            "name": "zpub",
+            "type": "ipv4",
+            "data": {},
+            "metadata": "zpub ip",
+            "description": "my zpub ip",
+            "result": {
+                "created": 1629128139,
+                "state": "ok",
+                "message": "",
+                "data": {
+                    "ip": "185.206.122.33/24",
+                    "gateway": "185.206.122.1"
+                }
+            }
+        }
+        ...
+```
+
+Then ssh to the master public IP.
+
+```bash
+ssh root@<public_ip>
+```
+
+### 3. Wireguard needed to connect to the deployment over the private network
 
     [Interface]
     Address = 100.64.240.2/32

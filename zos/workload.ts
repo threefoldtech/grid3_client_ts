@@ -2,6 +2,7 @@ import { Znet } from "./znet";
 import { Zmount, ZmountResult } from "./zmount";
 import { Zmachine, ZmachineResult } from "./zmachine";
 import { Zdb, ZdbResult } from "./zdb";
+import { PublicIP } from "./ipv4";
 
 enum ResultStates {
 	error = "error",
@@ -46,7 +47,7 @@ class Workload {
 	name: string;
 	type: WorkloadTypes;
 	// this should be something like json.RawMessage in golang
-	data: Zmount | Znet | Zmachine | Zdb; // serialize({size: 10}) ---> "data": {size:10},
+	data: Zmount | Znet | Zmachine | Zdb | PublicIP; // serialize({size: 10}) ---> "data": {size:10},
 
 	metadata: string;
 	description: string;

@@ -1,6 +1,7 @@
 import { Znet, Peer } from "../zos/znet";
 import { Zmount } from "../zos/zmount";
 import { Zmachine, ZmachineNetwork, ZNetworkInterface, Mount } from "../zos/zmachine";
+import { PublicIP } from "../zos/ipv4";
 import { ComputeCapacity } from "../zos/computecapacity";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Deployment, SignatureRequirement, SignatureRequest } from "../zos/deployment";
@@ -8,11 +9,11 @@ import { TFClient } from "../tf-grid/client"
 import { MessageBusClient } from "../rmb-client/client"
 
 async function main() {
-    const twin_id = 10
-    const mnemonic = "false boss tape wish talent pool ghost token exhibit response hedgehog invite";
+    const twin_id = 15
+    const mnemonic = "fiscal play spin all describe because stem disease coral call bronze please";
     const url = "wss://explorer.devnet.grid.tf/ws"
     const node_id = 2;
-    const node_twin_id = 3;
+    const node_twin_id = 6;
     const ssh_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmm8OzLt+lTdGaMUwMFcw0P+vr+a/h/UsR//EzzeQsgNtC0bdls4MawVEhb3hNcycEQNd2P/+tXdLC4qcaJ6iABYip4xqqAeY098owGDYhUKYwmnMyo+NwSgpjZs8taOhMxh5XHRI+Ifr4l/GmzbqExS0KVD21PI+4sdiLspbcnVBlg9Eg9enM///zx6rSkulrca/+MnSYHboC5+y4XLYboArD/gpWy3zwIUyxX/1MjJwPeSnd5LFBIWvPGrm3cl+dAtADwTZRkt5Yuet8y5HI73Q5/NSlCdYXMtlsKBLpJu3Ar8nz1QfSQL7dB8pa7/sf/s8wO17rXqWQgZG6JzvZ root@ahmed-Inspiron-3576"
     const contract_id = 18; // used only in case of updating deployment.
 
@@ -63,6 +64,19 @@ async function main() {
     znet_workload.metadata = "zn"
     znet_workload.description = "zn test"
 
+    // create a public ip 
+    let zpub_ip = new PublicIP();
+
+    // create public ip workload
+    let zpub_ip_workload = new Workload();
+    zpub_ip_workload.version = 0;
+    zpub_ip_workload.name = "zpub"
+    zpub_ip_workload.type = WorkloadTypes.ipv4
+    zpub_ip_workload.data = zpub_ip;
+    zpub_ip_workload.description = "my zpub ip"
+    zpub_ip_workload.metadata = "zpub ip"
+
+
     // create zmachine workload
     let mount = new Mount();
     mount.name = "zmountiaia";
@@ -75,6 +89,7 @@ async function main() {
     let zmachine_network = new ZmachineNetwork();
     zmachine_network.planetary = true;
     zmachine_network.interfaces = [znetwork_interface]
+    zmachine_network.public_ip = "zpub"
 
     let compute_capacity = new ComputeCapacity();
     compute_capacity.cpu = 1;
@@ -161,7 +176,7 @@ async function main() {
     deployment.expiration = 1626394539;
     deployment.metadata = "zm dep";
     deployment.description = "zm test"
-    deployment.workloads = [zmount_workload, zmount_workload1, znet_workload, zmachine_workload, zmachine_workload1];
+    deployment.workloads = [zmount_workload, zmount_workload1, znet_workload, zpub_ip_workload, zmachine_workload, zmachine_workload1];
     deployment.signature_requirement = signature_requirement;
 
     console.log(deployment.challenge_hash())
@@ -188,7 +203,7 @@ async function main() {
             })
         }
 
-        await tf_client.contracts.createContract(node_id, deployment.challenge_hash(), "", 0, callback);
+        await tf_client.contracts.createContract(node_id, deployment.challenge_hash(), "", 1, callback);
     }
 
     async function update() {
@@ -200,6 +215,7 @@ async function main() {
         let rmb = new MessageBusClient(6379);
         let msg = rmb.prepare("zos.deployment.update", [node_twin_id], 0, 2);
         rmb.send(msg, payload)
+
         rmb.read(msg, function (result) {
             console.log("result received")
             console.log(result)

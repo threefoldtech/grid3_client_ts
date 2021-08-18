@@ -5,7 +5,7 @@ import { ComputeCapacity } from "../zos/computecapacity";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Deployment, SignatureRequirement, SignatureRequest } from "../zos/deployment";
 import { TFClient } from "../tf-grid/client"
-import { MessageBusClient } from "../rmb-client/client"
+import { MessageBusClient } from "../rmb/client"
 
 async function main() {
     const twin_id = 10

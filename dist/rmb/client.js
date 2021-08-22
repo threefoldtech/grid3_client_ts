@@ -1,17 +1,17 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.MessageBusClient = void 0;
-var redis = require("redis");
-var uuid4 = require("uuid4");
-var MessageBusClient = /** @class */ (function () {
-    function MessageBusClient(port) {
-        var client = redis.createClient(port);
+const redis = require("redis");
+const uuid4 = require("uuid4");
+class MessageBusClient {
+    constructor(port) {
+        const client = redis.createClient(port);
         client.on("error", function (error) {
             console.error(error);
         });
         this.client = client;
     }
-    MessageBusClient.prototype.prepare = function (command, destination, expiration, retry) {
+    prepare(command, destination, expiration, retry) {
         return {
             "ver": 1,
             "uid": "",
@@ -24,26 +24,26 @@ var MessageBusClient = /** @class */ (function () {
             "try": retry,
             "shm": "",
             "now": Math.floor(new Date().getTime() / 1000),
-            "err": ""
+            "err": "",
         };
-    };
-    MessageBusClient.prototype.send = function (message, payload) {
-        var buffer = new Buffer(payload);
+    }
+    send(message, payload) {
+        const buffer = new Buffer(payload);
         message.dat = buffer.toString("base64");
-        var request = JSON.stringify(message);
+        const request = JSON.stringify(message);
         this.client.lpush(["msgbus.system.local", request], redis.print);
         console.log(request);
-    };
-    MessageBusClient.prototype.read = function (message, cb) {
+    }
+    read(message, cb) {
         console.log("waiting reply", message.ret);
-        var responses = [];
-        var _this = this;
+        const responses = [];
+        const _this = this;
         this.client.blpop(message.ret, 0, function (err, reply) {
             if (err) {
-                console.log("err while waiting for reply: " + err);
+                console.log(`err while waiting for reply: ${err}`);
                 return err;
             }
-            var response = JSON.parse(reply[1]);
+            const response = JSON.parse(reply[1]);
             response["dat"] = Buffer.from(response["dat"], 'base64').toString('ascii');
             responses.push(response);
             // checking if we have all responses
@@ -53,7 +53,6 @@ var MessageBusClient = /** @class */ (function () {
             // wait for remaining responses
             _this.read(message, cb);
         });
-    };
-    return MessageBusClient;
-}());
+    }
+}
 exports.MessageBusClient = MessageBusClient;

@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.WorkloadTypes = exports.Workload = void 0;
 var ResultStates;
 (function (ResultStates) {
@@ -24,30 +24,23 @@ var Right;
     Right[Right["logs"] = 3] = "logs";
 })(Right || (Right = {}));
 // Access Control Entry
-var ACE = /** @class */ (function () {
-    function ACE() {
-    }
-    return ACE;
-}());
-var DeploymentResult = /** @class */ (function () {
-    function DeploymentResult() {
+class ACE {
+}
+class DeploymentResult {
+    constructor() {
         this.error = "";
         this.data = ""; // also json.RawMessage
     }
-    return DeploymentResult;
-}());
-var Workload = /** @class */ (function () {
-    function Workload() {
-    }
-    Workload.prototype.challenge = function () {
-        var out = "";
+}
+class Workload {
+    challenge() {
+        let out = "";
         out += this.version;
         out += this.type.toString();
         out += this.metadata;
         out += this.description;
         out += this.data.challenge();
         return out;
-    };
-    return Workload;
-}());
+    }
+}
 exports.Workload = Workload;

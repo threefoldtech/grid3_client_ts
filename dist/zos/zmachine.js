@@ -1,81 +1,75 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.ZmachineResult = exports.Mount = exports.ZNetworkInterface = exports.ZmachineNetwork = exports.Zmachine = void 0;
-var ZNetworkInterface = /** @class */ (function () {
-    function ZNetworkInterface() {
+class ZNetworkInterface {
+    constructor() {
         this.network = "";
         this.ip = "";
     }
-    return ZNetworkInterface;
-}());
+}
 exports.ZNetworkInterface = ZNetworkInterface;
-var ZmachineNetwork = /** @class */ (function () {
-    function ZmachineNetwork() {
+class ZmachineNetwork {
+    constructor() {
         this.public_ip = "";
         this.interfaces = [];
         this.planetary = false;
     }
-    ZmachineNetwork.prototype.challenge = function () {
-        var out = "";
+    challenge() {
+        let out = "";
         out += this.public_ip;
         out += this.planetary.toString();
-        for (var i = 0; i < this.interfaces.length; i++) {
+        for (let i = 0; i < this.interfaces.length; i++) {
             out += this.interfaces[i].network;
             out += this.interfaces[i].ip;
         }
         return out;
-    };
-    return ZmachineNetwork;
-}());
+    }
+}
 exports.ZmachineNetwork = ZmachineNetwork;
-var Mount = /** @class */ (function () {
-    function Mount() {
+class Mount {
+    constructor() {
         this.name = "";
         this.mountpoint = "";
     }
-    Mount.prototype.challenge = function () {
-        var out = "";
+    challenge() {
+        let out = "";
         out += this.name;
         out += this.mountpoint;
         return out;
-    };
-    return Mount;
-}());
+    }
+}
 exports.Mount = Mount;
-var Zmachine = /** @class */ (function () {
-    function Zmachine() {
+class Zmachine {
+    constructor() {
         this.flist = ""; // if full url means custom flist meant for containers, if just name should be an official vm
         this.mounts = [];
         this.entrypoint = ""; //how to invoke that in a vm?
     }
-    Zmachine.prototype.challenge = function () {
-        var out = "";
+    challenge() {
+        let out = "";
         out += this.flist;
         out += this.network.challenge();
         out += this.size || "";
         out += this.compute_capacity.challenge();
-        for (var i = 0; i < this.mounts.length; i++) {
+        for (let i = 0; i < this.mounts.length; i++) {
             out += this.mounts[i].challenge();
         }
         out += this.entrypoint;
-        for (var _i = 0, _a = Object.keys(this.env).sort(); _i < _a.length; _i++) {
-            var key = _a[_i];
+        for (let key of Object.keys(this.env).sort()) {
             out += key;
             out += "=";
             out += this.env[key];
         }
         return out;
-    };
-    return Zmachine;
-}());
+    }
+}
 exports.Zmachine = Zmachine;
 // response of the deployment
-var ZmachineResult = /** @class */ (function () {
-    function ZmachineResult() {
+class ZmachineResult {
+    constructor() {
         // name unique per deployment, re-used in request & response
         this.id = "";
         this.ip = "";
     }
-    return ZmachineResult;
-}());
+}
 exports.ZmachineResult = ZmachineResult;

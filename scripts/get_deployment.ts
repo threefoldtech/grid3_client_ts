@@ -1,4 +1,4 @@
-import { MessageBusClient } from "../rmb/client"
+import { MessageBusClient } from "../src/rmb/client"
 
 const node_twin_id = 7;
 

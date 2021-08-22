@@ -1,12 +1,12 @@
-import { Znet, Peer } from "../zos/znet";
-import { Zmount } from "../zos/zmount";
-import { Zmachine, ZmachineNetwork, ZNetworkInterface, Mount } from "../zos/zmachine";
-import { PublicIP } from "../zos/ipv4";
-import { ComputeCapacity } from "../zos/computecapacity";
-import { Workload, WorkloadTypes } from "../zos/workload";
-import { Deployment, SignatureRequirement, SignatureRequest } from "../zos/deployment";
-import { TFClient } from "../tf-grid/client"
-import { MessageBusClient } from "../rmb/client"
+import { Znet, Peer } from "../src/zos/znet";
+import { Zmount } from "../src/zos/zmount";
+import { Zmachine, ZmachineNetwork, ZNetworkInterface, Mount } from "../src/zos/zmachine";
+import { PublicIP } from "../src/zos/ipv4";
+import { ComputeCapacity } from "../src/zos/computecapacity";
+import { Workload, WorkloadTypes } from "../src/zos/workload";
+import { Deployment, SignatureRequirement, SignatureRequest } from "../src/zos/deployment";
+import { TFClient } from "../src/tf-grid/client"
+import { MessageBusClient } from "../src/rmb/client"
 
 async function main() {
     const twin_id = 15

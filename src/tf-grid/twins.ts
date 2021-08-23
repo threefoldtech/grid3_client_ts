@@ -5,21 +5,21 @@ class Twins {
     constructor(client) {
         this.client = client;
     }
-    async createTwin(ip, callback) {
+    async create(ip, callback) {
         return await this.client.createTwin(ip, callback)
     }
 
-    async getTwin(id) {
+    async get(id) {
         const twin = await this.client.getTwinByID(id)
         return twin
     }
 
-    async listTwins() {
+    async list() {
         const twins = await this.client.listTwins()
         return twins
     }
 
-    async deleteTwin(id, callback) {
+    async delete(id, callback) {
         return await this.client.deleteTwin(id, callback)
     }
 

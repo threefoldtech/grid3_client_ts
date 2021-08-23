@@ -14,24 +14,24 @@ class Twins {
     constructor(client) {
         this.client = client;
     }
-    createTwin(ip, callback) {
+    create(ip, callback) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.client.createTwin(ip, callback);
         });
     }
-    getTwin(id) {
+    get(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const twin = yield this.client.getTwinByID(id);
             return twin;
         });
     }
-    listTwins() {
+    list() {
         return __awaiter(this, void 0, void 0, function* () {
             const twins = yield this.client.listTwins();
             return twins;
         });
     }
-    deleteTwin(id, callback) {
+    delete(id, callback) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.client.deleteTwin(id, callback);
         });

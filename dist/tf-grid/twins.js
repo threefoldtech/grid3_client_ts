@@ -12,38 +12,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Twins = void 0;
 class Twins {
     constructor(client) {
-        this.client = client;
+        this.tfclient = client;
     }
-    create(ip, callback) {
+    create(ip) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.client.createTwin(ip, callback);
+            return yield this.tfclient.applyExtrinsic(this.tfclient.client.createTwin, [ip], "tfgridModule", "TwinStored");
         });
     }
     get(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const twin = yield this.client.getTwinByID(id);
+            const twin = yield this.tfclient.client.getTwinByID(id);
             return twin;
         });
     }
     list() {
         return __awaiter(this, void 0, void 0, function* () {
-            const twins = yield this.client.listTwins();
+            const twins = yield this.tfclient.client.listTwins();
             return twins;
         });
     }
-    delete(id, callback) {
+    delete(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.client.deleteTwin(id, callback);
-        });
-    }
-    createTwinEntity(twinID, entityID, signature, callback) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.client.addTwinEntity(twinID, entityID, signature, callback);
-        });
-    }
-    deleteTwinEntity(twinID, entityID, callback) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.client.removeTwinEntity(twinID, entityID, callback);
+            return yield this.tfclient.applyExtrinsic(this.tfclient.client.deleteTwin, [id], "tfgridModule", "TwinDeleted");
         });
     }
 }

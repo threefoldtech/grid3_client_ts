@@ -1,36 +1,28 @@
-
 class Twins {
-    client: any;
+    tfclient: any;
 
     constructor(client) {
-        this.client = client;
+        this.tfclient = client;
     }
-    async create(ip, callback) {
-        return await this.client.createTwin(ip, callback)
+
+    async create(ip) {
+        return await this.tfclient.applyExtrinsic(this.tfclient.client.createTwin, [ip], "tfgridModule", "TwinStored")
     }
 
     async get(id) {
-        const twin = await this.client.getTwinByID(id)
+        const twin = await this.tfclient.client.getTwinByID(id)
         return twin
     }
 
     async list() {
-        const twins = await this.client.listTwins()
+        const twins = await this.tfclient.client.listTwins()
         return twins
     }
 
-    async delete(id, callback) {
-        return await this.client.deleteTwin(id, callback)
+    async delete(id) {
+        return await this.tfclient.applyExtrinsic(this.tfclient.client.deleteTwin, [id], "tfgridModule", "TwinDeleted")
     }
 
-    async createTwinEntity(twinID, entityID, signature, callback) {
-        return await this.client.addTwinEntity(twinID, entityID, signature, callback)
-    }
-
-    async deleteTwinEntity(twinID, entityID, callback) {
-
-        return await this.client.removeTwinEntity(twinID, entityID, callback)
-    }
 }
 
 export { Twins }

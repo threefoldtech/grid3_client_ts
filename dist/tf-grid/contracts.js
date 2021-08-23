@@ -10,50 +10,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Contracts = void 0;
-const utils_1 = require("./utils");
 class Contracts {
     constructor(client) {
-        this.client = client;
+        this.tfclient = client;
     }
-    create(nodeID, hash, data, publicIPs, callback) {
+    create(nodeID, hash, data, publicIPs) {
         return __awaiter(this, void 0, void 0, function* () {
-            const innerCallback = (res) => {
-                if (res instanceof Error) {
-                    console.log(res);
-                    process.exit(1);
-                }
-                const { events = [], status } = res;
-                if (status.isFinalized) {
-                    // Loop through Vec<EventRecord> to display all events
-                    events.forEach(({ phase, event: { data, method, section } }) => {
-                        console.log("section>>>", section, "method>>>", method, "data>>>>>", data);
-                        if (section === 'system' && method === 'ExtrinsicFailed') {
-                            console.log('Failed');
-                            // process.exit(1)
-                        }
-                        else if (section === 'smartContractModule' && method === 'ContractCreated') {
-                            return callback(data.toJSON()[0]);
-                        }
-                    });
-                }
-            };
-            return this.client.createContract(nodeID, data, hash, publicIPs, innerCallback);
+            return yield this.tfclient.applyExtrinsic(this.tfclient.client.createContract, [nodeID, data, hash, publicIPs], "smartContractModule", "ContractCreated");
         });
     }
     update(id, data, hash) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.client.updateContract(id, data, hash, utils_1.callback);
+            return yield this.tfclient.applyExtrinsic(this.tfclient.client.updateContract, [id, data, hash], "smartContractModule", "ContractUpdated");
         });
     }
     cancel(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.client.cancelContract(id, utils_1.callback);
+            return yield this.tfclient.applyExtrinsic(this.tfclient.client.cancelContract, [id], "smartContractModule", "ContractCanceled");
         });
     }
     get(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const contract = yield this.client.getContractByID(id, utils_1.callback);
-            console.log(contract);
+            return yield this.tfclient.client.getContractByID(id);
         });
     }
 }

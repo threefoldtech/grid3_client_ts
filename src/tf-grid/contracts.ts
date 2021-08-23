@@ -1,49 +1,23 @@
-import { callback } from './utils'
-
 class Contracts {
-    client: any;
+    tfclient: any;
 
     constructor(client) {
-        this.client = client;
+        this.tfclient = client;
     }
-    async create(nodeID, hash, data, publicIPs, callback) {
-        const innerCallback = (res) => {
-            if (res instanceof Error) {
-                console.log(res)
-                process.exit(1)
-            }
-            const { events = [], status } = res
-            if (status.isFinalized) {
-                // Loop through Vec<EventRecord> to display all events
-                events.forEach(({ phase, event: { data, method, section } }) => {
-                    console.log("section>>>", section, "method>>>", method, "data>>>>>", data)
-
-                    if (section === 'system' && method === 'ExtrinsicFailed') {
-                        console.log('Failed')
-                        // process.exit(1)
-                    } else if (section === 'smartContractModule' && method === 'ContractCreated') {
-                        return callback(data.toJSON()[0]);
-                    }
-                })
-            }
-        }
-        return this.client.createContract(nodeID, data, hash, publicIPs, innerCallback)
+    async create(nodeID, hash, data, publicIPs) {
+        return await this.tfclient.applyExtrinsic(this.tfclient.client.createContract, [nodeID, data, hash, publicIPs], "smartContractModule", "ContractCreated")
     }
 
     async update(id, data, hash) {
-
-        return this.client.updateContract(id, data, hash, callback)
+        return await this.tfclient.applyExtrinsic(this.tfclient.client.updateContract, [id, data, hash], "smartContractModule", "ContractUpdated")
     }
 
     async cancel(id) {
-
-        return this.client.cancelContract(id, callback)
+        return await this.tfclient.applyExtrinsic(this.tfclient.client.cancelContract, [id], "smartContractModule", "ContractCanceled")
     }
 
     async get(id) {
-
-        const contract = await this.client.getContractByID(id, callback)
-        console.log(contract)
+        return await this.tfclient.client.getContractByID(id)
     }
 }
 export { Contracts }

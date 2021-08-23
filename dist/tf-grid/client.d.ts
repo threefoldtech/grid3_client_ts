@@ -7,5 +7,6 @@ declare class TFClient {
     constructor(url: any, mnemonic: any);
     connect(): Promise<void>;
     disconnect(): void;
+    applyExtrinsic(func: any, args: any, resultSecttion: any, resultName: any): Promise<unknown>;
 }
 export { TFClient };

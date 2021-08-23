@@ -1,9 +1,9 @@
 declare class Contracts {
-    client: any;
+    tfclient: any;
     constructor(client: any);
-    create(nodeID: any, hash: any, data: any, publicIPs: any, callback: any): Promise<any>;
+    create(nodeID: any, hash: any, data: any, publicIPs: any): Promise<any>;
     update(id: any, data: any, hash: any): Promise<any>;
     cancel(id: any): Promise<any>;
-    get(id: any): Promise<void>;
+    get(id: any): Promise<any>;
 }
 export { Contracts };

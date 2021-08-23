@@ -9,11 +9,11 @@ import { TFClient } from "../src/tf-grid/client"
 import { MessageBusClient } from "../src/rmb/client"
 
 async function main() {
-    const twin_id = 15
+    const twin_id = 8
     const mnemonic = "fiscal play spin all describe because stem disease coral call bronze please";
     const url = "wss://explorer.devnet.grid.tf/ws"
-    const node_id = 3;
-    const node_twin_id = 7;
+    const node_id = 2;
+    const node_twin_id = 2;
     const ssh_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmm8OzLt+lTdGaMUwMFcw0P+vr+a/h/UsR//EzzeQsgNtC0bdls4MawVEhb3hNcycEQNd2P/+tXdLC4qcaJ6iABYip4xqqAeY098owGDYhUKYwmnMyo+NwSgpjZs8taOhMxh5XHRI+Ifr4l/GmzbqExS0KVD21PI+4sdiLspbcnVBlg9Eg9enM///zx6rSkulrca/+MnSYHboC5+y4XLYboArD/gpWy3zwIUyxX/1MjJwPeSnd5LFBIWvPGrm3cl+dAtADwTZRkt5Yuet8y5HI73Q5/NSlCdYXMtlsKBLpJu3Ar8nz1QfSQL7dB8pa7/sf/s8wO17rXqWQgZG6JzvZ root@ahmed-Inspiron-3576"
     const contract_id = 18; // used only in case of updating deployment.
 
@@ -203,11 +203,11 @@ async function main() {
             })
         }
 
-        await tf_client.contracts.createContract(node_id, deployment.challenge_hash(), "", 1, callback);
+        await tf_client.contracts.create(node_id, deployment.challenge_hash(), "", 1, callback);
     }
 
     async function update() {
-        await tf_client.contracts.updateContract(contract_id, "", deployment.challenge_hash())
+        await tf_client.contracts.update(contract_id, "", deployment.challenge_hash())
         deployment.contract_id = contract_id;
         let payload = JSON.stringify(deployment);
         console.log("payload>>>>>>>>>>>>>>>>>>", payload)

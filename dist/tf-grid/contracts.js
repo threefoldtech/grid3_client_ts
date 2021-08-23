@@ -15,7 +15,7 @@ class Contracts {
     constructor(client) {
         this.client = client;
     }
-    createContract(nodeID, hash, data, publicIPs, callback) {
+    create(nodeID, hash, data, publicIPs, callback) {
         return __awaiter(this, void 0, void 0, function* () {
             const innerCallback = (res) => {
                 if (res instanceof Error) {
@@ -40,17 +40,17 @@ class Contracts {
             return this.client.createContract(nodeID, data, hash, publicIPs, innerCallback);
         });
     }
-    updateContract(id, data, hash) {
+    update(id, data, hash) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.client.updateContract(id, data, hash, utils_1.callback);
         });
     }
-    cancelContract(id) {
+    cancel(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.client.cancelContract(id, utils_1.callback);
         });
     }
-    getContract(id) {
+    get(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const contract = yield this.client.getContractByID(id, utils_1.callback);
             console.log(contract);

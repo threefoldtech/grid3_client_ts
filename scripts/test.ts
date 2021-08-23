@@ -128,11 +128,11 @@ async function main() {
             })
         }
 
-        await tf_client.contracts.createContract(node_id, deployment.challenge_hash(), "", 0, callback);
+        await tf_client.contracts.create(node_id, deployment.challenge_hash(), "", 0, callback);
     }
 
     async function update() {
-        await tf_client.contracts.updateContract(contract_id, "", deployment.challenge_hash())
+        await tf_client.contracts.update(contract_id, "", deployment.challenge_hash())
         deployment.contract_id = contract_id;
         let payload = JSON.stringify(deployment);
         console.log("payload>>>>>>>>>>>>>>>>>>", payload)

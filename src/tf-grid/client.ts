@@ -1,14 +1,17 @@
 const Client = require('tfgrid-api-client')
 import { Contracts } from './contracts'
+import { Twins } from "./twins"
 
 
 class TFClient {
     client: any;
-    contracts: any;
+    contracts: Contracts;
+    twins: Twins
 
     constructor(url, mnemonic) {
         this.client = new Client(url, mnemonic);
         this.contracts = new Contracts(this.client);
+        this.twins = new Twins(this.client)
     }
     async connect() {
         try {

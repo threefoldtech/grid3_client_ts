@@ -6,6 +6,6 @@ async function main() {
     const url = "wss://explorer.devnet.grid.tf/ws"
     const tf_client = new TFClient(url, mnemonic)
     await tf_client.connect()
-    tf_client.contracts.getContract(5);
+    tf_client.contracts.get(5);
 }
 main()

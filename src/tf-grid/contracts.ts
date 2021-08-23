@@ -6,7 +6,7 @@ class Contracts {
     constructor(client) {
         this.client = client;
     }
-    async createContract(nodeID, hash, data, publicIPs, callback) {
+    async create(nodeID, hash, data, publicIPs, callback) {
         const innerCallback = (res) => {
             if (res instanceof Error) {
                 console.log(res)
@@ -30,17 +30,17 @@ class Contracts {
         return this.client.createContract(nodeID, data, hash, publicIPs, innerCallback)
     }
 
-    async updateContract(id, data, hash) {
+    async update(id, data, hash) {
 
         return this.client.updateContract(id, data, hash, callback)
     }
 
-    async cancelContract(id) {
+    async cancel(id) {
 
         return this.client.cancelContract(id, callback)
     }
 
-    async getContract(id) {
+    async get(id) {
 
         const contract = await this.client.getContractByID(id, callback)
         console.log(contract)

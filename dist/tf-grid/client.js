@@ -12,10 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TFClient = void 0;
 const Client = require('tfgrid-api-client');
 const contracts_1 = require("./contracts");
+const twins_1 = require("./twins");
 class TFClient {
     constructor(url, mnemonic) {
         this.client = new Client(url, mnemonic);
         this.contracts = new contracts_1.Contracts(this.client);
+        this.twins = new twins_1.Twins(this.client);
     }
     connect() {
         return __awaiter(this, void 0, void 0, function* () {

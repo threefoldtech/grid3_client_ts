@@ -41,4 +41,4 @@ class ZdbResult {
 }
 
 
-export { Zdb, ZdbResult }
+export { Zdb, ZdbResult, ZdbModes, DeviceTypes }

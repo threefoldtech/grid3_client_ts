@@ -1,16 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ZdbResult = exports.Zdb = void 0;
+exports.DeviceTypes = exports.ZdbModes = exports.ZdbResult = exports.Zdb = void 0;
 var ZdbModes;
 (function (ZdbModes) {
     ZdbModes["seq"] = "seq";
     ZdbModes["user"] = "user";
 })(ZdbModes || (ZdbModes = {}));
+exports.ZdbModes = ZdbModes;
 var DeviceTypes;
 (function (DeviceTypes) {
     DeviceTypes["hdd"] = "hdd";
     DeviceTypes["ssd"] = "ssd";
 })(DeviceTypes || (DeviceTypes = {}));
+exports.DeviceTypes = DeviceTypes;
 class Zdb {
     constructor() {
         this.namespace = "";

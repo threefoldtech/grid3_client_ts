@@ -21,4 +21,4 @@ declare class ZdbResult {
     ips: string[];
     port: number;
 }
-export { Zdb, ZdbResult };
+export { Zdb, ZdbResult, ZdbModes, DeviceTypes };

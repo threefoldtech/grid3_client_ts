@@ -3,7 +3,7 @@ const uuid4 = require("uuid4")
 
 class MessageBusClient {
     client: any;
-    constructor(port) {
+    constructor(port = 6379) {
         const client = redis.createClient(port)
         client.on("error", function (error) {
             console.error(error);
@@ -38,29 +38,28 @@ class MessageBusClient {
         console.log(request)
     }
 
-    read(message, cb) {
-        console.log("waiting reply", message.ret)
+    read(message) {
+        return new Promise((resolve, reject) => {
+            console.log("waiting reply", message.ret)
 
-        const responses = []
-        const _this = this
-        this.client.blpop(message.ret, 0, function (err, reply) {
-            if (err) {
-                console.log(`err while waiting for reply: ${err}`)
-                return err
-            }
+            const responses = []
+            const _this = this
 
-            const response = JSON.parse(reply[1])
+            this.client.blpop(message.ret, 0, function (err, reply) {
+                if (err) {
+                    console.log(`err while waiting for reply: ${err}`)
+                    reject(err)
+                }
 
-            response["dat"] = Buffer.from(response["dat"], 'base64').toString('ascii')
-            responses.push(response)
+                const response = JSON.parse(reply[1])
+                response["dat"] = Buffer.from(response["dat"], 'base64').toString('ascii')
+                responses.push(response)
 
-            // checking if we have all responses
-            if (responses.length == message.dst.length) {
-                return cb(responses);
-            }
-
-            // wait for remaining responses
-            _this.read(message, cb)
+                // checking if we have all responses
+                if (responses.length == message.dst.length) {
+                    resolve(responses);
+                }
+            })
         })
     }
 }

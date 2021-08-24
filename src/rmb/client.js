@@ -1,17 +1,18 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 exports.MessageBusClient = void 0;
-const redis = require("redis");
-const uuid4 = require("uuid4");
-class MessageBusClient {
-    constructor(port = 6379) {
-        const client = redis.createClient(port);
+var redis = require("redis");
+var uuid4 = require("uuid4");
+var MessageBusClient = /** @class */ (function () {
+    function MessageBusClient(port) {
+        if (port === void 0) { port = 6379; }
+        var client = redis.createClient(port);
         client.on("error", function (error) {
             console.error(error);
         });
         this.client = client;
     }
-    prepare(command, destination, expiration, retry) {
+    MessageBusClient.prototype.prepare = function (command, destination, expiration, retry) {
         return {
             "ver": 1,
             "uid": "",
@@ -24,27 +25,28 @@ class MessageBusClient {
             "try": retry,
             "shm": "",
             "now": Math.floor(new Date().getTime() / 1000),
-            "err": "",
+            "err": ""
         };
-    }
-    send(message, payload) {
-        const buffer = new Buffer(payload);
+    };
+    MessageBusClient.prototype.send = function (message, payload) {
+        var buffer = new Buffer(payload);
         message.dat = buffer.toString("base64");
-        const request = JSON.stringify(message);
+        var request = JSON.stringify(message);
         this.client.lpush(["msgbus.system.local", request], redis.print);
         console.log(request);
-    }
-    read(message) {
-        return new Promise((resolve, reject) => {
+    };
+    MessageBusClient.prototype.read = function (message) {
+        var _this_1 = this;
+        return new Promise(function (resolve, reject) {
             console.log("waiting reply", message.ret);
-            const responses = [];
-            const _this = this;
-            this.client.blpop(message.ret, 0, function (err, reply) {
+            var responses = [];
+            var _this = _this_1;
+            _this_1.client.blpop(message.ret, 0, function (err, reply) {
                 if (err) {
-                    console.log(`err while waiting for reply: ${err}`);
+                    console.log("err while waiting for reply: " + err);
                     reject(err);
                 }
-                const response = JSON.parse(reply[1]);
+                var response = JSON.parse(reply[1]);
                 response["dat"] = Buffer.from(response["dat"], 'base64').toString('ascii');
                 responses.push(response);
                 // checking if we have all responses
@@ -53,6 +55,7 @@ class MessageBusClient {
                 }
             });
         });
-    }
-}
+    };
+    return MessageBusClient;
+}());
 exports.MessageBusClient = MessageBusClient;

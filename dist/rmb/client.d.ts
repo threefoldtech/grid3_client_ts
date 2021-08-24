@@ -1,6 +1,6 @@
 declare class MessageBusClient {
     client: any;
-    constructor(port: any);
+    constructor(port?: number);
     prepare(command: any, destination: any, expiration: any, retry: any): {
         ver: number;
         uid: string;
@@ -16,6 +16,6 @@ declare class MessageBusClient {
         err: string;
     };
     send(message: any, payload: any): void;
-    read(message: any, cb: any): void;
+    read(message: any): Promise<unknown>;
 }
 export { MessageBusClient };

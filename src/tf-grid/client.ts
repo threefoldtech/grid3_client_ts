@@ -50,9 +50,6 @@ class TFClient {
             }
             catch (e) { reject(e) }
         })
-
-
     }
-
 }
 export { TFClient }

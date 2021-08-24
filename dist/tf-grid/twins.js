@@ -16,24 +16,22 @@ class Twins {
     }
     create(ip) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.tfclient.applyExtrinsic(this.tfclient.client.createTwin, [ip], "tfgridModule", "TwinStored");
+            return this.tfclient.applyExtrinsic(this.tfclient.client.createTwin, [ip], "tfgridModule", "TwinStored");
         });
     }
     get(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const twin = yield this.tfclient.client.getTwinByID(id);
-            return twin;
+            return this.tfclient.client.getTwinByID(id);
         });
     }
     list() {
         return __awaiter(this, void 0, void 0, function* () {
-            const twins = yield this.tfclient.client.listTwins();
-            return twins;
+            return this.tfclient.client.listTwins();
         });
     }
     delete(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.tfclient.applyExtrinsic(this.tfclient.client.deleteTwin, [id], "tfgridModule", "TwinDeleted");
+            return this.tfclient.applyExtrinsic(this.tfclient.client.deleteTwin, [id], "tfgridModule", "TwinDeleted");
         });
     }
 }

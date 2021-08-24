@@ -188,22 +188,19 @@ async function main() {
     await tf_client.connect();
 
     async function deploy() {
-        function callback(data) {
-            console.log(data)
-            deployment.contract_id = data["contract_id"];
-            let payload = JSON.stringify(deployment);
-            console.log("payload>>>>>>>>>>>>>>>>>>", payload)
+        const contract = await tf_client.contracts.create(node_id, deployment.challenge_hash(), "", 1);
+        console.log(contract)
+        deployment.contract_id = contract["contract_id"];
+        let payload = JSON.stringify(deployment);
+        console.log("payload>>>>>>>>>>>>>>>>>>", payload)
 
-            let rmb = new MessageBusClient(6379);
-            let msg = rmb.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
-            rmb.send(msg, payload)
-            rmb.read(msg, function (result) {
-                console.log("result received")
-                console.log(result)
-            })
-        }
-
-        await tf_client.contracts.create(node_id, deployment.challenge_hash(), "", 1, callback);
+        let rmb = new MessageBusClient(6379);
+        let msg = rmb.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
+        rmb.send(msg, payload)
+        rmb.read(msg, function (result) {
+            console.log("result received")
+            console.log(result)
+        })
     }
 
     async function update() {

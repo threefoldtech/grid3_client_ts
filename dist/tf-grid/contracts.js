@@ -16,22 +16,22 @@ class Contracts {
     }
     create(nodeID, hash, data, publicIPs) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.tfclient.applyExtrinsic(this.tfclient.client.createContract, [nodeID, data, hash, publicIPs], "smartContractModule", "ContractCreated");
+            return this.tfclient.applyExtrinsic(this.tfclient.client.createContract, [nodeID, data, hash, publicIPs], "smartContractModule", "ContractCreated");
         });
     }
     update(id, data, hash) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.tfclient.applyExtrinsic(this.tfclient.client.updateContract, [id, data, hash], "smartContractModule", "ContractUpdated");
+            return this.tfclient.applyExtrinsic(this.tfclient.client.updateContract, [id, data, hash], "smartContractModule", "ContractUpdated");
         });
     }
     cancel(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.tfclient.applyExtrinsic(this.tfclient.client.cancelContract, [id], "smartContractModule", "ContractCanceled");
+            return this.tfclient.applyExtrinsic(this.tfclient.client.cancelContract, [id], "smartContractModule", "ContractCanceled");
         });
     }
     get(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.tfclient.client.getContractByID(id);
+            return this.tfclient.client.getContractByID(id);
         });
     }
 }

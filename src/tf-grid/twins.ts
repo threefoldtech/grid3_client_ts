@@ -6,21 +6,19 @@ class Twins {
     }
 
     async create(ip) {
-        return await this.tfclient.applyExtrinsic(this.tfclient.client.createTwin, [ip], "tfgridModule", "TwinStored")
+        return this.tfclient.applyExtrinsic(this.tfclient.client.createTwin, [ip], "tfgridModule", "TwinStored")
     }
 
     async get(id) {
-        const twin = await this.tfclient.client.getTwinByID(id)
-        return twin
+        return this.tfclient.client.getTwinByID(id)
     }
 
     async list() {
-        const twins = await this.tfclient.client.listTwins()
-        return twins
+        return this.tfclient.client.listTwins()
     }
 
     async delete(id) {
-        return await this.tfclient.applyExtrinsic(this.tfclient.client.deleteTwin, [id], "tfgridModule", "TwinDeleted")
+        return this.tfclient.applyExtrinsic(this.tfclient.client.deleteTwin, [id], "tfgridModule", "TwinDeleted")
     }
 
 }

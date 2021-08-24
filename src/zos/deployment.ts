@@ -114,8 +114,8 @@ class Deployment {
 	}
 
 
-	sign(twin_id, mnemonic) {
-		let message = this.challenge_hash();
+	sign(twin_id, mnemonic, hash = "") {
+		let message = hash || this.challenge_hash();
 		let message_bytes = this.from_hex(message);
 
 		let keyr = new keyring.Keyring({ type: 'ed25519' })

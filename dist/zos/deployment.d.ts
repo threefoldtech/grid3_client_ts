@@ -28,6 +28,6 @@ declare class Deployment {
     challenge_hash(): any;
     from_hex(s: any): Uint8Array;
     to_hex(bs: any): string;
-    sign(twin_id: any, mnemonic: any): void;
+    sign(twin_id: any, mnemonic: any, hash?: string): void;
 }
 export { Deployment, SignatureRequirement, SignatureRequest };

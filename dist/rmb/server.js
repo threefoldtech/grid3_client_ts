@@ -72,7 +72,7 @@ class MessageBusServer {
         message.src = message.dst[0];
         message.dst = [message.src];
         message.now = Math.floor(new Date().getTime() / 1000);
-        message.err = reason;
+        message.err = String(reason);
         this.client.lpush(message.ret, JSON.stringify(message), function (err, r) {
             if (err) {
                 console.log(err, r);

@@ -119,13 +119,11 @@ async function main() {
         let payload = JSON.stringify(deployment);
         console.log("payload>>>>>>>>>>>>>>>>>>", payload)
 
-        let rmb = new MessageBusClient(6379);
+        let rmb = new MessageBusClient();
         let msg = rmb.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
         rmb.send(msg, payload)
-        rmb.read(msg, function (result) {
-            console.log("result received")
-            console.log(result)
-        })
+        const result = await rmb.read(msg)
+        console.log(result)
     }
 
 
@@ -138,10 +136,8 @@ async function main() {
         let rmb = new MessageBusClient(6379);
         let msg = rmb.prepare("zos.deployment.update", [node_twin_id], 0, 2);
         rmb.send(msg, payload)
-        rmb.read(msg, function (result) {
-            console.log("result received")
-            console.log(result)
-        })
+        const result = await rmb.read(msg)
+        console.log(result)
     }
     await deploy();
     // await update();

@@ -9,7 +9,7 @@ import { TFClient } from "../src/tf-grid/client"
 import { MessageBusClient } from "../src/rmb/client"
 
 async function main() {
-    const twin_id = 8
+    const twin_id = 17
     const mnemonic = "fiscal play spin all describe because stem disease coral call bronze please";
     const url = "wss://explorer.devnet.grid.tf/ws"
     const node_id = 2;
@@ -180,7 +180,7 @@ async function main() {
     deployment.signature_requirement = signature_requirement;
 
     console.log(deployment.challenge_hash())
-    console.log(deployment.challenge())
+    // console.log(JSON.stringify(deployment))
     deployment.sign(twin_id, mnemonic)
 
 
@@ -197,10 +197,8 @@ async function main() {
         let rmb = new MessageBusClient(6379);
         let msg = rmb.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
         rmb.send(msg, payload)
-        rmb.read(msg, function (result) {
-            console.log("result received")
-            console.log(result)
-        })
+        const result = await rmb.read(msg)
+        console.log(result)
     }
 
     async function update() {
@@ -212,11 +210,8 @@ async function main() {
         let rmb = new MessageBusClient(6379);
         let msg = rmb.prepare("zos.deployment.update", [node_twin_id], 0, 2);
         rmb.send(msg, payload)
-
-        rmb.read(msg, function (result) {
-            console.log("result received")
-            console.log(result)
-        })
+        const result = await rmb.read(msg)
+        console.log(result)
     }
     await deploy();
     // await update();

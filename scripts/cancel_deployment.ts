@@ -6,6 +6,7 @@ async function main() {
     const url = "wss://explorer.devnet.grid.tf/ws"
     const tf_client = new TFClient(url, mnemonic)
     await tf_client.connect()
-    tf_client.contracts.cancel(1);
+    const cancel = await tf_client.contracts.cancel(202);
+    console.log(cancel)
 }
 main()

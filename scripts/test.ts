@@ -140,6 +140,7 @@ async function main() {
         console.log(result)
     }
     await deploy();
+    tf_client.disconnect()
     // await update();
 }
 

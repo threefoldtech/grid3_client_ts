@@ -23,7 +23,6 @@ class Zdb {
 		out += this.size || "";
 		out += this.mode.toString();
 		out += this.password;
-		out += this.disk_type.toString();
 		out += this.public.toString();
 
 		return out

@@ -14,14 +14,19 @@ class Contracts {
     constructor(client) {
         this.tfclient = client;
     }
-    create(nodeID, hash, data, publicIPs) {
+    createNode(nodeID, hash, data, publicIPs) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.tfclient.applyExtrinsic(this.tfclient.client.createContract, [nodeID, data, hash, publicIPs], "smartContractModule", "ContractCreated");
+            return this.tfclient.applyExtrinsic(this.tfclient.client.createNodeContract, [nodeID, data, hash, publicIPs], "smartContractModule", "ContractCreated");
         });
     }
-    update(id, data, hash) {
+    createName(name) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.tfclient.applyExtrinsic(this.tfclient.client.updateContract, [id, data, hash], "smartContractModule", "ContractUpdated");
+            return this.tfclient.applyExtrinsic(this.tfclient.client.createNameContract, [name], "smartContractModule", "ContractCreated");
+        });
+    }
+    updateNode(id, data, hash) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.tfclient.applyExtrinsic(this.tfclient.client.updateNodeContract, [id, data, hash], "smartContractModule", "ContractUpdated");
         });
     }
     cancel(id) {

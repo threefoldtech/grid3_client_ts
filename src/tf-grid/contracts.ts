@@ -4,12 +4,16 @@ class Contracts {
     constructor(client) {
         this.tfclient = client;
     }
-    async create(nodeID, hash, data, publicIPs) {
-        return this.tfclient.applyExtrinsic(this.tfclient.client.createContract, [nodeID, data, hash, publicIPs], "smartContractModule", "ContractCreated")
+    async createNode(nodeID, hash, data, publicIPs) {
+        return this.tfclient.applyExtrinsic(this.tfclient.client.createNodeContract, [nodeID, data, hash, publicIPs], "smartContractModule", "ContractCreated")
     }
 
-    async update(id, data, hash) {
-        return this.tfclient.applyExtrinsic(this.tfclient.client.updateContract, [id, data, hash], "smartContractModule", "ContractUpdated")
+    async createName(name) {
+        return this.tfclient.applyExtrinsic(this.tfclient.client.createNameContract, [name], "smartContractModule", "ContractCreated")
+    }
+
+    async updateNode(id, data, hash) {
+        return this.tfclient.applyExtrinsic(this.tfclient.client.updateNodeContract, [id, data, hash], "smartContractModule", "ContractUpdated")
     }
 
     async cancel(id) {

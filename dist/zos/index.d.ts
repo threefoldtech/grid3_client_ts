@@ -6,3 +6,4 @@ export * from './zdb';
 export * from './zmachine';
 export * from './zmount';
 export * from './znet';
+export * from './gateway';

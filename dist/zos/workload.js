@@ -14,6 +14,8 @@ var WorkloadTypes;
     WorkloadTypes["network"] = "network";
     WorkloadTypes["zdb"] = "zdb";
     WorkloadTypes["ipv4"] = "ipv4";
+    WorkloadTypes["gatewayfqdnproxy"] = "gatewayfqdnproxy";
+    WorkloadTypes["gatewaynameproxy"] = "gatewaynameproxy";
 })(WorkloadTypes || (WorkloadTypes = {}));
 exports.WorkloadTypes = WorkloadTypes;
 var Right;

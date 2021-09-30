@@ -3,7 +3,7 @@ const uuid4 = require("uuid4")
 
 import { MessageBusClientInterface } from "./clientInterface"
 
-class RedisMessageBusClient implements MessageBusClientInterface {
+class MessageBusClient implements MessageBusClientInterface {
     client: any;
     constructor(port = 6379) {
         const client = redis.createClient(port)
@@ -38,6 +38,7 @@ class RedisMessageBusClient implements MessageBusClientInterface {
 
         this.client.lpush(["msgbus.system.local", request], redis.print)
         console.log(request)
+        return message
     }
 
     read(message) {
@@ -67,4 +68,4 @@ class RedisMessageBusClient implements MessageBusClientInterface {
 }
 
 
-export { RedisMessageBusClient }
+export { MessageBusClient }

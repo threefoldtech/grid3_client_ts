@@ -5,7 +5,7 @@ import { ComputeCapacity } from "../src/zos/computecapacity";
 import { Workload, WorkloadTypes } from "../src/zos/workload";
 import { Deployment, SignatureRequirement, SignatureRequest } from "../src/zos/deployment";
 import { TFClient } from "../src/tf-grid/client"
-import { RedisMessageBusClient } from "../src/rmb/redisClient"
+import { MessageBusClient } from "../src/rmb/redisClient"
 
 async function main() {
     const twin_id = 10
@@ -119,7 +119,7 @@ async function main() {
         let payload = JSON.stringify(deployment);
         console.log("payload>>>>>>>>>>>>>>>>>>", payload)
 
-        let rmb = new RedisMessageBusClient();
+        let rmb = new MessageBusClient();
         let msg = rmb.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
         rmb.send(msg, payload)
         const result = await rmb.read(msg)
@@ -133,7 +133,7 @@ async function main() {
         let payload = JSON.stringify(deployment);
         console.log("payload>>>>>>>>>>>>>>>>>>", payload)
 
-        let rmb = new RedisMessageBusClient(6379);
+        let rmb = new MessageBusClient(6379);
         let msg = rmb.prepare("zos.deployment.update", [node_twin_id], 0, 2);
         rmb.send(msg, payload)
         const result = await rmb.read(msg)

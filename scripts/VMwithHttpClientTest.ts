@@ -5,17 +5,20 @@ import { ComputeCapacity } from "../src/zos/computecapacity";
 import { Workload, WorkloadTypes } from "../src/zos/workload";
 import { Deployment, SignatureRequirement, SignatureRequest } from "../src/zos/deployment";
 import { TFClient } from "../src/tf-grid/client"
-import { RedisMessageBusClient } from "../src/rmb/redisClient"
+import { HTTPMessageBusClient } from "../src/rmb/httpClient"
+
+
+function delay(s: number) {
+    return new Promise( resolve => setTimeout(resolve, s*1000) );
+}
 
 async function main() {
-    const twin_id = 10
-    const mnemonic = "false boss tape wish talent pool ghost token exhibit response hedgehog invite";
+    const twin_id = 38
+    const mnemonic = "muffin reward plug grant able market nerve orphan token foster major relax";
     const url = "wss://explorer.devnet.grid.tf/ws"
     const node_id = 2;
-    const node_twin_id = 3;
-    const ssh_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmm8OzLt+lTdGaMUwMFcw0P+vr+a/h/UsR//EzzeQsgNtC0bdls4MawVEhb3hNcycEQNd2P/+tXdLC4qcaJ6iABYip4xqqAeY098owGDYhUKYwmnMyo+NwSgpjZs8taOhMxh5XHRI+Ifr4l/GmzbqExS0KVD21PI+4sdiLspbcnVBlg9Eg9enM///zx6rSkulrca/+MnSYHboC5+y4XLYboArD/gpWy3zwIUyxX/1MjJwPeSnd5LFBIWvPGrm3cl+dAtADwTZRkt5Yuet8y5HI73Q5/NSlCdYXMtlsKBLpJu3Ar8nz1QfSQL7dB8pa7/sf/s8wO17rXqWQgZG6JzvZ root@ahmed-Inspiron-3576"
-    const contract_id = 18; // used only in case of updating deployment.
-
+    const node_twin_id = 38;
+    const ssh_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDWlguBuvfQikkRJZXkLPei7Scvo/OULUEvjWVR4tCZ5V85P2F4SsSghxpRGixCNc7pNtgvdwJegK06Tn7SkV2jYJ9kBJh8PA06CPSz1mnpco4cgktiWx/R8xBvLGlyO0BwUuD3/WFjrc6fzH9E7Bpkel/xTnacx14w1bZAC1R35hz7BaHu1WrXsfxEd0VH7gpMPoQ4+l+H38ULPTiC+JcOKJOqVafgcc0sU7otXbgCa1Frr4QE5bwiMYhOlsRfRv/hf08jYsVo+RUO3wD12ylLWR7a7sJDkBBwgir8SwAvtRlT6k9ew9cDMQ7H8iWNCOg2xqoTLpVag6RN9kGzA5LGL+qHEcBr6gd2taFEy9+mt+TWuKp6reUeJfTu9RD1UgB0HpcdgTHtoUTISW7Mz4KNkouci2DJFngDWrLRxRoz81ZwfI2hjFY0PYDzF471K7Nwwt3qKYF1Js9a6VO38tMxSU4mTO83bt+dUFozgpw2Y0KKJGHDwU66i2MvTPg3EGs= ayoub@ayoub-Inspiron-3576"
     // Create zmount workload
     let zmount = new Zmount();
     zmount.size = 1024 * 1024 * 1024 * 10;
@@ -115,33 +118,23 @@ async function main() {
     async function deploy() {
         const contract = await tf_client.contracts.createNode(node_id, deployment.challenge_hash(), "", 0);
         console.log(contract)
-        deployment.contract_id = 10;
+        deployment.contract_id = contract["contract_id"];
+        deployment.contract_id = 5;
         let payload = JSON.stringify(deployment);
-        console.log("payload>>>>>>>>>>>>>>>>>>", payload)
 
-        let rmb = new RedisMessageBusClient();
+        let rmb = new HTTPMessageBusClient();
         let msg = rmb.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
-        rmb.send(msg, payload)
+
+
+        const messageIdentifier = await rmb.send(msg, payload)
+        msg.ret = messageIdentifier["retqueue"];
+        await delay(20);
         const result = await rmb.read(msg)
-        console.log(result)
+        console.log(`the read response is: ${result}`)
     }
 
-
-    async function update() {
-        await tf_client.contracts.updateNode(contract_id, "", deployment.challenge_hash())
-        deployment.contract_id = contract_id;
-        let payload = JSON.stringify(deployment);
-        console.log("payload>>>>>>>>>>>>>>>>>>", payload)
-
-        let rmb = new RedisMessageBusClient(6379);
-        let msg = rmb.prepare("zos.deployment.update", [node_twin_id], 0, 2);
-        rmb.send(msg, payload)
-        const result = await rmb.read(msg)
-        console.log(result)
-    }
     await deploy();
     tf_client.disconnect()
-    // await update();
 }
 
 main()

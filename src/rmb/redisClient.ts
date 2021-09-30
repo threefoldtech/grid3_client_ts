@@ -1,7 +1,9 @@
 const redis = require("redis")
 const uuid4 = require("uuid4")
 
-class MessageBusClient {
+import { MessageBusClientInterface } from "./clientInterface"
+
+class RedisMessageBusClient implements MessageBusClientInterface {
     client: any;
     constructor(port = 6379) {
         const client = redis.createClient(port)
@@ -65,4 +67,4 @@ class MessageBusClient {
 }
 
 
-export { MessageBusClient }
+export { RedisMessageBusClient }

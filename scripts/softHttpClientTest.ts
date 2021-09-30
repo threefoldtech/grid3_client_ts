@@ -12,7 +12,7 @@ async function main() {
 
     async function deploy() {
 
-        let rmb = new HTTPMessageBusClient();
+        let rmb = new HTTPMessageBusClient("https://rmbproxy1.devnet.grid.tf");
         let msg = rmb.prepare("zos.statistics.get", [dstNodeId], 0, 2);
         console.log(msg)
         const messageIdentifier = await rmb.send(msg, "")

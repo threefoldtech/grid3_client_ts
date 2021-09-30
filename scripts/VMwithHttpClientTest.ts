@@ -122,7 +122,7 @@ async function main() {
         deployment.contract_id = 5;
         let payload = JSON.stringify(deployment);
 
-        let rmb = new HTTPMessageBusClient();
+        let rmb = new HTTPMessageBusClient("https://rmbproxy1.devnet.grid.tf");
         let msg = rmb.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
 
 

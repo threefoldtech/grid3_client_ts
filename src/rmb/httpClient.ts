@@ -4,6 +4,10 @@ import { MessageBusClientInterface } from "./clientInterface"
 
 class HTTPMessageBusClient implements MessageBusClientInterface {
     client: any;
+    proxyURL: string;
+    constructor(proxyURL: string) {
+        this.proxyURL = proxyURL;
+    }
 
     prepare(command, destination, expiration, retry) {
         return {
@@ -33,7 +37,7 @@ class HTTPMessageBusClient implements MessageBusClientInterface {
         const body = JSON.stringify(message)
         const dst = message.dst[0]
 
-        await axios.post(`https://rmbproxy1.devnet.grid.tf/twin/${dst}`, body)
+        await axios.post(`${this.proxyURL}/twin/${dst}`, body)
             .then(res => {
                 console.log(`the send api response: ${res.status}`);
                 return res.json()
@@ -52,7 +56,7 @@ class HTTPMessageBusClient implements MessageBusClientInterface {
         }
 
 
-        axios.post(`https://rmbproxy1.devnet.grid.tf/twin/${dst}/${retqueue}`)
+        axios.post(`${this.proxyURL}/twin/${dst}/${retqueue}`)
             .then(res => {
                 console.log(`the read api response for retqueue ( ${retqueue} ) is : ${res.status}`);
                 return res.json()

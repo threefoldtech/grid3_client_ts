@@ -7,8 +7,9 @@ class GatewayFQDNProxy {
         out += this.fqdn;
         out += this.tls_passthrough.toString();
         for (let backend of this.backends) {
-            out += backend.toString();
+            out += backend;
         }
+        return out;
     }
 }
 exports.GatewayFQDNProxy = GatewayFQDNProxy;
@@ -18,8 +19,9 @@ class GatewayNameProxy {
         out += this.name;
         out += this.tls_passthrough.toString();
         for (let backend of this.backends) {
-            out += backend.toString();
+            out += backend;
         }
+        return out;
     }
 }
 exports.GatewayNameProxy = GatewayNameProxy;

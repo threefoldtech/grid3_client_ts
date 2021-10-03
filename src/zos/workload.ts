@@ -17,8 +17,8 @@ enum WorkloadTypes {
 	network = "network",
 	zdb = "zdb",
 	ipv4 = "ipv4",
-	gatewayfqdnproxy = "gatewayfqdnproxy",
-	gatewaynameproxy = "gatewaynameproxy"
+	gatewayfqdnproxy = "gateway-fqdn-proxy",
+	gatewaynameproxy = "gateway-name-proxy"
 }
 
 

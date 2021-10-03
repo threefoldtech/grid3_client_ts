@@ -3,6 +3,7 @@ import { Zmount, ZmountResult } from "./zmount";
 import { Zmachine, ZmachineResult } from "./zmachine";
 import { Zdb, ZdbResult } from "./zdb";
 import { PublicIP } from "./ipv4";
+import { GatewayFQDNProxy, GatewayNameProxy, GatewayResult } from "./gateway";
 
 enum ResultStates {
 	error = "error",
@@ -15,7 +16,9 @@ enum WorkloadTypes {
 	zmount = "zmount",
 	network = "network",
 	zdb = "zdb",
-	ipv4 = "ipv4"
+	ipv4 = "ipv4",
+	gatewayfqdnproxy = "gateway-fqdn-proxy",
+	gatewaynameproxy = "gateway-name-proxy"
 }
 
 
@@ -47,7 +50,7 @@ class Workload {
 	name: string;
 	type: WorkloadTypes;
 	// this should be something like json.RawMessage in golang
-	data: Zmount | Znet | Zmachine | Zdb | PublicIP; // serialize({size: 10}) ---> "data": {size:10},
+	data: Zmount | Znet | Zmachine | Zdb | PublicIP | GatewayFQDNProxy | GatewayNameProxy; // serialize({size: 10}) ---> "data": {size:10},
 
 	metadata: string;
 	description: string;
@@ -74,8 +77,8 @@ class Workload {
 
 
 
-type WorkloadData = Zmount | Zdb | Zmachine | Znet
-type WorkloadDataResult = ZmountResult | ZdbResult | ZmachineResult
+type WorkloadData = Zmount | Zdb | Zmachine | Znet | GatewayFQDNProxy | GatewayNameProxy
+type WorkloadDataResult = ZmountResult | ZdbResult | ZmachineResult | GatewayResult
 
 // pub fn(mut w WorkloadData) challenge() string {
 // 	return w.challenge()

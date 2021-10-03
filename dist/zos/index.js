@@ -18,3 +18,4 @@ __exportStar(require("./zdb"), exports);
 __exportStar(require("./zmachine"), exports);
 __exportStar(require("./zmount"), exports);
 __exportStar(require("./znet"), exports);
+__exportStar(require("./gateway"), exports);

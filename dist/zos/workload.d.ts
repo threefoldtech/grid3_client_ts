@@ -3,6 +3,7 @@ import { Zmount, ZmountResult } from "./zmount";
 import { Zmachine, ZmachineResult } from "./zmachine";
 import { Zdb, ZdbResult } from "./zdb";
 import { PublicIP } from "./ipv4";
+import { GatewayFQDNProxy, GatewayNameProxy, GatewayResult } from "./gateway";
 declare enum ResultStates {
     error = "error",
     ok = "ok",
@@ -13,7 +14,9 @@ declare enum WorkloadTypes {
     zmount = "zmount",
     network = "network",
     zdb = "zdb",
-    ipv4 = "ipv4"
+    ipv4 = "ipv4",
+    gatewayfqdnproxy = "gateway-fqdn-proxy",
+    gatewaynameproxy = "gateway-name-proxy"
 }
 declare class DeploymentResult {
     created: number;
@@ -25,12 +28,12 @@ declare class Workload {
     version: number;
     name: string;
     type: WorkloadTypes;
-    data: Zmount | Znet | Zmachine | Zdb | PublicIP;
+    data: Zmount | Znet | Zmachine | Zdb | PublicIP | GatewayFQDNProxy | GatewayNameProxy;
     metadata: string;
     description: string;
     result: DeploymentResult;
     challenge(): string;
 }
-declare type WorkloadData = Zmount | Zdb | Zmachine | Znet;
-declare type WorkloadDataResult = ZmountResult | ZdbResult | ZmachineResult;
+declare type WorkloadData = Zmount | Zdb | Zmachine | Znet | GatewayFQDNProxy | GatewayNameProxy;
+declare type WorkloadDataResult = ZmountResult | ZdbResult | ZmachineResult | GatewayResult;
 export { Workload, WorkloadTypes, WorkloadData, WorkloadDataResult };

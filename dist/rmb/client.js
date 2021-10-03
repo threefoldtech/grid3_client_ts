@@ -33,6 +33,7 @@ class MessageBusClient {
         const request = JSON.stringify(message);
         this.client.lpush(["msgbus.system.local", request], redis.print);
         console.log(request);
+        return message;
     }
     read(message) {
         return new Promise((resolve, reject) => {

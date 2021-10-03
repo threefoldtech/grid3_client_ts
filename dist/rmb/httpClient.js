@@ -22,7 +22,7 @@ class HTTPMessageBusClient {
             "cmd": command,
             "exp": expiration,
             "dat": "",
-            "src": 0,
+            "src": destination[0] || 0,
             "dst": destination,
             "ret": null,
             "try": retry,
@@ -40,32 +40,42 @@ class HTTPMessageBusClient {
             }
             const body = JSON.stringify(message);
             const dst = message.dst[0];
-            yield axios.post(`${this.proxyURL}/twin/${dst}`, body)
+            const sendURL = `${this.proxyURL}/twin/${dst}`;
+            let msgIdentifier;
+            console.log(`The request URL is : ${sendURL}`);
+            yield axios.post(sendURL, body)
                 .then(res => {
                 console.log(`the send api response: ${res.status}`);
-                return res.json();
+                console.log(res.data);
+                msgIdentifier = res.data;
             })
                 .catch(error => {
-                // console.log(error);
-                throw new Error(error.response.data);
+                if (error.response) {
+                    console.log(error.response.data);
+                }
+                throw new Error(error.message);
             });
+            message.ret = msgIdentifier.retqueue;
+            return message;
         });
     }
     read(message) {
         return __awaiter(this, void 0, void 0, function* () {
             const dst = message.dst[0];
             const retqueue = message.ret;
+            let ret;
             if (!retqueue) {
                 throw new Error('The Message retqueue is null');
             }
-            axios.post(`${this.proxyURL}/twin/${dst}/${retqueue}`)
+            yield axios.post(`${this.proxyURL}/twin/${dst}/${retqueue}`)
                 .then(res => {
                 console.log(`the read api response for retqueue ( ${retqueue} ) is : ${res.status}`);
-                return res.json();
+                ret = res.data;
             })
                 .catch(error => {
-                throw new Error(error.response.data);
+                throw new Error(error.message);
             });
+            return ret;
         });
     }
 }

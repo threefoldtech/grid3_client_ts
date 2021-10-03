@@ -1,4 +1,5 @@
-declare class MessageBusClient {
+import { MessageBusClientInterface } from "./clientInterface";
+declare class MessageBusClient implements MessageBusClientInterface {
     client: any;
     constructor(port?: number);
     prepare(command: any, destination: any, expiration: any, retry: any): {
@@ -15,7 +16,7 @@ declare class MessageBusClient {
         now: number;
         err: string;
     };
-    send(message: any, payload: any): void;
+    send(message: any, payload: any): any;
     read(message: any): Promise<unknown>;
 }
 export { MessageBusClient };

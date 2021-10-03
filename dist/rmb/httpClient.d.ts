@@ -9,7 +9,7 @@ declare class HTTPMessageBusClient implements MessageBusClientInterface {
         cmd: any;
         exp: any;
         dat: string;
-        src: number;
+        src: any;
         dst: any;
         ret: any;
         try: any;
@@ -17,7 +17,7 @@ declare class HTTPMessageBusClient implements MessageBusClientInterface {
         now: number;
         err: string;
     };
-    send(message: any, payload: any): Promise<void>;
-    read(message: any): Promise<void>;
+    send(message: any, payload: any): Promise<any>;
+    read(message: any): Promise<any>;
 }
 export { HTTPMessageBusClient };

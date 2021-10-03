@@ -5,7 +5,7 @@ import { ComputeCapacity } from "../src/zos/computecapacity";
 import { Workload, WorkloadTypes } from "../src/zos/workload";
 import { Deployment, SignatureRequirement, SignatureRequest } from "../src/zos/deployment";
 import { TFClient } from "../src/tf-grid/client"
-import { MessageBusClient } from "../src/rmb/redisClient"
+import { MessageBusClient } from "../src/rmb/client"
 
 async function main() {
     const twin_id = 10
@@ -113,9 +113,9 @@ async function main() {
     await tf_client.connect();
 
     async function deploy() {
-        const contract = await tf_client.contracts.createNode(node_id, deployment.challenge_hash(), "", 0);
+        const contract = await tf_client.contracts.create(node_id, deployment.challenge_hash(), "", 0);
         console.log(contract)
-        deployment.contract_id = 10;
+        deployment.contract_id = contract["contract_id"];
         let payload = JSON.stringify(deployment);
         console.log("payload>>>>>>>>>>>>>>>>>>", payload)
 
@@ -128,7 +128,7 @@ async function main() {
 
 
     async function update() {
-        await tf_client.contracts.updateNode(contract_id, "", deployment.challenge_hash())
+        await tf_client.contracts.update(contract_id, "", deployment.challenge_hash())
         deployment.contract_id = contract_id;
         let payload = JSON.stringify(deployment);
         console.log("payload>>>>>>>>>>>>>>>>>>", payload)

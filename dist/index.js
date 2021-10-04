@@ -14,3 +14,4 @@ __exportStar(require("./tf-grid/index"), exports);
 __exportStar(require("./zos/index"), exports);
 __exportStar(require("./primitives/index"), exports);
 __exportStar(require("./high_level/index"), exports);
+__exportStar(require("./helpers"), exports);

@@ -5,3 +5,4 @@ export * from "./vm";
 export * from "./deployment";
 export * from "./nodes";
 export * from "./gateway";
+export * from "./zdb";

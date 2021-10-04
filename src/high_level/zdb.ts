@@ -7,7 +7,7 @@ import { zdb } from "../primitives/zdb";
 import { DeploymentFactory } from "../primitives/deployment";
 import { TwinDeployment, Operations } from "../high_level/models";
 
-class Zdb extends HighLevelBase {
+class ZdbHL extends HighLevelBase {
     create(
         name: string,
         node_id: number,
@@ -40,4 +40,4 @@ class Zdb extends HighLevelBase {
         return await this._delete(deployment, names, [WorkloadTypes.zdb]);
     }
 }
-export { Zdb };
+export { ZdbHL };

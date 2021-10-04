@@ -17,3 +17,4 @@ __exportStar(require("./vm"), exports);
 __exportStar(require("./deployment"), exports);
 __exportStar(require("./nodes"), exports);
 __exportStar(require("./gateway"), exports);
+__exportStar(require("./zdb"), exports);

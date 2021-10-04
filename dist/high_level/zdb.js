@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Zdb = void 0;
+exports.ZdbHL = void 0;
 const workload_1 = require("../zos/workload");
 const base_1 = require("./base");
 const zdb_1 = require("../primitives/zdb");
 const deployment_1 = require("../primitives/deployment");
 const models_1 = require("../high_level/models");
-class Zdb extends base_1.HighLevelBase {
+class ZdbHL extends base_1.HighLevelBase {
     create(name, node_id, namespace, disk_size, disk_type, mode, password, publicIpv6, metadata = "", description = "") {
         const deploymentFactory = new deployment_1.DeploymentFactory(this.twin_id, this.url, this.mnemonic);
         const zdbFactory = new zdb_1.zdb();
@@ -18,4 +18,4 @@ class Zdb extends base_1.HighLevelBase {
         return await this._delete(deployment, names, [workload_1.WorkloadTypes.zdb]);
     }
 }
-exports.Zdb = Zdb;
+exports.ZdbHL = ZdbHL;

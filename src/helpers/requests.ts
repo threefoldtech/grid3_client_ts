@@ -1,11 +1,16 @@
-import * as request from "request-promise-native";
+import { default as axios, Method } from "axios";
 
-async function send(method: string, url: string, body: string, headers: Record<string, string>) {
+async function send(method: Method, url: string, body: string, headers: Record<string, string>) {
     const options = {
-        uri: url,
-        body: body,
+        method: method,
+        url: url,
+        data: body,
         headers: headers,
     };
-    return await request[method](options);
+    const response = await axios(options);
+    if (response.status !== 200) {
+        throw Error(`http request failed with status code: ${response.status} due to: ${response.data}`);
+    }
+    return response.data;
 }
-export { send };
+export { send };;;

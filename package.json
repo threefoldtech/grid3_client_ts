@@ -7,13 +7,11 @@
         "tfgrid-api-client": "^0.1.1",
         "typescript": "^4.3.5",
         "uuid4": "^2.0.2",
-        "@types/private-ip": "^1.0.0",
         "@types/request": "^2.48.7",
         "@types/request-promise-native": "^1.0.18",
         "appdata-path": "^1.0.0",
         "ip": "^1.1.5",
         "netaddr": "^1.1.0",
-        "reflect-metadata": "^0.1.13",
         "request": "^2.88.2",
         "request-promise-native": "^1.0.9",
         "wireguard-wrapper": "^1.0.3"

@@ -1,4 +1,4 @@
-import { ComputeCapacity } from './computecapacity';
+import { ComputeCapacity } from "./computecapacity";
 declare class ZNetworkInterface {
     network: string;
     ip: string;
@@ -21,7 +21,7 @@ declare class Zmachine {
     compute_capacity: ComputeCapacity;
     mounts: Mount[];
     entrypoint: string;
-    env: {};
+    env: Record<string, unknown>;
     challenge(): string;
 }
 declare class ZmachineResult {

@@ -1,7 +1,7 @@
 class PublicIP {
     challenge() {
-        return ""
+        return "";
     }
 }
 
-export { PublicIP }
+export { PublicIP };

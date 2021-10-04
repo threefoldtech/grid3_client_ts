@@ -6,21 +6,20 @@ class Twins {
     }
 
     async create(ip) {
-        return this.tfclient.applyExtrinsic(this.tfclient.client.createTwin, [ip], "tfgridModule", "TwinStored")
+        return this.tfclient.applyExtrinsic(this.tfclient.client.createTwin, [ip], "tfgridModule", "TwinStored");
     }
 
     async get(id) {
-        return this.tfclient.client.getTwinByID(id)
+        return this.tfclient.client.getTwinByID(id);
     }
 
     async list() {
-        return this.tfclient.client.listTwins()
+        return this.tfclient.client.listTwins();
     }
 
     async delete(id) {
-        return this.tfclient.applyExtrinsic(this.tfclient.client.deleteTwin, [id], "tfgridModule", "TwinDeleted")
+        return this.tfclient.applyExtrinsic(this.tfclient.client.deleteTwin, [id], "tfgridModule", "TwinDeleted");
     }
-
 }
 
-export { Twins }
+export { Twins };

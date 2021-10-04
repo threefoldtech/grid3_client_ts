@@ -1,43 +1,38 @@
 enum ZdbModes {
-	seq = "seq",
-	user = "user"
+    seq = "seq",
+    user = "user",
 }
 
 enum DeviceTypes {
-	hdd = "hdd",
-	ssd = "ssd"
+    hdd = "hdd",
+    ssd = "ssd",
 }
 
 class Zdb {
-	namespace: string = "";
-	// size in bytes
-	size: number;
-	mode: ZdbModes = ZdbModes.seq;
-	password: string = "";
-	disk_type: DeviceTypes = DeviceTypes.hdd;
-	public: boolean = false;
+    namespace = "";
+    // size in bytes
+    size: number;
+    mode: ZdbModes = ZdbModes.seq;
+    password = "";
+    disk_type: DeviceTypes = DeviceTypes.hdd;
+    public = false;
 
-	challenge() {
+    challenge() {
+        let out = "";
+        out += this.size || "";
+        out += this.mode.toString();
+        out += this.password;
+        out += this.public.toString();
 
-		let out = "";
-		out += this.size || "";
-		out += this.mode.toString();
-		out += this.password;
-		out += this.public.toString();
-
-		return out
-
-	}
+        return out;
+    }
 }
-
-
 
 class ZdbResult {
-	name: string = "";
-	namespace: string = "";
-	ips: string[];
-	port: number = 0;
+    name = "";
+    namespace = "";
+    ips: string[];
+    port = 0;
 }
 
-
-export { Zdb, ZdbResult, ZdbModes, DeviceTypes }
+export { Zdb, ZdbResult, ZdbModes, DeviceTypes };

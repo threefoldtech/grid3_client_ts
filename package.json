@@ -4,12 +4,26 @@
     "version": "0.0.1",
     "dependencies": {
         "crypto-js": "^4.1.1",
-        "@types/node": "^16.4.10",
         "tfgrid-api-client": "^0.1.1",
         "typescript": "^4.3.5",
         "uuid4": "^2.0.2",
-        "redis": "^3.1.2",
-        "stellar-sdk": "^8.2.2"
+        "@types/private-ip": "^1.0.0",
+        "@types/request": "^2.48.7",
+        "@types/request-promise-native": "^1.0.18",
+        "appdata-path": "^1.0.0",
+        "ip": "^1.1.5",
+        "netaddr": "^1.1.0",
+        "reflect-metadata": "^0.1.13",
+        "request": "^2.88.2",
+        "request-promise-native": "^1.0.9",
+        "wireguard-wrapper": "^1.0.3"
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^4.31.2",
+        "@typescript-eslint/parser": "^4.31.2",
+        "eslint": "^7.32.0",
+        "eslint-plugin-prettier": "^4.0.0",
+        "prettier": "^2.4.1"
     },
     "main": "dist/index.js",
     "types": "dist/index.d.ts",

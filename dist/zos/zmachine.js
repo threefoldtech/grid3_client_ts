@@ -2,18 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ZmachineResult = exports.Mount = exports.ZNetworkInterface = exports.ZmachineNetwork = exports.Zmachine = void 0;
 class ZNetworkInterface {
-    constructor() {
-        this.network = "";
-        this.ip = "";
-    }
+    network = "";
+    ip = "";
 }
 exports.ZNetworkInterface = ZNetworkInterface;
 class ZmachineNetwork {
-    constructor() {
-        this.public_ip = "";
-        this.interfaces = [];
-        this.planetary = false;
-    }
+    public_ip = "";
+    interfaces = [];
+    planetary = false;
     challenge() {
         let out = "";
         out += this.public_ip;
@@ -27,10 +23,8 @@ class ZmachineNetwork {
 }
 exports.ZmachineNetwork = ZmachineNetwork;
 class Mount {
-    constructor() {
-        this.name = "";
-        this.mountpoint = "";
-    }
+    name = "";
+    mountpoint = "";
     challenge() {
         let out = "";
         out += this.name;
@@ -40,11 +34,13 @@ class Mount {
 }
 exports.Mount = Mount;
 class Zmachine {
-    constructor() {
-        this.flist = ""; // if full url means custom flist meant for containers, if just name should be an official vm
-        this.mounts = [];
-        this.entrypoint = ""; //how to invoke that in a vm?
-    }
+    flist = ""; // if full url means custom flist meant for containers, if just name should be an official vm
+    network;
+    size;
+    compute_capacity;
+    mounts = [];
+    entrypoint = ""; //how to invoke that in a vm?
+    env; //environment for the zmachine
     challenge() {
         let out = "";
         out += this.flist;
@@ -55,7 +51,7 @@ class Zmachine {
             out += this.mounts[i].challenge();
         }
         out += this.entrypoint;
-        for (let key of Object.keys(this.env).sort()) {
+        for (const key of Object.keys(this.env).sort()) {
             out += key;
             out += "=";
             out += this.env[key];
@@ -66,10 +62,8 @@ class Zmachine {
 exports.Zmachine = Zmachine;
 // response of the deployment
 class ZmachineResult {
-    constructor() {
-        // name unique per deployment, re-used in request & response
-        this.id = "";
-        this.ip = "";
-    }
+    // name unique per deployment, re-used in request & response
+    id = "";
+    ip = "";
 }
 exports.ZmachineResult = ZmachineResult;

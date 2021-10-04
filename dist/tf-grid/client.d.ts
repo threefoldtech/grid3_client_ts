@@ -1,4 +1,4 @@
-import { Contracts } from './contracts';
+import { Contracts } from "./contracts";
 import { Twins } from "./twins";
 declare class TFClient {
     client: any;

@@ -2,11 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GatewayResult = exports.GatewayNameProxy = exports.GatewayFQDNProxy = void 0;
 class GatewayFQDNProxy {
+    fqdn;
+    tls_passthrough;
+    backends;
     challenge() {
         let out = "";
         out += this.fqdn;
         out += this.tls_passthrough.toString();
-        for (let backend of this.backends) {
+        for (const backend of this.backends) {
             out += backend;
         }
         return out;
@@ -14,11 +17,14 @@ class GatewayFQDNProxy {
 }
 exports.GatewayFQDNProxy = GatewayFQDNProxy;
 class GatewayNameProxy {
+    name;
+    tls_passthrough;
+    backends;
     challenge() {
         let out = "";
         out += this.name;
         out += this.tls_passthrough.toString();
-        for (let backend of this.backends) {
+        for (const backend of this.backends) {
             out += backend;
         }
         return out;

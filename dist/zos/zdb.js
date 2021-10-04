@@ -14,13 +14,13 @@ var DeviceTypes;
 })(DeviceTypes || (DeviceTypes = {}));
 exports.DeviceTypes = DeviceTypes;
 class Zdb {
-    constructor() {
-        this.namespace = "";
-        this.mode = ZdbModes.seq;
-        this.password = "";
-        this.disk_type = DeviceTypes.hdd;
-        this.public = false;
-    }
+    namespace = "";
+    // size in bytes
+    size;
+    mode = ZdbModes.seq;
+    password = "";
+    disk_type = DeviceTypes.hdd;
+    public = false;
     challenge() {
         let out = "";
         out += this.size || "";
@@ -32,10 +32,9 @@ class Zdb {
 }
 exports.Zdb = Zdb;
 class ZdbResult {
-    constructor() {
-        this.name = "";
-        this.namespace = "";
-        this.port = 0;
-    }
+    name = "";
+    namespace = "";
+    ips;
+    port = 0;
 }
 exports.ZdbResult = ZdbResult;

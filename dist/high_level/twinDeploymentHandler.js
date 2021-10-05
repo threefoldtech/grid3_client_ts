@@ -30,8 +30,8 @@ class TwinDeploymentHandler {
         const node_twin_id = await index_1.getNodeTwinId(node_id);
         try {
             const msg = this.rmbClient.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
-            this.rmbClient.send(msg, payload);
-            const result = await this.rmbClient.read(msg);
+            const message = await this.rmbClient.send(msg, payload);
+            const result = await this.rmbClient.read(message);
             if (result[0].err) {
                 throw Error(result[0].err);
             }
@@ -57,8 +57,8 @@ class TwinDeploymentHandler {
         const node_twin_id = await index_1.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
         try {
             const msg = this.rmbClient.prepare("zos.deployment.update", [node_twin_id], 0, 2);
-            this.rmbClient.send(msg, payload);
-            const result = await this.rmbClient.read(msg);
+            const message = await this.rmbClient.send(msg, payload);
+            const result = await this.rmbClient.read(message);
             if (result[0].err) {
                 throw Error(result[0].err);
             }
@@ -90,8 +90,8 @@ class TwinDeploymentHandler {
         const node_twin_id = await index_1.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
         const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
         const payload = { contract_id: contract_id };
-        this.rmbClient.send(msg, JSON.stringify(payload));
-        const result = await this.rmbClient.read(msg);
+        const message = await this.rmbClient.send(msg, JSON.stringify(payload));
+        const result = await this.rmbClient.read(message);
         if (result[0].err) {
             console.error(`Could not get deployment ${contract_id} due to error: ${result[0].err} `);
         }

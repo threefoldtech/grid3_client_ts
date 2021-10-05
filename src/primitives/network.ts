@@ -181,8 +181,8 @@ class Network {
             for (const node of this.nodes) {
                 const node_twin_id = await getNodeTwinId(node.node_id);
                 const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
-                this.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
-                const result = await this.rmbClient.read(msg);
+                const message = await this.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
+                const result = await this.rmbClient.read(message);
                 if (result[0].err) {
                     console.error(
                         `Could not load network deployment ${node.contract_id} due to error: ${result[0].err} `,
@@ -391,8 +391,8 @@ class Network {
     async getFreePort(node_id: number): Promise<number> {
         const node_twin_id = await getNodeTwinId(node_id);
         const msg = this.rmbClient.prepare("zos.network.list_wg_ports", [node_twin_id], 0, 2);
-        this.rmbClient.send(msg, "");
-        const result = await this.rmbClient.read(msg);
+        const message = await this.rmbClient.send(msg, "");
+        const result = await this.rmbClient.read(message);
         console.log(result);
 
         let port = 0;
@@ -409,8 +409,8 @@ class Network {
     async getNodeEndpoint(node_id: number): Promise<string> {
         const node_twin_id = await getNodeTwinId(node_id);
         let msg = this.rmbClient.prepare("zos.network.public_config_get", [node_twin_id], 0, 2);
-        this.rmbClient.send(msg, "");
-        let result = await this.rmbClient.read(msg);
+        let message = await this.rmbClient.send(msg, "");
+        let result = await this.rmbClient.read(message);
         console.log(result);
 
         if (!result[0].err && result[0].dat) {
@@ -427,8 +427,8 @@ class Network {
         console.log(`node ${node_id} has no public config`);
 
         msg = this.rmbClient.prepare("zos.network.interfaces", [node_twin_id], 0, 2);
-        this.rmbClient.send(msg, "");
-        result = await this.rmbClient.read(msg);
+        message = await this.rmbClient.send(msg, "");
+        result = await this.rmbClient.read(message);
         console.log(result);
 
         if (!result[0].err && result[0].dat) {

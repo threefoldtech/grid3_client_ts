@@ -13,4 +13,4 @@ async function send(method: Method, url: string, body: string, headers: Record<s
     }
     return response.data;
 }
-export { send };;;
+export { send };

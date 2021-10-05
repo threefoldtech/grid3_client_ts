@@ -19,5 +19,3 @@ async function send(method, url, body, headers) {
     return response.data;
 }
 exports.send = send;
-;
-;

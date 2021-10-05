@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNodeIdFromContractId = exports.getAccessNodes = exports.getNodeTwinId = void 0;
 const ip_1 = __importDefault(require("ip"));
+const private_ip_1 = __importDefault(require("private-ip"));
 const client_1 = require("../tf-grid/client");
 const requests_1 = require("../helpers/requests");
 const graphqlURL = "https://tfchain.dev.threefold.io/graphql/graphql";
@@ -57,8 +58,8 @@ async function getAccessNodes() {
             if (config === conf["id"]) {
                 const ipv4 = conf["ipv4"];
                 const ipv6 = conf["ipv6"];
-                if ((ip_1.default.isV4Format(ipv4.split("/")[0]) && !ip_1.default.isPrivate(ipv4)) ||
-                    (ip_1.default.isV6Format(ipv6.split("/")[0]) && !ip_1.default.isPrivate(ipv6))) {
+                if ((ip_1.default.isV4Format(ipv4.split("/")[0]) && !private_ip_1.default(ipv4)) ||
+                    (ip_1.default.isV6Format(ipv6.split("/")[0]) && !private_ip_1.default(ipv6))) {
                     accessNodes[nodeId] = { ipv4: ipv4, ipv6: ipv6 };
                 }
             }

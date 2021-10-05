@@ -1,10 +1,10 @@
 import * as PATH from "path";
 
 import { Wg } from "wireguard-wrapper";
-import { default as IP } from "ip";
-
 
 import { Addr } from "netaddr";
+import { default as isPrivateIP } from "private-ip";
+
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Znet, Peer } from "../zos/znet";
 import { Deployment } from "../zos/deployment";
@@ -403,7 +403,7 @@ class Network {
     }
 
     isPrivateIP(ip: string): boolean {
-        return IP.isPrivate(ip);
+        return isPrivateIP(ip);
     }
 
     async getNodeEndpoint(node_id: number): Promise<string> {

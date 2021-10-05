@@ -8,6 +8,7 @@
         "crypto-js": "^4.1.1",
         "ip": "^1.1.5",
         "netaddr": "^1.1.0",
+        "private-ip": "^2.2.1",
         "tfgrid-api-client": "^0.1.1",
         "typescript": "^4.3.5",
         "uuid4": "^2.0.2",

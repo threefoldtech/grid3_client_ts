@@ -25,8 +25,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Network = void 0;
 const PATH = __importStar(require("path"));
 const wireguard_wrapper_1 = require("wireguard-wrapper");
-const ip_1 = __importDefault(require("ip"));
 const netaddr_1 = require("netaddr");
+const private_ip_1 = __importDefault(require("private-ip"));
 const workload_1 = require("../zos/workload");
 const znet_1 = require("../zos/znet");
 const jsonfs_1 = require("../helpers/jsonfs");
@@ -393,7 +393,7 @@ class Network {
         return port;
     }
     isPrivateIP(ip) {
-        return ip_1.default.isPrivate(ip);
+        return private_ip_1.default(ip);
     }
     async getNodeEndpoint(node_id) {
         const node_twin_id = await nodes_1.getNodeTwinId(node_id);

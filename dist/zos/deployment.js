@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SignatureRequest = exports.SignatureRequirement = exports.Deployment = void 0;
-const crypto_js_1 = require("crypto-js");
+const md5_1 = __importDefault(require("crypto-js/md5"));
 const keyring_1 = require("@polkadot/keyring");
 class SignatureRequest {
     // unique id as used in TFGrid DB
@@ -78,7 +81,7 @@ class Deployment {
     // ChallengeHash computes the hash of the challenge signed
     // by the user. used for validation
     challenge_hash() {
-        return crypto_js_1.md5(this.challenge()).toString();
+        return md5_1.default(this.challenge()).toString();
     }
     from_hex(s) {
         const result = new Uint8Array(s.length / 2);

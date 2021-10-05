@@ -54,7 +54,7 @@ class TwinDeploymentHandler {
         }
         console.log(`Contract with id: ${contract["contract_id"]} has been updated`);
         const payload = JSON.stringify(deployment);
-        const node_twin_id = await index_1.getNodeTwinId(contract["node_id"]);
+        const node_twin_id = await index_1.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
         try {
             const msg = this.rmbClient.prepare("zos.deployment.update", [node_twin_id], 0, 2);
             this.rmbClient.send(msg, payload);
@@ -87,7 +87,7 @@ class TwinDeploymentHandler {
     async getDeployment(contract_id) {
         await this.tfclient.connect();
         const contract = await this.tfclient.contracts.get(contract_id);
-        const node_twin_id = await index_1.getNodeTwinId(contract["node_id"]);
+        const node_twin_id = await index_1.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
         const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
         const payload = { contract_id: contract_id };
         this.rmbClient.send(msg, JSON.stringify(payload));
@@ -266,9 +266,9 @@ class TwinDeploymentHandler {
                 twinDeployment.deployment.contract_id = contract["contract_id"];
                 contracts.created.push(contract);
                 if (twinDeployment.network) {
-                    await twinDeployment.network.save(contract["contract_id"], contract["node_id"]);
+                    await twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
                 }
-                console.log(`A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contract_id"]}`);
+                console.log(`A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contract_type"]["nodeContract"]["node_id"]}`);
             }
             else if (twinDeployment.operation === models_1.Operations.update) {
                 twinDeployment.deployment.sign(this.twin_id, this.mnemonic);
@@ -276,7 +276,7 @@ class TwinDeploymentHandler {
                 const contract = await this.update(twinDeployment.deployment, twinDeployment.publicIps);
                 contracts.updated.push(contract);
                 if (twinDeployment.network) {
-                    await twinDeployment.network.save(contract["contract_id"], contract["node_id"]);
+                    await twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
                 }
                 console.log(`Deployment has been updated with contract_id: ${contract["contract_id"]}`);
             }

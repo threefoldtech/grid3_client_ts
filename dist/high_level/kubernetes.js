@@ -7,7 +7,7 @@ const base_1 = require("./base");
 const Flist = "https://hub.grid.tf/ahmed_hanafy_1/ahmedhanafy725-k3s-latest.flist";
 class Kubernetes extends base_1.HighLevelBase {
     async add_master(name, nodeId, secret, cpu, memory, diskSize, publicIp, network, sshKey, metadata = "", description = "") {
-        console.log(`Creating a master with name: ${name} on node: ${nodeId}, network: ${network}`);
+        console.log(`Creating a master with name: ${name} on node: ${nodeId}, network: ${network.name}`);
         const machine = new machine_1.VirtualMachine(this.twin_id, this.url, this.mnemonic, this.rmbClient);
         const mountpoint = "/mnt/data";
         const env = {
@@ -26,7 +26,7 @@ class Kubernetes extends base_1.HighLevelBase {
         return await machine.create(name, nodeId, Flist, cpu, memory, [disk], publicIp, network, "/sbin/zinit init", env, metadata, description);
     }
     async add_worker(name, nodeId, secret, masterIp, cpu, memory, diskSize, publicIp, network, sshKey, metadata = "", description = "") {
-        console.log(`Creating a worker with name: ${name} on node: ${nodeId}, network: ${network}`);
+        console.log(`Creating a worker with name: ${name} on node: ${nodeId}, network: ${network.name}`);
         const machine = new machine_1.VirtualMachine(this.twin_id, this.url, this.mnemonic, this.rmbClient);
         const mountpoint = "/mnt/data";
         const env = {

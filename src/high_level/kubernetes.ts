@@ -21,7 +21,7 @@ class Kubernetes extends HighLevelBase {
         metadata = "",
         description = "",
     ) {
-        console.log(`Creating a master with name: ${name} on node: ${nodeId}, network: ${network}`);
+        console.log(`Creating a master with name: ${name} on node: ${nodeId}, network: ${network.name}`);
         const machine = new VirtualMachine(this.twin_id, this.url, this.mnemonic, this.rmbClient);
         const mountpoint = "/mnt/data";
         const env = {
@@ -67,7 +67,7 @@ class Kubernetes extends HighLevelBase {
         metadata = "",
         description = "",
     ) {
-        console.log(`Creating a worker with name: ${name} on node: ${nodeId}, network: ${network}`);
+        console.log(`Creating a worker with name: ${name} on node: ${nodeId}, network: ${network.name}`);
         const machine = new VirtualMachine(this.twin_id, this.url, this.mnemonic, this.rmbClient);
         const mountpoint = "/mnt/data";
         const env = {

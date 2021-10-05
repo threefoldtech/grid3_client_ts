@@ -17,8 +17,7 @@ async function getNodeTwinId(node_id) {
             }
         }`;
     const response = await requests_1.send("post", graphqlURL, JSON.stringify({ query: body }), headers);
-    const res = JSON.parse(response);
-    return res["data"]["nodes"][0]["twinId"];
+    return response["data"]["nodes"][0]["twinId"];
 }
 exports.getNodeTwinId = getNodeTwinId;
 async function getAccessNodes() {
@@ -30,8 +29,7 @@ async function getAccessNodes() {
         }
       }`;
     const nodeResponse = await requests_1.send("post", graphqlURL, JSON.stringify({ query: body }), headers);
-    const nodeRes = JSON.parse(nodeResponse);
-    const nodes = nodeRes["data"]["nodes"];
+    const nodes = nodeResponse["data"]["nodes"];
     const nodeConfigs = {};
     let configsIds = "";
     for (const node of nodes) {
@@ -45,12 +43,12 @@ async function getAccessNodes() {
         publicConfigs (where: {id_in: [${configsIds}]}) {
           id
           ipv4
-          ipv6    
+          ipv6
+          domain
         }
       }`;
     const pubConfigResponse = await requests_1.send("post", graphqlURL, JSON.stringify({ query: body }), headers);
-    const pubConfigRes = JSON.parse(pubConfigResponse);
-    const configs = pubConfigRes["data"]["publicConfigs"];
+    const configs = pubConfigResponse["data"]["publicConfigs"];
     const accessNodes = {};
     for (const nodeId of Object.keys(nodeConfigs)) {
         const config = nodeConfigs[nodeId];
@@ -75,7 +73,7 @@ async function getNodeIdFromContractId(contractId, url, mnemonic) {
     let nodeId;
     try {
         const contract = await tfclient.contracts.get(contractId);
-        nodeId = contract["node_id"];
+        nodeId = contract["contract_type"]["nodeContract"]["node_id"];
     }
     catch (err) {
         throw Error(err);

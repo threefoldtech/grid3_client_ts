@@ -1,6 +1,6 @@
 import { default as axios, Method } from "axios";
 
-async function send(method: Method, url: string, body: string, headers: Record<string, string>) {
+async function send(method: Method, url: string, body: string, headers: Record<string, string>): Promise<Record<string, unknown>> {
     const options = {
         method: method,
         url: url,

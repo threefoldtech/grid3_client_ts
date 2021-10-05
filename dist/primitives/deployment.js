@@ -11,7 +11,7 @@ const zmount_1 = require("../zos/zmount");
 const znet_1 = require("../zos/znet");
 const ipv4_1 = require("../zos/ipv4");
 const computecapacity_1 = require("../zos/computecapacity");
-const client_1 = require("../tf-grid/client");
+const nodes_1 = require("./nodes");
 class DeploymentFactory {
     twin_id;
     url;
@@ -78,10 +78,7 @@ class DeploymentFactory {
                 workload.version = 0;
                 // Don't change the machine ip
                 if (w.type === workload_2.WorkloadTypes.zmachine) {
-                    const tfclient = new client_1.TFClient(this.url, this.mnemonic);
-                    await tfclient.connect();
-                    const contract = await tfclient.contracts.get(oldDeployment.contract_id);
-                    const node_id = contract["node_id"];
+                    const node_id = await nodes_1.getNodeIdFromContractId(oldDeployment.contract_id, this.url, this.mnemonic);
                     const oldIp = workload.data["network"]["interfaces"][0]["ip"];
                     const newIp = w.data["network"]["interfaces"][0]["ip"];
                     if (newIp !== oldIp) {

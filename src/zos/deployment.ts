@@ -1,6 +1,6 @@
 import { Workload } from "./workload";
 
-import { md5 } from "crypto-js";
+import { default as md5 } from "crypto-js/md5";
 import { Keyring } from "@polkadot/keyring";
 
 class SignatureRequest {

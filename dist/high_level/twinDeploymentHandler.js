@@ -1,13 +1,17 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import { WorkloadTypes } from "../zos/workload";
 import { TFClient } from "../tf-grid/client";
 import { Operations } from "./models";
 import { getNodeTwinId } from "../primitives/index";
 class TwinDeploymentHandler {
-    rmbClient;
-    twin_id;
-    url;
-    mnemonic;
-    tfclient;
     constructor(rmbClient, twin_id, url, mnemonic) {
         this.rmbClient = rmbClient;
         this.twin_id = twin_id;
@@ -15,85 +19,93 @@ class TwinDeploymentHandler {
         this.mnemonic = mnemonic;
         this.tfclient = new TFClient(url, mnemonic);
     }
-    async deploy(deployment, node_id, publicIps) {
-        await this.tfclient.connect();
-        const contract = await this.tfclient.contracts.createNode(node_id, deployment.challenge_hash(), "", publicIps);
-        if (contract instanceof Error) {
-            throw Error(`Failed to create contract ${contract}`);
-        }
-        console.log(`Contract with id: ${contract["contract_id"]} has been created`);
-        deployment.contract_id = contract["contract_id"];
-        const payload = JSON.stringify(deployment);
-        const node_twin_id = await getNodeTwinId(node_id);
-        try {
-            const msg = this.rmbClient.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
-            const message = await this.rmbClient.send(msg, payload);
-            const result = await this.rmbClient.read(message);
-            if (result[0].err) {
-                throw Error(result[0].err);
+    deploy(deployment, node_id, publicIps) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.tfclient.connect();
+            const contract = yield this.tfclient.contracts.createNode(node_id, deployment.challenge_hash(), "", publicIps);
+            if (contract instanceof Error) {
+                throw Error(`Failed to create contract ${contract}`);
             }
-        }
-        catch (err) {
-            await this.tfclient.contracts.cancel(contract["contract_id"]);
-            throw Error(err);
-        }
-        finally {
-            this.tfclient.disconnect();
-        }
-        return contract;
-    }
-    async update(deployment, publicIps) {
-        // TODO: update the contract with public when it is available
-        await this.tfclient.connect();
-        const contract = await this.tfclient.contracts.updateNode(deployment.contract_id, "", deployment.challenge_hash());
-        if (contract instanceof Error) {
-            throw Error(`Failed to update contract ${contract}`);
-        }
-        console.log(`Contract with id: ${contract["contract_id"]} has been updated`);
-        const payload = JSON.stringify(deployment);
-        const node_twin_id = await getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
-        try {
-            const msg = this.rmbClient.prepare("zos.deployment.update", [node_twin_id], 0, 2);
-            const message = await this.rmbClient.send(msg, payload);
-            const result = await this.rmbClient.read(message);
-            if (result[0].err) {
-                throw Error(result[0].err);
+            console.log(`Contract with id: ${contract["contract_id"]} has been created`);
+            deployment.contract_id = contract["contract_id"];
+            const payload = JSON.stringify(deployment);
+            const node_twin_id = yield getNodeTwinId(node_id);
+            try {
+                const msg = this.rmbClient.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
+                const message = yield this.rmbClient.send(msg, payload);
+                const result = yield this.rmbClient.read(message);
+                if (result[0].err) {
+                    throw Error(result[0].err);
+                }
             }
-        }
-        catch (err) {
-            throw Error(err);
-        }
-        finally {
-            this.tfclient.disconnect();
-        }
-        return contract;
+            catch (err) {
+                yield this.tfclient.contracts.cancel(contract["contract_id"]);
+                throw Error(err);
+            }
+            finally {
+                this.tfclient.disconnect();
+            }
+            return contract;
+        });
     }
-    async delete(contract_id) {
-        await this.tfclient.connect();
-        try {
-            await this.tfclient.contracts.cancel(contract_id);
-        }
-        catch (err) {
-            throw Error(`Failed to cancel contract ${contract_id} due to: ${err}`);
-        }
-        finally {
-            this.tfclient.disconnect();
-        }
-        return contract_id;
+    update(deployment, publicIps) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // TODO: update the contract with public when it is available
+            yield this.tfclient.connect();
+            const contract = yield this.tfclient.contracts.updateNode(deployment.contract_id, "", deployment.challenge_hash());
+            if (contract instanceof Error) {
+                throw Error(`Failed to update contract ${contract}`);
+            }
+            console.log(`Contract with id: ${contract["contract_id"]} has been updated`);
+            const payload = JSON.stringify(deployment);
+            const node_twin_id = yield getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
+            try {
+                const msg = this.rmbClient.prepare("zos.deployment.update", [node_twin_id], 0, 2);
+                const message = yield this.rmbClient.send(msg, payload);
+                const result = yield this.rmbClient.read(message);
+                if (result[0].err) {
+                    throw Error(result[0].err);
+                }
+            }
+            catch (err) {
+                throw Error(err);
+            }
+            finally {
+                this.tfclient.disconnect();
+            }
+            return contract;
+        });
     }
-    async getDeployment(contract_id) {
-        await this.tfclient.connect();
-        const contract = await this.tfclient.contracts.get(contract_id);
-        const node_twin_id = await getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
-        const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
-        const payload = { contract_id: contract_id };
-        const message = await this.rmbClient.send(msg, JSON.stringify(payload));
-        const result = await this.rmbClient.read(message);
-        if (result[0].err) {
-            console.error(`Could not get deployment ${contract_id} due to error: ${result[0].err} `);
-        }
-        const res = JSON.parse(result[0].dat);
-        return res;
+    delete(contract_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.tfclient.connect();
+            try {
+                yield this.tfclient.contracts.cancel(contract_id);
+            }
+            catch (err) {
+                throw Error(`Failed to cancel contract ${contract_id} due to: ${err}`);
+            }
+            finally {
+                this.tfclient.disconnect();
+            }
+            return contract_id;
+        });
+    }
+    getDeployment(contract_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.tfclient.connect();
+            const contract = yield this.tfclient.contracts.get(contract_id);
+            const node_twin_id = yield getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
+            const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
+            const payload = { contract_id: contract_id };
+            const message = yield this.rmbClient.send(msg, JSON.stringify(payload));
+            const result = yield this.rmbClient.read(message);
+            if (result[0].err) {
+                console.error(`Could not get deployment ${contract_id} due to error: ${result[0].err} `);
+            }
+            const res = JSON.parse(result[0].dat);
+            return res;
+        });
     }
     checkWorkload(workload, targetWorkload) {
         let state = false;
@@ -108,40 +120,44 @@ class TwinDeploymentHandler {
         }
         return false;
     }
-    async waitForDeployment(twinDeployment, timeout = 5) {
-        const now = new Date().getTime();
-        while (new Date().getTime() < now + timeout * 1000 * 60) {
-            const deployment = await this.getDeployment(twinDeployment.deployment.contract_id);
-            if (deployment.workloads.length !== twinDeployment.deployment.workloads.length) {
-                await new Promise(f => setTimeout(f, 1000));
-                continue;
+    waitForDeployment(twinDeployment, timeout = 5) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const now = new Date().getTime();
+            while (new Date().getTime() < now + timeout * 1000 * 60) {
+                const deployment = yield this.getDeployment(twinDeployment.deployment.contract_id);
+                if (deployment.workloads.length !== twinDeployment.deployment.workloads.length) {
+                    yield new Promise(f => setTimeout(f, 1000));
+                    continue;
+                }
+                let readyWorkloads = 0;
+                for (let i = 0; i < deployment.workloads.length; i++) {
+                    if (this.checkWorkload(deployment.workloads[i], twinDeployment.deployment.workloads[i])) {
+                        readyWorkloads += 1;
+                    }
+                }
+                if (readyWorkloads === twinDeployment.deployment.workloads.length) {
+                    return true;
+                }
+                yield new Promise(f => setTimeout(f, 1000));
             }
-            let readyWorkloads = 0;
-            for (let i = 0; i < deployment.workloads.length; i++) {
-                if (this.checkWorkload(deployment.workloads[i], twinDeployment.deployment.workloads[i])) {
-                    readyWorkloads += 1;
+        });
+    }
+    waitForDeployments(twinDeployments, timeout = 5) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const promises = [];
+            for (const twinDeployment of twinDeployments) {
+                if ([Operations.deploy, Operations.update].includes(twinDeployment.operation)) {
+                    console.log(`Waiting for deployment with contract_id: ${twinDeployment.deployment.contract_id} to be ready`);
+                    promises.push(this.waitForDeployment(twinDeployment, timeout));
                 }
             }
-            if (readyWorkloads === twinDeployment.deployment.workloads.length) {
-                return true;
+            for (const promise of promises) {
+                if (!(yield promise)) {
+                    return false;
+                }
             }
-            await new Promise(f => setTimeout(f, 1000));
-        }
-    }
-    async waitForDeployments(twinDeployments, timeout = 5) {
-        const promises = [];
-        for (const twinDeployment of twinDeployments) {
-            if ([Operations.deploy, Operations.update].includes(twinDeployment.operation)) {
-                console.log(`Waiting for deployment with contract_id: ${twinDeployment.deployment.contract_id} to be ready`);
-                promises.push(this.waitForDeployment(twinDeployment, timeout));
-            }
-        }
-        for (const promise of promises) {
-            if (!(await promise)) {
-                return false;
-            }
-        }
-        return true;
+            return true;
+        });
     }
     deployMerge(twinDeployments) {
         const deploymentMap = {};
@@ -242,53 +258,55 @@ class TwinDeploymentHandler {
         deployments = deployments.concat(deletedDeployments);
         return deployments;
     }
-    async handle(twinDeployments) {
-        console.log("Merging workloads");
-        twinDeployments = this.merge(twinDeployments);
-        const contracts = { created: [], updated: [], deleted: [] };
-        for (const twinDeployment of twinDeployments) {
-            for (const workload of twinDeployment.deployment.workloads) {
-                if (!twinDeployment.network) {
-                    break;
+    handle(twinDeployments) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("Merging workloads");
+            twinDeployments = this.merge(twinDeployments);
+            const contracts = { created: [], updated: [], deleted: [] };
+            for (const twinDeployment of twinDeployments) {
+                for (const workload of twinDeployment.deployment.workloads) {
+                    if (!twinDeployment.network) {
+                        break;
+                    }
+                    if (workload.type === WorkloadTypes.network) {
+                        console.log(`Updating network workload with name: ${workload.name}`);
+                        workload["data"] = twinDeployment.network.updateNetwork(workload.data);
+                    }
                 }
-                if (workload.type === WorkloadTypes.network) {
-                    console.log(`Updating network workload with name: ${workload.name}`);
-                    workload["data"] = twinDeployment.network.updateNetwork(workload.data);
+                if (twinDeployment.operation === Operations.deploy) {
+                    twinDeployment.deployment.sign(this.twin_id, this.mnemonic);
+                    console.log(`Deploying on node_id: ${twinDeployment.nodeId}`);
+                    const contract = yield this.deploy(twinDeployment.deployment, twinDeployment.nodeId, twinDeployment.publicIps);
+                    twinDeployment.deployment.contract_id = contract["contract_id"];
+                    contracts.created.push(contract);
+                    if (twinDeployment.network) {
+                        yield twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
+                    }
+                    console.log(`A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contract_type"]["nodeContract"]["node_id"]}`);
+                }
+                else if (twinDeployment.operation === Operations.update) {
+                    twinDeployment.deployment.sign(this.twin_id, this.mnemonic);
+                    console.log(`Updating deployment with contract_id: ${twinDeployment.deployment.contract_id}`);
+                    const contract = yield this.update(twinDeployment.deployment, twinDeployment.publicIps);
+                    contracts.updated.push(contract);
+                    if (twinDeployment.network) {
+                        yield twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
+                    }
+                    console.log(`Deployment has been updated with contract_id: ${contract["contract_id"]}`);
+                }
+                else if (twinDeployment.operation === Operations.delete) {
+                    console.log(`Deleting deployment with contract_id: ${twinDeployment.deployment.contract_id}`);
+                    const contract = yield this.delete(twinDeployment.deployment.contract_id);
+                    contracts.deleted.push({ contract_id: contract });
+                    if (twinDeployment.network) {
+                        yield twinDeployment.network.save();
+                    }
+                    console.log(`Deployment has been deleted with contract_id: ${contract["contract_id"]}`);
                 }
             }
-            if (twinDeployment.operation === Operations.deploy) {
-                twinDeployment.deployment.sign(this.twin_id, this.mnemonic);
-                console.log(`Deploying on node_id: ${twinDeployment.nodeId}`);
-                const contract = await this.deploy(twinDeployment.deployment, twinDeployment.nodeId, twinDeployment.publicIps);
-                twinDeployment.deployment.contract_id = contract["contract_id"];
-                contracts.created.push(contract);
-                if (twinDeployment.network) {
-                    await twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
-                }
-                console.log(`A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contract_type"]["nodeContract"]["node_id"]}`);
-            }
-            else if (twinDeployment.operation === Operations.update) {
-                twinDeployment.deployment.sign(this.twin_id, this.mnemonic);
-                console.log(`Updating deployment with contract_id: ${twinDeployment.deployment.contract_id}`);
-                const contract = await this.update(twinDeployment.deployment, twinDeployment.publicIps);
-                contracts.updated.push(contract);
-                if (twinDeployment.network) {
-                    await twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
-                }
-                console.log(`Deployment has been updated with contract_id: ${contract["contract_id"]}`);
-            }
-            else if (twinDeployment.operation === Operations.delete) {
-                console.log(`Deleting deployment with contract_id: ${twinDeployment.deployment.contract_id}`);
-                const contract = await this.delete(twinDeployment.deployment.contract_id);
-                contracts.deleted.push({ contract_id: contract });
-                if (twinDeployment.network) {
-                    await twinDeployment.network.save();
-                }
-                console.log(`Deployment has been deleted with contract_id: ${contract["contract_id"]}`);
-            }
-        }
-        await this.waitForDeployments(twinDeployments);
-        return contracts;
+            yield this.waitForDeployments(twinDeployments);
+            return contracts;
+        });
     }
 }
 export { TwinDeploymentHandler };

@@ -1,7 +1,4 @@
 class GatewayFQDNProxy {
-    fqdn;
-    tls_passthrough;
-    backends;
     challenge() {
         let out = "";
         out += this.fqdn;
@@ -13,9 +10,6 @@ class GatewayFQDNProxy {
     }
 }
 class GatewayNameProxy {
-    name;
-    tls_passthrough;
-    backends;
     challenge() {
         let out = "";
         out += this.name;

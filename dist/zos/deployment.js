@@ -1,12 +1,10 @@
 import { default as md5 } from "crypto-js/md5";
 import { Keyring } from "@polkadot/keyring";
 class SignatureRequest {
-    // unique id as used in TFGrid DB
-    twin_id;
-    // if put on required then this twin_id needs to sign
-    required = false;
-    // signing weight
-    weight;
+    constructor() {
+        // if put on required then this twin_id needs to sign
+        this.required = false;
+    }
     challenge() {
         let out = "";
         out += this.twin_id || "";
@@ -17,17 +15,17 @@ class SignatureRequest {
 }
 // Challenge computes challenge for SignatureRequest
 class Signature {
-    // unique id as used in TFGrid DB
-    twin_id;
-    // signature (done with private key of the twin_id)
-    signature = "";
+    constructor() {
+        // signature (done with private key of the twin_id)
+        this.signature = "";
+    }
 }
 class SignatureRequirement {
-    // the requests which can allow to get to required quorum
-    requests = [];
-    // minimal weight which needs to be achieved to let this workload become valid
-    weight_required;
-    signatures = [];
+    constructor() {
+        // the requests which can allow to get to required quorum
+        this.requests = [];
+        this.signatures = [];
+    }
     // Challenge computes challenge for SignatureRequest
     challenge() {
         let out = "";
@@ -42,21 +40,10 @@ class SignatureRequirement {
 // the zero-os'es will only take out what is relevant for them
 // if signature not done on the main Deployment one, nothing will happen
 class Deployment {
-    // increments for each new interation of this model
-    // signature needs to be achieved when version goes up
-    version;
-    // the twin who is responsible for this deployment
-    twin_id;
-    // each deployment has unique id (in relation to originator)
-    contract_id;
-    // when the full workload will stop working
-    // default, 0 means no expiration
-    expiration;
-    metadata = "";
-    description = "";
-    // list of all worklaods
-    workloads;
-    signature_requirement;
+    constructor() {
+        this.metadata = "";
+        this.description = "";
+    }
     challenge() {
         let out = "";
         out += this.version;

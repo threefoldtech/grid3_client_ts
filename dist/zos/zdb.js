@@ -9,13 +9,13 @@ var DeviceTypes;
     DeviceTypes["ssd"] = "ssd";
 })(DeviceTypes || (DeviceTypes = {}));
 class Zdb {
-    namespace = "";
-    // size in bytes
-    size;
-    mode = ZdbModes.seq;
-    password = "";
-    disk_type = DeviceTypes.hdd;
-    public = false;
+    constructor() {
+        this.namespace = "";
+        this.mode = ZdbModes.seq;
+        this.password = "";
+        this.disk_type = DeviceTypes.hdd;
+        this.public = false;
+    }
     challenge() {
         let out = "";
         out += this.size || "";
@@ -26,9 +26,10 @@ class Zdb {
     }
 }
 class ZdbResult {
-    name = "";
-    namespace = "";
-    ips;
-    port = 0;
+    constructor() {
+        this.name = "";
+        this.namespace = "";
+        this.port = 0;
+    }
 }
 export { Zdb, ZdbResult, ZdbModes, DeviceTypes };

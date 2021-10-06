@@ -23,30 +23,14 @@ var Right;
 })(Right || (Right = {}));
 // Access Control Entry
 class ACE {
-    // the administrator twin id
-    twin_ids;
-    rights;
 }
 class DeploymentResult {
-    created;
-    state;
-    error = "";
-    data = ""; // also json.RawMessage
+    constructor() {
+        this.error = "";
+        this.data = ""; // also json.RawMessage
+    }
 }
 class Workload {
-    version;
-    // unique name per Deployment
-    name;
-    type;
-    // this should be something like json.RawMessage in golang
-    data; // serialize({size: 10}) ---> "data": {size:10},
-    metadata;
-    description;
-    // list of Access Control Entries
-    // what can an administrator do
-    // not implemented in zos
-    // acl []ACE
-    result;
     challenge() {
         let out = "";
         out += this.version;

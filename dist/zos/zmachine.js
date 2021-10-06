@@ -1,11 +1,15 @@
 class ZNetworkInterface {
-    network = "";
-    ip = "";
+    constructor() {
+        this.network = "";
+        this.ip = "";
+    }
 }
 class ZmachineNetwork {
-    public_ip = "";
-    interfaces = [];
-    planetary = false;
+    constructor() {
+        this.public_ip = "";
+        this.interfaces = [];
+        this.planetary = false;
+    }
     challenge() {
         let out = "";
         out += this.public_ip;
@@ -18,8 +22,10 @@ class ZmachineNetwork {
     }
 }
 class Mount {
-    name = "";
-    mountpoint = "";
+    constructor() {
+        this.name = "";
+        this.mountpoint = "";
+    }
     challenge() {
         let out = "";
         out += this.name;
@@ -28,13 +34,11 @@ class Mount {
     }
 }
 class Zmachine {
-    flist = ""; // if full url means custom flist meant for containers, if just name should be an official vm
-    network;
-    size;
-    compute_capacity;
-    mounts = [];
-    entrypoint = ""; //how to invoke that in a vm?
-    env; //environment for the zmachine
+    constructor() {
+        this.flist = ""; // if full url means custom flist meant for containers, if just name should be an official vm
+        this.mounts = [];
+        this.entrypoint = ""; //how to invoke that in a vm?
+    }
     challenge() {
         let out = "";
         out += this.flist;
@@ -55,8 +59,10 @@ class Zmachine {
 }
 // response of the deployment
 class ZmachineResult {
-    // name unique per deployment, re-used in request & response
-    id = "";
-    ip = "";
+    constructor() {
+        // name unique per deployment, re-used in request & response
+        this.id = "";
+        this.ip = "";
+    }
 }
 export { Zmachine, ZmachineNetwork, ZNetworkInterface, Mount, ZmachineResult };

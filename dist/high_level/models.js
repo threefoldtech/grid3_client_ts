@@ -5,11 +5,6 @@ var Operations;
     Operations["delete"] = "delete";
 })(Operations || (Operations = {}));
 class TwinDeployment {
-    deployment;
-    operation;
-    publicIps;
-    nodeId;
-    network;
     constructor(deployment, operation, publicIps, nodeId, network = null) {
         this.deployment = deployment;
         this.operation = operation;

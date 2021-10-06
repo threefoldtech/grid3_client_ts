@@ -13,3 +13,4 @@ declare class VirtualMachine extends HighLevelBase {
     delete(deployment: Deployment, names: string[]): Promise<TwinDeployment[]>;
 }
 export { VirtualMachine };
+//# sourceMappingURL=machine.d.ts.map

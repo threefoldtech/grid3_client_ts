@@ -6,3 +6,4 @@ declare class GW {
     updateName(name: string, tls_passthrough: boolean, backends: string[], metadata?: string, description?: string, old_version?: number): Workload;
 }
 export { GW };
+//# sourceMappingURL=gateway.d.ts.map

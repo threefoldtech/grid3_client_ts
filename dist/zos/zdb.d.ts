@@ -22,3 +22,4 @@ declare class ZdbResult {
     port: number;
 }
 export { Zdb, ZdbResult, ZdbModes, DeviceTypes };
+//# sourceMappingURL=zdb.d.ts.map

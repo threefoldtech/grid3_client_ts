@@ -12,3 +12,4 @@ declare class HighLevelBase {
     _delete(deployment: Deployment, names: string[], types?: WorkloadTypes[]): Promise<TwinDeployment[]>;
 }
 export { HighLevelBase };
+//# sourceMappingURL=base.d.ts.map

@@ -7,3 +7,4 @@ declare class Kubernetes extends HighLevelBase {
     delete(deployment: Deployment, names: string[]): Promise<import("./models").TwinDeployment[]>;
 }
 export { Kubernetes };
+//# sourceMappingURL=kubernetes.d.ts.map

@@ -31,3 +31,4 @@ declare class Deployment {
     sign(twin_id: any, mnemonic: any, hash?: string): void;
 }
 export { Deployment, SignatureRequirement, SignatureRequest };
+//# sourceMappingURL=deployment.d.ts.map

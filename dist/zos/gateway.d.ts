@@ -13,3 +13,4 @@ declare class GatewayNameProxy {
 declare class GatewayResult {
 }
 export { GatewayFQDNProxy, GatewayNameProxy, GatewayResult };
+//# sourceMappingURL=gateway.d.ts.map

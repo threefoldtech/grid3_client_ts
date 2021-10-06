@@ -14,3 +14,4 @@ declare class TwinDeployment {
     constructor(deployment: Deployment, operation: Operations, publicIps: number, nodeId: number, network?: Network);
 }
 export { TwinDeployment, Operations };
+//# sourceMappingURL=models.d.ts.map

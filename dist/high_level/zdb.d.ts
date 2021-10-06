@@ -7,3 +7,4 @@ declare class ZdbHL extends HighLevelBase {
     delete(deployment: Deployment, names: string[]): Promise<TwinDeployment[]>;
 }
 export { ZdbHL };
+//# sourceMappingURL=zdb.d.ts.map

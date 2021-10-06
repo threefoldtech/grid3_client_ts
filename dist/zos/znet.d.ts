@@ -14,3 +14,4 @@ declare class Znet {
     challenge(): string;
 }
 export { Znet, Peer };
+//# sourceMappingURL=znet.d.ts.map

@@ -7,3 +7,4 @@ declare class Twins {
     delete(id: any): Promise<any>;
 }
 export { Twins };
+//# sourceMappingURL=twins.d.ts.map

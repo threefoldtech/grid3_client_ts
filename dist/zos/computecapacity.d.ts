@@ -4,3 +4,4 @@ declare class ComputeCapacity {
     challenge(): string;
 }
 export { ComputeCapacity };
+//# sourceMappingURL=computecapacity.d.ts.map

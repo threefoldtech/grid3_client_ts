@@ -8,3 +8,4 @@ declare class Contracts {
     get(id: any): Promise<any>;
 }
 export { Contracts };
+//# sourceMappingURL=contracts.d.ts.map

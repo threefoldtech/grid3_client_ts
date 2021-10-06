@@ -11,3 +11,4 @@ declare class DeploymentFactory {
     fromObj(deployment: any): Deployment;
 }
 export { DeploymentFactory };
+//# sourceMappingURL=deployment.d.ts.map

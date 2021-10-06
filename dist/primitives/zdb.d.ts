@@ -5,3 +5,4 @@ declare class zdb {
     update(name: string, namespace: string, size: number, mode: ZdbModes, password: string, type: DeviceTypes, pub: boolean, metadata?: string, description?: string, version?: number): Workload;
 }
 export { zdb };
+//# sourceMappingURL=zdb.d.ts.map

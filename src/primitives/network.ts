@@ -1,6 +1,7 @@
 import * as PATH from "path";
 
-import { Wg } from "wireguard-wrapper";
+import { default as TweetNACL } from "tweetnacl";
+import { Buffer } from "buffer";
 
 import { Addr } from "netaddr";
 import { default as isPrivateIP } from "private-ip";
@@ -70,7 +71,7 @@ class Network {
         }
 
         const nodesWGPubkey = await this.getNodeWGPublicKey(node_id);
-        const keypair = await this.generateWireguardKeypair();
+        const keypair = this.generateWireguardKeypair();
         const accessPoint = new AccessPoint();
         accessPoint.node_id = node_id;
         accessPoint.subnet = this.getFreeSubnet();
@@ -87,7 +88,7 @@ class Network {
             return;
         }
         console.log(`Adding node ${node_id} to network ${this.name}`);
-        const keypair = await this.generateWireguardKeypair();
+        const keypair = this.generateWireguardKeypair();
         let znet = new Znet();
         znet.subnet = this.getFreeSubnet();
         znet.ip_range = this.ipRange;
@@ -242,27 +243,24 @@ class Network {
         return false;
     }
 
-    async generateWireguardKeypair(): Promise<WireGuardKeys> {
-        return Wg.genkey().then(function (privateKey) {
-            return Wg.pubkey(privateKey).then(function (publicKey) {
-                const wireguardKeys = new WireGuardKeys();
-                wireguardKeys.privateKey = privateKey;
-                wireguardKeys.publicKey = publicKey;
-                return wireguardKeys;
-            });
-        });
+    generateWireguardKeypair() {
+        const keypair = TweetNACL.box.keyPair();
+        const wg = new WireGuardKeys();
+        wg.privateKey = Buffer.from(keypair.secretKey).toString("base64");
+        wg.publicKey = Buffer.from(keypair.publicKey).toString("base64");
+        return wg;
     }
 
-    async getPublicKey(privateKey: string): Promise<string> {
-        return Wg.pubkey(privateKey).then(function (publicKey) {
-            return publicKey;
-        });
+    getPublicKey(privateKey: string) {
+        const privKey = Buffer.from(privateKey, "base64");
+        const keypair = TweetNACL.box.keyPair.fromSecretKey(privKey);
+        return Buffer.from(keypair.publicKey).toString("base64");
     }
 
     async getNodeWGPublicKey(node_id: number): Promise<string> {
         for (const net of this.networks) {
             if (net["node_id"] == node_id) {
-                return await this.getPublicKey(net.wireguard_private_key);
+                return this.getPublicKey(net.wireguard_private_key);
             }
         }
     }
@@ -360,7 +358,7 @@ class Network {
     async getAccessPoints(): Promise<AccessPoint[]> {
         const nodesWGPubkeys = [];
         for (const network of this.networks) {
-            const pubkey = await this.getPublicKey(network.wireguard_private_key);
+            const pubkey = this.getPublicKey(network.wireguard_private_key);
             nodesWGPubkeys.push(pubkey);
         }
         for (const network of this.networks) {
@@ -534,7 +532,7 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
                 }
                 const peer = new Peer();
                 peer.subnet = net.subnet;
-                peer.wireguard_public_key = await this.getPublicKey(net.wireguard_private_key);
+                peer.wireguard_public_key = this.getPublicKey(net.wireguard_private_key);
                 peer.allowed_ips = allowed_ips;
                 peer.endpoint = `${accessIP}:${net.wireguard_listen_port}`;
                 n.peers.push(peer);

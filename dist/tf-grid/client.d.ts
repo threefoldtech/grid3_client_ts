@@ -10,3 +10,4 @@ declare class TFClient {
     applyExtrinsic(func: any, args: any, resultSecttion: any, resultName: any): Promise<unknown>;
 }
 export { TFClient };
+//# sourceMappingURL=client.d.ts.map

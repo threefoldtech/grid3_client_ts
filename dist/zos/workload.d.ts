@@ -37,3 +37,4 @@ declare class Workload {
 declare type WorkloadData = Zmount | Zdb | Zmachine | Znet | GatewayFQDNProxy | GatewayNameProxy;
 declare type WorkloadDataResult = ZmountResult | ZdbResult | ZmachineResult | GatewayResult;
 export { Workload, WorkloadTypes, WorkloadData, WorkloadDataResult };
+//# sourceMappingURL=workload.d.ts.map

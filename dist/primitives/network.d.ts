@@ -35,8 +35,8 @@ declare class Network {
     exists(): boolean;
     nodeExists(node_id: number): boolean;
     hasAccessPoint(node_id: number): boolean;
-    generateWireguardKeypair(): Promise<WireGuardKeys>;
-    getPublicKey(privateKey: string): Promise<string>;
+    generateWireguardKeypair(): WireGuardKeys;
+    getPublicKey(privateKey: string): string;
     getNodeWGPublicKey(node_id: number): Promise<string>;
     getNodeWGListeningPort(node_id: number): number;
     getFreeIP(node_id: number, subnet?: string): string;
@@ -59,3 +59,4 @@ declare class Network {
     generatePeers(): Promise<void>;
 }
 export { Network };
+//# sourceMappingURL=network.d.ts.map

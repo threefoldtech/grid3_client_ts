@@ -29,3 +29,4 @@ declare class ZmachineResult {
     ip: string;
 }
 export { Zmachine, ZmachineNetwork, ZNetworkInterface, Mount, ZmachineResult };
+//# sourceMappingURL=zmachine.d.ts.map

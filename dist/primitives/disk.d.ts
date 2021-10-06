@@ -6,3 +6,4 @@ declare class Disk {
     update(size: number, name: string, metadata?: string, description?: string, old_version?: number): Workload;
 }
 export { Disk };
+//# sourceMappingURL=disk.d.ts.map

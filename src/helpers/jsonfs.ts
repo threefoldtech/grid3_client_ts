@@ -3,7 +3,7 @@ import * as PATH from "path";
 import getAppDataPath from "appdata-path";
 
 const appsPath = getAppDataPath();
-const appPath = PATH.join(appsPath, "twinserver");
+const appPath = PATH.join(appsPath, "grid3_client");
 
 function loadFromFile(path: string) {
     const data = FS.readFileSync(path);

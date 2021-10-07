@@ -7,7 +7,7 @@ import { HighLevelBase } from "./base";
 import { Disk, VM, IPv4, DeploymentFactory, Network, getAccessNodes } from "../primitives/index";
 import { randomChoice } from "../helpers/utils";
 
-class Disks {
+class VirtualMachineDisk {
     name: string;
     size: number;
     mountpoint: string;
@@ -20,7 +20,7 @@ class VirtualMachine extends HighLevelBase {
         flist: string,
         cpu: number,
         memory: number,
-        disks: Disks[],
+        disks: VirtualMachineDisk[],
         publicIp: boolean,
         network: Network,
         entrypoint: string,
@@ -146,7 +146,7 @@ class VirtualMachine extends HighLevelBase {
         flist: string,
         cpu: number,
         memory: number,
-        disks: Disks[],
+        disks: VirtualMachineDisk[],
         publicIp: boolean,
         network: Network,
         entrypoint: string,
@@ -190,4 +190,4 @@ class VirtualMachine extends HighLevelBase {
     }
 }
 
-export { VirtualMachine };
+export { VirtualMachine, VirtualMachineDisk };

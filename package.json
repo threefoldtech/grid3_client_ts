@@ -5,7 +5,6 @@
     "dependencies": {
         "appdata-path": "^1.0.0",
         "axios": "^0.22.0",
-        "browserify-fs": "^1.0.0",
         "buffer": "^6.0.3",
         "crypto-js": "^4.1.1",
         "ip": "^1.1.5",
@@ -20,14 +19,9 @@
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^4.31.2",
         "@typescript-eslint/parser": "^4.31.2",
-        "browserify-zlib": "^0.2.0",
-        "crypto-browserify": "^3.12.0",
         "eslint": "^7.32.0",
         "eslint-plugin-prettier": "^4.0.0",
-        "os-browserify": "^0.3.0",
-        "path-browserify": "^1.0.1",
         "prettier": "^2.4.1",
-        "stream-browserify": "^3.0.0",
         "ts-loader": "^9.2.6",
         "tsconfig-paths-webpack-plugin": "^3.5.1",
         "webpack": "^5.57.1",

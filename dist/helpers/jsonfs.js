@@ -1,4 +1,4 @@
-import * as FS from "browserify-fs";
+import * as FS from "fs";
 import * as PATH from "path";
 import getAppDataPath from "appdata-path";
 const appsPath = getAppDataPath();

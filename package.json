@@ -29,10 +29,8 @@
         "webpack-cli": "^4.8.0"
     },
     "exports": {
-        ".": {
-            "node": "./dist/node/index.js",
-            "default": "./dist/es6/index.js"
-        }
+        "require": "./dist/node/index.js",
+        "import": "./dist/es6/index.js"
     },
     "types": "dist/index.d.ts",
     "files": [

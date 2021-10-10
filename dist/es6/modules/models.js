@@ -36,38 +36,10 @@ class AddZDB extends ZDB {
 }
 class DeleteZDB extends DeleteWorker {
 }
-class NodeContractCreate {
-}
-class NameContractCreate {
-}
-class ContractGet {
-}
-class NodeContractUpdate {
-}
-class ContractCancel {
-}
-class TwinCreate {
-}
-class TwinGet {
-}
-class TwinDelete {
-}
-class WalletImport {
-}
-class WalletBalanceByName {
-}
-class WalletBalanceByAddress {
-}
-class WalletTransfer {
-}
-class WalletDelete {
-}
-class WalletGet extends WalletDelete {
-}
 class DeployGatewayFQDN {
 }
 class DeployGatewayName {
 }
 class ZOS extends Deployment {
 }
-export { VirtualMachineDisk, Machines, MachinesGet, MachinesDelete, K8S, K8SGet, K8SDelete, AddWorker, DeleteWorker, ZDBS, ZDBGet, ZDBDelete, AddZDB, DeleteZDB, NodeContractCreate, NameContractCreate, ContractGet, NodeContractUpdate, ContractCancel, TwinCreate, TwinGet, TwinDelete, WalletImport, WalletBalanceByName, WalletBalanceByAddress, WalletTransfer, WalletDelete, WalletGet, DeployGatewayFQDN, DeployGatewayName, ZOS, };
+export { VirtualMachineDisk, Machines, MachinesGet, MachinesDelete, K8S, K8SGet, K8SDelete, AddWorker, DeleteWorker, ZDBS, ZDBGet, ZDBDelete, AddZDB, DeleteZDB, DeployGatewayFQDN, DeployGatewayName, ZOS, };

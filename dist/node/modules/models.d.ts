@@ -84,57 +84,6 @@ declare class AddZDB extends ZDB {
 }
 declare class DeleteZDB extends DeleteWorker {
 }
-declare class NodeContractCreate {
-    node_id: number;
-    hash: string;
-    data: string;
-    public_ip: number;
-}
-declare class NameContractCreate {
-    name: string;
-}
-declare class ContractGet {
-    id: number;
-}
-declare class NodeContractUpdate {
-    id: number;
-    hash: string;
-    data: string;
-}
-declare class ContractCancel {
-    id: number;
-}
-declare class TwinCreate {
-    ip: string;
-}
-declare class TwinGet {
-    id: number;
-}
-declare class TwinDelete {
-    id: number;
-}
-declare class WalletImport {
-    name: string;
-    secret: string;
-}
-declare class WalletBalanceByName {
-    name: string;
-}
-declare class WalletBalanceByAddress {
-    address: string;
-}
-declare class WalletTransfer {
-    name: string;
-    target_address: string;
-    amount: number;
-    asset: string;
-    memo: string;
-}
-declare class WalletDelete {
-    name: string;
-}
-declare class WalletGet extends WalletDelete {
-}
 declare class DeployGatewayFQDN {
     name: string;
     node_id: number;
@@ -151,5 +100,5 @@ declare class DeployGatewayName {
 declare class ZOS extends Deployment {
     node_id: number;
 }
-export { VirtualMachineDisk, Machines, MachinesGet, MachinesDelete, K8S, K8SGet, K8SDelete, AddWorker, DeleteWorker, ZDBS, ZDBGet, ZDBDelete, AddZDB, DeleteZDB, NodeContractCreate, NameContractCreate, ContractGet, NodeContractUpdate, ContractCancel, TwinCreate, TwinGet, TwinDelete, WalletImport, WalletBalanceByName, WalletBalanceByAddress, WalletTransfer, WalletDelete, WalletGet, DeployGatewayFQDN, DeployGatewayName, ZOS, };
+export { VirtualMachineDisk, Machines, MachinesGet, MachinesDelete, K8S, K8SGet, K8SDelete, AddWorker, DeleteWorker, ZDBS, ZDBGet, ZDBDelete, AddZDB, DeleteZDB, DeployGatewayFQDN, DeployGatewayName, ZOS, };
 //# sourceMappingURL=models.d.ts.map

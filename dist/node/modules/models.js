@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ZOS = exports.DeployGatewayName = exports.DeployGatewayFQDN = exports.WalletGet = exports.WalletDelete = exports.WalletTransfer = exports.WalletBalanceByAddress = exports.WalletBalanceByName = exports.WalletImport = exports.TwinDelete = exports.TwinGet = exports.TwinCreate = exports.ContractCancel = exports.NodeContractUpdate = exports.ContractGet = exports.NameContractCreate = exports.NodeContractCreate = exports.DeleteZDB = exports.AddZDB = exports.ZDBDelete = exports.ZDBGet = exports.ZDBS = exports.DeleteWorker = exports.AddWorker = exports.K8SDelete = exports.K8SGet = exports.K8S = exports.MachinesDelete = exports.MachinesGet = exports.Machines = exports.VirtualMachineDisk = void 0;
+exports.ZOS = exports.DeployGatewayName = exports.DeployGatewayFQDN = exports.DeleteZDB = exports.AddZDB = exports.ZDBDelete = exports.ZDBGet = exports.ZDBS = exports.DeleteWorker = exports.AddWorker = exports.K8SDelete = exports.K8SGet = exports.K8S = exports.MachinesDelete = exports.MachinesGet = exports.Machines = exports.VirtualMachineDisk = void 0;
 const deployment_1 = require("../zos/deployment");
 class VirtualMachineDisk {
     name;
@@ -101,71 +101,6 @@ exports.AddZDB = AddZDB;
 class DeleteZDB extends DeleteWorker {
 }
 exports.DeleteZDB = DeleteZDB;
-class NodeContractCreate {
-    node_id;
-    hash;
-    data;
-    public_ip;
-}
-exports.NodeContractCreate = NodeContractCreate;
-class NameContractCreate {
-    name;
-}
-exports.NameContractCreate = NameContractCreate;
-class ContractGet {
-    id;
-}
-exports.ContractGet = ContractGet;
-class NodeContractUpdate {
-    id;
-    hash;
-    data;
-}
-exports.NodeContractUpdate = NodeContractUpdate;
-class ContractCancel {
-    id;
-}
-exports.ContractCancel = ContractCancel;
-class TwinCreate {
-    ip;
-}
-exports.TwinCreate = TwinCreate;
-class TwinGet {
-    id;
-}
-exports.TwinGet = TwinGet;
-class TwinDelete {
-    id;
-}
-exports.TwinDelete = TwinDelete;
-class WalletImport {
-    name;
-    secret;
-}
-exports.WalletImport = WalletImport;
-class WalletBalanceByName {
-    name;
-}
-exports.WalletBalanceByName = WalletBalanceByName;
-class WalletBalanceByAddress {
-    address;
-}
-exports.WalletBalanceByAddress = WalletBalanceByAddress;
-class WalletTransfer {
-    name;
-    target_address;
-    amount;
-    asset;
-    memo;
-}
-exports.WalletTransfer = WalletTransfer;
-class WalletDelete {
-    name;
-}
-exports.WalletDelete = WalletDelete;
-class WalletGet extends WalletDelete {
-}
-exports.WalletGet = WalletGet;
 class DeployGatewayFQDN {
     name;
     node_id;

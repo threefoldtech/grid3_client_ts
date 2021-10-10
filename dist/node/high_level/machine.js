@@ -1,18 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VirtualMachineDisk = exports.VirtualMachine = void 0;
+exports.VirtualMachine = void 0;
 const netaddr_1 = require("netaddr");
 const workload_1 = require("../zos/workload");
 const models_1 = require("./models");
 const base_1 = require("./base");
 const index_1 = require("../primitives/index");
 const utils_1 = require("../helpers/utils");
-class VirtualMachineDisk {
-    name;
-    size;
-    mountpoint;
-}
-exports.VirtualMachineDisk = VirtualMachineDisk;
 class VirtualMachine extends base_1.HighLevelBase {
     async create(name, nodeId, flist, cpu, memory, disks, publicIp, network, entrypoint, env, metadata = "", description = "") {
         const deployments = [];

@@ -6,9 +6,10 @@ import { DeploymentFactory } from "../primitives/deployment";
 import { Network } from "../primitives/network";
 import { getNodeIdFromContractId } from "../primitives/nodes";
 import { TwinDeployment, Operations } from "../high_level/models";
+import { MessageBusClientInterface } from "ts-rmb-client-base";
 
 class HighLevelBase {
-    constructor(public twin_id: number, public url: string, public mnemonic: string, public rmbClient) {}
+    constructor(public twin_id: number, public url: string, public mnemonic: string, public rmbClient: MessageBusClientInterface) {}
 
     _filterWorkloads(
         deployment: Deployment,

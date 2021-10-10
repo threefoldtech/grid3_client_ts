@@ -6,12 +6,8 @@ import { TwinDeployment, Operations } from "./models";
 import { HighLevelBase } from "./base";
 import { Disk, VM, IPv4, DeploymentFactory, Network, getAccessNodes } from "../primitives/index";
 import { randomChoice } from "../helpers/utils";
+import { VirtualMachineDisk } from "../modules/models";
 
-class VirtualMachineDisk {
-    name: string;
-    size: number;
-    mountpoint: string;
-}
 
 class VirtualMachine extends HighLevelBase {
     async create(
@@ -190,4 +186,4 @@ class VirtualMachine extends HighLevelBase {
     }
 }
 
-export { VirtualMachine, VirtualMachineDisk };
+export { VirtualMachine };

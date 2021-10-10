@@ -3,4 +3,5 @@ export * from "./zos/index";
 export * from "./primitives/index";
 export * from "./high_level/index";
 export * from "./helpers";
+export * from "./modules/index";
 //# sourceMappingURL=index.d.ts.map

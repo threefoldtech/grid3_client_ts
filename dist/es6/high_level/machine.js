@@ -13,8 +13,6 @@ import { TwinDeployment, Operations } from "./models";
 import { HighLevelBase } from "./base";
 import { Disk, VM, IPv4, DeploymentFactory, getAccessNodes } from "../primitives/index";
 import { randomChoice } from "../helpers/utils";
-class VirtualMachineDisk {
-}
 class VirtualMachine extends HighLevelBase {
     create(name, nodeId, flist, cpu, memory, disks, publicIp, network, entrypoint, env, metadata = "", description = "") {
         return __awaiter(this, void 0, void 0, function* () {
@@ -128,4 +126,4 @@ class VirtualMachine extends HighLevelBase {
         });
     }
 }
-export { VirtualMachine, VirtualMachineDisk };
+export { VirtualMachine };

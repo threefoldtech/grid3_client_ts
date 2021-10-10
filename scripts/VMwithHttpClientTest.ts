@@ -5,7 +5,7 @@ import { ComputeCapacity } from "../src/zos/computecapacity";
 import { Workload, WorkloadTypes } from "../src/zos/workload";
 import { Deployment, SignatureRequirement, SignatureRequest } from "../src/zos/deployment";
 import { TFClient } from "../src/tf-grid/client"
-import { HTTPMessageBusClient } from "../src/rmb/httpClient"
+import { HTTPMessageBusClient } from "ts-rmb-http-client"
 
 
 function delay(s: number) {
@@ -13,11 +13,11 @@ function delay(s: number) {
 }
 
 async function main() {
-    const twin_id = 38
+    const twin_id = 3
     const mnemonic = "muffin reward plug grant able market nerve orphan token foster major relax";
-    const url = "wss://explorer.devnet.grid.tf/ws"
-    const node_id = 2;
-    const node_twin_id = 38;
+    const url = "wss://tfchain.dev.threefold.io/ws"
+    const node_id = 40;
+    const node_twin_id = 54;
     const ssh_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDWlguBuvfQikkRJZXkLPei7Scvo/OULUEvjWVR4tCZ5V85P2F4SsSghxpRGixCNc7pNtgvdwJegK06Tn7SkV2jYJ9kBJh8PA06CPSz1mnpco4cgktiWx/R8xBvLGlyO0BwUuD3/WFjrc6fzH9E7Bpkel/xTnacx14w1bZAC1R35hz7BaHu1WrXsfxEd0VH7gpMPoQ4+l+H38ULPTiC+JcOKJOqVafgcc0sU7otXbgCa1Frr4QE5bwiMYhOlsRfRv/hf08jYsVo+RUO3wD12ylLWR7a7sJDkBBwgir8SwAvtRlT6k9ew9cDMQ7H8iWNCOg2xqoTLpVag6RN9kGzA5LGL+qHEcBr6gd2taFEy9+mt+TWuKp6reUeJfTu9RD1UgB0HpcdgTHtoUTISW7Mz4KNkouci2DJFngDWrLRxRoz81ZwfI2hjFY0PYDzF471K7Nwwt3qKYF1Js9a6VO38tMxSU4mTO83bt+dUFozgpw2Y0KKJGHDwU66i2MvTPg3EGs= ayoub@ayoub-Inspiron-3576"
     // Create zmount workload
     let zmount = new Zmount();
@@ -126,10 +126,9 @@ async function main() {
         let msg = rmb.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
 
 
-        const messageIdentifier = await rmb.send(msg, payload)
-        msg.ret = messageIdentifier["retqueue"];
+        const retMsg = await rmb.send(msg, payload)
         await delay(20);
-        const result = await rmb.read(msg)
+        const result = await rmb.read(retMsg)
         console.log(`the read response is: ${result}`)
     }
 

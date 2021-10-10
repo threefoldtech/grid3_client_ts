@@ -1,5 +1,5 @@
 
-import { HTTPMessageBusClient } from "../src/rmb/httpClient"
+import { HTTPMessageBusClient } from "ts-rmb-http-client"
 
 
 
@@ -8,7 +8,7 @@ function delay(s: number) {
 }
 
 async function main() {
-    const dstNodeId = 4;
+    const dstNodeId = 50;
 
     async function deploy() {
 
@@ -19,7 +19,7 @@ async function main() {
         console.log(retMsg)
         
         // set the retqueue to oringnal message
-        await delay(7);
+        await delay(3);
 
         const result = await rmb.read(retMsg);
         console.log(`the read response is: ${JSON.stringify(result)}`);

@@ -28,7 +28,6 @@
         "webpack": "^5.57.1",
         "webpack-cli": "^4.8.0"
     },
-    "main": "dist/es6/index.js",
     "exports": {
         ".": {
             "node": "./dist/node/index.js",

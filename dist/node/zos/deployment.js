@@ -81,7 +81,7 @@ class Deployment {
     // ChallengeHash computes the hash of the challenge signed
     // by the user. used for validation
     challenge_hash() {
-        return md5_1.default(this.challenge()).toString();
+        return (0, md5_1.default)(this.challenge()).toString();
     }
     from_hex(s) {
         const result = new Uint8Array(s.length / 2);

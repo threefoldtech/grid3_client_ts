@@ -59,7 +59,7 @@ class HighLevelBase {
         const deploymentFactory = new deployment_1.DeploymentFactory(this.twin_id, this.url, this.mnemonic);
         for (const workload of deletedMachineWorkloads) {
             const networkName = workload.data["network"].interfaces[0].network;
-            const networkIpRange = netaddr_1.Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
+            const networkIpRange = (0, netaddr_1.Addr)(workload.data["network"].interfaces[0].ip).mask(16).toString();
             const network = new network_1.Network(networkName, networkIpRange, this.rmbClient);
             await network.load(true);
             const machineIp = workload.data["network"].interfaces[0].ip;
@@ -125,7 +125,7 @@ class HighLevelBase {
         if (types.includes(workload_1.WorkloadTypes.network)) {
             throw Error("network can't be deleted");
         }
-        const node_id = await nodes_1.getNodeIdFromContractId(deployment.contract_id, this.url, this.mnemonic);
+        const node_id = await (0, nodes_1.getNodeIdFromContractId)(deployment.contract_id, this.url, this.mnemonic);
         let twinDeployments = [];
         const deploymentFactory = new deployment_1.DeploymentFactory(this.twin_id, this.url, this.mnemonic);
         const numberOfWorkloads = deployment.workloads.length;

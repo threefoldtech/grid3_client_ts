@@ -16,7 +16,7 @@ async function getNodeTwinId(node_id) {
             twinId
             }
         }`;
-    const response = await requests_1.send("post", graphqlURL, JSON.stringify({ query: body }), headers);
+    const response = await (0, requests_1.send)("post", graphqlURL, JSON.stringify({ query: body }), headers);
     return response["data"]["nodes"][0]["twinId"];
 }
 exports.getNodeTwinId = getNodeTwinId;
@@ -28,7 +28,7 @@ async function getAccessNodes() {
           publicConfigId 
         }
       }`;
-    const nodeResponse = await requests_1.send("post", graphqlURL, JSON.stringify({ query: body }), headers);
+    const nodeResponse = await (0, requests_1.send)("post", graphqlURL, JSON.stringify({ query: body }), headers);
     const nodes = nodeResponse["data"]["nodes"];
     const nodeConfigs = {};
     let configsIds = "";
@@ -47,7 +47,7 @@ async function getAccessNodes() {
           domain
         }
       }`;
-    const pubConfigResponse = await requests_1.send("post", graphqlURL, JSON.stringify({ query: body }), headers);
+    const pubConfigResponse = await (0, requests_1.send)("post", graphqlURL, JSON.stringify({ query: body }), headers);
     const configs = pubConfigResponse["data"]["publicConfigs"];
     const accessNodes = {};
     for (const nodeId of Object.keys(nodeConfigs)) {
@@ -56,8 +56,8 @@ async function getAccessNodes() {
             if (config === conf["id"]) {
                 const ipv4 = conf["ipv4"];
                 const ipv6 = conf["ipv6"];
-                if ((ip_1.default.isV4Format(ipv4.split("/")[0]) && !private_ip_1.default(ipv4)) ||
-                    (ip_1.default.isV6Format(ipv6.split("/")[0]) && !private_ip_1.default(ipv6))) {
+                if ((ip_1.default.isV4Format(ipv4.split("/")[0]) && !(0, private_ip_1.default)(ipv4)) ||
+                    (ip_1.default.isV6Format(ipv6.split("/")[0]) && !(0, private_ip_1.default)(ipv6))) {
                     accessNodes[nodeId] = { ipv4: ipv4, ipv6: ipv6 };
                 }
             }

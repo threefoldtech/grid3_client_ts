@@ -26,7 +26,7 @@ exports.appPath = exports.updatejson = exports.dumpToFile = exports.loadFromFile
 const FS = __importStar(require("fs"));
 const PATH = __importStar(require("path"));
 const appdata_path_1 = __importDefault(require("appdata-path"));
-const appsPath = appdata_path_1.default();
+const appsPath = (0, appdata_path_1.default)();
 const appPath = PATH.join(appsPath, "grid3_client");
 exports.appPath = appPath;
 function loadFromFile(path) {

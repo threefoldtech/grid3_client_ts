@@ -12,7 +12,7 @@ async function send(method, url, body, headers) {
         data: body,
         headers: headers,
     };
-    const response = await axios_1.default(options);
+    const response = await (0, axios_1.default)(options);
     if (response.status !== 200) {
         throw Error(`http request failed with status code: ${response.status} due to: ${response.data}`);
     }

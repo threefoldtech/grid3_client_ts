@@ -35,7 +35,7 @@ class VirtualMachine extends base_1.HighLevelBase {
         }
         // network
         const deploymentFactory = new index_1.DeploymentFactory(this.twin_id, this.url, this.mnemonic);
-        const accessNodes = await index_1.getAccessNodes();
+        const accessNodes = await (0, index_1.getAccessNodes)();
         let access_net_workload;
         let wgConfig = "";
         let hasAccessNode = false;
@@ -53,7 +53,7 @@ class VirtualMachine extends base_1.HighLevelBase {
                     filteredAccessNodes.push(accessNodeId);
                 }
             }
-            const access_node_id = Number(utils_1.randomChoice(filteredAccessNodes));
+            const access_node_id = Number((0, utils_1.randomChoice)(filteredAccessNodes));
             access_net_workload = await network.addNode(access_node_id, metadata, description);
             wgConfig = await network.addAccess(access_node_id, true);
         }
@@ -64,7 +64,7 @@ class VirtualMachine extends base_1.HighLevelBase {
                 const d = deploymentFactory.fromObj(deployment);
                 for (const workload of d["workloads"]) {
                     if (workload["type"] !== workload_1.WorkloadTypes.network ||
-                        !netaddr_1.Addr(network.ipRange).contains(netaddr_1.Addr(workload["data"]["subnet"]))) {
+                        !(0, netaddr_1.Addr)(network.ipRange).contains((0, netaddr_1.Addr)(workload["data"]["subnet"]))) {
                         continue;
                     }
                     workload.data = network.updateNetwork(workload["data"]);

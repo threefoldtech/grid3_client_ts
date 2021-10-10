@@ -60,7 +60,7 @@ class Network {
         this.name = name;
         this.ipRange = ipRange;
         this.rmbClient = rmbClient;
-        if (netaddr_1.Addr(ipRange).prefix !== 16) {
+        if ((0, netaddr_1.Addr)(ipRange).prefix !== 16) {
             throw Error("Network ip_range should be with prefix 16");
         }
         if (!this.isPrivateIP(ipRange)) {
@@ -72,7 +72,7 @@ class Network {
             throw Error(`Node ${node_id} does not exist in the network. Please add it first`);
         }
         console.log(`Adding access to node ${node_id}`);
-        const accessNodes = await nodes_1.getAccessNodes();
+        const accessNodes = await (0, nodes_1.getAccessNodes)();
         if (Object.keys(accessNodes).includes(node_id.toString())) {
             if (ipv4 && !accessNodes[node_id]["ipv4"]) {
                 throw Error(`Node ${node_id} does not have ipv4 public config.`);
@@ -192,7 +192,7 @@ class Network {
         }
         if (deployments) {
             for (const node of this.nodes) {
-                const node_twin_id = await nodes_1.getNodeTwinId(node.node_id);
+                const node_twin_id = await (0, nodes_1.getNodeTwinId)(node.node_id);
                 const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
                 const message = await this.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
                 const result = await this.rmbClient.read(message);
@@ -204,7 +204,7 @@ class Network {
                 this.deployments.push(res);
                 for (const workload of res["workloads"]) {
                     if (workload["type"] !== workload_1.WorkloadTypes.network ||
-                        !netaddr_1.Addr(this.ipRange).contains(netaddr_1.Addr(workload["data"]["subnet"]))) {
+                        !(0, netaddr_1.Addr)(this.ipRange).contains((0, netaddr_1.Addr)(workload["data"]["subnet"]))) {
                         continue;
                     }
                     const znet = this._fromObj(workload["data"]);
@@ -275,10 +275,10 @@ class Network {
     getFreeIP(node_id, subnet = "") {
         let ip;
         if (!this.nodeExists(node_id) && subnet) {
-            ip = netaddr_1.Addr(subnet).mask(32).increment().increment();
+            ip = (0, netaddr_1.Addr)(subnet).mask(32).increment().increment();
         }
         else if (this.nodeExists(node_id)) {
-            ip = netaddr_1.Addr(this.getNodeSubnet(node_id)).mask(32).increment().increment();
+            ip = (0, netaddr_1.Addr)(this.getNodeSubnet(node_id)).mask(32).increment().increment();
             const reserved_ips = this.getNodeReservedIps(node_id);
             while (reserved_ips.includes(ip.toString().split("/")[0])) {
                 ip = ip.increment();
@@ -343,7 +343,7 @@ class Network {
     }
     getFreeSubnet() {
         const reservedSubnets = this.getReservedSubnets();
-        let subnet = netaddr_1.Addr(this.ipRange).mask(24).nextSibling().nextSibling();
+        let subnet = (0, netaddr_1.Addr)(this.ipRange).mask(24).nextSibling().nextSibling();
         while (reservedSubnets.includes(subnet.toString())) {
             subnet = subnet.nextSibling();
         }
@@ -372,29 +372,29 @@ class Network {
     }
     getNetworks() {
         const path = PATH.join(jsonfs_1.appPath, "network.json");
-        return jsonfs_1.loadFromFile(path);
+        return (0, jsonfs_1.loadFromFile)(path);
     }
     getNetworkNames() {
         const networks = this.getNetworks();
         return Object.keys(networks);
     }
     async getFreePort(node_id) {
-        const node_twin_id = await nodes_1.getNodeTwinId(node_id);
+        const node_twin_id = await (0, nodes_1.getNodeTwinId)(node_id);
         const msg = this.rmbClient.prepare("zos.network.list_wg_ports", [node_twin_id], 0, 2);
         const message = await this.rmbClient.send(msg, "");
         const result = await this.rmbClient.read(message);
         console.log(result);
         let port = 0;
         while (!port || JSON.parse(result[0].dat).includes(port)) {
-            port = utils_1.getRandomNumber(2000, 8000);
+            port = (0, utils_1.getRandomNumber)(2000, 8000);
         }
         return port;
     }
     isPrivateIP(ip) {
-        return private_ip_1.default(ip);
+        return (0, private_ip_1.default)(ip);
     }
     async getNodeEndpoint(node_id) {
-        const node_twin_id = await nodes_1.getNodeTwinId(node_id);
+        const node_twin_id = await (0, nodes_1.getNodeTwinId)(node_id);
         let msg = this.rmbClient.prepare("zos.network.public_config_get", [node_twin_id], 0, 2);
         let message = await this.rmbClient.send(msg, "");
         let result = await this.rmbClient.read(message);
@@ -477,14 +477,14 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
         const networks = this.getNetworks();
         networks[this.name] = network;
         const path = PATH.join(jsonfs_1.appPath, "network.json");
-        jsonfs_1.dumpToFile(path, networks);
+        (0, jsonfs_1.dumpToFile)(path, networks);
     }
     delete() {
         console.log(`Deleting network ${this.name}`);
         const networks = this.getNetworks();
         delete networks[this.name];
         const path = PATH.join(jsonfs_1.appPath, "network.json");
-        jsonfs_1.dumpToFile(path, networks);
+        (0, jsonfs_1.dumpToFile)(path, networks);
     }
     async generatePeers() {
         console.log(`Generating peers for network ${this.name}`);

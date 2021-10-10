@@ -30,8 +30,10 @@
     },
     "main": "dist/es6/index.js",
     "exports": {
-        "import": "./dist/es6/index.js",
-        "require": "./dist/node/index.js"
+        ".": {
+            "node": "./dist/node/index.js",
+            "default": "./dist/es6/index.js"
+        }
     },
     "types": "dist/index.d.ts",
     "files": [

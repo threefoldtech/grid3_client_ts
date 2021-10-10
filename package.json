@@ -38,7 +38,7 @@
     ],
     "scripts": {
         "build": "npm-run-all es6-build node-build",
-        "node-build": "tsc --build tsconfig1.json",
-        "es6-build": "tsc --build tsconfig.json"
+        "node-build": "tsc --build tsconfig-node.json",
+        "es6-build": "tsc --build tsconfig-es6.json"
     }
 }

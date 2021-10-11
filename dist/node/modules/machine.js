@@ -27,7 +27,7 @@ class Machine extends base_1.BaseModule {
         const networkName = options.network.name;
         const network = new network_1.Network(networkName, options.network.ip_range, this.rmbClient);
         await network.load(true);
-        const [twinDeployments, wgConfig] = await this.vm.create(options.name, options.node_id, options.flist, options.cpu, options.memory, options.disks, options.public_ip, network, options.entrypoint, options.env, options.metadata, options.description);
+        const [twinDeployments, wgConfig] = await this.vm.create(options.name, options.node_id, options.flist, options.cpu, options.memory, options.rootfs_size, options.disks, options.public_ip, options.planetary, network, options.entrypoint, options.env, options.metadata, options.description);
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
         this.save(options.name, contracts, wgConfig);
         return { contracts: contracts, wireguard_config: wgConfig };
@@ -61,7 +61,7 @@ class Machine extends base_1.BaseModule {
         const networkName = options.network.name;
         const network = new network_1.Network(networkName, options.network.ip_range, this.rmbClient);
         await network.load(true);
-        const twinDeployment = await this.vm.update(oldDeployment, options.name, options.node_id, options.flist, options.cpu, options.memory, options.disks, options.public_ip, network, options.entrypoint, options.env, options.metadata, options.description);
+        const twinDeployment = await this.vm.update(oldDeployment, options.name, options.node_id, options.flist, options.cpu, options.memory, options.rootfs_size, options.disks, options.public_ip, options.planetary, network, options.entrypoint, options.env, options.metadata, options.description);
         console.log(JSON.stringify(twinDeployment));
         const contracts = await this.twinDeploymentHandler.handle([twinDeployment]);
         return { contracts: contracts };

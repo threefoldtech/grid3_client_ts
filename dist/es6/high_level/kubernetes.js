@@ -12,7 +12,7 @@ import { VirtualMachine } from "../high_level//machine";
 import { HighLevelBase } from "./base";
 const Flist = "https://hub.grid.tf/ahmed_hanafy_1/ahmedhanafy725-k3s-latest.flist";
 class Kubernetes extends HighLevelBase {
-    add_master(name, nodeId, secret, cpu, memory, diskSize, publicIp, network, sshKey, metadata = "", description = "") {
+    add_master(name, nodeId, secret, cpu, memory, rootfs_size, diskSize, publicIp, planetary, network, sshKey, metadata = "", description = "") {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`Creating a master with name: ${name} on node: ${nodeId}, network: ${network.name}`);
             const machine = new VirtualMachine(this.twin_id, this.url, this.mnemonic, this.rmbClient);
@@ -30,10 +30,10 @@ class Kubernetes extends HighLevelBase {
                 size: diskSize,
                 mountpoint: mountpoint,
             };
-            return yield machine.create(name, nodeId, Flist, cpu, memory, [disk], publicIp, network, "/sbin/zinit init", env, metadata, description);
+            return yield machine.create(name, nodeId, Flist, cpu, memory, rootfs_size, [disk], publicIp, planetary, network, "/sbin/zinit init", env, metadata, description);
         });
     }
-    add_worker(name, nodeId, secret, masterIp, cpu, memory, diskSize, publicIp, network, sshKey, metadata = "", description = "") {
+    add_worker(name, nodeId, secret, masterIp, cpu, memory, rootfs_size, diskSize, publicIp, planetary, network, sshKey, metadata = "", description = "") {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`Creating a worker with name: ${name} on node: ${nodeId}, network: ${network.name}`);
             const machine = new VirtualMachine(this.twin_id, this.url, this.mnemonic, this.rmbClient);
@@ -51,7 +51,7 @@ class Kubernetes extends HighLevelBase {
                 size: diskSize,
                 mountpoint: mountpoint,
             };
-            return yield machine.create(name, nodeId, Flist, cpu, memory, [disk], publicIp, network, "/sbin/zinit init", env, metadata, description);
+            return yield machine.create(name, nodeId, Flist, cpu, memory, rootfs_size, [disk], publicIp, planetary, network, "/sbin/zinit init", env, metadata, description);
         });
     }
     delete(deployment, names) {

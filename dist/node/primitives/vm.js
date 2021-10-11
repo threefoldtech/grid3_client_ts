@@ -24,11 +24,11 @@ class VM {
         zmachine_network.public_ip = public_ip;
         return zmachine_network;
     }
-    create(name, flist, cpu, memory, disks, networkName, ip, planetary, public_ip, entrypoint, env, metadata = "", description = "", version = 0) {
+    create(name, flist, cpu, memory, rootfs_size, disks, networkName, ip, planetary, public_ip, entrypoint, env, metadata = "", description = "", version = 0) {
         const zmachine = new zmachine_1.Zmachine();
         zmachine.flist = flist;
         zmachine.network = this._createMachineNetwork(networkName, ip, planetary, public_ip);
-        zmachine.size = 1;
+        zmachine.size = rootfs_size * 1024 * 1024 * 1024;
         zmachine.mounts = disks;
         zmachine.entrypoint = entrypoint;
         zmachine.compute_capacity = this._createComputeCapacity(cpu, memory);

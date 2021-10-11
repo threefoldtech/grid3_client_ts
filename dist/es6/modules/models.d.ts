@@ -18,8 +18,10 @@ declare class Machines {
     disks: VirtualMachineDisk[];
     network: Network;
     public_ip: boolean;
+    planetary: boolean;
     cpu: number;
     memory: number;
+    rootfs_size: number;
     flist: string;
     entrypoint: string;
     metadata: string;
@@ -35,8 +37,10 @@ declare class KubernetesNode {
     node_id: number;
     cpu: number;
     memory: number;
+    rootfs_size: number;
     disk_size: number;
     public_ip: boolean;
+    planetary: boolean;
 }
 declare class K8S {
     name: string;

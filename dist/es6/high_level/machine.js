@@ -14,7 +14,7 @@ import { HighLevelBase } from "./base";
 import { Disk, VM, IPv4, DeploymentFactory, getAccessNodes } from "../primitives/index";
 import { randomChoice } from "../helpers/utils";
 class VirtualMachine extends HighLevelBase {
-    create(name, nodeId, flist, cpu, memory, disks, publicIp, network, entrypoint, env, metadata = "", description = "") {
+    create(name, nodeId, flist, cpu, memory, rootfs_size, disks, publicIp, planetary, network, entrypoint, env, metadata = "", description = "") {
         return __awaiter(this, void 0, void 0, function* () {
             const deployments = [];
             const workloads = [];
@@ -97,7 +97,7 @@ class VirtualMachine extends HighLevelBase {
             const vm = new VM();
             const machine_ip = network.getFreeIP(nodeId);
             console.log(`Creating a vm on node: ${nodeId}, network: ${network.name} with private ip: ${machine_ip}`);
-            workloads.push(vm.create(name, flist, cpu, memory, diskMounts, network.name, machine_ip, true, ipName, entrypoint, env, metadata, description));
+            workloads.push(vm.create(name, flist, cpu, memory, rootfs_size, diskMounts, network.name, machine_ip, planetary, ipName, entrypoint, env, metadata, description));
             // deployment
             // NOTE: expiration is not used for zos deployment
             const deployment = deploymentFactory.create(workloads, 1626394539, metadata, description);
@@ -105,9 +105,9 @@ class VirtualMachine extends HighLevelBase {
             return [deployments, wgConfig];
         });
     }
-    update(oldDeployment, name, nodeId, flist, cpu, memory, disks, publicIp, network, entrypoint, env, metadata = "", description = "") {
+    update(oldDeployment, name, nodeId, flist, cpu, memory, rootfs_size, disks, publicIp, planetary, network, entrypoint, env, metadata = "", description = "") {
         return __awaiter(this, void 0, void 0, function* () {
-            const [twinDeployments, _] = yield this.create(name, nodeId, flist, cpu, memory, disks, publicIp, network, entrypoint, env, metadata, description);
+            const [twinDeployments, _] = yield this.create(name, nodeId, flist, cpu, memory, rootfs_size, disks, publicIp, planetary, network, entrypoint, env, metadata, description);
             const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
             const updatedDeployment = yield deploymentFactory.UpdateDeployment(oldDeployment, twinDeployments.pop().deployment, network);
             if (!updatedDeployment) {

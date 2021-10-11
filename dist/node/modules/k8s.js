@@ -49,7 +49,7 @@ class K8s extends base_1.BaseModule {
         let deployments = [];
         let wireguardConfig = "";
         for (const master of options.masters) {
-            const [twinDeployments, wgConfig] = await this.kubernetes.add_master(master.name, master.node_id, options.secret, master.cpu, master.memory, master.disk_size, master.public_ip, network, options.ssh_key, options.metadata, options.description);
+            const [twinDeployments, wgConfig] = await this.kubernetes.add_master(master.name, master.node_id, options.secret, master.cpu, master.memory, master.rootfs_size, master.disk_size, master.public_ip, master.planetary, network, options.ssh_key, options.metadata, options.description);
             deployments = deployments.concat(twinDeployments);
             if (wgConfig) {
                 wireguardConfig = wgConfig;
@@ -62,7 +62,7 @@ class K8s extends base_1.BaseModule {
             }
         }
         for (const worker of options.workers) {
-            const [twinDeployments, _] = await this.kubernetes.add_worker(worker.name, worker.node_id, options.secret, masterIps[0], worker.cpu, worker.memory, worker.disk_size, worker.public_ip, network, options.ssh_key, options.metadata, options.description);
+            const [twinDeployments, _] = await this.kubernetes.add_worker(worker.name, worker.node_id, options.secret, masterIps[0], worker.cpu, worker.memory, worker.rootfs_size, worker.disk_size, worker.public_ip, worker.planetary, network, options.ssh_key, options.metadata, options.description);
             deployments = deployments.concat(twinDeployments);
         }
         return [deployments, wireguardConfig];
@@ -131,7 +131,7 @@ class K8s extends base_1.BaseModule {
         const networkIpRange = (0, netaddr_1.Addr)(masterWorkload.data["network"].interfaces[0].ip).mask(16).toString();
         const network = new network_1.Network(networkName, networkIpRange, this.rmbClient);
         await network.load(true);
-        const [twinDeployments, _] = await this.kubernetes.add_worker(options.name, options.node_id, masterWorkload.data["env"]["K3S_TOKEN"], masterWorkload.data["network"]["interfaces"][0]["ip"], options.cpu, options.memory, options.disk_size, options.public_ip, network, masterWorkload.data["env"]["SSH_KEY"], masterWorkload.metadata, masterWorkload.description);
+        const [twinDeployments, _] = await this.kubernetes.add_worker(options.name, options.node_id, masterWorkload.data["env"]["K3S_TOKEN"], masterWorkload.data["network"]["interfaces"][0]["ip"], options.cpu, options.memory, options.rootfs_size, options.disk_size, options.public_ip, options.planetary, network, masterWorkload.data["env"]["SSH_KEY"], masterWorkload.metadata, masterWorkload.description);
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }
     async delete_worker(options) {

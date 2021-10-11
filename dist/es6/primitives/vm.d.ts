@@ -5,7 +5,7 @@ declare class VM {
     _createComputeCapacity(cpu: number, memory: number): ComputeCapacity;
     _createNetworkInterface(networkName: string, ip: string): ZNetworkInterface;
     _createMachineNetwork(networkName: string, ip: string, planetary: boolean, public_ip?: string): ZmachineNetwork;
-    create(name: string, flist: string, cpu: number, memory: number, disks: Mount[], networkName: string, ip: string, planetary: boolean, public_ip: string, entrypoint: string, env: Record<string, unknown>, metadata?: string, description?: string, version?: number): Workload;
+    create(name: string, flist: string, cpu: number, memory: number, rootfs_size: number, disks: Mount[], networkName: string, ip: string, planetary: boolean, public_ip: string, entrypoint: string, env: Record<string, unknown>, metadata?: string, description?: string, version?: number): Workload;
 }
 export { VM };
 //# sourceMappingURL=vm.d.ts.map

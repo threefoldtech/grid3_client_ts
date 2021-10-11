@@ -22,8 +22,10 @@ class Machines {
     disks;
     network;
     public_ip;
+    planetary;
     cpu;
     memory;
+    rootfs_size;
     flist;
     entrypoint;
     metadata;
@@ -42,8 +44,10 @@ class KubernetesNode {
     node_id;
     cpu;
     memory;
+    rootfs_size;
     disk_size;
     public_ip;
+    planetary;
 }
 exports.KubernetesNode = KubernetesNode;
 class K8S {

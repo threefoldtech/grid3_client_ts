@@ -27,6 +27,7 @@ class VM {
         flist: string,
         cpu: number,
         memory: number,
+        rootfs_size: number,
         disks: Mount[],
         networkName: string,
         ip: string,
@@ -41,7 +42,7 @@ class VM {
         const zmachine = new Zmachine();
         zmachine.flist = flist;
         zmachine.network = this._createMachineNetwork(networkName, ip, planetary, public_ip);
-        zmachine.size = 1;
+        zmachine.size = rootfs_size * 1024 * 1024 * 1024;
         zmachine.mounts = disks;
         zmachine.entrypoint = entrypoint;
         zmachine.compute_capacity = this._createComputeCapacity(cpu, memory);

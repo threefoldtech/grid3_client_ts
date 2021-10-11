@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ZOS = exports.DeployGatewayName = exports.DeployGatewayFQDN = exports.DeleteZDB = exports.AddZDB = exports.ZDBDelete = exports.ZDBGet = exports.ZDBS = exports.DeleteWorker = exports.AddWorker = exports.K8SDelete = exports.K8SGet = exports.K8S = exports.MachinesDelete = exports.MachinesGet = exports.Machines = exports.VirtualMachineDisk = void 0;
+exports.ZOS = exports.DeployGatewayName = exports.DeployGatewayFQDN = exports.DeleteZDB = exports.AddZDB = exports.ZDBDelete = exports.ZDBGet = exports.ZDBS = exports.DeleteWorker = exports.AddWorker = exports.K8SDelete = exports.K8SGet = exports.K8S = exports.KubernetesNode = exports.MachinesDelete = exports.MachinesGet = exports.Machines = exports.VirtualMachineDisk = void 0;
 const deployment_1 = require("../zos/deployment");
 class VirtualMachineDisk {
     name;
@@ -45,6 +45,7 @@ class KubernetesNode {
     disk_size;
     public_ip;
 }
+exports.KubernetesNode = KubernetesNode;
 class K8S {
     name;
     secret;

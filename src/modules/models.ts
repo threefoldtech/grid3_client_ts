@@ -121,6 +121,7 @@ export {
     Machines,
     MachinesGet,
     MachinesDelete,
+    KubernetesNode,
     K8S,
     K8SGet,
     K8SDelete,

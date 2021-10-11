@@ -42,4 +42,4 @@ class DeployGatewayName {
 }
 class ZOS extends Deployment {
 }
-export { VirtualMachineDisk, Machines, MachinesGet, MachinesDelete, K8S, K8SGet, K8SDelete, AddWorker, DeleteWorker, ZDBS, ZDBGet, ZDBDelete, AddZDB, DeleteZDB, DeployGatewayFQDN, DeployGatewayName, ZOS, };
+export { VirtualMachineDisk, Machines, MachinesGet, MachinesDelete, KubernetesNode, K8S, K8SGet, K8SDelete, AddWorker, DeleteWorker, ZDBS, ZDBGet, ZDBDelete, AddZDB, DeleteZDB, DeployGatewayFQDN, DeployGatewayName, ZOS, };

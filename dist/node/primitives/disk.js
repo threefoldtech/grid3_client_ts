@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Disk = void 0;
+exports.DiskPrimitive = void 0;
 const workload_1 = require("../zos/workload");
 const zmount_1 = require("../zos/zmount");
 const zmachine_1 = require("../zos/zmachine");
-class Disk {
+class DiskPrimitive {
     createMount(name, mountpoint) {
         const mount = new zmachine_1.Mount();
         mount.name = name;
@@ -27,4 +27,4 @@ class Disk {
         return this.create(size, name, metadata, description, old_version + 1);
     }
 }
-exports.Disk = Disk;
+exports.DiskPrimitive = DiskPrimitive;

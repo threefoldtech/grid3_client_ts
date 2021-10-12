@@ -1,11 +1,11 @@
 import { BaseModule } from "./base";
-import { ZDBS, DeleteZDB, AddZDB, ZDBGet, ZDBDelete } from "./models";
+import { ZDBSModel, DeleteZDBModel, AddZDBModel, ZDBGetModel, ZDBDeleteModel } from "./models";
 import { ZdbHL } from "../high_level/zdb";
 import { TwinDeployment } from "../high_level/models";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 
 
-class Zdbs extends BaseModule {
+class ZdbsModule extends BaseModule {
     fileName = "zdbs.json";
     zdb: ZdbHL;
     constructor(public twin_id: number, public url: string, public mnemonic: string, public rmbClient: MessageBusClientInterface) {
@@ -13,7 +13,7 @@ class Zdbs extends BaseModule {
         this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient);
     }
 
-    _createDeployment(options: ZDBS): TwinDeployment[] {
+    _createDeployment(options: ZDBSModel): TwinDeployment[] {
         const twinDeployments = [];
         for (const instance of options.zdbs) {
             const twinDeployment = this.zdb.create(
@@ -33,7 +33,7 @@ class Zdbs extends BaseModule {
         return twinDeployments;
     }
 
-    async deploy(options: ZDBS) {
+    async deploy(options: ZDBSModel) {
         if (this.exists(options.name)) {
             throw Error(`Another zdb deployment with the same name ${options.name} is already exist`);
         }
@@ -47,15 +47,15 @@ class Zdbs extends BaseModule {
         return this._list();
     }
 
-    async get(options: ZDBGet) {
+    async get(options: ZDBGetModel) {
         return await this._get(options.name);
     }
 
-    async delete(options: ZDBDelete) {
+    async delete(options: ZDBDeleteModel) {
         return await this._delete(options.name);
     }
 
-    async update(options: ZDBS) {
+    async update(options: ZDBSModel) {
         if (!this.exists(options.name)) {
             throw Error(`There is no zdb deployment with name: ${options.name}`);
         }
@@ -64,7 +64,7 @@ class Zdbs extends BaseModule {
         return await this._update(this.zdb, options.name, oldDeployments, twinDeployments);
     }
 
-    async add_zdb(options: AddZDB) {
+    async addZdb(options: AddZDBModel) {
         if (!this.exists(options.deployment_name)) {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
         }
@@ -85,7 +85,7 @@ class Zdbs extends BaseModule {
         return await this._add(options.deployment_name, options.node_id, oldDeployments, [twinDeployment]);
     }
 
-    async delete_zdb(options: DeleteZDB) {
+    async deleteZdb(options: DeleteZDBModel) {
         if (!this.exists(options.deployment_name)) {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
         }
@@ -93,4 +93,4 @@ class Zdbs extends BaseModule {
     }
 }
 
-export { Zdbs };
+export { ZdbsModule };

@@ -1,6 +1,6 @@
 import { TwinDeployment, Operations } from "./models";
 import { HighLevelBase } from "./base";
-import { GW, DeploymentFactory } from "../primitives/index";
+import { GWPrimitive, DeploymentFactory } from "../primitives/index";
 
 class GatewayHL extends HighLevelBase {
     async create(
@@ -13,7 +13,7 @@ class GatewayHL extends HighLevelBase {
         description = "",
     ): Promise<TwinDeployment[]> {
         const public_ips = 0;
-        const gw = new GW();
+        const gw = new GWPrimitive();
         const workloads = [];
         if (fqdn != "") {
             workloads.push(gw.createFQDN(fqdn, tls_passthrough, backends, name, metadata, description));

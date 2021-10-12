@@ -1,22 +1,22 @@
 import { Workload } from "../zos/workload";
-import { AddWorker, DeleteWorker, K8S, K8SDelete, K8SGet } from "./models";
+import { AddWorkerModel, DeleteWorkerModel, K8SModel, K8SDeleteModel, K8SGetModel } from "./models";
 import { BaseModule } from "./base";
 import { TwinDeployment } from "../high_level/models";
-import { Kubernetes } from "../high_level/kubernetes";
+import { KubernetesHL } from "../high_level/kubernetes";
 import { Network } from "../primitives/network";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
-declare class K8s extends BaseModule {
+declare class K8sModule extends BaseModule {
     twin_id: number;
     url: string;
     mnemonic: string;
     rmbClient: MessageBusClientInterface;
     fileName: string;
-    kubernetes: Kubernetes;
+    kubernetes: KubernetesHL;
     constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
     _getMastersWorkload(deployments: any): Workload[];
     _getMastersIp(deployments: any): string[];
-    _createDeployment(options: K8S, network: Network, masterIps?: string[]): Promise<[TwinDeployment[], string]>;
-    deploy(options: K8S): Promise<{
+    _createDeployment(options: K8SModel, masterIps?: string[]): Promise<[TwinDeployment[], Network, string]>;
+    deploy(options: K8SModel): Promise<{
         contracts: {
             created: any[];
             updated: any[];
@@ -25,30 +25,30 @@ declare class K8s extends BaseModule {
         wireguard_config: string;
     }>;
     list(): string[];
-    get(options: K8SGet): Promise<any[]>;
-    delete(options: K8SDelete): Promise<{
+    get(options: K8SGetModel): Promise<any[]>;
+    delete(options: K8SDeleteModel): Promise<{
         deleted: any[];
         updated: any[];
     }>;
-    update(options: K8S): Promise<"Nothing found to update" | {
+    update(options: K8SModel): Promise<"Nothing found to update" | {
         contracts: {
             created: any[];
             updated: any[];
             deleted: any[];
         };
     }>;
-    add_worker(options: AddWorker): Promise<{
+    addWorker(options: AddWorkerModel): Promise<{
         contracts: {
             created: any[];
             updated: any[];
             deleted: any[];
         };
     }>;
-    delete_worker(options: DeleteWorker): Promise<{
+    deleteWorker(options: DeleteWorkerModel): Promise<{
         created: any[];
         updated: any[];
         deleted: any[];
     }>;
 }
-export { K8s };
+export { K8sModule };
 //# sourceMappingURL=k8s.d.ts.map

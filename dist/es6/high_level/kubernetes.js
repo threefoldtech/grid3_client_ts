@@ -8,14 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { WorkloadTypes } from "../zos/workload";
-import { VirtualMachine } from "../high_level//machine";
+import { VMHL } from "../high_level//machine";
 import { HighLevelBase } from "./base";
 const Flist = "https://hub.grid.tf/ahmed_hanafy_1/ahmedhanafy725-k3s-latest.flist";
-class Kubernetes extends HighLevelBase {
+class KubernetesHL extends HighLevelBase {
     add_master(name, nodeId, secret, cpu, memory, rootfs_size, diskSize, publicIp, planetary, network, sshKey, metadata = "", description = "") {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`Creating a master with name: ${name} on node: ${nodeId}, network: ${network.name}`);
-            const machine = new VirtualMachine(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+            const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
             const mountpoint = "/mnt/data";
             const env = {
                 SSH_KEY: sshKey,
@@ -36,7 +36,7 @@ class Kubernetes extends HighLevelBase {
     add_worker(name, nodeId, secret, masterIp, cpu, memory, rootfs_size, diskSize, publicIp, planetary, network, sshKey, metadata = "", description = "") {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`Creating a worker with name: ${name} on node: ${nodeId}, network: ${network.name}`);
-            const machine = new VirtualMachine(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+            const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
             const mountpoint = "/mnt/data";
             const env = {
                 SSH_KEY: sshKey,
@@ -64,4 +64,4 @@ class Kubernetes extends HighLevelBase {
         });
     }
 }
-export { Kubernetes };
+export { KubernetesHL };

@@ -1,20 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VirtualMachine = void 0;
+exports.VMHL = void 0;
 const netaddr_1 = require("netaddr");
 const workload_1 = require("../zos/workload");
 const models_1 = require("./models");
 const base_1 = require("./base");
 const index_1 = require("../primitives/index");
 const utils_1 = require("../helpers/utils");
-class VirtualMachine extends base_1.HighLevelBase {
+class VMHL extends base_1.HighLevelBase {
     async create(name, nodeId, flist, cpu, memory, rootfs_size, disks, publicIp, planetary, network, entrypoint, env, metadata = "", description = "") {
         const deployments = [];
         const workloads = [];
         // disks
         const diskMounts = [];
         for (const d of disks) {
-            const disk = new index_1.Disk();
+            const disk = new index_1.DiskPrimitive();
             workloads.push(disk.create(d.size, d.name, metadata, description));
             diskMounts.push(disk.createMount(d.name, d.mountpoint));
         }
@@ -22,7 +22,7 @@ class VirtualMachine extends base_1.HighLevelBase {
         let ipName = "";
         let publicIps = 0;
         if (publicIp) {
-            const ipv4 = new index_1.IPv4();
+            const ipv4 = new index_1.IPv4Primitive();
             ipName = `${name}_pubip`;
             workloads.push(ipv4.create(ipName, metadata, description));
             publicIps++;
@@ -87,7 +87,7 @@ class VirtualMachine extends base_1.HighLevelBase {
         }
         // vm
         // check the planetary
-        const vm = new index_1.VM();
+        const vm = new index_1.VMPrimitive();
         const machine_ip = network.getFreeIP(nodeId);
         console.log(`Creating a vm on node: ${nodeId}, network: ${network.name} with private ip: ${machine_ip}`);
         workloads.push(vm.create(name, flist, cpu, memory, rootfs_size, diskMounts, network.name, machine_ip, planetary, ipName, entrypoint, env, metadata, description));
@@ -114,4 +114,4 @@ class VirtualMachine extends base_1.HighLevelBase {
         ]);
     }
 }
-exports.VirtualMachine = VirtualMachine;
+exports.VMHL = VMHL;

@@ -1,45 +1,51 @@
 import { Deployment } from "../zos/deployment";
-class VirtualMachineDisk {
+class DiskModel {
 }
 ;
-class Network {
+class NetworkModel {
 }
-class BaseGetDelete {
+class BaseGetDeleteModel {
 }
-class Machines {
+class MachineModel {
 }
-class MachinesGet extends BaseGetDelete {
+class MachinesModel {
 }
-class MachinesDelete extends BaseGetDelete {
+class AddMachineModel extends MachineModel {
 }
-class KubernetesNode {
+class DeleteMachineModel {
 }
-class K8S {
+class MachinesGetModel extends BaseGetDeleteModel {
 }
-class K8SGet extends BaseGetDelete {
+class MachinesDeleteModel extends BaseGetDeleteModel {
 }
-class K8SDelete extends BaseGetDelete {
+class KubernetesNodeModel {
 }
-class AddWorker extends KubernetesNode {
+class K8SModel {
 }
-class DeleteWorker {
+class K8SGetModel extends BaseGetDeleteModel {
 }
-class ZDB {
+class K8SDeleteModel extends BaseGetDeleteModel {
 }
-class ZDBS {
+class AddWorkerModel extends KubernetesNodeModel {
 }
-class ZDBGet extends BaseGetDelete {
+class DeleteWorkerModel {
 }
-class ZDBDelete extends BaseGetDelete {
+class ZDBModel {
 }
-class AddZDB extends ZDB {
+class ZDBSModel {
 }
-class DeleteZDB extends DeleteWorker {
+class ZDBGetModel extends BaseGetDeleteModel {
 }
-class DeployGatewayFQDN {
+class ZDBDeleteModel extends BaseGetDeleteModel {
 }
-class DeployGatewayName {
+class AddZDBModel extends ZDBModel {
 }
-class ZOS extends Deployment {
+class DeleteZDBModel extends DeleteWorkerModel {
 }
-export { VirtualMachineDisk, Machines, MachinesGet, MachinesDelete, KubernetesNode, K8S, K8SGet, K8SDelete, AddWorker, DeleteWorker, ZDBS, ZDBGet, ZDBDelete, AddZDB, DeleteZDB, DeployGatewayFQDN, DeployGatewayName, ZOS, };
+class DeployGatewayFQDNModel {
+}
+class DeployGatewayNameModel {
+}
+class ZOSModel extends Deployment {
+}
+export { DiskModel, NetworkModel, MachineModel, MachinesModel, MachinesGetModel, MachinesDeleteModel, AddMachineModel, DeleteMachineModel, KubernetesNodeModel, K8SModel, K8SGetModel, K8SDeleteModel, AddWorkerModel, DeleteWorkerModel, ZDBModel, ZDBSModel, ZDBGetModel, ZDBDeleteModel, AddZDBModel, DeleteZDBModel, DeployGatewayFQDNModel, DeployGatewayNameModel, ZOSModel, };

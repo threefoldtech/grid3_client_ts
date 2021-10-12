@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Zdbs = void 0;
+exports.ZdbsModule = void 0;
 const base_1 = require("./base");
 const zdb_1 = require("../high_level/zdb");
-class Zdbs extends base_1.BaseModule {
+class ZdbsModule extends base_1.BaseModule {
     twin_id;
     url;
     mnemonic;
@@ -52,7 +52,7 @@ class Zdbs extends base_1.BaseModule {
         const twinDeployments = this._createDeployment(options);
         return await this._update(this.zdb, options.name, oldDeployments, twinDeployments);
     }
-    async add_zdb(options) {
+    async addZdb(options) {
         if (!this.exists(options.deployment_name)) {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
         }
@@ -60,11 +60,11 @@ class Zdbs extends base_1.BaseModule {
         const twinDeployment = this.zdb.create(options.name, options.node_id, options.namespace, options.disk_size, options.disk_type, options.mode, options.password, options.public, oldDeployments[0].metadata, oldDeployments[0].metadata);
         return await this._add(options.deployment_name, options.node_id, oldDeployments, [twinDeployment]);
     }
-    async delete_zdb(options) {
+    async deleteZdb(options) {
         if (!this.exists(options.deployment_name)) {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
         }
         return await this._deleteInstance(this.zdb, options.deployment_name, options.name);
     }
 }
-exports.Zdbs = Zdbs;
+exports.ZdbsModule = ZdbsModule;

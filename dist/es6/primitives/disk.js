@@ -1,7 +1,7 @@
 import { WorkloadTypes, Workload } from "../zos/workload";
 import { Zmount } from "../zos/zmount";
 import { Mount } from "../zos/zmachine";
-class Disk {
+class DiskPrimitive {
     createMount(name, mountpoint) {
         const mount = new Mount();
         mount.name = name;
@@ -24,4 +24,4 @@ class Disk {
         return this.create(size, name, metadata, description, old_version + 1);
     }
 }
-export { Disk };
+export { DiskPrimitive };

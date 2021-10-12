@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { BaseModule } from "./base";
 import { GatewayHL } from "../high_level/gateway";
-class Gateway extends BaseModule {
+class GWModule extends BaseModule {
     constructor(twin_id, url, mnemonic, rmbClient) {
         super(twin_id, url, mnemonic, rmbClient);
         this.twin_id = twin_id;
@@ -42,4 +42,4 @@ class Gateway extends BaseModule {
         });
     }
 }
-export { Gateway };
+export { GWModule };

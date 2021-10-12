@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IPv4 = void 0;
+exports.IPv4Primitive = void 0;
 const workload_1 = require("../zos/workload");
 const ipv4_1 = require("../zos/ipv4");
-class IPv4 {
+class IPv4Primitive {
     create(name, metadata = "", description = "", version = 0) {
         const public_ip = new ipv4_1.PublicIP();
         const ipv4_workload = new workload_1.Workload();
@@ -19,4 +19,4 @@ class IPv4 {
         return this.create(name, metadata, description, old_version + 1);
     }
 }
-exports.IPv4 = IPv4;
+exports.IPv4Primitive = IPv4Primitive;

@@ -1,56 +1,71 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ZOS = exports.DeployGatewayName = exports.DeployGatewayFQDN = exports.DeleteZDB = exports.AddZDB = exports.ZDBDelete = exports.ZDBGet = exports.ZDBS = exports.DeleteWorker = exports.AddWorker = exports.K8SDelete = exports.K8SGet = exports.K8S = exports.KubernetesNode = exports.MachinesDelete = exports.MachinesGet = exports.Machines = exports.VirtualMachineDisk = void 0;
+exports.ZOSModel = exports.DeployGatewayNameModel = exports.DeployGatewayFQDNModel = exports.DeleteZDBModel = exports.AddZDBModel = exports.ZDBDeleteModel = exports.ZDBGetModel = exports.ZDBSModel = exports.ZDBModel = exports.DeleteWorkerModel = exports.AddWorkerModel = exports.K8SDeleteModel = exports.K8SGetModel = exports.K8SModel = exports.KubernetesNodeModel = exports.DeleteMachineModel = exports.AddMachineModel = exports.MachinesDeleteModel = exports.MachinesGetModel = exports.MachinesModel = exports.MachineModel = exports.NetworkModel = exports.DiskModel = void 0;
 const deployment_1 = require("../zos/deployment");
-class VirtualMachineDisk {
+class DiskModel {
     name;
-    size;
+    size; // in GB
     mountpoint;
 }
-exports.VirtualMachineDisk = VirtualMachineDisk;
+exports.DiskModel = DiskModel;
 ;
-class Network {
+class NetworkModel {
     name;
     ip_range;
 }
-class BaseGetDelete {
+exports.NetworkModel = NetworkModel;
+class BaseGetDeleteModel {
     name;
 }
-class Machines {
+class MachineModel {
     name;
     node_id;
     disks;
-    network;
     public_ip;
     planetary;
     cpu;
-    memory;
-    rootfs_size;
+    memory; // in MB
+    rootfs_size; // in GB
     flist;
     entrypoint;
-    metadata;
-    description;
     env;
 }
-exports.Machines = Machines;
-class MachinesGet extends BaseGetDelete {
+exports.MachineModel = MachineModel;
+class MachinesModel {
+    name;
+    network;
+    machines;
+    metadata;
+    description;
 }
-exports.MachinesGet = MachinesGet;
-class MachinesDelete extends BaseGetDelete {
+exports.MachinesModel = MachinesModel;
+class AddMachineModel extends MachineModel {
+    deployment_name;
 }
-exports.MachinesDelete = MachinesDelete;
-class KubernetesNode {
+exports.AddMachineModel = AddMachineModel;
+class DeleteMachineModel {
+    name;
+    deployment_name;
+}
+exports.DeleteMachineModel = DeleteMachineModel;
+class MachinesGetModel extends BaseGetDeleteModel {
+}
+exports.MachinesGetModel = MachinesGetModel;
+class MachinesDeleteModel extends BaseGetDeleteModel {
+}
+exports.MachinesDeleteModel = MachinesDeleteModel;
+class KubernetesNodeModel {
     name;
     node_id;
     cpu;
-    memory;
-    rootfs_size;
-    disk_size;
+    memory; // in MB
+    rootfs_size; // in GB
+    disk_size; // in GB
     public_ip;
     planetary;
 }
-exports.KubernetesNode = KubernetesNode;
-class K8S {
+exports.KubernetesNodeModel = KubernetesNodeModel;
+class K8SModel {
     name;
     secret;
     network;
@@ -60,23 +75,23 @@ class K8S {
     description;
     ssh_key;
 }
-exports.K8S = K8S;
-class K8SGet extends BaseGetDelete {
+exports.K8SModel = K8SModel;
+class K8SGetModel extends BaseGetDeleteModel {
 }
-exports.K8SGet = K8SGet;
-class K8SDelete extends BaseGetDelete {
+exports.K8SGetModel = K8SGetModel;
+class K8SDeleteModel extends BaseGetDeleteModel {
 }
-exports.K8SDelete = K8SDelete;
-class AddWorker extends KubernetesNode {
+exports.K8SDeleteModel = K8SDeleteModel;
+class AddWorkerModel extends KubernetesNodeModel {
     deployment_name;
 }
-exports.AddWorker = AddWorker;
-class DeleteWorker {
+exports.AddWorkerModel = AddWorkerModel;
+class DeleteWorkerModel {
     deployment_name;
     name;
 }
-exports.DeleteWorker = DeleteWorker;
-class ZDB {
+exports.DeleteWorkerModel = DeleteWorkerModel;
+class ZDBModel {
     name;
     node_id;
     mode;
@@ -86,42 +101,43 @@ class ZDB {
     namespace;
     password;
 }
-class ZDBS {
+exports.ZDBModel = ZDBModel;
+class ZDBSModel {
     name;
     zdbs;
     metadata;
     description;
 }
-exports.ZDBS = ZDBS;
-class ZDBGet extends BaseGetDelete {
+exports.ZDBSModel = ZDBSModel;
+class ZDBGetModel extends BaseGetDeleteModel {
 }
-exports.ZDBGet = ZDBGet;
-class ZDBDelete extends BaseGetDelete {
+exports.ZDBGetModel = ZDBGetModel;
+class ZDBDeleteModel extends BaseGetDeleteModel {
 }
-exports.ZDBDelete = ZDBDelete;
-class AddZDB extends ZDB {
+exports.ZDBDeleteModel = ZDBDeleteModel;
+class AddZDBModel extends ZDBModel {
     deployment_name;
 }
-exports.AddZDB = AddZDB;
-class DeleteZDB extends DeleteWorker {
+exports.AddZDBModel = AddZDBModel;
+class DeleteZDBModel extends DeleteWorkerModel {
 }
-exports.DeleteZDB = DeleteZDB;
-class DeployGatewayFQDN {
+exports.DeleteZDBModel = DeleteZDBModel;
+class DeployGatewayFQDNModel {
     name;
     node_id;
     fqdn;
     tls_passthrough;
     backends;
 }
-exports.DeployGatewayFQDN = DeployGatewayFQDN;
-class DeployGatewayName {
+exports.DeployGatewayFQDNModel = DeployGatewayFQDNModel;
+class DeployGatewayNameModel {
     name;
     node_id;
     tls_passthrough;
     backends;
 }
-exports.DeployGatewayName = DeployGatewayName;
-class ZOS extends deployment_1.Deployment {
+exports.DeployGatewayNameModel = DeployGatewayNameModel;
+class ZOSModel extends deployment_1.Deployment {
     node_id;
 }
-exports.ZOS = ZOS;
+exports.ZOSModel = ZOSModel;

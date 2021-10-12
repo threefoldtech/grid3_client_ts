@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.zdb = void 0;
+exports.ZdbPrimitive = void 0;
 const zdb_1 = require("../zos/zdb");
 const workload_1 = require("../zos/workload");
-class zdb {
+class ZdbPrimitive {
     create(name, namespace, size, mode = zdb_1.ZdbModes.seq, password, type = zdb_1.DeviceTypes.hdd, pub, metadata = "", description = "", version = 0) {
         const zdb = new zdb_1.Zdb();
         zdb.namespace = namespace;
@@ -25,4 +25,4 @@ class zdb {
         return this.create(name, namespace, size, mode, password, type, pub, metadata, description, version);
     }
 }
-exports.zdb = zdb;
+exports.ZdbPrimitive = ZdbPrimitive;

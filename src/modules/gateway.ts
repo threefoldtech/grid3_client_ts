@@ -1,10 +1,10 @@
 import { BaseModule } from "./base";
-import { DeployGatewayFQDN, DeployGatewayName } from "./models";
+import { DeployGatewayFQDNModel, DeployGatewayNameModel } from "./models";
 import { GatewayHL } from "../high_level/gateway";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 
 
-class Gateway extends BaseModule {
+class GWModule extends BaseModule {
     fileName = "gateway.json";
     gateway: GatewayHL;
 
@@ -13,7 +13,7 @@ class Gateway extends BaseModule {
         this.gateway = new GatewayHL(twin_id, url, mnemonic, rmbClient);
     }
 
-    async deploy_fqdn(options: DeployGatewayFQDN) {
+    async deploy_fqdn(options: DeployGatewayFQDNModel) {
         if (this.exists(options.name)) {
             throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
         }
@@ -29,7 +29,7 @@ class Gateway extends BaseModule {
         return { contracts: contracts };
     }
 
-    async deploy_name(options: DeployGatewayName) {
+    async deploy_name(options: DeployGatewayNameModel) {
         if (this.exists(options.name)) {
             throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
         }
@@ -45,4 +45,4 @@ class Gateway extends BaseModule {
     }
 }
 
-export { Gateway };
+export { GWModule };

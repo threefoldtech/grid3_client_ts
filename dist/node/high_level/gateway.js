@@ -7,7 +7,7 @@ const index_1 = require("../primitives/index");
 class GatewayHL extends base_1.HighLevelBase {
     async create(name, node_id, tls_passthrough, backends, fqdn = "", metadata = "", description = "") {
         const public_ips = 0;
-        const gw = new index_1.GW();
+        const gw = new index_1.GWPrimitive();
         const workloads = [];
         if (fqdn != "") {
             workloads.push(gw.createFQDN(fqdn, tls_passthrough, backends, name, metadata, description));

@@ -5,13 +5,14 @@ import { Deployment } from "../zos/deployment";
 import { HighLevelBase } from "../high_level/base";
 import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { TwinDeployment, Operations } from "../high_level/models";
-import { Kubernetes } from "../high_level/kubernetes";
+import { KubernetesHL } from "../high_level/kubernetes";
 import { ZdbHL } from "../high_level/zdb";
 import { loadFromFile, updatejson, appPath } from "../helpers/jsonfs";
 import { getNodeTwinId } from "../primitives/nodes";
 import { DeploymentFactory } from "../primitives/deployment";
 import { Network } from "../primitives/network";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
+import { VMHL } from "../high_level/machine";
 
 class BaseModule {
     fileName = "";
@@ -122,7 +123,7 @@ class BaseModule {
     }
 
     async _update(
-        module: Kubernetes | ZdbHL,
+        module: KubernetesHL | ZdbHL | VMHL,
         name: string,
         oldDeployments: Deployment[],
         twinDeployments: TwinDeployment[],
@@ -199,7 +200,7 @@ class BaseModule {
         return { contracts: contracts };
     }
 
-    async _deleteInstance(module: Kubernetes | ZdbHL, deployment_name: string, name: string) {
+    async _deleteInstance(module: KubernetesHL | ZdbHL | VMHL, deployment_name: string, name: string) {
         const deployments = await this._get(deployment_name);
         for (const deployment of deployments) {
             const twinDeployments = await module.delete(deployment, [name]);

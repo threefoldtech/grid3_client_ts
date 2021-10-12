@@ -1,6 +1,6 @@
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { PublicIP } from "../zos/ipv4";
-class IPv4 {
+class IPv4Primitive {
     create(name, metadata = "", description = "", version = 0) {
         const public_ip = new PublicIP();
         const ipv4_workload = new Workload();
@@ -16,4 +16,4 @@ class IPv4 {
         return this.create(name, metadata, description, old_version + 1);
     }
 }
-export { IPv4 };
+export { IPv4Primitive };

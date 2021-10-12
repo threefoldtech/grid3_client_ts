@@ -11,9 +11,9 @@ import { Addr } from "netaddr";
 import { WorkloadTypes } from "../zos/workload";
 import { TwinDeployment, Operations } from "./models";
 import { HighLevelBase } from "./base";
-import { Disk, VM, IPv4, DeploymentFactory, getAccessNodes } from "../primitives/index";
+import { DiskPrimitive, VMPrimitive, IPv4Primitive, DeploymentFactory, getAccessNodes } from "../primitives/index";
 import { randomChoice } from "../helpers/utils";
-class VirtualMachine extends HighLevelBase {
+class VMHL extends HighLevelBase {
     create(name, nodeId, flist, cpu, memory, rootfs_size, disks, publicIp, planetary, network, entrypoint, env, metadata = "", description = "") {
         return __awaiter(this, void 0, void 0, function* () {
             const deployments = [];
@@ -21,7 +21,7 @@ class VirtualMachine extends HighLevelBase {
             // disks
             const diskMounts = [];
             for (const d of disks) {
-                const disk = new Disk();
+                const disk = new DiskPrimitive();
                 workloads.push(disk.create(d.size, d.name, metadata, description));
                 diskMounts.push(disk.createMount(d.name, d.mountpoint));
             }
@@ -29,7 +29,7 @@ class VirtualMachine extends HighLevelBase {
             let ipName = "";
             let publicIps = 0;
             if (publicIp) {
-                const ipv4 = new IPv4();
+                const ipv4 = new IPv4Primitive();
                 ipName = `${name}_pubip`;
                 workloads.push(ipv4.create(ipName, metadata, description));
                 publicIps++;
@@ -94,7 +94,7 @@ class VirtualMachine extends HighLevelBase {
             }
             // vm
             // check the planetary
-            const vm = new VM();
+            const vm = new VMPrimitive();
             const machine_ip = network.getFreeIP(nodeId);
             console.log(`Creating a vm on node: ${nodeId}, network: ${network.name} with private ip: ${machine_ip}`);
             workloads.push(vm.create(name, flist, cpu, memory, rootfs_size, diskMounts, network.name, machine_ip, planetary, ipName, entrypoint, env, metadata, description));
@@ -126,4 +126,4 @@ class VirtualMachine extends HighLevelBase {
         });
     }
 }
-export { VirtualMachine };
+export { VMHL };

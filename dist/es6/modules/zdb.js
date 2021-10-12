@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { BaseModule } from "./base";
 import { ZdbHL } from "../high_level/zdb";
-class Zdbs extends BaseModule {
+class ZdbsModule extends BaseModule {
     constructor(twin_id, url, mnemonic, rmbClient) {
         super(twin_id, url, mnemonic, rmbClient);
         this.twin_id = twin_id;
@@ -61,7 +61,7 @@ class Zdbs extends BaseModule {
             return yield this._update(this.zdb, options.name, oldDeployments, twinDeployments);
         });
     }
-    add_zdb(options) {
+    addZdb(options) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.exists(options.deployment_name)) {
                 throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
@@ -71,7 +71,7 @@ class Zdbs extends BaseModule {
             return yield this._add(options.deployment_name, options.node_id, oldDeployments, [twinDeployment]);
         });
     }
-    delete_zdb(options) {
+    deleteZdb(options) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.exists(options.deployment_name)) {
                 throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
@@ -80,4 +80,4 @@ class Zdbs extends BaseModule {
         });
     }
 }
-export { Zdbs };
+export { ZdbsModule };

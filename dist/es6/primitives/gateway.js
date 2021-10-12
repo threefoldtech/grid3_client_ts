@@ -1,6 +1,6 @@
 import { GatewayFQDNProxy, GatewayNameProxy } from "../zos/gateway";
 import { Workload, WorkloadTypes } from "../zos/workload";
-class GW {
+class GWPrimitive {
     createFQDN(fqdn, tls_passthrough, backends, name, metadata = "", description = "", version = 0) {
         const fqdnObj = new GatewayFQDNProxy();
         fqdnObj.fqdn = fqdn;
@@ -36,4 +36,4 @@ class GW {
         return this.createName(name, tls_passthrough, backends, metadata, description, old_version + 1);
     }
 }
-export { GW };
+export { GWPrimitive };

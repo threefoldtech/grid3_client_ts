@@ -1,16 +1,21 @@
+import { Workload } from "../zos/workload";
 import { BaseModule } from "./base";
-import { Machines, MachinesDelete, MachinesGet } from "./models";
-import { VirtualMachine } from "../high_level/machine";
+import { MachinesModel, MachinesDeleteModel, MachinesGetModel, AddMachineModel, DeleteMachineModel } from "./models";
+import { Network } from "../primitives/network";
+import { VMHL } from "../high_level/machine";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
-declare class Machine extends BaseModule {
+import { TwinDeployment } from "../high_level/models";
+declare class MachineModule extends BaseModule {
     twin_id: number;
     url: string;
     mnemonic: string;
     rmbClient: MessageBusClientInterface;
     fileName: string;
-    vm: VirtualMachine;
+    vm: VMHL;
     constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
-    deploy(options: Machines): Promise<{
+    _createDeloyment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]>;
+    _getMachineWorkload(deployments: any): Workload;
+    deploy(options: MachinesModel): Promise<{
         contracts: {
             created: any[];
             updated: any[];
@@ -19,18 +24,30 @@ declare class Machine extends BaseModule {
         wireguard_config: string;
     }>;
     list(): string[];
-    get(options: MachinesGet): Promise<any[]>;
-    delete(options: MachinesDelete): Promise<{
+    get(options: MachinesGetModel): Promise<any[]>;
+    delete(options: MachinesDeleteModel): Promise<{
         deleted: any[];
         updated: any[];
     }>;
-    update(options: Machines): Promise<{
+    update(options: MachinesModel): Promise<"Nothing found to update" | {
         contracts: {
             created: any[];
             updated: any[];
             deleted: any[];
         };
     }>;
+    addMachine(options: AddMachineModel): Promise<{
+        contracts: {
+            created: any[];
+            updated: any[];
+            deleted: any[];
+        };
+    }>;
+    deleteMachine(options: DeleteMachineModel): Promise<{
+        created: any[];
+        updated: any[];
+        deleted: any[];
+    }>;
 }
-export { Machine };
+export { MachineModule };
 //# sourceMappingURL=machine.d.ts.map

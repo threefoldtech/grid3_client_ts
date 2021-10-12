@@ -1,8 +1,8 @@
 import { BaseModule } from "./base";
-import { DeployGatewayFQDN, DeployGatewayName } from "./models";
+import { DeployGatewayFQDNModel, DeployGatewayNameModel } from "./models";
 import { GatewayHL } from "../high_level/gateway";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
-declare class Gateway extends BaseModule {
+declare class GWModule extends BaseModule {
     twin_id: number;
     url: string;
     mnemonic: string;
@@ -10,14 +10,14 @@ declare class Gateway extends BaseModule {
     fileName: string;
     gateway: GatewayHL;
     constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
-    deploy_fqdn(options: DeployGatewayFQDN): Promise<{
+    deploy_fqdn(options: DeployGatewayFQDNModel): Promise<{
         contracts: {
             created: any[];
             updated: any[];
             deleted: any[];
         };
     }>;
-    deploy_name(options: DeployGatewayName): Promise<{
+    deploy_name(options: DeployGatewayNameModel): Promise<{
         contracts: {
             created: any[];
             updated: any[];
@@ -25,5 +25,5 @@ declare class Gateway extends BaseModule {
         };
     }>;
 }
-export { Gateway };
+export { GWModule };
 //# sourceMappingURL=gateway.d.ts.map

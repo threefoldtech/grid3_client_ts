@@ -11,9 +11,9 @@ import { WorkloadTypes } from "../zos/workload";
 import { Addr } from "netaddr";
 import { BaseModule } from "./base";
 import { TwinDeployment } from "../high_level/models";
-import { Kubernetes } from "../high_level/kubernetes";
+import { KubernetesHL } from "../high_level/kubernetes";
 import { Network } from "../primitives/network";
-class K8s extends BaseModule {
+class K8sModule extends BaseModule {
     constructor(twin_id, url, mnemonic, rmbClient) {
         super(twin_id, url, mnemonic, rmbClient);
         this.twin_id = twin_id;
@@ -21,7 +21,7 @@ class K8s extends BaseModule {
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
         this.fileName = "kubernetes.json";
-        this.kubernetes = new Kubernetes(twin_id, url, mnemonic, rmbClient);
+        this.kubernetes = new KubernetesHL(twin_id, url, mnemonic, rmbClient);
     }
     _getMastersWorkload(deployments) {
         const workloads = [];
@@ -46,8 +46,10 @@ class K8s extends BaseModule {
         }
         return ips;
     }
-    _createDeployment(options, network, masterIps = []) {
+    _createDeployment(options, masterIps = []) {
         return __awaiter(this, void 0, void 0, function* () {
+            const network = new Network(options.network.name, options.network.ip_range, this.rmbClient);
+            yield network.load(true);
             let deployments = [];
             let wireguardConfig = "";
             for (const master of options.masters) {
@@ -67,7 +69,7 @@ class K8s extends BaseModule {
                 const [twinDeployments, _] = yield this.kubernetes.add_worker(worker.name, worker.node_id, options.secret, masterIps[0], worker.cpu, worker.memory, worker.rootfs_size, worker.disk_size, worker.public_ip, worker.planetary, network, options.ssh_key, options.metadata, options.description);
                 deployments = deployments.concat(twinDeployments);
             }
-            return [deployments, wireguardConfig];
+            return [deployments, network, wireguardConfig];
         });
     }
     deploy(options) {
@@ -78,9 +80,7 @@ class K8s extends BaseModule {
             if (this.exists(options.name)) {
                 throw Error(`Another k8s deployment with the same name ${options.name} is already exist`);
             }
-            const network = new Network(options.network.name, options.network.ip_range, this.rmbClient);
-            yield network.load(true);
-            const [deployments, wireguardConfig] = yield this._createDeployment(options, network);
+            const [deployments, _, wireguardConfig] = yield this._createDeployment(options);
             const contracts = yield this.twinDeploymentHandler.handle(deployments);
             this.save(options.name, contracts, wireguardConfig);
             return { contracts: contracts, wireguard_config: wireguardConfig };
@@ -108,27 +108,29 @@ class K8s extends BaseModule {
                 throw Error("Multi master is not supported");
             }
             const oldDeployments = yield this._get(options.name);
-            for (const workload of oldDeployments[0].workloads) {
-                if (workload.type !== WorkloadTypes.network) {
-                    continue;
-                }
-                if (workload.name !== options.network.name) {
-                    throw Error("Network name can't be changed");
+            for (const oldDeployment of oldDeployments) {
+                for (const workload of oldDeployment.workloads) {
+                    if (workload.type !== WorkloadTypes.network) {
+                        continue;
+                    }
+                    const networkName = workload.data["network"].interfaces[0].network;
+                    const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
+                    if (networkName === options.network.name && networkIpRange === options.network.ip_range) {
+                        break;
+                    }
+                    throw Error("Network name and ip_range can't be changed");
                 }
             }
             const masterIps = this._getMastersIp(oldDeployments);
             if (masterIps.length === 0) {
                 throw Error("Couldn't get master ip");
             }
-            const networkName = options.network.name;
-            const network = new Network(networkName, options.network.ip_range, this.rmbClient);
-            yield network.load(true);
             //TODO: check that the master nodes are not changed
-            const [twinDeployments, _] = yield this._createDeployment(options, network, masterIps);
+            const [twinDeployments, network, _] = yield this._createDeployment(options, masterIps);
             return yield this._update(this.kubernetes, options.name, oldDeployments, twinDeployments, network);
         });
     }
-    add_worker(options) {
+    addWorker(options) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.exists(options.deployment_name)) {
                 throw Error(`There is no k8s deployment with name: ${options.deployment_name}`);
@@ -147,7 +149,7 @@ class K8s extends BaseModule {
             return yield this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
         });
     }
-    delete_worker(options) {
+    deleteWorker(options) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.exists(options.deployment_name)) {
                 throw Error(`There is no k8s deployment with name: ${options.deployment_name}`);
@@ -156,4 +158,4 @@ class K8s extends BaseModule {
         });
     }
 }
-export { K8s };
+export { K8sModule };

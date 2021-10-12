@@ -9,12 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { TwinDeployment, Operations } from "./models";
 import { HighLevelBase } from "./base";
-import { GW, DeploymentFactory } from "../primitives/index";
+import { GWPrimitive, DeploymentFactory } from "../primitives/index";
 class GatewayHL extends HighLevelBase {
     create(name, node_id, tls_passthrough, backends, fqdn = "", metadata = "", description = "") {
         return __awaiter(this, void 0, void 0, function* () {
             const public_ips = 0;
-            const gw = new GW();
+            const gw = new GWPrimitive();
             const workloads = [];
             if (fqdn != "") {
                 workloads.push(gw.createFQDN(fqdn, tls_passthrough, backends, name, metadata, description));

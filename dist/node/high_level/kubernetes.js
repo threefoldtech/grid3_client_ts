@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Kubernetes = void 0;
+exports.KubernetesHL = void 0;
 const workload_1 = require("../zos/workload");
 const machine_1 = require("../high_level//machine");
 const base_1 = require("./base");
 const Flist = "https://hub.grid.tf/ahmed_hanafy_1/ahmedhanafy725-k3s-latest.flist";
-class Kubernetes extends base_1.HighLevelBase {
+class KubernetesHL extends base_1.HighLevelBase {
     async add_master(name, nodeId, secret, cpu, memory, rootfs_size, diskSize, publicIp, planetary, network, sshKey, metadata = "", description = "") {
         console.log(`Creating a master with name: ${name} on node: ${nodeId}, network: ${network.name}`);
-        const machine = new machine_1.VirtualMachine(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+        const machine = new machine_1.VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
         const mountpoint = "/mnt/data";
         const env = {
             SSH_KEY: sshKey,
@@ -27,7 +27,7 @@ class Kubernetes extends base_1.HighLevelBase {
     }
     async add_worker(name, nodeId, secret, masterIp, cpu, memory, rootfs_size, diskSize, publicIp, planetary, network, sshKey, metadata = "", description = "") {
         console.log(`Creating a worker with name: ${name} on node: ${nodeId}, network: ${network.name}`);
-        const machine = new machine_1.VirtualMachine(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+        const machine = new machine_1.VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
         const mountpoint = "/mnt/data";
         const env = {
             SSH_KEY: sshKey,
@@ -52,4 +52,4 @@ class Kubernetes extends base_1.HighLevelBase {
         ]);
     }
 }
-exports.Kubernetes = Kubernetes;
+exports.KubernetesHL = KubernetesHL;

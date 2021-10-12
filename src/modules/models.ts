@@ -1,78 +1,92 @@
 import { Deployment } from "../zos/deployment";
 import { ZdbModes, DeviceTypes } from "../zos/zdb";
 
-class VirtualMachineDisk {
+class DiskModel {
     name: string;
-    size: number;
+    size: number; // in GB
     mountpoint: string;
 };
 
-class Network {
+class NetworkModel {
     name: string;
     ip_range: string;
 }
 
-class BaseGetDelete {
+class BaseGetDeleteModel {
     name: string;
 }
 
-class Machines {
+class MachineModel {
     name: string;
     node_id: number;
-    disks: VirtualMachineDisk[];
-    network: Network;
+    disks: DiskModel[];
     public_ip: boolean;
     planetary: boolean;
     cpu: number;
-    memory: number;
-    rootfs_size: number;
+    memory: number; // in MB
+    rootfs_size: number; // in GB
     flist: string;
     entrypoint: string;
-    metadata: string;
-    description: string;
     env: Record<string, unknown>;
 }
 
-class MachinesGet extends BaseGetDelete {}
+class MachinesModel {
+    name: string;
+    network: NetworkModel;
+    machines: MachineModel[];
+    metadata: string;
+    description: string;
+}
 
-class MachinesDelete extends BaseGetDelete {}
+class AddMachineModel extends MachineModel {
+    deployment_name: string;
+}
 
-class KubernetesNode {
+class DeleteMachineModel {
+    name: string;
+    deployment_name: string;
+}
+
+class MachinesGetModel extends BaseGetDeleteModel {}
+
+class MachinesDeleteModel extends BaseGetDeleteModel {}
+
+class KubernetesNodeModel {
     name: string;
     node_id: number;
     cpu: number;
-    memory: number;
-    rootfs_size: number;
-    disk_size: number;
+    memory: number; // in MB
+    rootfs_size: number; // in GB
+    disk_size: number; // in GB
     public_ip: boolean;
     planetary: boolean;
 }
 
-class K8S {
+class K8SModel {
     name: string;
     secret: string;
-    network: Network;
-    masters: KubernetesNode[];
-    workers: KubernetesNode[];
+    network: NetworkModel;
+    masters: KubernetesNodeModel[];
+    workers: KubernetesNodeModel[];
     metadata: string;
     description: string;
     ssh_key: string;
 }
 
-class K8SGet extends BaseGetDelete {}
+class K8SGetModel extends BaseGetDeleteModel {}
 
-class K8SDelete extends BaseGetDelete {}
+class K8SDeleteModel extends BaseGetDeleteModel {}
 
-class AddWorker extends KubernetesNode {
+class AddWorkerModel extends KubernetesNodeModel {
     deployment_name: string;
 }
 
-class DeleteWorker {
+class DeleteWorkerModel {
     deployment_name: string;
     name: string;
 }
 
-class ZDB {
+class ZDBModel {
     name: string;
     node_id: number;
     mode: ZdbModes;
@@ -83,25 +97,25 @@ class ZDB {
     password: string;
 }
 
-class ZDBS {
+class ZDBSModel {
     name: string;
-    zdbs: ZDB[];
+    zdbs: ZDBModel[];
     metadata: string;
     description: string;
 }
 
-class ZDBGet extends BaseGetDelete {}
+class ZDBGetModel extends BaseGetDeleteModel {}
 
-class ZDBDelete extends BaseGetDelete {}
+class ZDBDeleteModel extends BaseGetDeleteModel {}
 
-class AddZDB extends ZDB {
+class AddZDBModel extends ZDBModel {
     deployment_name: string;
 }
 
-class DeleteZDB extends DeleteWorker {}
+class DeleteZDBModel extends DeleteWorkerModel {}
 
 
-class DeployGatewayFQDN {
+class DeployGatewayFQDNModel {
     name: string;
     node_id: number;
     fqdn: string;
@@ -109,34 +123,39 @@ class DeployGatewayFQDN {
     backends: string[];
 }
 
-class DeployGatewayName {
+class DeployGatewayNameModel {
     name: string;
     node_id: number;
     tls_passthrough: boolean;
     backends: string[];
 }
 
-class ZOS extends Deployment {
+class ZOSModel extends Deployment {
     node_id: number;
 }
 
 export {
-    VirtualMachineDisk,
-    Machines,
-    MachinesGet,
-    MachinesDelete,
-    KubernetesNode,
-    K8S,
-    K8SGet,
-    K8SDelete,
-    AddWorker,
-    DeleteWorker,
-    ZDBS,
-    ZDBGet,
-    ZDBDelete,
-    AddZDB,
-    DeleteZDB,
-    DeployGatewayFQDN,
-    DeployGatewayName,
-    ZOS,
+    DiskModel,
+    NetworkModel,
+    MachineModel,
+    MachinesModel,
+    MachinesGetModel,
+    MachinesDeleteModel,
+    AddMachineModel,
+    DeleteMachineModel,
+    KubernetesNodeModel,
+    K8SModel,
+    K8SGetModel,
+    K8SDeleteModel,
+    AddWorkerModel,
+    DeleteWorkerModel,
+    ZDBModel,
+    ZDBSModel,
+    ZDBGetModel,
+    ZDBDeleteModel,
+    AddZDBModel,
+    DeleteZDBModel,
+    DeployGatewayFQDNModel,
+    DeployGatewayNameModel,
+    ZOSModel,
 };

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Gateway = void 0;
+exports.GWModule = void 0;
 const base_1 = require("./base");
 const gateway_1 = require("../high_level/gateway");
-class Gateway extends base_1.BaseModule {
+class GWModule extends base_1.BaseModule {
     twin_id;
     url;
     mnemonic;
@@ -37,4 +37,4 @@ class Gateway extends base_1.BaseModule {
         return { contracts: contracts };
     }
 }
-exports.Gateway = Gateway;
+exports.GWModule = GWModule;

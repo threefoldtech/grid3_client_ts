@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VM = void 0;
+exports.VMPrimitive = void 0;
 const zmachine_1 = require("../zos/zmachine");
 const workload_1 = require("../zos/workload");
 const computecapacity_1 = require("../zos/computecapacity");
-class VM {
+class VMPrimitive {
     _createComputeCapacity(cpu, memory) {
         const compute_capacity = new computecapacity_1.ComputeCapacity();
         compute_capacity.cpu = cpu;
@@ -43,4 +43,4 @@ class VM {
         return zmachine_workload;
     }
 }
-exports.VM = VM;
+exports.VMPrimitive = VMPrimitive;

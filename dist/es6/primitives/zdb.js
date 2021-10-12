@@ -1,6 +1,6 @@
 import { Zdb, ZdbModes, DeviceTypes } from "../zos/zdb";
 import { WorkloadTypes, Workload } from "../zos/workload";
-class zdb {
+class ZdbPrimitive {
     create(name, namespace, size, mode = ZdbModes.seq, password, type = DeviceTypes.hdd, pub, metadata = "", description = "", version = 0) {
         const zdb = new Zdb();
         zdb.namespace = namespace;
@@ -22,4 +22,4 @@ class zdb {
         return this.create(name, namespace, size, mode, password, type, pub, metadata, description, version);
     }
 }
-export { zdb };
+export { ZdbPrimitive };

@@ -4,6 +4,12 @@ import getAppDataPath from "appdata-path";
 const appsPath = getAppDataPath();
 const appPath = PATH.join(appsPath, "grid3_client");
 function loadFromFile(path) {
+    if (!FS.existsSync(appPath)) {
+        FS.mkdirSync(appPath);
+    }
+    if (!FS.existsSync(path)) {
+        dumpToFile(path, {});
+    }
     const data = FS.readFileSync(path);
     return JSON.parse(data.toString());
 }

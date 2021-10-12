@@ -3,7 +3,7 @@ import { Deployment } from "../zos/deployment";
 import { WorkloadTypes } from "../zos/workload";
 
 import { HighLevelBase } from "./base";
-import { zdb } from "../primitives/zdb";
+import { ZdbPrimitive } from "../primitives/zdb";
 import { DeploymentFactory } from "../primitives/deployment";
 import { TwinDeployment, Operations } from "../high_level/models";
 
@@ -21,7 +21,7 @@ class ZdbHL extends HighLevelBase {
         description = "",
     ) {
         const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
-        const zdbFactory = new zdb();
+        const zdbFactory = new ZdbPrimitive();
         const zdbWorkload = zdbFactory.create(
             name,
             namespace,

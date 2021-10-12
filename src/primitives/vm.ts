@@ -2,7 +2,7 @@ import { Zmachine, Mount, ZNetworkInterface, ZmachineNetwork } from "../zos/zmac
 import { WorkloadTypes, Workload } from "../zos/workload";
 import { ComputeCapacity } from "../zos/computecapacity";
 
-class VM {
+class VMPrimitive {
     _createComputeCapacity(cpu: number, memory: number): ComputeCapacity {
         const compute_capacity = new ComputeCapacity();
         compute_capacity.cpu = cpu;
@@ -59,4 +59,4 @@ class VM {
     }
 }
 
-export { VM };
+export { VMPrimitive };

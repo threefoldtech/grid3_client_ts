@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GW = void 0;
+exports.GWPrimitive = void 0;
 const gateway_1 = require("../zos/gateway");
 const workload_1 = require("../zos/workload");
-class GW {
+class GWPrimitive {
     createFQDN(fqdn, tls_passthrough, backends, name, metadata = "", description = "", version = 0) {
         const fqdnObj = new gateway_1.GatewayFQDNProxy();
         fqdnObj.fqdn = fqdn;
@@ -39,4 +39,4 @@ class GW {
         return this.createName(name, tls_passthrough, backends, metadata, description, old_version + 1);
     }
 }
-exports.GW = GW;
+exports.GWPrimitive = GWPrimitive;

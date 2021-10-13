@@ -11,7 +11,7 @@ import * as PATH from "path";
 import { default as TweetNACL } from "tweetnacl";
 import { Buffer } from "buffer";
 import { Addr } from "netaddr";
-import { default as isPrivateIP } from "private-ip";
+import { default as IP } from "ip";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Znet, Peer } from "../zos/znet";
 import { loadFromFile, dumpToFile, appPath } from "../helpers/jsonfs";
@@ -379,7 +379,7 @@ class Network {
         });
     }
     isPrivateIP(ip) {
-        return isPrivateIP(ip);
+        return IP.isPrivate(ip.split("/")[0]);
     }
     getNodeEndpoint(node_id) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { default as IP } from "ip";
-import { default as isPrivateIP } from "private-ip";
 import { TFClient } from "../tf-grid/client";
 import { send } from "../helpers/requests";
 const graphqlURL = "https://tfchain.dev.threefold.io/graphql/graphql";
@@ -61,8 +60,8 @@ function getAccessNodes() {
                 if (config === conf["id"]) {
                     const ipv4 = conf["ipv4"];
                     const ipv6 = conf["ipv6"];
-                    if ((IP.isV4Format(ipv4.split("/")[0]) && !isPrivateIP(ipv4)) ||
-                        (IP.isV6Format(ipv6.split("/")[0]) && !isPrivateIP(ipv6))) {
+                    if ((IP.isV4Format(ipv4.split("/")[0]) && !IP.isPrivate(ipv4.split("/")[0])) ||
+                        (IP.isV6Format(ipv6.split("/")[0]) && !IP.isPrivate(ipv6.split("/")[0]))) {
                         accessNodes[nodeId] = { ipv4: ipv4, ipv6: ipv6 };
                     }
                 }

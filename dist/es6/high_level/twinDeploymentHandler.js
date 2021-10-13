@@ -301,7 +301,7 @@ class TwinDeploymentHandler {
                     if (twinDeployment.network) {
                         yield twinDeployment.network.save();
                     }
-                    console.log(`Deployment has been deleted with contract_id: ${contract["contract_id"]}`);
+                    console.log(`Deployment has been deleted with contract_id: ${contract}`);
                 }
             }
             yield this.waitForDeployments(twinDeployments);

@@ -7,6 +7,7 @@ const models_1 = require("./models");
 const base_1 = require("./base");
 const index_1 = require("../primitives/index");
 const utils_1 = require("../helpers/utils");
+const events_1 = require("../helpers/events");
 class VMHL extends base_1.HighLevelBase {
     async create(name, nodeId, flist, cpu, memory, rootfs_size, disks, publicIp, planetary, network, entrypoint, env, metadata = "", description = "") {
         const deployments = [];
@@ -89,7 +90,7 @@ class VMHL extends base_1.HighLevelBase {
         // check the planetary
         const vm = new index_1.VMPrimitive();
         const machine_ip = network.getFreeIP(nodeId);
-        console.log(`Creating a vm on node: ${nodeId}, network: ${network.name} with private ip: ${machine_ip}`);
+        events_1.events.emit("logs", `Creating a vm on node: ${nodeId}, network: ${network.name} with private ip: ${machine_ip}`);
         workloads.push(vm.create(name, flist, cpu, memory, rootfs_size, diskMounts, network.name, machine_ip, planetary, ipName, entrypoint, env, metadata, description));
         // deployment
         // NOTE: expiration is not used for zos deployment

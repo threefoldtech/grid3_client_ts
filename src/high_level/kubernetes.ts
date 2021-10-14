@@ -4,6 +4,7 @@ import { WorkloadTypes } from "../zos/workload";
 import { Network } from "../primitives/network";
 import { VMHL } from "../high_level//machine";
 import { HighLevelBase } from "./base";
+import { events } from "../helpers/events";
 
 const Flist = "https://hub.grid.tf/ahmed_hanafy_1/ahmedhanafy725-k3s-latest.flist";
 
@@ -23,7 +24,7 @@ class KubernetesHL extends HighLevelBase {
         metadata = "",
         description = "",
     ) {
-        console.log(`Creating a master with name: ${name} on node: ${nodeId}, network: ${network.name}`);
+        events.emit("logs", `Creating a master with name: ${name} on node: ${nodeId}, network: ${network.name}`);
         const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
         const mountpoint = "/mnt/data";
         const env = {
@@ -73,7 +74,7 @@ class KubernetesHL extends HighLevelBase {
         metadata = "",
         description = "",
     ) {
-        console.log(`Creating a worker with name: ${name} on node: ${nodeId}, network: ${network.name}`);
+        events.emit("logs", `Creating a worker with name: ${name} on node: ${nodeId}, network: ${network.name}`);
         const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
         const mountpoint = "/mnt/data";
         const env = {

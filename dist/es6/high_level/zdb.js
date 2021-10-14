@@ -12,8 +12,10 @@ import { HighLevelBase } from "./base";
 import { ZdbPrimitive } from "../primitives/zdb";
 import { DeploymentFactory } from "../primitives/deployment";
 import { TwinDeployment, Operations } from "../high_level/models";
+import { events } from "../helpers/events";
 class ZdbHL extends HighLevelBase {
     create(name, node_id, namespace, disk_size, disk_type, mode, password, publicIpv6, metadata = "", description = "") {
+        events.emit("logs", `Creating a zdb on node: ${node_id}`);
         const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
         const zdbFactory = new ZdbPrimitive();
         const zdbWorkload = zdbFactory.create(name, namespace, disk_size, mode, password, disk_type, publicIpv6, metadata, description);

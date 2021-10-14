@@ -13,6 +13,7 @@ import { TwinDeployment, Operations } from "./models";
 import { HighLevelBase } from "./base";
 import { DiskPrimitive, VMPrimitive, IPv4Primitive, DeploymentFactory, getAccessNodes } from "../primitives/index";
 import { randomChoice } from "../helpers/utils";
+import { events } from "../helpers/events";
 class VMHL extends HighLevelBase {
     create(name, nodeId, flist, cpu, memory, rootfs_size, disks, publicIp, planetary, network, entrypoint, env, metadata = "", description = "") {
         return __awaiter(this, void 0, void 0, function* () {
@@ -96,7 +97,7 @@ class VMHL extends HighLevelBase {
             // check the planetary
             const vm = new VMPrimitive();
             const machine_ip = network.getFreeIP(nodeId);
-            console.log(`Creating a vm on node: ${nodeId}, network: ${network.name} with private ip: ${machine_ip}`);
+            events.emit("logs", `Creating a vm on node: ${nodeId}, network: ${network.name} with private ip: ${machine_ip}`);
             workloads.push(vm.create(name, flist, cpu, memory, rootfs_size, diskMounts, network.name, machine_ip, planetary, ipName, entrypoint, env, metadata, description));
             // deployment
             // NOTE: expiration is not used for zos deployment

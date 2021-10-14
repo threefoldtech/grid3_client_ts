@@ -7,6 +7,7 @@ const deployment_1 = require("../primitives/deployment");
 const network_1 = require("../primitives/network");
 const nodes_1 = require("../primitives/nodes");
 const models_1 = require("../high_level/models");
+const events_1 = require("../helpers/events");
 class HighLevelBase {
     twin_id;
     url;
@@ -63,7 +64,7 @@ class HighLevelBase {
             const network = new network_1.Network(networkName, networkIpRange, this.rmbClient);
             await network.load(true);
             const machineIp = workload.data["network"].interfaces[0].ip;
-            console.log(`Deleting ip: ${machineIp} from node: ${node_id}, network ${network.name}`);
+            events_1.events.emit("logs", `Deleting ip: ${machineIp} from node: ${node_id}, network ${network.name}`);
             const deletedIp = network.deleteReservedIp(node_id, machineIp);
             if (network.getNodeReservedIps(node_id).length !== 0) {
                 deletedIps.push(deletedIp);

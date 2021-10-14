@@ -33,6 +33,7 @@ const znet_1 = require("../zos/znet");
 const jsonfs_1 = require("../helpers/jsonfs");
 const utils_1 = require("../helpers/utils");
 const nodes_1 = require("./nodes");
+const events_1 = require("../helpers/events");
 class WireGuardKeys {
     privateKey;
     publicKey;
@@ -71,7 +72,7 @@ class Network {
         if (!this.nodeExists(node_id)) {
             throw Error(`Node ${node_id} does not exist in the network. Please add it first`);
         }
-        console.log(`Adding access to node ${node_id}`);
+        events_1.events.emit("logs", `Adding access to node ${node_id}`);
         const accessNodes = await (0, nodes_1.getAccessNodes)();
         if (Object.keys(accessNodes).includes(node_id.toString())) {
             if (ipv4 && !accessNodes[node_id]["ipv4"]) {
@@ -107,7 +108,7 @@ class Network {
         if (this.nodeExists(node_id)) {
             return;
         }
-        console.log(`Adding node ${node_id} to network ${this.name}`);
+        events_1.events.emit("logs", `Adding node ${node_id} to network ${this.name}`);
         const keypair = this.generateWireguardKeypair();
         let znet = new znet_1.Znet();
         znet.subnet = this.getFreeSubnet();
@@ -135,7 +136,7 @@ class Network {
         if (!this.exists()) {
             return 0;
         }
-        console.log(`Deleting node ${node_id} from network ${this.name}`);
+        events_1.events.emit("logs", `Deleting node ${node_id} from network ${this.name}`);
         let contract_id = 0;
         const nodes = [];
         for (const node of this.nodes) {
@@ -181,7 +182,7 @@ class Network {
         if (!Object.keys(networks).includes(this.name)) {
             return;
         }
-        console.log(`Loading network ${this.name}`);
+        events_1.events.emit("logs", `Loading network ${this.name}`);
         const network = networks[this.name];
         if (network.ip_range !== this.ipRange) {
             throw Error(`The same network name ${this.name} with different ip range is already exist`);
@@ -383,7 +384,7 @@ class Network {
         const msg = this.rmbClient.prepare("zos.network.list_wg_ports", [node_twin_id], 0, 2);
         const message = await this.rmbClient.send(msg, "");
         const result = await this.rmbClient.read(message);
-        console.log(result);
+        events_1.events.emit("logs", result);
         let port = 0;
         while (!port || JSON.parse(result[0].dat).includes(port)) {
             port = (0, utils_1.getRandomNumber)(2000, 8000);
@@ -398,7 +399,7 @@ class Network {
         let msg = this.rmbClient.prepare("zos.network.public_config_get", [node_twin_id], 0, 2);
         let message = await this.rmbClient.send(msg, "");
         let result = await this.rmbClient.read(message);
-        console.log(result);
+        events_1.events.emit("logs", result);
         if (!result[0].err && result[0].dat) {
             const data = JSON.parse(result[0].dat);
             const ipv4 = data.ipv4;
@@ -410,11 +411,11 @@ class Network {
                 return ipv6.split("/")[0];
             }
         }
-        console.log(`node ${node_id} has no public config`);
+        events_1.events.emit("logs", `node ${node_id} has no public config`);
         msg = this.rmbClient.prepare("zos.network.interfaces", [node_twin_id], 0, 2);
         message = await this.rmbClient.send(msg, "");
         result = await this.rmbClient.read(message);
-        console.log(result);
+        events_1.events.emit("logs", result);
         if (!result[0].err && result[0].dat) {
             const data = JSON.parse(result[0].dat);
             for (const iface of Object.keys(data)) {
@@ -480,14 +481,14 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
         (0, jsonfs_1.dumpToFile)(path, networks);
     }
     delete() {
-        console.log(`Deleting network ${this.name}`);
+        events_1.events.emit("logs", `Deleting network ${this.name}`);
         const networks = this.getNetworks();
         delete networks[this.name];
         const path = PATH.join(jsonfs_1.appPath, "network.json");
         (0, jsonfs_1.dumpToFile)(path, networks);
     }
     async generatePeers() {
-        console.log(`Generating peers for network ${this.name}`);
+        events_1.events.emit("logs", `Generating peers for network ${this.name}`);
         for (const n of this.networks) {
             n.peers = [];
             for (const net of this.networks) {

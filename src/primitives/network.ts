@@ -12,6 +12,7 @@ import { Deployment } from "../zos/deployment";
 import { loadFromFile, dumpToFile, appPath } from "../helpers/jsonfs";
 import { getRandomNumber } from "../helpers/utils";
 import { getNodeTwinId, getAccessNodes } from "./nodes";
+import { events } from "../helpers/events";
 
 class WireGuardKeys {
     privateKey: string;
@@ -50,7 +51,7 @@ class Network {
         if (!this.nodeExists(node_id)) {
             throw Error(`Node ${node_id} does not exist in the network. Please add it first`);
         }
-        console.log(`Adding access to node ${node_id}`);
+        events.emit("logs", `Adding access to node ${node_id}`);
         const accessNodes = await getAccessNodes();
         if (Object.keys(accessNodes).includes(node_id.toString())) {
             if (ipv4 && !accessNodes[node_id]["ipv4"]) {
@@ -87,7 +88,7 @@ class Network {
         if (this.nodeExists(node_id)) {
             return;
         }
-        console.log(`Adding node ${node_id} to network ${this.name}`);
+        events.emit("logs", `Adding node ${node_id} to network ${this.name}`);
         const keypair = this.generateWireguardKeypair();
         let znet = new Znet();
         znet.subnet = this.getFreeSubnet();
@@ -120,7 +121,7 @@ class Network {
         if (!this.exists()) {
             return 0;
         }
-        console.log(`Deleting node ${node_id} from network ${this.name}`);
+        events.emit("logs", `Deleting node ${node_id} from network ${this.name}`);
         let contract_id = 0;
         const nodes = [];
         for (const node of this.nodes) {
@@ -169,7 +170,7 @@ class Network {
         if (!Object.keys(networks).includes(this.name)) {
             return;
         }
-        console.log(`Loading network ${this.name}`);
+        events.emit("logs", `Loading network ${this.name}`);
         const network = networks[this.name];
         if (network.ip_range !== this.ipRange) {
             throw Error(`The same network name ${this.name} with different ip range is already exist`);
@@ -391,7 +392,7 @@ class Network {
         const msg = this.rmbClient.prepare("zos.network.list_wg_ports", [node_twin_id], 0, 2);
         const message = await this.rmbClient.send(msg, "");
         const result = await this.rmbClient.read(message);
-        console.log(result);
+        events.emit("logs", result);
 
         let port = 0;
         while (!port || JSON.parse(result[0].dat).includes(port)) {
@@ -409,7 +410,7 @@ class Network {
         let msg = this.rmbClient.prepare("zos.network.public_config_get", [node_twin_id], 0, 2);
         let message = await this.rmbClient.send(msg, "");
         let result = await this.rmbClient.read(message);
-        console.log(result);
+        events.emit("logs", result);
 
         if (!result[0].err && result[0].dat) {
             const data = JSON.parse(result[0].dat);
@@ -422,12 +423,12 @@ class Network {
                 return ipv6.split("/")[0];
             }
         }
-        console.log(`node ${node_id} has no public config`);
+        events.emit("logs", `node ${node_id} has no public config`);
 
         msg = this.rmbClient.prepare("zos.network.interfaces", [node_twin_id], 0, 2);
         message = await this.rmbClient.send(msg, "");
         result = await this.rmbClient.read(message);
-        console.log(result);
+        events.emit("logs", result);
 
         if (!result[0].err && result[0].dat) {
             const data = JSON.parse(result[0].dat);
@@ -500,7 +501,7 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     }
 
     delete(): void {
-        console.log(`Deleting network ${this.name}`);
+        events.emit("logs", `Deleting network ${this.name}`);
         const networks = this.getNetworks();
         delete networks[this.name];
         const path = PATH.join(appPath, "network.json");
@@ -508,7 +509,7 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     }
 
     async generatePeers(): Promise<void> {
-        console.log(`Generating peers for network ${this.name}`);
+        events.emit("logs", `Generating peers for network ${this.name}`);
         for (const n of this.networks) {
             n.peers = [];
             for (const net of this.networks) {

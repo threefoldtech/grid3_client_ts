@@ -13,6 +13,7 @@ import { DeploymentFactory } from "../primitives/deployment";
 import { Network } from "../primitives/network";
 import { getNodeIdFromContractId } from "../primitives/nodes";
 import { TwinDeployment, Operations } from "../high_level/models";
+import { events } from "../helpers/events";
 class HighLevelBase {
     constructor(twin_id, url, mnemonic, rmbClient) {
         this.twin_id = twin_id;
@@ -66,7 +67,7 @@ class HighLevelBase {
                 const network = new Network(networkName, networkIpRange, this.rmbClient);
                 yield network.load(true);
                 const machineIp = workload.data["network"].interfaces[0].ip;
-                console.log(`Deleting ip: ${machineIp} from node: ${node_id}, network ${network.name}`);
+                events.emit("logs", `Deleting ip: ${machineIp} from node: ${node_id}, network ${network.name}`);
                 const deletedIp = network.deleteReservedIp(node_id, machineIp);
                 if (network.getNodeReservedIps(node_id).length !== 0) {
                     deletedIps.push(deletedIp);

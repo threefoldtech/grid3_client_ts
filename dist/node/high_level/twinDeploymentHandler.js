@@ -5,6 +5,7 @@ const workload_1 = require("../zos/workload");
 const client_1 = require("../tf-grid/client");
 const models_1 = require("./models");
 const index_1 = require("../primitives/index");
+const events_1 = require("../helpers/events");
 class TwinDeploymentHandler {
     rmbClient;
     twin_id;
@@ -24,7 +25,7 @@ class TwinDeploymentHandler {
         if (contract instanceof Error) {
             throw Error(`Failed to create contract ${contract}`);
         }
-        console.log(`Contract with id: ${contract["contract_id"]} has been created`);
+        events_1.events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
         deployment.contract_id = contract["contract_id"];
         const payload = JSON.stringify(deployment);
         const node_twin_id = await (0, index_1.getNodeTwinId)(node_id);
@@ -52,7 +53,7 @@ class TwinDeploymentHandler {
         if (contract instanceof Error) {
             throw Error(`Failed to update contract ${contract}`);
         }
-        console.log(`Contract with id: ${contract["contract_id"]} has been updated`);
+        events_1.events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
         const payload = JSON.stringify(deployment);
         const node_twin_id = await (0, index_1.getNodeTwinId)(contract["contract_type"]["nodeContract"]["node_id"]);
         try {
@@ -135,7 +136,7 @@ class TwinDeploymentHandler {
         const promises = [];
         for (const twinDeployment of twinDeployments) {
             if ([models_1.Operations.deploy, models_1.Operations.update].includes(twinDeployment.operation)) {
-                console.log(`Waiting for deployment with contract_id: ${twinDeployment.deployment.contract_id} to be ready`);
+                events_1.events.emit("logs", `Waiting for deployment with contract_id: ${twinDeployment.deployment.contract_id} to be ready`);
                 promises.push(this.waitForDeployment(twinDeployment, timeout));
             }
         }
@@ -246,7 +247,7 @@ class TwinDeploymentHandler {
         return deployments;
     }
     async handle(twinDeployments) {
-        console.log("Merging workloads");
+        events_1.events.emit("logs", "Merging workloads");
         twinDeployments = this.merge(twinDeployments);
         const contracts = { created: [], updated: [], deleted: [] };
         for (const twinDeployment of twinDeployments) {
@@ -255,39 +256,39 @@ class TwinDeploymentHandler {
                     break;
                 }
                 if (workload.type === workload_1.WorkloadTypes.network) {
-                    console.log(`Updating network workload with name: ${workload.name}`);
+                    events_1.events.emit("logs", `Updating network workload with name: ${workload.name}`);
                     workload["data"] = twinDeployment.network.updateNetwork(workload.data);
                 }
             }
             if (twinDeployment.operation === models_1.Operations.deploy) {
                 twinDeployment.deployment.sign(this.twin_id, this.mnemonic);
-                console.log(`Deploying on node_id: ${twinDeployment.nodeId}`);
+                events_1.events.emit("logs", `Deploying on node_id: ${twinDeployment.nodeId}`);
                 const contract = await this.deploy(twinDeployment.deployment, twinDeployment.nodeId, twinDeployment.publicIps);
                 twinDeployment.deployment.contract_id = contract["contract_id"];
                 contracts.created.push(contract);
                 if (twinDeployment.network) {
                     await twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
                 }
-                console.log(`A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contract_type"]["nodeContract"]["node_id"]}`);
+                events_1.events.emit("logs", `A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contract_type"]["nodeContract"]["node_id"]}`);
             }
             else if (twinDeployment.operation === models_1.Operations.update) {
                 twinDeployment.deployment.sign(this.twin_id, this.mnemonic);
-                console.log(`Updating deployment with contract_id: ${twinDeployment.deployment.contract_id}`);
+                events_1.events.emit("logs", `Updating deployment with contract_id: ${twinDeployment.deployment.contract_id}`);
                 const contract = await this.update(twinDeployment.deployment, twinDeployment.publicIps);
                 contracts.updated.push(contract);
                 if (twinDeployment.network) {
                     await twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
                 }
-                console.log(`Deployment has been updated with contract_id: ${contract["contract_id"]}`);
+                events_1.events.emit("logs", `Deployment has been updated with contract_id: ${contract["contract_id"]}`);
             }
             else if (twinDeployment.operation === models_1.Operations.delete) {
-                console.log(`Deleting deployment with contract_id: ${twinDeployment.deployment.contract_id}`);
+                events_1.events.emit("logs", `Deleting deployment with contract_id: ${twinDeployment.deployment.contract_id}`);
                 const contract = await this.delete(twinDeployment.deployment.contract_id);
                 contracts.deleted.push({ contract_id: contract });
                 if (twinDeployment.network) {
                     await twinDeployment.network.save();
                 }
-                console.log(`Deployment has been deleted with contract_id: ${contract}`);
+                events_1.events.emit("logs", `Deployment has been deleted with contract_id: ${contract}`);
             }
         }
         await this.waitForDeployments(twinDeployments);

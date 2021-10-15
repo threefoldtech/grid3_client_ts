@@ -53,7 +53,7 @@ class K8sModule extends BaseModule {
             let deployments = [];
             let wireguardConfig = "";
             for (const master of options.masters) {
-                const [twinDeployments, wgConfig] = yield this.kubernetes.add_master(master.name, master.node_id, options.secret, master.cpu, master.memory, master.rootfs_size, master.disk_size, master.public_ip, master.planetary, network, options.ssh_key, options.metadata, options.description);
+                const [twinDeployments, wgConfig] = yield this.kubernetes.add_master(master.name, master.node_id, options.secret, master.cpu, master.memory, master.rootfs_size, master.disk_size, master.public_ip, master.planetary, network, options.ssh_key, options.metadata, options.description, master.qsfs_disks, this.projectName);
                 deployments = deployments.concat(twinDeployments);
                 if (wgConfig) {
                     wireguardConfig = wgConfig;
@@ -145,7 +145,7 @@ class K8sModule extends BaseModule {
             const networkIpRange = Addr(masterWorkload.data["network"].interfaces[0].ip).mask(16).toString();
             const network = new Network(networkName, networkIpRange, this.rmbClient);
             yield network.load(true);
-            const [twinDeployments, _] = yield this.kubernetes.add_worker(options.name, options.node_id, masterWorkload.data["env"]["K3S_TOKEN"], masterWorkload.data["network"]["interfaces"][0]["ip"], options.cpu, options.memory, options.rootfs_size, options.disk_size, options.public_ip, options.planetary, network, masterWorkload.data["env"]["SSH_KEY"], masterWorkload.metadata, masterWorkload.description);
+            const [twinDeployments, _] = yield this.kubernetes.add_worker(options.name, options.node_id, masterWorkload.data["env"]["K3S_TOKEN"], masterWorkload.data["network"]["interfaces"][0]["ip"], options.cpu, options.memory, options.rootfs_size, options.disk_size, options.public_ip, options.planetary, network, masterWorkload.data["env"]["SSH_KEY"], masterWorkload.metadata, masterWorkload.description, options.qsfs_disks, this.projectName);
             return yield this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
         });
     }

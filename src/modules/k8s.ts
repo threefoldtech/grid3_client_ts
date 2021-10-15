@@ -67,6 +67,8 @@ class K8sModule extends BaseModule {
                 options.ssh_key,
                 options.metadata,
                 options.description,
+                master.qsfs_disks,
+                this.projectName
             );
 
             deployments = deployments.concat(twinDeployments);
@@ -192,6 +194,8 @@ class K8sModule extends BaseModule {
             masterWorkload.data["env"]["SSH_KEY"],
             masterWorkload.metadata,
             masterWorkload.description,
+            options.qsfs_disks,
+            this.projectName
         );
 
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);

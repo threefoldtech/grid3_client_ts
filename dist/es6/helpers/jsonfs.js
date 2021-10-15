@@ -4,8 +4,8 @@ import getAppDataPath from "appdata-path";
 const appsPath = getAppDataPath();
 const appPath = PATH.join(appsPath, "grid3_client");
 function loadFromFile(path) {
-    if (!FS.existsSync(appPath)) {
-        FS.mkdirSync(appPath);
+    if (!FS.existsSync(PATH.dirname(path))) {
+        FS.mkdirSync(PATH.dirname(path));
     }
     if (!FS.existsSync(path)) {
         dumpToFile(path, {});

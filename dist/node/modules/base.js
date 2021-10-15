@@ -32,6 +32,7 @@ class BaseModule {
     url;
     mnemonic;
     rmbClient;
+    projectName = "";
     fileName = "";
     deploymentFactory;
     twinDeploymentHandler;
@@ -43,9 +44,12 @@ class BaseModule {
         this.deploymentFactory = new deployment_1.DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new twinDeploymentHandler_1.TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
     }
+    _load() {
+        const path = PATH.join(jsonfs_1.appPath, this.projectName, this.fileName);
+        return [path, (0, jsonfs_1.loadFromFile)(path)];
+    }
     save(name, contracts, wgConfig = "", action = "add") {
-        const path = PATH.join(jsonfs_1.appPath, this.fileName);
-        const data = (0, jsonfs_1.loadFromFile)(path);
+        const [path, data] = this._load();
         let deploymentData = { contracts: [], wireguard_config: "" };
         if (Object.keys(data).includes(name)) {
             deploymentData = data[name];
@@ -68,8 +72,7 @@ class BaseModule {
         return deploymentData;
     }
     _list() {
-        const path = PATH.join(jsonfs_1.appPath, this.fileName);
-        const data = (0, jsonfs_1.loadFromFile)(path);
+        const [_, data] = this._load();
         return Object.keys(data);
     }
     exists(name) {
@@ -84,8 +87,7 @@ class BaseModule {
         return nodeIds;
     }
     _getContracts(name) {
-        const path = PATH.join(jsonfs_1.appPath, this.fileName);
-        const data = (0, jsonfs_1.loadFromFile)(path);
+        const [_, data] = this._load();
         if (!Object.keys(data).includes(name)) {
             return [];
         }
@@ -108,13 +110,13 @@ class BaseModule {
         }
     }
     async _get(name) {
-        const path = PATH.join(jsonfs_1.appPath, this.fileName);
-        const data = (0, jsonfs_1.loadFromFile)(path);
+        const [_, data] = this._load();
         if (!Object.keys(data).includes(name)) {
             return [];
         }
         const deployments = [];
         for (const contract of data[name]["contracts"]) {
+            //TODO: Check contract state before load it from zos and if it's deleted, remove it from the filesystem storage.
             const node_twin_id = await (0, nodes_1.getNodeTwinId)(contract["node_id"]);
             const payload = JSON.stringify({ contract_id: contract["contract_id"] });
             const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
@@ -123,6 +125,7 @@ class BaseModule {
             if (result[0].err) {
                 throw Error(String(result[0].err));
             }
+            //TODO: Check if the deployment doesn't have the module type to remove them from the filesystem.
             deployments.push(JSON.parse(String(result[0].dat)));
         }
         return deployments;
@@ -197,8 +200,7 @@ class BaseModule {
         throw Error(`instance with name ${name} is not found`);
     }
     async _delete(name) {
-        const path = PATH.join(jsonfs_1.appPath, this.fileName);
-        const data = (0, jsonfs_1.loadFromFile)(path);
+        const [path, data] = this._load();
         const contracts = { deleted: [], updated: [] };
         if (!Object.keys(data).includes(name)) {
             return contracts;

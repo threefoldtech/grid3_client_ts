@@ -30,7 +30,7 @@ class MachineModule extends BaseModule {
             let twinDeployments = [];
             let wireguardConfig = "";
             for (const machine of options.machines) {
-                const [TDeployments, wgConfig] = yield this.vm.create(machine.name, machine.node_id, machine.flist, machine.cpu, machine.memory, machine.rootfs_size, machine.disks, machine.public_ip, machine.planetary, network, machine.entrypoint, machine.env, options.metadata, options.description);
+                const [TDeployments, wgConfig] = yield this.vm.create(machine.name, machine.node_id, machine.flist, machine.cpu, machine.memory, machine.rootfs_size, machine.disks, machine.public_ip, machine.planetary, network, machine.entrypoint, machine.env, options.metadata, options.description, machine.qsfs_disks, this.projectName);
                 twinDeployments = twinDeployments.concat(TDeployments);
                 if (wgConfig) {
                     wireguardConfig = wgConfig;
@@ -100,7 +100,7 @@ class MachineModule extends BaseModule {
             const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
             const network = new Network(networkName, networkIpRange, this.rmbClient);
             yield network.load(true);
-            const [twinDeployments, wgConfig] = yield this.vm.create(options.name, options.node_id, options.flist, options.cpu, options.memory, options.rootfs_size, options.disks, options.public_ip, options.planetary, network, options.entrypoint, options.env, workload.metadata, workload.description);
+            const [twinDeployments, wgConfig] = yield this.vm.create(options.name, options.node_id, options.flist, options.cpu, options.memory, options.rootfs_size, options.disks, options.public_ip, options.planetary, network, options.entrypoint, options.env, workload.metadata, workload.description, options.qsfs_disks, this.projectName);
             return yield this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
         });
     }

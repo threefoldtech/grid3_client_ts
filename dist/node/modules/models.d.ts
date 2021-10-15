@@ -5,6 +5,13 @@ declare class DiskModel {
     size: number;
     mountpoint: string;
 }
+declare class QSFSDisk {
+    qsfs_zdbs_name: string;
+    name: string;
+    prefix: string;
+    encryption_key: string;
+    mountpoint: string;
+}
 declare class NetworkModel {
     name: string;
     ip_range: string;
@@ -16,6 +23,7 @@ declare class MachineModel {
     name: string;
     node_id: number;
     disks: DiskModel[];
+    qsfs_disks: QSFSDisk[];
     public_ip: boolean;
     planetary: boolean;
     cpu: number;
@@ -50,6 +58,7 @@ declare class KubernetesNodeModel {
     memory: number;
     rootfs_size: number;
     disk_size: number;
+    qsfs_disks: QSFSDisk[];
     public_ip: boolean;
     planetary: boolean;
 }
@@ -99,6 +108,21 @@ declare class AddZDBModel extends ZDBModel {
 }
 declare class DeleteZDBModel extends DeleteWorkerModel {
 }
+declare class QSFSZDBSModel {
+    name: string;
+    count: number;
+    node_ids: number[];
+    disk_size: number;
+    disk_type: DeviceTypes;
+    namespace: string;
+    password: string;
+    metadata: string;
+    description: string;
+}
+declare class QSFSZDBGetModel extends BaseGetDeleteModel {
+}
+declare class QSFSZDBDeleteModel extends BaseGetDeleteModel {
+}
 declare class DeployGatewayFQDNModel {
     name: string;
     node_id: number;
@@ -115,5 +139,5 @@ declare class DeployGatewayNameModel {
 declare class ZOSModel extends Deployment {
     node_id: number;
 }
-export { DiskModel, NetworkModel, MachineModel, MachinesModel, MachinesGetModel, MachinesDeleteModel, AddMachineModel, DeleteMachineModel, KubernetesNodeModel, K8SModel, K8SGetModel, K8SDeleteModel, AddWorkerModel, DeleteWorkerModel, ZDBModel, ZDBSModel, ZDBGetModel, ZDBDeleteModel, AddZDBModel, DeleteZDBModel, DeployGatewayFQDNModel, DeployGatewayNameModel, ZOSModel, };
+export { DiskModel, NetworkModel, MachineModel, MachinesModel, MachinesGetModel, MachinesDeleteModel, AddMachineModel, DeleteMachineModel, KubernetesNodeModel, K8SModel, K8SGetModel, K8SDeleteModel, AddWorkerModel, DeleteWorkerModel, ZDBModel, ZDBSModel, ZDBGetModel, ZDBDeleteModel, AddZDBModel, DeleteZDBModel, DeployGatewayFQDNModel, DeployGatewayNameModel, ZOSModel, QSFSDisk, QSFSZDBSModel, QSFSZDBGetModel, QSFSZDBDeleteModel };
 //# sourceMappingURL=models.d.ts.map

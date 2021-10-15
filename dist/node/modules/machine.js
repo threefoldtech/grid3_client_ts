@@ -28,7 +28,7 @@ class MachineModule extends base_1.BaseModule {
         let twinDeployments = [];
         let wireguardConfig = "";
         for (const machine of options.machines) {
-            const [TDeployments, wgConfig] = await this.vm.create(machine.name, machine.node_id, machine.flist, machine.cpu, machine.memory, machine.rootfs_size, machine.disks, machine.public_ip, machine.planetary, network, machine.entrypoint, machine.env, options.metadata, options.description);
+            const [TDeployments, wgConfig] = await this.vm.create(machine.name, machine.node_id, machine.flist, machine.cpu, machine.memory, machine.rootfs_size, machine.disks, machine.public_ip, machine.planetary, network, machine.entrypoint, machine.env, options.metadata, options.description, machine.qsfs_disks, this.projectName);
             twinDeployments = twinDeployments.concat(TDeployments);
             if (wgConfig) {
                 wireguardConfig = wgConfig;
@@ -88,7 +88,7 @@ class MachineModule extends base_1.BaseModule {
         const networkIpRange = (0, netaddr_1.Addr)(workload.data["network"].interfaces[0].ip).mask(16).toString();
         const network = new network_1.Network(networkName, networkIpRange, this.rmbClient);
         await network.load(true);
-        const [twinDeployments, wgConfig] = await this.vm.create(options.name, options.node_id, options.flist, options.cpu, options.memory, options.rootfs_size, options.disks, options.public_ip, options.planetary, network, options.entrypoint, options.env, workload.metadata, workload.description);
+        const [twinDeployments, wgConfig] = await this.vm.create(options.name, options.node_id, options.flist, options.cpu, options.memory, options.rootfs_size, options.disks, options.public_ip, options.planetary, network, options.entrypoint, options.env, workload.metadata, workload.description, options.qsfs_disks, this.projectName);
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }
     async deleteMachine(options) {

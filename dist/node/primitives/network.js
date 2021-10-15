@@ -208,6 +208,7 @@ class Network {
                         !(0, netaddr_1.Addr)(this.ipRange).contains((0, netaddr_1.Addr)(workload["data"]["subnet"]))) {
                         continue;
                     }
+                    //TODO: don't load network if network workload is deleted, and delete it from the filesystem.
                     const znet = this._fromObj(workload["data"]);
                     znet["node_id"] = node.node_id;
                     this.networks.push(znet);

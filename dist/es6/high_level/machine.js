@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import * as PATH from "path";
 import { Addr } from "netaddr";
 import { WorkloadTypes } from "../zos/workload";
 import { TwinDeployment, Operations } from "./models";
@@ -14,16 +15,36 @@ import { HighLevelBase } from "./base";
 import { DiskPrimitive, VMPrimitive, IPv4Primitive, DeploymentFactory, getAccessNodes } from "../primitives/index";
 import { randomChoice } from "../helpers/utils";
 import { events } from "../helpers/events";
+import { QSFSPrimitive } from "../primitives/qsfs";
+import { QSFSZdbsModule } from "../modules/qsfs_zdbs";
 class VMHL extends HighLevelBase {
-    create(name, nodeId, flist, cpu, memory, rootfs_size, disks, publicIp, planetary, network, entrypoint, env, metadata = "", description = "") {
+    create(name, nodeId, flist, cpu, memory, rootfs_size, disks, publicIp, planetary, network, entrypoint, env, metadata = "", description = "", qsfsDisks = [], qsfsProjectName = "") {
         return __awaiter(this, void 0, void 0, function* () {
             const deployments = [];
             const workloads = [];
             // disks
             const diskMounts = [];
+            const disk = new DiskPrimitive();
             for (const d of disks) {
-                const disk = new DiskPrimitive();
                 workloads.push(disk.create(d.size, d.name, metadata, description));
+                diskMounts.push(disk.createMount(d.name, d.mountpoint));
+            }
+            // qsfs disks
+            const qsfsPrimitive = new QSFSPrimitive();
+            for (const d of qsfsDisks) {
+                // the ratio that will be used for minimal_shards is 2/5 and expected_shards 3/5
+                const qsfsZdbsModule = new QSFSZdbsModule(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+                if (qsfsProjectName) {
+                    qsfsZdbsModule.fileName = PATH.join(qsfsProjectName, qsfsZdbsModule.fileName);
+                }
+                const qsfsZdbs = yield qsfsZdbsModule.getZdbs(d.qsfs_zdbs_name);
+                if (qsfsZdbs.groups.length === 0 || qsfsZdbs.meta.length === 0) {
+                    throw Error(`Couldn't find a qsfs zdbs with name ${d.qsfs_zdbs_name}. Please create one with qsfs_zdbs module`);
+                }
+                const minimalShards = Math.ceil(qsfsZdbs.groups.length * 3 / 5);
+                const expectedShards = qsfsZdbs.groups.length - minimalShards;
+                const qsfsWorkload = qsfsPrimitive.create(d.name, minimalShards, expectedShards, d.prefix, qsfsZdbs.meta, qsfsZdbs.groups, d.encryption_key);
+                workloads.push(qsfsWorkload);
                 diskMounts.push(disk.createMount(d.name, d.mountpoint));
             }
             // ipv4
@@ -94,7 +115,6 @@ class VMHL extends HighLevelBase {
                 deployments.push(new TwinDeployment(deployment, Operations.deploy, 0, accessNodeId, network));
             }
             // vm
-            // check the planetary
             const vm = new VMPrimitive();
             const machine_ip = network.getFreeIP(nodeId);
             events.emit("logs", `Creating a vm on node: ${nodeId}, network: ${network.name} with private ip: ${machine_ip}`);
@@ -104,17 +124,6 @@ class VMHL extends HighLevelBase {
             const deployment = deploymentFactory.create(workloads, 1626394539, metadata, description);
             deployments.push(new TwinDeployment(deployment, Operations.deploy, publicIps, nodeId, network));
             return [deployments, wgConfig];
-        });
-    }
-    update(oldDeployment, name, nodeId, flist, cpu, memory, rootfs_size, disks, publicIp, planetary, network, entrypoint, env, metadata = "", description = "") {
-        return __awaiter(this, void 0, void 0, function* () {
-            const [twinDeployments, _] = yield this.create(name, nodeId, flist, cpu, memory, rootfs_size, disks, publicIp, planetary, network, entrypoint, env, metadata, description);
-            const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
-            const updatedDeployment = yield deploymentFactory.UpdateDeployment(oldDeployment, twinDeployments.pop().deployment, network);
-            if (!updatedDeployment) {
-                throw Error("Nothing found to be updated");
-            }
-            return new TwinDeployment(updatedDeployment, Operations.update, 0, 0, network);
         });
     }
     delete(deployment, names) {

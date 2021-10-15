@@ -4,6 +4,7 @@ import { Zmachine, ZmachineResult } from "./zmachine";
 import { Zdb, ZdbResult } from "./zdb";
 import { PublicIP } from "./ipv4";
 import { GatewayFQDNProxy, GatewayNameProxy, GatewayResult } from "./gateway";
+import { QuantumSafeFS } from "./qsfs";
 
 enum ResultStates {
     error = "error",
@@ -19,6 +20,7 @@ enum WorkloadTypes {
     ipv4 = "ipv4",
     gatewayfqdnproxy = "gateway-fqdn-proxy",
     gatewaynameproxy = "gateway-name-proxy",
+    qsfs = "qsfs"
 }
 
 enum Right {
@@ -48,7 +50,7 @@ class Workload {
     name: string;
     type: WorkloadTypes;
     // this should be something like json.RawMessage in golang
-    data: Zmount | Znet | Zmachine | Zdb | PublicIP | GatewayFQDNProxy | GatewayNameProxy; // serialize({size: 10}) ---> "data": {size:10},
+    data: Zmount | Znet | Zmachine | Zdb | PublicIP | GatewayFQDNProxy | GatewayNameProxy | QuantumSafeFS; // serialize({size: 10}) ---> "data": {size:10},
 
     metadata: string;
     description: string;

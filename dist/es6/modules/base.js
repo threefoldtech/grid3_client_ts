@@ -20,13 +20,17 @@ class BaseModule {
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.projectName = "";
         this.fileName = "";
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
     }
+    _load() {
+        const path = PATH.join(appPath, this.projectName, this.fileName);
+        return [path, loadFromFile(path)];
+    }
     save(name, contracts, wgConfig = "", action = "add") {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+        const [path, data] = this._load();
         let deploymentData = { contracts: [], wireguard_config: "" };
         if (Object.keys(data).includes(name)) {
             deploymentData = data[name];
@@ -49,8 +53,7 @@ class BaseModule {
         return deploymentData;
     }
     _list() {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+        const [_, data] = this._load();
         return Object.keys(data);
     }
     exists(name) {
@@ -65,8 +68,7 @@ class BaseModule {
         return nodeIds;
     }
     _getContracts(name) {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+        const [_, data] = this._load();
         if (!Object.keys(data).includes(name)) {
             return [];
         }
@@ -90,13 +92,13 @@ class BaseModule {
     }
     _get(name) {
         return __awaiter(this, void 0, void 0, function* () {
-            const path = PATH.join(appPath, this.fileName);
-            const data = loadFromFile(path);
+            const [_, data] = this._load();
             if (!Object.keys(data).includes(name)) {
                 return [];
             }
             const deployments = [];
             for (const contract of data[name]["contracts"]) {
+                //TODO: Check contract state before load it from zos and if it's deleted, remove it from the filesystem storage.
                 const node_twin_id = yield getNodeTwinId(contract["node_id"]);
                 const payload = JSON.stringify({ contract_id: contract["contract_id"] });
                 const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
@@ -105,6 +107,7 @@ class BaseModule {
                 if (result[0].err) {
                     throw Error(String(result[0].err));
                 }
+                //TODO: Check if the deployment doesn't have the module type to remove them from the filesystem.
                 deployments.push(JSON.parse(String(result[0].dat)));
             }
             return deployments;
@@ -187,8 +190,7 @@ class BaseModule {
     }
     _delete(name) {
         return __awaiter(this, void 0, void 0, function* () {
-            const path = PATH.join(appPath, this.fileName);
-            const data = loadFromFile(path);
+            const [path, data] = this._load();
             const contracts = { deleted: [], updated: [] };
             if (!Object.keys(data).includes(name)) {
                 return contracts;

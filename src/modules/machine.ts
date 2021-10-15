@@ -42,6 +42,8 @@ class MachineModule extends BaseModule {
                 machine.env,
                 options.metadata,
                 options.description,
+                machine.qsfs_disks,
+                this.projectName
             );
             twinDeployments = twinDeployments.concat(TDeployments);
             if (wgConfig) {
@@ -127,6 +129,8 @@ class MachineModule extends BaseModule {
             options.env,
             workload.metadata,
             workload.description,
+            options.qsfs_disks,
+            this.projectName
         );
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }

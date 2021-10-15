@@ -264,6 +264,7 @@ class TwinDeploymentHandler {
             events.emit("logs", "Merging workloads");
             twinDeployments = this.merge(twinDeployments);
             const contracts = { created: [], updated: [], deleted: [] };
+            //TODO: check if it can be done to save the deployment here instead of doing this in the module.
             for (const twinDeployment of twinDeployments) {
                 for (const workload of twinDeployment.deployment.workloads) {
                     if (!twinDeployment.network) {

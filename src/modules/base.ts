@@ -15,6 +15,7 @@ import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { VMHL } from "../high_level/machine";
 
 class BaseModule {
+    projectName = "";
     fileName = "";
     deploymentFactory: DeploymentFactory;
     twinDeploymentHandler: TwinDeploymentHandler;
@@ -25,9 +26,13 @@ class BaseModule {
 
     }
 
+    _load() {
+        const path = PATH.join(appPath, this.projectName, this.fileName);
+        return [path, loadFromFile(path)];
+    }
+
     save(name: string, contracts: Record<string, unknown[]>, wgConfig = "", action = "add") {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+        const [path, data] = this._load();
         let deploymentData = { contracts: [], wireguard_config: "" };
         if (Object.keys(data).includes(name)) {
             deploymentData = data[name];
@@ -56,8 +61,7 @@ class BaseModule {
     }
 
     _list(): string[] {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+        const [_, data] = this._load();
         return Object.keys(data);
     }
 
@@ -75,8 +79,7 @@ class BaseModule {
     }
 
     _getContracts(name: string): string[] {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+        const [_, data] = this._load();
         if (!Object.keys(data).includes(name)) {
             return [];
         }
@@ -101,13 +104,13 @@ class BaseModule {
     }
 
     async _get(name: string) {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+        const [_, data] = this._load();
         if (!Object.keys(data).includes(name)) {
             return [];
         }
         const deployments = [];
         for (const contract of data[name]["contracts"]) {
+            //TODO: Check contract state before load it from zos and if it's deleted, remove it from the filesystem storage.
             const node_twin_id = await getNodeTwinId(contract["node_id"]);
             const payload = JSON.stringify({ contract_id: contract["contract_id"] });
 
@@ -117,6 +120,7 @@ class BaseModule {
             if (result[0].err) {
                 throw Error(String(result[0].err));
             }
+            //TODO: Check if the deployment doesn't have the module type to remove them from the filesystem.
             deployments.push(JSON.parse(String(result[0].dat)));
         }
         return deployments;
@@ -214,8 +218,7 @@ class BaseModule {
     }
 
     async _delete(name: string) {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+        const [path, data] = this._load();
         const contracts = { deleted: [], updated: [] };
         if (!Object.keys(data).includes(name)) {
             return contracts;

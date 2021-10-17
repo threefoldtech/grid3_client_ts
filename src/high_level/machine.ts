@@ -6,13 +6,19 @@ import { WorkloadTypes } from "../zos/workload";
 
 import { TwinDeployment, Operations } from "./models";
 import { HighLevelBase } from "./base";
-import { DiskPrimitive, VMPrimitive, IPv4Primitive, DeploymentFactory, Network, getAccessNodes } from "../primitives/index";
+import {
+    DiskPrimitive,
+    VMPrimitive,
+    IPv4Primitive,
+    DeploymentFactory,
+    Network,
+    getAccessNodes,
+} from "../primitives/index";
 import { randomChoice } from "../helpers/utils";
 import { DiskModel, QSFSDisk } from "../modules/models";
 import { events } from "../helpers/events";
 import { QSFSPrimitive } from "../primitives/qsfs";
 import { QSFSZdbsModule } from "../modules/qsfs_zdbs";
-
 
 class VMHL extends HighLevelBase {
     async create(
@@ -31,8 +37,7 @@ class VMHL extends HighLevelBase {
         metadata = "",
         description = "",
         qsfsDisks: QSFSDisk[] = [],
-        qsfsProjectName: string = ""
-
+        qsfsProjectName = "",
     ): Promise<[TwinDeployment[], string]> {
         const deployments = [];
         const workloads = [];
@@ -54,17 +59,20 @@ class VMHL extends HighLevelBase {
             }
             const qsfsZdbs = await qsfsZdbsModule.getZdbs(d.qsfs_zdbs_name);
             if (qsfsZdbs.groups.length === 0 || qsfsZdbs.meta.length === 0) {
-                throw Error(`Couldn't find a qsfs zdbs with name ${d.qsfs_zdbs_name}. Please create one with qsfs_zdbs module`);
+                throw Error(
+                    `Couldn't find a qsfs zdbs with name ${d.qsfs_zdbs_name}. Please create one with qsfs_zdbs module`,
+                );
             }
-            const minimalShards = Math.ceil(qsfsZdbs.groups.length * 3 / 5);
+            const minimalShards = Math.ceil((qsfsZdbs.groups.length * 3) / 5);
             const expectedShards = qsfsZdbs.groups.length - minimalShards;
-            const qsfsWorkload = qsfsPrimitive.create(d.name,
+            const qsfsWorkload = qsfsPrimitive.create(
+                d.name,
                 minimalShards,
                 expectedShards,
                 d.prefix,
                 qsfsZdbs.meta,
                 qsfsZdbs.groups,
-                d.encryption_key
+                d.encryption_key,
             );
             workloads.push(qsfsWorkload);
             diskMounts.push(disk.createMount(d.name, d.mountpoint));
@@ -144,7 +152,10 @@ class VMHL extends HighLevelBase {
         // vm
         const vm = new VMPrimitive();
         const machine_ip = network.getFreeIP(nodeId);
-        events.emit("logs", `Creating a vm on node: ${nodeId}, network: ${network.name} with private ip: ${machine_ip}`);
+        events.emit(
+            "logs",
+            `Creating a vm on node: ${nodeId}, network: ${network.name} with private ip: ${machine_ip}`,
+        );
         workloads.push(
             vm.create(
                 name,

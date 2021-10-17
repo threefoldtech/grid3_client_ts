@@ -12,7 +12,7 @@ import { Addr } from "netaddr";
 import { WorkloadTypes } from "../zos/workload";
 import { TwinDeployment, Operations } from "./models";
 import { HighLevelBase } from "./base";
-import { DiskPrimitive, VMPrimitive, IPv4Primitive, DeploymentFactory, getAccessNodes } from "../primitives/index";
+import { DiskPrimitive, VMPrimitive, IPv4Primitive, DeploymentFactory, getAccessNodes, } from "../primitives/index";
 import { randomChoice } from "../helpers/utils";
 import { events } from "../helpers/events";
 import { QSFSPrimitive } from "../primitives/qsfs";
@@ -41,7 +41,7 @@ class VMHL extends HighLevelBase {
                 if (qsfsZdbs.groups.length === 0 || qsfsZdbs.meta.length === 0) {
                     throw Error(`Couldn't find a qsfs zdbs with name ${d.qsfs_zdbs_name}. Please create one with qsfs_zdbs module`);
                 }
-                const minimalShards = Math.ceil(qsfsZdbs.groups.length * 3 / 5);
+                const minimalShards = Math.ceil((qsfsZdbs.groups.length * 3) / 5);
                 const expectedShards = qsfsZdbs.groups.length - minimalShards;
                 const qsfsWorkload = qsfsPrimitive.create(d.name, minimalShards, expectedShards, d.prefix, qsfsZdbs.meta, qsfsZdbs.groups, d.encryption_key);
                 workloads.push(qsfsWorkload);

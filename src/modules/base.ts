@@ -20,10 +20,14 @@ class BaseModule {
     deploymentFactory: DeploymentFactory;
     twinDeploymentHandler: TwinDeploymentHandler;
 
-    constructor(public twin_id: number, public url: string, public mnemonic: string, public rmbClient: MessageBusClientInterface) {
+    constructor(
+        public twin_id: number,
+        public url: string,
+        public mnemonic: string,
+        public rmbClient: MessageBusClientInterface,
+    ) {
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
-
     }
 
     _load() {
@@ -39,7 +43,10 @@ class BaseModule {
         }
 
         for (const contract of contracts["created"]) {
-            deploymentData.contracts.push({ contract_id: contract["contract_id"], node_id: contract["contract_type"]["nodeContract"]["node_id"] });
+            deploymentData.contracts.push({
+                contract_id: contract["contract_id"],
+                node_id: contract["contract_type"]["nodeContract"]["node_id"],
+            });
         }
         for (const contract of contracts["deleted"]) {
             deploymentData.contracts = deploymentData.contracts.filter(

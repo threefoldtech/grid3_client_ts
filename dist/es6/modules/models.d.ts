@@ -139,5 +139,5 @@ declare class DeployGatewayNameModel {
 declare class ZOSModel extends Deployment {
     node_id: number;
 }
-export { DiskModel, NetworkModel, MachineModel, MachinesModel, MachinesGetModel, MachinesDeleteModel, AddMachineModel, DeleteMachineModel, KubernetesNodeModel, K8SModel, K8SGetModel, K8SDeleteModel, AddWorkerModel, DeleteWorkerModel, ZDBModel, ZDBSModel, ZDBGetModel, ZDBDeleteModel, AddZDBModel, DeleteZDBModel, DeployGatewayFQDNModel, DeployGatewayNameModel, ZOSModel, QSFSDisk, QSFSZDBSModel, QSFSZDBGetModel, QSFSZDBDeleteModel };
+export { DiskModel, NetworkModel, MachineModel, MachinesModel, MachinesGetModel, MachinesDeleteModel, AddMachineModel, DeleteMachineModel, KubernetesNodeModel, K8SModel, K8SGetModel, K8SDeleteModel, AddWorkerModel, DeleteWorkerModel, ZDBModel, ZDBSModel, ZDBGetModel, ZDBDeleteModel, AddZDBModel, DeleteZDBModel, DeployGatewayFQDNModel, DeployGatewayNameModel, ZOSModel, QSFSDisk, QSFSZDBSModel, QSFSZDBGetModel, QSFSZDBDeleteModel, };
 //# sourceMappingURL=models.d.ts.map

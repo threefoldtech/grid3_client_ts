@@ -25,7 +25,7 @@ class KubernetesHL extends HighLevelBase {
         metadata = "",
         description = "",
         qsfs_disks: QSFSDisk[] = [],
-        qsfsProjectName = ""
+        qsfsProjectName = "",
     ) {
         events.emit("logs", `Creating a master with name: ${name} on node: ${nodeId}, network: ${network.name}`);
         const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
@@ -59,7 +59,7 @@ class KubernetesHL extends HighLevelBase {
             metadata,
             description,
             qsfs_disks,
-            qsfsProjectName
+            qsfsProjectName,
         );
     }
 
@@ -79,7 +79,7 @@ class KubernetesHL extends HighLevelBase {
         metadata = "",
         description = "",
         qsfs_disks: QSFSDisk[] = [],
-        qsfsProjectName = ""
+        qsfsProjectName = "",
     ) {
         events.emit("logs", `Creating a worker with name: ${name} on node: ${nodeId}, network: ${network.name}`);
         const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
@@ -113,7 +113,7 @@ class KubernetesHL extends HighLevelBase {
             metadata,
             description,
             qsfs_disks,
-            qsfsProjectName
+            qsfsProjectName,
         );
     }
 

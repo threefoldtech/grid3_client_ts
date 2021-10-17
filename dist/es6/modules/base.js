@@ -36,7 +36,10 @@ class BaseModule {
             deploymentData = data[name];
         }
         for (const contract of contracts["created"]) {
-            deploymentData.contracts.push({ contract_id: contract["contract_id"], node_id: contract["contract_type"]["nodeContract"]["node_id"] });
+            deploymentData.contracts.push({
+                contract_id: contract["contract_id"],
+                node_id: contract["contract_type"]["nodeContract"]["node_id"],
+            });
         }
         for (const contract of contracts["deleted"]) {
             deploymentData.contracts = deploymentData.contracts.filter(c => c["contract_id"] !== contract["contract_id"]);

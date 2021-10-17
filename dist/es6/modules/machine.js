@@ -36,7 +36,6 @@ class MachineModule extends BaseModule {
                     wireguardConfig = wgConfig;
                 }
             }
-            ;
             return [twinDeployments, network, wireguardConfig];
         });
     }

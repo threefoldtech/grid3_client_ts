@@ -45,5 +45,5 @@ declare class QuantumSafeFS {
     config: QuantumSafeFSConfig;
     challenge(): string;
 }
-export { QuantumSafeFS, ZdbBackend, ZdbGroup, QuantumSafeFSConfig, Encryption, QuantumSafeMeta, QuantumSafeConfig, QuantumCompression };
+export { QuantumSafeFS, ZdbBackend, ZdbGroup, QuantumSafeFSConfig, Encryption, QuantumSafeMeta, QuantumSafeConfig, QuantumCompression, };
 //# sourceMappingURL=qsfs.d.ts.map

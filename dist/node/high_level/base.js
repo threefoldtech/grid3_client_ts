@@ -66,7 +66,7 @@ class HighLevelBase {
             const machineIp = workload.data["network"].interfaces[0].ip;
             events_1.events.emit("logs", `Deleting ip: ${machineIp} from node: ${node_id}, network ${network.name}`);
             //TODO: Reproduce: Sometimes the network is free and it keeps getting wrong result here
-            // so it doesn't delete the deployment, but it updates the deployment. 
+            // so it doesn't delete the deployment, but it updates the deployment.
             const deletedIp = network.deleteReservedIp(node_id, machineIp);
             if (network.getNodeReservedIps(node_id).length !== 0) {
                 deletedIps.push(deletedIp);

@@ -3,12 +3,16 @@ import { DeployGatewayFQDNModel, DeployGatewayNameModel } from "./models";
 import { GatewayHL } from "../high_level/gateway";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 
-
 class GWModule extends BaseModule {
     fileName = "gateway.json";
     gateway: GatewayHL;
 
-    constructor(public twin_id: number, public url: string, public mnemonic: string, public rmbClient: MessageBusClientInterface) {
+    constructor(
+        public twin_id: number,
+        public url: string,
+        public mnemonic: string,
+        public rmbClient: MessageBusClientInterface,
+    ) {
         super(twin_id, url, mnemonic, rmbClient);
         this.gateway = new GatewayHL(twin_id, url, mnemonic, rmbClient);
     }

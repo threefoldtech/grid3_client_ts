@@ -1,5 +1,7 @@
 # grid3_client_ts
 
+[![Build](https://github.com/threefoldtech/grid3_client_ts/actions/workflows/build.yml/badge.svg)](https://github.com/threefoldtech/grid3_client_ts/actions/workflows/build.yml)
+
 Github repo: [grid3_client_ts](https://github.com/threefoldtech/grid3_client_ts.git)
 
 ## Prerequisites

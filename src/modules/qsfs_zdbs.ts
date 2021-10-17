@@ -7,11 +7,15 @@ import { ZdbModes } from "../zos/zdb";
 import { WorkloadTypes } from "../zos/workload";
 import { ZdbBackend } from "../zos/qsfs";
 
-
 class QSFSZdbsModule extends BaseModule {
     fileName = "qsfs_zdbs.json";
     zdb: ZdbHL;
-    constructor(public twin_id: number, public url: string, public mnemonic: string, public rmbClient: MessageBusClientInterface) {
+    constructor(
+        public twin_id: number,
+        public url: string,
+        public mnemonic: string,
+        public rmbClient: MessageBusClientInterface,
+    ) {
         super(twin_id, url, mnemonic, rmbClient);
         this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient);
     }
@@ -27,7 +31,7 @@ class QSFSZdbsModule extends BaseModule {
             if (i > options.count) {
                 mode = "user";
             }
-            const nodeId = options.node_ids[((i - 1) % options.node_ids.length)];
+            const nodeId = options.node_ids[(i - 1) % options.node_ids.length];
             const twinDeployment = this.zdb.create(
                 options.name + i,
                 nodeId,
@@ -69,7 +73,7 @@ class QSFSZdbsModule extends BaseModule {
 
     async getZdbs(name) {
         const deployments = await this._get(name);
-        let zdbs = [];
+        const zdbs = [];
         for (const deployment of deployments) {
             for (const workload of deployment.workloads) {
                 if (workload.type !== WorkloadTypes.zdb) {
@@ -78,7 +82,7 @@ class QSFSZdbsModule extends BaseModule {
                 zdbs.push(workload.data);
             }
         }
-        let qsfsZdbs = { "meta": [], "groups": [] };
+        const qsfsZdbs = { meta: [], groups: [] };
         for (const zdb of zdbs) {
             const zdbBackend = new ZdbBackend();
             zdbBackend.namespace = zdb.namespace;
@@ -86,8 +90,7 @@ class QSFSZdbsModule extends BaseModule {
             zdbBackend.address = `[${zdb.result.data.ips[0]}]:${zdb.result.data.port}`;
             if (zdb.mode === ZdbModes.user) {
                 qsfsZdbs.meta.push(zdbBackend);
-            }
-            else {
+            } else {
                 qsfsZdbs.groups.push(zdbBackend);
             }
         }

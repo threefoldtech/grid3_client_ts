@@ -2,7 +2,6 @@ import { Deployment } from "../zos/deployment";
 //TODO: find a way to validate all fields are passed while casting data to any of these classes.
 class DiskModel {
 }
-;
 class QSFSDisk {
 }
 class NetworkModel {
@@ -57,4 +56,4 @@ class DeployGatewayNameModel {
 }
 class ZOSModel extends Deployment {
 }
-export { DiskModel, NetworkModel, MachineModel, MachinesModel, MachinesGetModel, MachinesDeleteModel, AddMachineModel, DeleteMachineModel, KubernetesNodeModel, K8SModel, K8SGetModel, K8SDeleteModel, AddWorkerModel, DeleteWorkerModel, ZDBModel, ZDBSModel, ZDBGetModel, ZDBDeleteModel, AddZDBModel, DeleteZDBModel, DeployGatewayFQDNModel, DeployGatewayNameModel, ZOSModel, QSFSDisk, QSFSZDBSModel, QSFSZDBGetModel, QSFSZDBDeleteModel };
+export { DiskModel, NetworkModel, MachineModel, MachinesModel, MachinesGetModel, MachinesDeleteModel, AddMachineModel, DeleteMachineModel, KubernetesNodeModel, K8SModel, K8SGetModel, K8SDeleteModel, AddWorkerModel, DeleteWorkerModel, ZDBModel, ZDBSModel, ZDBGetModel, ZDBDeleteModel, AddZDBModel, DeleteZDBModel, DeployGatewayFQDNModel, DeployGatewayNameModel, ZOSModel, QSFSDisk, QSFSZDBSModel, QSFSZDBGetModel, QSFSZDBDeleteModel, };

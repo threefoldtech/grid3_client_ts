@@ -9,11 +9,15 @@ import { VMHL } from "../high_level/machine";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { TwinDeployment } from "../high_level/models";
 
-
 class MachineModule extends BaseModule {
     fileName = "machines.json";
     vm: VMHL;
-    constructor(public twin_id: number, public url: string, public mnemonic: string, public rmbClient: MessageBusClientInterface) {
+    constructor(
+        public twin_id: number,
+        public url: string,
+        public mnemonic: string,
+        public rmbClient: MessageBusClientInterface,
+    ) {
         super(twin_id, url, mnemonic, rmbClient);
         this.vm = new VMHL(twin_id, url, mnemonic, rmbClient);
     }
@@ -43,13 +47,13 @@ class MachineModule extends BaseModule {
                 options.metadata,
                 options.description,
                 machine.qsfs_disks,
-                this.projectName
+                this.projectName,
             );
             twinDeployments = twinDeployments.concat(TDeployments);
             if (wgConfig) {
                 wireguardConfig = wgConfig;
             }
-        };
+        }
         return [twinDeployments, network, wireguardConfig];
     }
 
@@ -130,7 +134,7 @@ class MachineModule extends BaseModule {
             workload.metadata,
             workload.description,
             options.qsfs_disks,
-            this.projectName
+            this.projectName,
         );
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }

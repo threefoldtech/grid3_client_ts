@@ -53,7 +53,7 @@ class VMHL extends base_1.HighLevelBase {
             if (qsfsZdbs.groups.length === 0 || qsfsZdbs.meta.length === 0) {
                 throw Error(`Couldn't find a qsfs zdbs with name ${d.qsfs_zdbs_name}. Please create one with qsfs_zdbs module`);
             }
-            const minimalShards = Math.ceil(qsfsZdbs.groups.length * 3 / 5);
+            const minimalShards = Math.ceil((qsfsZdbs.groups.length * 3) / 5);
             const expectedShards = qsfsZdbs.groups.length - minimalShards;
             const qsfsWorkload = qsfsPrimitive.create(d.name, minimalShards, expectedShards, d.prefix, qsfsZdbs.meta, qsfsZdbs.groups, d.encryption_key);
             workloads.push(qsfsWorkload);

@@ -114,4 +114,13 @@ class QuatumSafeFSResult {
     metrics_endpoint: string;
 }
 
-export { QuantumSafeFS, ZdbBackend, ZdbGroup, QuantumSafeFSConfig, Encryption, QuantumSafeMeta, QuantumSafeConfig, QuantumCompression };
+export {
+    QuantumSafeFS,
+    ZdbBackend,
+    ZdbGroup,
+    QuantumSafeFSConfig,
+    Encryption,
+    QuantumSafeMeta,
+    QuantumSafeConfig,
+    QuantumCompression,
+};

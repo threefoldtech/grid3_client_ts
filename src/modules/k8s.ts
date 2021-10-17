@@ -8,12 +8,16 @@ import { KubernetesHL } from "../high_level/kubernetes";
 import { Network } from "../primitives/network";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 
-
 class K8sModule extends BaseModule {
     fileName = "kubernetes.json";
     kubernetes: KubernetesHL;
 
-    constructor(public twin_id: number, public url: string, public mnemonic: string, public rmbClient: MessageBusClientInterface) {
+    constructor(
+        public twin_id: number,
+        public url: string,
+        public mnemonic: string,
+        public rmbClient: MessageBusClientInterface,
+    ) {
         super(twin_id, url, mnemonic, rmbClient);
         this.kubernetes = new KubernetesHL(twin_id, url, mnemonic, rmbClient);
     }
@@ -43,10 +47,7 @@ class K8sModule extends BaseModule {
         return ips;
     }
 
-    async _createDeployment(
-        options: K8SModel,
-        masterIps: string[] = [],
-    ): Promise<[TwinDeployment[], Network, string]> {
+    async _createDeployment(options: K8SModel, masterIps: string[] = []): Promise<[TwinDeployment[], Network, string]> {
         const network = new Network(options.network.name, options.network.ip_range, this.rmbClient);
         await network.load(true);
 
@@ -68,7 +69,7 @@ class K8sModule extends BaseModule {
                 options.metadata,
                 options.description,
                 master.qsfs_disks,
-                this.projectName
+                this.projectName,
             );
 
             deployments = deployments.concat(twinDeployments);
@@ -195,7 +196,7 @@ class K8sModule extends BaseModule {
             masterWorkload.metadata,
             masterWorkload.description,
             options.qsfs_disks,
-            this.projectName
+            this.projectName,
         );
 
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);

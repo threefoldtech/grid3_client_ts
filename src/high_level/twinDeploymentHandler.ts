@@ -136,7 +136,8 @@ class TwinDeploymentHandler {
         const promises = [];
         for (const twinDeployment of twinDeployments) {
             if ([Operations.deploy, Operations.update].includes(twinDeployment.operation)) {
-                events.emit("logs",
+                events.emit(
+                    "logs",
                     `Waiting for deployment with contract_id: ${twinDeployment.deployment.contract_id} to be ready`,
                 );
                 promises.push(this.waitForDeployment(twinDeployment, timeout));
@@ -284,9 +285,13 @@ class TwinDeploymentHandler {
                 twinDeployment.deployment.contract_id = contract["contract_id"];
                 contracts.created.push(contract);
                 if (twinDeployment.network) {
-                    await twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
+                    await twinDeployment.network.save(
+                        contract["contract_id"],
+                        contract["contract_type"]["nodeContract"]["node_id"],
+                    );
                 }
-                events.emit("logs",
+                events.emit(
+                    "logs",
                     `A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contract_type"]["nodeContract"]["node_id"]}`,
                 );
             } else if (twinDeployment.operation === Operations.update) {
@@ -295,7 +300,10 @@ class TwinDeploymentHandler {
                 const contract = await this.update(twinDeployment.deployment, twinDeployment.publicIps);
                 contracts.updated.push(contract);
                 if (twinDeployment.network) {
-                    await twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
+                    await twinDeployment.network.save(
+                        contract["contract_id"],
+                        contract["contract_type"]["nodeContract"]["node_id"],
+                    );
                 }
                 events.emit("logs", `Deployment has been updated with contract_id: ${contract["contract_id"]}`);
             } else if (twinDeployment.operation === Operations.delete) {

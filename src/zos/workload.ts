@@ -20,7 +20,7 @@ enum WorkloadTypes {
     ipv4 = "ipv4",
     gatewayfqdnproxy = "gateway-fqdn-proxy",
     gatewaynameproxy = "gateway-name-proxy",
-    qsfs = "qsfs"
+    qsfs = "qsfs",
 }
 
 enum Right {

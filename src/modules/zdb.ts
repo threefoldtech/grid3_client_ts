@@ -4,11 +4,15 @@ import { ZdbHL } from "../high_level/zdb";
 import { TwinDeployment } from "../high_level/models";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 
-
 class ZdbsModule extends BaseModule {
     fileName = "zdbs.json";
     zdb: ZdbHL;
-    constructor(public twin_id: number, public url: string, public mnemonic: string, public rmbClient: MessageBusClientInterface) {
+    constructor(
+        public twin_id: number,
+        public url: string,
+        public mnemonic: string,
+        public rmbClient: MessageBusClientInterface,
+    ) {
         super(twin_id, url, mnemonic, rmbClient);
         this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient);
     }

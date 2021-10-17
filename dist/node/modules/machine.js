@@ -34,7 +34,6 @@ class MachineModule extends base_1.BaseModule {
                 wireguardConfig = wgConfig;
             }
         }
-        ;
         return [twinDeployments, network, wireguardConfig];
     }
     _getMachineWorkload(deployments) {

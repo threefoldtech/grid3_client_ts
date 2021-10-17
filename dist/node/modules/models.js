@@ -9,7 +9,6 @@ class DiskModel {
     mountpoint;
 }
 exports.DiskModel = DiskModel;
-;
 class QSFSDisk {
     qsfs_zdbs_name;
     name;

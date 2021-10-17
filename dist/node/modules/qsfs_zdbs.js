@@ -32,7 +32,7 @@ class QSFSZdbsModule extends base_1.BaseModule {
             if (i > options.count) {
                 mode = "user";
             }
-            const nodeId = options.node_ids[((i - 1) % options.node_ids.length)];
+            const nodeId = options.node_ids[(i - 1) % options.node_ids.length];
             const twinDeployment = this.zdb.create(options.name + i, nodeId, options.namespace, options.disk_size, options.disk_type, mode, options.password, true, options.metadata, options.description);
             twinDeployments.push(twinDeployment);
         }
@@ -58,7 +58,7 @@ class QSFSZdbsModule extends base_1.BaseModule {
     }
     async getZdbs(name) {
         const deployments = await this._get(name);
-        let zdbs = [];
+        const zdbs = [];
         for (const deployment of deployments) {
             for (const workload of deployment.workloads) {
                 if (workload.type !== workload_1.WorkloadTypes.zdb) {
@@ -67,7 +67,7 @@ class QSFSZdbsModule extends base_1.BaseModule {
                 zdbs.push(workload.data);
             }
         }
-        let qsfsZdbs = { "meta": [], "groups": [] };
+        const qsfsZdbs = { meta: [], groups: [] };
         for (const zdb of zdbs) {
             const zdbBackend = new qsfs_1.ZdbBackend();
             zdbBackend.namespace = zdb.namespace;

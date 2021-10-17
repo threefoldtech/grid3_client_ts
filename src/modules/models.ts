@@ -6,7 +6,7 @@ class DiskModel {
     name: string;
     size: number; // in GB
     mountpoint: string;
-};
+}
 
 class QSFSDisk {
     qsfs_zdbs_name: string;
@@ -125,7 +125,6 @@ class AddZDBModel extends ZDBModel {
 
 class DeleteZDBModel extends DeleteWorkerModel {}
 
-
 class QSFSZDBSModel {
     name: string;
     count: number;
@@ -141,7 +140,6 @@ class QSFSZDBSModel {
 class QSFSZDBGetModel extends BaseGetDeleteModel {}
 
 class QSFSZDBDeleteModel extends BaseGetDeleteModel {}
-
 
 class DeployGatewayFQDNModel {
     name: string;
@@ -189,5 +187,5 @@ export {
     QSFSDisk,
     QSFSZDBSModel,
     QSFSZDBGetModel,
-    QSFSZDBDeleteModel
+    QSFSZDBDeleteModel,
 };

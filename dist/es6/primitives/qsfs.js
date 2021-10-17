@@ -1,7 +1,7 @@
 import { default as md5 } from "crypto-js/md5";
 import { Buffer } from "buffer";
 import { WorkloadTypes, Workload } from "../zos/workload";
-import { QuantumSafeFS, QuantumSafeFSConfig, Encryption, QuantumSafeMeta, QuantumSafeConfig, QuantumCompression } from "../zos/qsfs";
+import { QuantumSafeFS, QuantumSafeFSConfig, Encryption, QuantumSafeMeta, QuantumSafeConfig, QuantumCompression, } from "../zos/qsfs";
 import { Mount } from "../zos/zmachine";
 class QSFSPrimitive {
     createMount(name, mountpoint) {
@@ -10,8 +10,8 @@ class QSFSPrimitive {
         mount.mountpoint = mountpoint;
         return mount;
     }
-    create(name, minimalShards, expectedShards, metaPrefix, metaBackends, groups, encryptionKey, metaType = "zdb", cache = 1024 * 1024 * 1024, // 1 GB for qsfs 
-    maxZdbDataDirSize = 32, // in MB 
+    create(name, minimalShards, expectedShards, metaPrefix, metaBackends, groups, encryptionKey, metaType = "zdb", cache = 1024 * 1024 * 1024, // 1 GB for qsfs
+    maxZdbDataDirSize = 32, // in MB
     redundantGroups = 1, redundantNodes = 1, encryptionAlgorithm = "AES", compressionAlgorithm = "snappy", metadata = "", description = "", version = 0) {
         const key = md5(encryptionKey).toString();
         const hexKey = Buffer.from(key).toString("hex");
@@ -27,7 +27,7 @@ class QSFSPrimitive {
         quantumSafeMeta.config = quantumSafeConfig;
         const quantumCompression = new QuantumCompression();
         quantumCompression.algorithm = compressionAlgorithm;
-        const quantumSafeFSConfig = new QuantumSafeFSConfig;
+        const quantumSafeFSConfig = new QuantumSafeFSConfig();
         quantumSafeFSConfig.minimal_shards = minimalShards;
         quantumSafeFSConfig.expected_shards = expectedShards;
         quantumSafeFSConfig.redundant_groups = redundantGroups;

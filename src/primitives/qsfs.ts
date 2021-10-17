@@ -2,7 +2,16 @@ import { default as md5 } from "crypto-js/md5";
 import { Buffer } from "buffer";
 
 import { WorkloadTypes, Workload } from "../zos/workload";
-import { QuantumSafeFS, ZdbBackend, ZdbGroup, QuantumSafeFSConfig, Encryption, QuantumSafeMeta, QuantumSafeConfig, QuantumCompression } from "../zos/qsfs";
+import {
+    QuantumSafeFS,
+    ZdbBackend,
+    ZdbGroup,
+    QuantumSafeFSConfig,
+    Encryption,
+    QuantumSafeMeta,
+    QuantumSafeConfig,
+    QuantumCompression,
+} from "../zos/qsfs";
 import { Mount } from "../zos/zmachine";
 
 class QSFSPrimitive {
@@ -12,23 +21,24 @@ class QSFSPrimitive {
         mount.mountpoint = mountpoint;
         return mount;
     }
-    create(name: string,
+    create(
+        name: string,
         minimalShards: number,
         expectedShards: number,
         metaPrefix: string,
         metaBackends: ZdbBackend[],
         groups: ZdbGroup[],
         encryptionKey: string,
-        metaType: string = "zdb",
-        cache: number = 1024 * 1024 * 1024, // 1 GB for qsfs 
-        maxZdbDataDirSize: number = 32, // in MB 
-        redundantGroups: number = 1,
-        redundantNodes: number = 1,
-        encryptionAlgorithm: string = "AES",
-        compressionAlgorithm: string = "snappy",
-        metadata: string = "",
-        description: string = "",
-        version: number = 0
+        metaType = "zdb",
+        cache: number = 1024 * 1024 * 1024, // 1 GB for qsfs
+        maxZdbDataDirSize = 32, // in MB
+        redundantGroups = 1,
+        redundantNodes = 1,
+        encryptionAlgorithm = "AES",
+        compressionAlgorithm = "snappy",
+        metadata = "",
+        description = "",
+        version = 0,
     ): Workload {
         const key = md5(encryptionKey).toString();
         const hexKey = Buffer.from(key).toString("hex");
@@ -48,7 +58,7 @@ class QSFSPrimitive {
         const quantumCompression = new QuantumCompression();
         quantumCompression.algorithm = compressionAlgorithm;
 
-        const quantumSafeFSConfig = new QuantumSafeFSConfig;
+        const quantumSafeFSConfig = new QuantumSafeFSConfig();
         quantumSafeFSConfig.minimal_shards = minimalShards;
         quantumSafeFSConfig.expected_shards = expectedShards;
         quantumSafeFSConfig.redundant_groups = redundantGroups;

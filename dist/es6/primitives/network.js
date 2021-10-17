@@ -183,19 +183,22 @@ class Network {
                     }
                     const res = JSON.parse(result[0].dat);
                     res["node_id"] = node.node_id;
-                    this.deployments.push(res);
                     for (const workload of res["workloads"]) {
                         if (workload["type"] !== WorkloadTypes.network ||
                             !Addr(this.ipRange).contains(Addr(workload["data"]["subnet"]))) {
                             continue;
                         }
-                        //TODO: don't load network if network workload is deleted, and delete it from the filesystem.
+                        if (workload.result.state === "deleted") {
+                            continue;
+                        }
                         const znet = this._fromObj(workload["data"]);
                         znet["node_id"] = node.node_id;
                         this.networks.push(znet);
+                        this.deployments.push(res);
                     }
                 }
                 yield this.getAccessPoints();
+                this.save();
             }
         });
     }
@@ -434,38 +437,36 @@ AllowedIPs = ${this.ipRange}, ${networkIP}
 PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     }
     save(contract_id = 0, node_id = 0) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let network;
-            if (this.exists()) {
-                network = this.getNetworks()[this.name];
+        let network;
+        if (this.exists()) {
+            network = this.getNetworks()[this.name];
+        }
+        else {
+            network = {
+                ip_range: this.ipRange,
+                nodes: [],
+            };
+        }
+        if (this.nodes.length === 0) {
+            this.delete();
+            return;
+        }
+        const nodes = [];
+        for (const node of this.nodes) {
+            if (node.node_id === node_id) {
+                node.contract_id = contract_id;
             }
-            else {
-                network = {
-                    ip_range: this.ipRange,
-                    nodes: [],
-                };
+            if (!node.contract_id) {
+                continue;
             }
-            if (this.nodes.length === 0) {
-                this.delete();
-                return;
-            }
-            const nodes = [];
-            for (const node of this.nodes) {
-                if (node.node_id === node_id) {
-                    node.contract_id = contract_id;
-                }
-                if (!node.contract_id) {
-                    continue;
-                }
-                nodes.push({
-                    contract_id: node.contract_id,
-                    node_id: node.node_id,
-                    reserved_ips: this.getNodeReservedIps(node.node_id),
-                });
-            }
-            network.nodes = nodes;
-            this._save(network);
-        });
+            nodes.push({
+                contract_id: node.contract_id,
+                node_id: node.node_id,
+                reserved_ips: this.getNodeReservedIps(node.node_id),
+            });
+        }
+        network.nodes = nodes;
+        this._save(network);
     }
     _save(network) {
         const networks = this.getNetworks();

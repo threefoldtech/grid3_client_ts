@@ -202,19 +202,22 @@ class Network {
                 }
                 const res = JSON.parse(result[0].dat);
                 res["node_id"] = node.node_id;
-                this.deployments.push(res);
                 for (const workload of res["workloads"]) {
                     if (workload["type"] !== workload_1.WorkloadTypes.network ||
                         !(0, netaddr_1.Addr)(this.ipRange).contains((0, netaddr_1.Addr)(workload["data"]["subnet"]))) {
                         continue;
                     }
-                    //TODO: don't load network if network workload is deleted, and delete it from the filesystem.
+                    if (workload.result.state === "deleted") {
+                        continue;
+                    }
                     const znet = this._fromObj(workload["data"]);
                     znet["node_id"] = node.node_id;
                     this.networks.push(znet);
+                    this.deployments.push(res);
                 }
             }
             await this.getAccessPoints();
+            this.save();
         }
     }
     _fromObj(net) {
@@ -443,7 +446,7 @@ PrivateKey = ${userprivKey}\n\n[Peer]\nPublicKey = ${peerPubkey}
 AllowedIPs = ${this.ipRange}, ${networkIP}
 PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     }
-    async save(contract_id = 0, node_id = 0) {
+    save(contract_id = 0, node_id = 0) {
         let network;
         if (this.exists()) {
             network = this.getNetworks()[this.name];

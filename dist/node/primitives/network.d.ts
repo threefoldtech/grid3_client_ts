@@ -53,7 +53,7 @@ declare class Network {
     getNodeEndpoint(node_id: number): Promise<string>;
     wgRoutingIP(subnet: string): string;
     getWireguardConfig(subnet: string, userprivKey: string, peerPubkey: string, endpoint: string): string;
-    save(contract_id?: number, node_id?: number): Promise<void>;
+    save(contract_id?: number, node_id?: number): void;
     _save(network: any): void;
     delete(): void;
     generatePeers(): Promise<void>;

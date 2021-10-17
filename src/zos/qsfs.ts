@@ -1,6 +1,6 @@
 class Encryption {
     algorithm: string;
-    key: string; // hex or bytes ?
+    key: string;
 
     challenge() {
         let out = "";
@@ -99,7 +99,7 @@ class QuantumSafeFSConfig {
 }
 
 class QuantumSafeFS {
-    cache: number; // is it number ?
+    cache: number;
     config: QuantumSafeFSConfig;
     challenge() {
         let out = "";

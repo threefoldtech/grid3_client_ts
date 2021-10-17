@@ -12,6 +12,7 @@ const znet_1 = require("../zos/znet");
 const ipv4_1 = require("../zos/ipv4");
 const computecapacity_1 = require("../zos/computecapacity");
 const nodes_1 = require("./nodes");
+const qsfs_1 = require("../zos/qsfs");
 class DeploymentFactory {
     twin_id;
     url;
@@ -184,6 +185,51 @@ class DeploymentFactory {
                 const namegw = new gateway_1.GatewayNameProxy();
                 Object.assign(namegw, w.data);
                 w.data = namegw;
+                workloads.push(w);
+            }
+            else if (workload.type === workload_2.WorkloadTypes.qsfs) {
+                const qsfs = new qsfs_1.QuantumSafeFS();
+                Object.assign(qsfs, w.data);
+                const quantumSafeFSConfig = new qsfs_1.QuantumSafeFSConfig();
+                Object.assign(quantumSafeFSConfig, qsfs.config);
+                const encryption = new qsfs_1.Encryption();
+                Object.assign(encryption, quantumSafeFSConfig.encryption);
+                quantumSafeFSConfig.encryption = encryption;
+                const quantumSafeMeta = new qsfs_1.QuantumSafeMeta();
+                Object.assign(quantumSafeMeta, quantumSafeFSConfig.meta);
+                const quantumSafeConfig = new qsfs_1.QuantumSafeConfig();
+                Object.assign(quantumSafeConfig, quantumSafeMeta.config);
+                const metaEncryption = new qsfs_1.Encryption();
+                Object.assign(metaEncryption, quantumSafeConfig.encryption);
+                quantumSafeConfig.encryption = metaEncryption;
+                const metaBackends = [];
+                for (const backend of quantumSafeConfig.backends) {
+                    const zdbBackend = new qsfs_1.ZdbBackend();
+                    Object.assign(zdbBackend, backend);
+                    metaBackends.push(zdbBackend);
+                }
+                quantumSafeConfig.backends = metaBackends;
+                quantumSafeMeta.config = quantumSafeConfig;
+                quantumSafeFSConfig.meta = quantumSafeMeta;
+                const zdbGroups = [];
+                for (const zdbGroup of quantumSafeFSConfig.groups) {
+                    const group = new qsfs_1.ZdbGroup();
+                    Object.assign(group, zdbGroup);
+                    const zdbBackends = [];
+                    for (const zdbBackend of group.backends) {
+                        const backend = new qsfs_1.ZdbBackend();
+                        Object.assign(backend, zdbBackend);
+                        zdbBackends.push(backend);
+                    }
+                    group.backends = zdbBackends;
+                    zdbGroups.push(group);
+                }
+                quantumSafeFSConfig.groups = zdbGroups;
+                const quantumCompression = new qsfs_1.QuantumCompression();
+                Object.assign(quantumCompression, quantumSafeFSConfig.compression);
+                quantumSafeFSConfig.compression = quantumCompression;
+                qsfs.config = quantumSafeFSConfig;
+                w.data = qsfs;
                 workloads.push(w);
             }
         }

@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuantumCompression = exports.QuantumSafeConfig = exports.QuantumSafeMeta = exports.Encryption = exports.QuantumSafeFSConfig = exports.ZdbGroup = exports.ZdbBackend = exports.QuantumSafeFS = void 0;
 class Encryption {
     algorithm;
-    key; // hex or bytes ?
+    key;
     challenge() {
         let out = "";
         out += this.algorithm;
@@ -97,7 +97,7 @@ class QuantumSafeFSConfig {
 }
 exports.QuantumSafeFSConfig = QuantumSafeFSConfig;
 class QuantumSafeFS {
-    cache; // is it number ?
+    cache;
     config;
     challenge() {
         let out = "";

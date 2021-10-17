@@ -1,9 +1,10 @@
 import { BaseModule } from "./base";
 import { ZDBSModel, DeleteZDBModel, AddZDBModel, ZDBGetModel, ZDBDeleteModel } from "./models";
+import { WorkloadTypes, Workload } from "../zos/workload";
+import { Zdb } from "../zos/zdb";
 import { ZdbHL } from "../high_level/zdb";
 import { TwinDeployment } from "../high_level/models";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
-import { WorkloadTypes } from "../zos/workload";
 
 class ZdbsModule extends BaseModule {
     fileName = "zdbs.json";
@@ -39,6 +40,16 @@ class ZdbsModule extends BaseModule {
         return twinDeployments;
     }
 
+    _getZdbeWorkload(deployments): Workload {
+        for (const deployment of deployments) {
+            for (const workload of deployment.workloads) {
+                if (workload.type === WorkloadTypes.zdb) {
+                    return workload;
+                }
+            }
+        }
+    }
+
     async deploy(options: ZDBSModel) {
         if (this.exists(options.name)) {
             throw Error(`Another zdb deployment with the same name ${options.name} is already exist`);
@@ -51,6 +62,27 @@ class ZdbsModule extends BaseModule {
 
     list() {
         return this._list();
+    }
+
+    async getPrettyObj(deplymentName: string) {
+        const deployments = await this._get(deplymentName);
+        const workload = this._getZdbeWorkload(deployments);
+        const data = workload.data as Zdb;
+        return {
+            version: workload.version,
+            name: workload.name,
+            created: workload.result.created,
+            status: workload.result.state,
+            error: workload.result.error,
+            namespace: data.namespace,
+            size: data.size / (1024 * 1024 * 1024), // GB
+            mode: data.mode,
+            diskType: data.disk_type,
+            public: data.public,
+            password: data.password,
+            metadata: workload.metadata,
+            description: workload.description,
+        };
     }
 
     async get(options: ZDBGetModel) {

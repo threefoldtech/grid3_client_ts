@@ -1,6 +1,7 @@
 import { Addr } from "netaddr";
 
 import { WorkloadTypes, Workload } from "../zos/workload";
+import { Zmachine } from "../zos/zmachine";
 
 import { BaseModule } from "./base";
 import { MachinesModel, MachinesDeleteModel, MachinesGetModel, AddMachineModel, DeleteMachineModel } from "./models";
@@ -70,6 +71,16 @@ class MachineModule extends BaseModule {
         }
     }
 
+    _getZMountData(deployments, name) {
+        for (const deployment of deployments) {
+            for (const workload of deployment.workloads) {
+                if (workload.type === WorkloadTypes.zmount && workload.name === name) {
+                    return { size: workload.data.size, state: workload.result.state, error: workload.result.error };
+                }
+            }
+        }
+    }
+
     async deploy(options: MachinesModel) {
         if (this.exists(options.name)) {
             throw Error(`Another machine deployment with the same name ${options.name} is already exist`);
@@ -83,6 +94,40 @@ class MachineModule extends BaseModule {
 
     list() {
         return this._list();
+    }
+
+    async getPrettyObj(deploymentName: string) {
+        const deployments = await this._get(deploymentName);
+        const workload = this._getMachineWorkload(deployments);
+        const data = workload.data as Zmachine;
+        return {
+            version: workload.version,
+            name: workload.name,
+            created: workload.result.created,
+            status: workload.result.state,
+            error: workload.result.error,
+            flist: data.flist,
+            publicIP: data.network.public_ip,
+            planetary: data.network.planetary,
+            yggIP: data.network.planetary ? JSON.parse(workload.result.data).ygg_ip : "",
+            interfaces: data.network.interfaces.map(n => ({
+                network: n.network,
+                ip: n.network,
+            })),
+            capacity: {
+                cpu: data.compute_capacity.cpu,
+                memory: data.compute_capacity.memory / (1024 * 1024), // MB
+            },
+            mounts: data.mounts.map(m => ({
+                name: m.name,
+                mountPoint: m.mountpoint,
+                ...this._getZMountData(deployments, m.name),
+            })),
+            env: data.env,
+            entrypoint: data.entrypoint,
+            metadata: workload.metadata,
+            description: workload.description,
+        };
     }
 
     async get(options: MachinesGetModel) {

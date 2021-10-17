@@ -1,4 +1,5 @@
 import { Workload, WorkloadTypes } from "../zos/workload";
+import { Zmachine } from "../zos/zmachine";
 import { Addr } from "netaddr";
 
 import { AddWorkerModel, DeleteWorkerModel, K8SModel, K8SDeleteModel, K8SGetModel } from "./models";
@@ -41,6 +42,22 @@ class K8sModule extends BaseModule {
         return workloads;
     }
 
+    _getWorkersWorkload(deployments): Workload[] {
+        const workloads = [];
+        for (const deployment of deployments) {
+            let d = deployment;
+            if (deployment instanceof TwinDeployment) {
+                d = deployment.deployment;
+            }
+            for (const workload of d.workloads) {
+                if (workload.type === WorkloadTypes.zmachine && workload.data["env"]["K3S_URL"] !== "") {
+                    workloads.push(workload);
+                }
+            }
+        }
+        return workloads;
+    }
+
     _getMastersIp(deployments): string[] {
         const ips = [];
         const workloads = this._getMastersWorkload(deployments);
@@ -48,6 +65,49 @@ class K8sModule extends BaseModule {
             ips.push(workload.data["network"]["interfaces"][0]["ip"]);
         }
         return ips;
+    }
+
+    
+    _getZMountData(deployments, name) {
+        for (const deployment of deployments) {
+            for (const workload of deployment.workloads) {
+                if (workload.type === WorkloadTypes.zmount && workload.name === name) {
+                    return { size: workload.data.size, state: workload.result.state, error: workload.result.error };
+                }
+            }
+        }
+    }
+
+    _getZmachineData(deployments, workload: Workload): Record<string, unknown> {
+        const data = workload.data as Zmachine;
+        return {
+            version: workload.version,
+            name: workload.name,
+            created: workload.result.created,
+            status: workload.result.state,
+            error: workload.result.error,
+            flist: data.flist,
+            publicIP: data.network.public_ip,
+            planetary: data.network.planetary,
+            yggIP: data.network.planetary ? JSON.parse(workload.result.data).ygg_ip : "",
+            interfaces: data.network.interfaces.map(n => ({
+                network: n.network,
+                ip: n.network,
+            })),
+            capacity: {
+                cpu: data.compute_capacity.cpu,
+                memory: data.compute_capacity.memory / (1024 * 1024), // MB
+            },
+            mounts: data.mounts.map(m => ({
+                name: m.name,
+                mountPoint: m.mountpoint,
+                ...this._getZMountData(deployments, m.name),
+            })),
+            env: data.env,
+            entrypoint: data.entrypoint,
+            metadata: workload.metadata,
+            description: workload.description,
+        };
     }
 
     async _createDeployment(options: K8SModel, masterIps: string[] = []): Promise<[TwinDeployment[], Network, string]> {
@@ -133,6 +193,20 @@ class K8sModule extends BaseModule {
 
     list() {
         return this._list();
+    }
+
+    async getPrettyObj(deploymentName: string) {
+        let k = { masters: [], workers: [] };
+        const deployments = await this._get(deploymentName);
+        const masters = this._getMastersWorkload(deployments);
+        const workers = this._getWorkersWorkload(deployments);
+        masters.forEach(workload => {
+            k.masters.push(this._getZmachineData(deployments, workload));
+        });
+        workers.forEach(workload => {
+            k.masters.push(this._getZmachineData(deployments, workload));
+        });
+        return k;
     }
 
     async get(options: K8SGetModel) {

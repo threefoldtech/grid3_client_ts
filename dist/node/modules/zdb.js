@@ -3,12 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ZdbsModule = void 0;
 const base_1 = require("./base");
 const zdb_1 = require("../high_level/zdb");
+const workload_1 = require("../zos/workload");
 class ZdbsModule extends base_1.BaseModule {
     twin_id;
     url;
     mnemonic;
     rmbClient;
     fileName = "zdbs.json";
+    workloadTypes = [workload_1.WorkloadTypes.zdb];
     zdb;
     constructor(twin_id, url, mnemonic, rmbClient) {
         super(twin_id, url, mnemonic, rmbClient);

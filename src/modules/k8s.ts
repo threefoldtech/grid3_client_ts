@@ -10,6 +10,7 @@ import { MessageBusClientInterface } from "ts-rmb-client-base";
 
 class K8sModule extends BaseModule {
     fileName = "kubernetes.json";
+    workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
     kubernetes: KubernetesHL;
 
     constructor(

@@ -14,6 +14,7 @@ import { TwinDeployment, Operations } from "../high_level/models";
 import { loadFromFile, updatejson, appPath } from "../helpers/jsonfs";
 import { getNodeTwinId } from "../primitives/nodes";
 import { DeploymentFactory } from "../primitives/deployment";
+import { TFClient } from "../tf-grid/client";
 class BaseModule {
     constructor(twin_id, url, mnemonic, rmbClient) {
         this.twin_id = twin_id;
@@ -22,6 +23,7 @@ class BaseModule {
         this.rmbClient = rmbClient;
         this.projectName = "";
         this.fileName = "";
+        this.workloadTypes = [];
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
     }
@@ -29,7 +31,7 @@ class BaseModule {
         const path = PATH.join(appPath, this.projectName, this.fileName);
         return [path, loadFromFile(path)];
     }
-    save(name, contracts, wgConfig = "", action = "add") {
+    save(name, contracts, wgConfig = "") {
         const [path, data] = this._load();
         let deploymentData = { contracts: [], wireguard_config: "" };
         if (Object.keys(data).includes(name)) {
@@ -44,15 +46,15 @@ class BaseModule {
         for (const contract of contracts["deleted"]) {
             deploymentData.contracts = deploymentData.contracts.filter(c => c["contract_id"] !== contract["contract_id"]);
         }
-        if (action === "delete") {
-            for (const contract of contracts["updated"]) {
-                deploymentData.contracts = deploymentData.contracts.filter(c => c["contract_id"] !== contract["contract_id"]);
-            }
-        }
         if (wgConfig) {
             deploymentData["wireguard_config"] = wgConfig;
         }
-        updatejson(path, name, deploymentData);
+        if (deploymentData.contracts.length !== 0) {
+            updatejson(path, name, deploymentData);
+        }
+        else {
+            updatejson(path, name, deploymentData, "delete");
+        }
         return deploymentData;
     }
     _list() {
@@ -101,7 +103,18 @@ class BaseModule {
             }
             const deployments = [];
             for (const contract of data[name]["contracts"]) {
-                //TODO: Check contract state before load it from zos and if it's deleted, remove it from the filesystem storage.
+                const tfClient = new TFClient(this.url, this.mnemonic);
+                try {
+                    tfClient.connect();
+                    const c = yield tfClient.contracts.get(contract["contract_id"]);
+                    if (c.state !== "Created") {
+                        this.save(name, { deleted: [contract["contract_id"]] });
+                        continue;
+                    }
+                }
+                finally {
+                    tfClient.disconnect();
+                }
                 const node_twin_id = yield getNodeTwinId(contract["node_id"]);
                 const payload = JSON.stringify({ contract_id: contract["contract_id"] });
                 const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
@@ -110,8 +123,20 @@ class BaseModule {
                 if (result[0].err) {
                     throw Error(String(result[0].err));
                 }
-                //TODO: Check if the deployment doesn't have the module type to remove them from the filesystem.
-                deployments.push(JSON.parse(String(result[0].dat)));
+                const deployment = JSON.parse(String(result[0].dat));
+                let found = false;
+                for (const workload of deployment.workloads) {
+                    if (this.workloadTypes.includes(workload.type) && workload.result.state !== "deleted") {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    deployments.push(deployment);
+                }
+                else {
+                    this.save(name, { deleted: [contract["contract_id"]] });
+                }
             }
             return deployments;
         });
@@ -184,7 +209,8 @@ class BaseModule {
                 const twinDeployments = yield module.delete(deployment, [name]);
                 const contracts = yield this.twinDeploymentHandler.handle(twinDeployments);
                 if (contracts["deleted"].length > 0 || contracts["updated"].length > 0) {
-                    this.save(deployment_name, contracts, "", "delete");
+                    this.save(deployment_name, contracts, "");
+                    this._get(deployment_name);
                     return contracts;
                 }
             }

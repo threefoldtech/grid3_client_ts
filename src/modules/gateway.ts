@@ -2,9 +2,11 @@ import { BaseModule } from "./base";
 import { DeployGatewayFQDNModel, DeployGatewayNameModel } from "./models";
 import { GatewayHL } from "../high_level/gateway";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
+import { WorkloadTypes } from "../zos/workload";
 
 class GWModule extends BaseModule {
     fileName = "gateway.json";
+    workloadTypes = [WorkloadTypes.gatewayfqdnproxy, WorkloadTypes.gatewaynameproxy];
     gateway: GatewayHL;
 
     constructor(

@@ -21,6 +21,7 @@ class K8sModule extends BaseModule {
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
         this.fileName = "kubernetes.json";
+        this.workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
         this.kubernetes = new KubernetesHL(twin_id, url, mnemonic, rmbClient);
     }
     _getMastersWorkload(deployments) {

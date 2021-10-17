@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { BaseModule } from "./base";
 import { ZdbHL } from "../high_level/zdb";
+import { WorkloadTypes } from "../zos/workload";
 class ZdbsModule extends BaseModule {
     constructor(twin_id, url, mnemonic, rmbClient) {
         super(twin_id, url, mnemonic, rmbClient);
@@ -17,6 +18,7 @@ class ZdbsModule extends BaseModule {
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
         this.fileName = "zdbs.json";
+        this.workloadTypes = [WorkloadTypes.zdb];
         this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient);
     }
     _createDeployment(options) {

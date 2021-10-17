@@ -27,6 +27,7 @@ const models_1 = require("../high_level/models");
 const jsonfs_1 = require("../helpers/jsonfs");
 const nodes_1 = require("../primitives/nodes");
 const deployment_1 = require("../primitives/deployment");
+const client_1 = require("../tf-grid/client");
 class BaseModule {
     twin_id;
     url;
@@ -34,6 +35,7 @@ class BaseModule {
     rmbClient;
     projectName = "";
     fileName = "";
+    workloadTypes = [];
     deploymentFactory;
     twinDeploymentHandler;
     constructor(twin_id, url, mnemonic, rmbClient) {
@@ -48,7 +50,7 @@ class BaseModule {
         const path = PATH.join(jsonfs_1.appPath, this.projectName, this.fileName);
         return [path, (0, jsonfs_1.loadFromFile)(path)];
     }
-    save(name, contracts, wgConfig = "", action = "add") {
+    save(name, contracts, wgConfig = "") {
         const [path, data] = this._load();
         let deploymentData = { contracts: [], wireguard_config: "" };
         if (Object.keys(data).includes(name)) {
@@ -63,15 +65,15 @@ class BaseModule {
         for (const contract of contracts["deleted"]) {
             deploymentData.contracts = deploymentData.contracts.filter(c => c["contract_id"] !== contract["contract_id"]);
         }
-        if (action === "delete") {
-            for (const contract of contracts["updated"]) {
-                deploymentData.contracts = deploymentData.contracts.filter(c => c["contract_id"] !== contract["contract_id"]);
-            }
-        }
         if (wgConfig) {
             deploymentData["wireguard_config"] = wgConfig;
         }
-        (0, jsonfs_1.updatejson)(path, name, deploymentData);
+        if (deploymentData.contracts.length !== 0) {
+            (0, jsonfs_1.updatejson)(path, name, deploymentData);
+        }
+        else {
+            (0, jsonfs_1.updatejson)(path, name, deploymentData, "delete");
+        }
         return deploymentData;
     }
     _list() {
@@ -119,7 +121,18 @@ class BaseModule {
         }
         const deployments = [];
         for (const contract of data[name]["contracts"]) {
-            //TODO: Check contract state before load it from zos and if it's deleted, remove it from the filesystem storage.
+            const tfClient = new client_1.TFClient(this.url, this.mnemonic);
+            try {
+                tfClient.connect();
+                const c = await tfClient.contracts.get(contract["contract_id"]);
+                if (c.state !== "Created") {
+                    this.save(name, { deleted: [contract["contract_id"]] });
+                    continue;
+                }
+            }
+            finally {
+                tfClient.disconnect();
+            }
             const node_twin_id = await (0, nodes_1.getNodeTwinId)(contract["node_id"]);
             const payload = JSON.stringify({ contract_id: contract["contract_id"] });
             const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
@@ -128,8 +141,20 @@ class BaseModule {
             if (result[0].err) {
                 throw Error(String(result[0].err));
             }
-            //TODO: Check if the deployment doesn't have the module type to remove them from the filesystem.
-            deployments.push(JSON.parse(String(result[0].dat)));
+            const deployment = JSON.parse(String(result[0].dat));
+            let found = false;
+            for (const workload of deployment.workloads) {
+                if (this.workloadTypes.includes(workload.type) && workload.result.state !== "deleted") {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                deployments.push(deployment);
+            }
+            else {
+                this.save(name, { deleted: [contract["contract_id"]] });
+            }
         }
         return deployments;
     }
@@ -196,7 +221,8 @@ class BaseModule {
             const twinDeployments = await module.delete(deployment, [name]);
             const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
             if (contracts["deleted"].length > 0 || contracts["updated"].length > 0) {
-                this.save(deployment_name, contracts, "", "delete");
+                this.save(deployment_name, contracts, "");
+                this._get(deployment_name);
                 return contracts;
             }
         }

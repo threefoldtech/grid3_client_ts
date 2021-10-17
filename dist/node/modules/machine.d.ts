@@ -1,4 +1,4 @@
-import { Workload } from "../zos/workload";
+import { WorkloadTypes, Workload } from "../zos/workload";
 import { BaseModule } from "./base";
 import { MachinesModel, MachinesDeleteModel, MachinesGetModel, AddMachineModel, DeleteMachineModel } from "./models";
 import { Network } from "../primitives/network";
@@ -11,6 +11,7 @@ declare class MachineModule extends BaseModule {
     mnemonic: string;
     rmbClient: MessageBusClientInterface;
     fileName: string;
+    workloadTypes: WorkloadTypes[];
     vm: VMHL;
     constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
     _createDeloyment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]>;

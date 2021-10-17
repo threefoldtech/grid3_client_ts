@@ -3,12 +3,14 @@ import { ZDBSModel, DeleteZDBModel, AddZDBModel, ZDBGetModel, ZDBDeleteModel } f
 import { ZdbHL } from "../high_level/zdb";
 import { TwinDeployment } from "../high_level/models";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
+import { WorkloadTypes } from "../zos/workload";
 declare class ZdbsModule extends BaseModule {
     twin_id: number;
     url: string;
     mnemonic: string;
     rmbClient: MessageBusClientInterface;
     fileName: string;
+    workloadTypes: WorkloadTypes[];
     zdb: ZdbHL;
     constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
     _createDeployment(options: ZDBSModel): TwinDeployment[];

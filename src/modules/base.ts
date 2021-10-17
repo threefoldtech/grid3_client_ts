@@ -13,10 +13,12 @@ import { DeploymentFactory } from "../primitives/deployment";
 import { Network } from "../primitives/network";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { VMHL } from "../high_level/machine";
+import { TFClient } from "../tf-grid/client";
 
 class BaseModule {
     projectName = "";
     fileName = "";
+    workloadTypes = [];
     deploymentFactory: DeploymentFactory;
     twinDeploymentHandler: TwinDeploymentHandler;
 
@@ -35,7 +37,7 @@ class BaseModule {
         return [path, loadFromFile(path)];
     }
 
-    save(name: string, contracts: Record<string, unknown[]>, wgConfig = "", action = "add") {
+    save(name: string, contracts: Record<string, unknown[]>, wgConfig = "") {
         const [path, data] = this._load();
         let deploymentData = { contracts: [], wireguard_config: "" };
         if (Object.keys(data).includes(name)) {
@@ -53,17 +55,15 @@ class BaseModule {
                 c => c["contract_id"] !== contract["contract_id"],
             );
         }
-        if (action === "delete") {
-            for (const contract of contracts["updated"]) {
-                deploymentData.contracts = deploymentData.contracts.filter(
-                    c => c["contract_id"] !== contract["contract_id"],
-                );
-            }
-        }
         if (wgConfig) {
             deploymentData["wireguard_config"] = wgConfig;
         }
-        updatejson(path, name, deploymentData);
+        if (deploymentData.contracts.length !== 0) {
+            updatejson(path, name, deploymentData);
+        } else {
+            updatejson(path, name, deploymentData, "delete");
+        }
+
         return deploymentData;
     }
 
@@ -117,7 +117,17 @@ class BaseModule {
         }
         const deployments = [];
         for (const contract of data[name]["contracts"]) {
-            //TODO: Check contract state before load it from zos and if it's deleted, remove it from the filesystem storage.
+            const tfClient = new TFClient(this.url, this.mnemonic);
+            try {
+                tfClient.connect();
+                const c = await tfClient.contracts.get(contract["contract_id"]);
+                if (c.state !== "Created") {
+                    this.save(name, { deleted: [contract["contract_id"]] });
+                    continue;
+                }
+            } finally {
+                tfClient.disconnect();
+            }
             const node_twin_id = await getNodeTwinId(contract["node_id"]);
             const payload = JSON.stringify({ contract_id: contract["contract_id"] });
 
@@ -127,8 +137,19 @@ class BaseModule {
             if (result[0].err) {
                 throw Error(String(result[0].err));
             }
-            //TODO: Check if the deployment doesn't have the module type to remove them from the filesystem.
-            deployments.push(JSON.parse(String(result[0].dat)));
+            const deployment = JSON.parse(String(result[0].dat));
+            let found = false;
+            for (const workload of deployment.workloads) {
+                if (this.workloadTypes.includes(workload.type) && workload.result.state !== "deleted") {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                deployments.push(deployment);
+            } else {
+                this.save(name, { deleted: [contract["contract_id"]] });
+            }
         }
         return deployments;
     }
@@ -217,7 +238,8 @@ class BaseModule {
             const twinDeployments = await module.delete(deployment, [name]);
             const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
             if (contracts["deleted"].length > 0 || contracts["updated"].length > 0) {
-                this.save(deployment_name, contracts, "", "delete");
+                this.save(deployment_name, contracts, "");
+                this._get(deployment_name);
                 return contracts;
             }
         }

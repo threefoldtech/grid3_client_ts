@@ -3,12 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GWModule = void 0;
 const base_1 = require("./base");
 const gateway_1 = require("../high_level/gateway");
+const workload_1 = require("../zos/workload");
 class GWModule extends base_1.BaseModule {
     twin_id;
     url;
     mnemonic;
     rmbClient;
     fileName = "gateway.json";
+    workloadTypes = [workload_1.WorkloadTypes.gatewayfqdnproxy, workload_1.WorkloadTypes.gatewaynameproxy];
     gateway;
     constructor(twin_id, url, mnemonic, rmbClient) {
         super(twin_id, url, mnemonic, rmbClient);

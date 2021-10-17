@@ -13,6 +13,7 @@ class K8sModule extends base_1.BaseModule {
     mnemonic;
     rmbClient;
     fileName = "kubernetes.json";
+    workloadTypes = [workload_1.WorkloadTypes.zmachine, workload_1.WorkloadTypes.zmount, workload_1.WorkloadTypes.qsfs, workload_1.WorkloadTypes.ipv4];
     kubernetes;
     constructor(twin_id, url, mnemonic, rmbClient) {
         super(twin_id, url, mnemonic, rmbClient);

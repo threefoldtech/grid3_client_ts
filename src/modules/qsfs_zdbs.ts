@@ -9,6 +9,7 @@ import { ZdbBackend } from "../zos/qsfs";
 
 class QSFSZdbsModule extends BaseModule {
     fileName = "qsfs_zdbs.json";
+    workloadTypes = [WorkloadTypes.zdb];
     zdb: ZdbHL;
     constructor(
         public twin_id: number,

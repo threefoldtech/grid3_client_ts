@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { BaseModule } from "./base";
 import { GatewayHL } from "../high_level/gateway";
+import { WorkloadTypes } from "../zos/workload";
 class GWModule extends BaseModule {
     constructor(twin_id, url, mnemonic, rmbClient) {
         super(twin_id, url, mnemonic, rmbClient);
@@ -17,6 +18,7 @@ class GWModule extends BaseModule {
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
         this.fileName = "gateway.json";
+        this.workloadTypes = [WorkloadTypes.gatewayfqdnproxy, WorkloadTypes.gatewaynameproxy];
         this.gateway = new GatewayHL(twin_id, url, mnemonic, rmbClient);
     }
     deploy_fqdn(options) {

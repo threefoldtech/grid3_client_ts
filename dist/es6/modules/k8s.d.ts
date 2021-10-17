@@ -1,4 +1,4 @@
-import { Workload } from "../zos/workload";
+import { Workload, WorkloadTypes } from "../zos/workload";
 import { AddWorkerModel, DeleteWorkerModel, K8SModel, K8SDeleteModel, K8SGetModel } from "./models";
 import { BaseModule } from "./base";
 import { TwinDeployment } from "../high_level/models";
@@ -11,6 +11,7 @@ declare class K8sModule extends BaseModule {
     mnemonic: string;
     rmbClient: MessageBusClientInterface;
     fileName: string;
+    workloadTypes: WorkloadTypes[];
     kubernetes: KubernetesHL;
     constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
     _getMastersWorkload(deployments: any): Workload[];

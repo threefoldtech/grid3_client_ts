@@ -20,6 +20,7 @@ class QSFSZdbsModule extends BaseModule {
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
         this.fileName = "qsfs_zdbs.json";
+        this.workloadTypes = [WorkloadTypes.zdb];
         this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient);
     }
     _createDeployment(options) {

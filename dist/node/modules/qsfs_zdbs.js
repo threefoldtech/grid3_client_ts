@@ -12,6 +12,7 @@ class QSFSZdbsModule extends base_1.BaseModule {
     mnemonic;
     rmbClient;
     fileName = "qsfs_zdbs.json";
+    workloadTypes = [workload_1.WorkloadTypes.zdb];
     zdb;
     constructor(twin_id, url, mnemonic, rmbClient) {
         super(twin_id, url, mnemonic, rmbClient);

@@ -11,6 +11,7 @@ import { TwinDeployment } from "../high_level/models";
 
 class MachineModule extends BaseModule {
     fileName = "machines.json";
+    workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
     vm: VMHL;
     constructor(
         public twin_id: number,

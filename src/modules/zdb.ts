@@ -3,9 +3,11 @@ import { ZDBSModel, DeleteZDBModel, AddZDBModel, ZDBGetModel, ZDBDeleteModel } f
 import { ZdbHL } from "../high_level/zdb";
 import { TwinDeployment } from "../high_level/models";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
+import { WorkloadTypes } from "../zos/workload";
 
 class ZdbsModule extends BaseModule {
     fileName = "zdbs.json";
+    workloadTypes = [WorkloadTypes.zdb];
     zdb: ZdbHL;
     constructor(
         public twin_id: number,

@@ -83,6 +83,7 @@ class Workload {
         return out;
     }
 }
+<<<<<<< HEAD
 __decorate([
     Expose(),
     IsInt(),
@@ -131,4 +132,9 @@ __decorate([
     Expose(),
     Type(() => DeploymentResult)
 ], Workload.prototype, "result", void 0);
+=======
+// pub fn(mut w WorkloadData) challenge() string {
+// 	return w.challenge()
+// }
+>>>>>>> Revert "build"
 export { Workload, WorkloadTypes };

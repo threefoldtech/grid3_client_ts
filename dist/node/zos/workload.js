@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WorkloadTypes = exports.Workload = void 0;
+<<<<<<< HEAD
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const znet_1 = require("./znet");
@@ -17,7 +18,13 @@ const ipv4_1 = require("./ipv4");
 const gateway_1 = require("./gateway");
 const qsfs_1 = require("./qsfs");
 const workload_base_1 = require("./workload_base");
+<<<<<<< HEAD
 const ipv4_2 = require("./ipv4");
+=======
+const _1 = require(".");
+=======
+>>>>>>> Revert "build"
+>>>>>>> Revert "build"
 var ResultStates;
 (function (ResultStates) {
     ResultStates["error"] = "error";

@@ -38,13 +38,14 @@ class MachineModule extends BaseModule {
                     wireguardConfig = wgConfig;
                 }
             }
+            ;
             return [twinDeployments, network, wireguardConfig];
         });
     }
     _getMachineWorkload(deployments) {
         for (const deployment of deployments) {
             for (const workload of deployment.workloads) {
-                if (workload.type === WorkloadTypes.zmachine) {
+                if (workload.type !== WorkloadTypes.zmachine) {
                     return workload;
                 }
             }

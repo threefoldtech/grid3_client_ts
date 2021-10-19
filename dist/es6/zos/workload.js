@@ -1,3 +1,10 @@
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+import { IsString, IsNotEmpty, IsDefined, IsInt, Min, ValidateNested } from "class-validator";
 var ResultStates;
 (function (ResultStates) {
     ResultStates["error"] = "error";
@@ -42,6 +49,25 @@ class Workload {
         return out;
     }
 }
+__decorate([
+    IsInt(),
+    Min(0)
+], Workload.prototype, "version", void 0);
+__decorate([
+    IsString(),
+    IsNotEmpty()
+], Workload.prototype, "name", void 0);
+__decorate([
+    ValidateNested()
+], Workload.prototype, "data", void 0);
+__decorate([
+    IsString(),
+    IsDefined()
+], Workload.prototype, "metadata", void 0);
+__decorate([
+    IsString(),
+    IsDefined()
+], Workload.prototype, "description", void 0);
 // pub fn(mut w WorkloadData) challenge() string {
 // 	return w.challenge()
 // }

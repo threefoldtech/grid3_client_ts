@@ -20,8 +20,8 @@ declare class Deployment {
     twin_id: number;
     contract_id: number;
     expiration: number;
-    metadata: string;
-    description: string;
+    metadata: any;
+    description: any;
     workloads: Workload[];
     signature_requirement: SignatureRequirement;
     challenge(): string;

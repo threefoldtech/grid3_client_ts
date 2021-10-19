@@ -1,3 +1,5 @@
+import { IsString, IsNotEmpty, IsBoolean, IsDefined, IsInt, Min, ValidateNested } from "class-validator";
+
 import { Workload } from "./workload";
 
 import { default as md5 } from "crypto-js/md5";
@@ -5,17 +7,17 @@ import { Keyring } from "@polkadot/keyring";
 
 class SignatureRequest {
     // unique id as used in TFGrid DB
-    twin_id: number;
+    @IsInt() @Min(1) twin_id: number;
     // if put on required then this twin_id needs to sign
-    required = false;
+    @IsBoolean() required: boolean;
     // signing weight
-    weight: number;
+    @IsInt() @Min(1) weight: number;
 
     challenge() {
         let out = "";
-        out += this.twin_id || "";
+        out += this.twin_id;
         out += this.required;
-        out += this.weight || "";
+        out += this.weight;
 
         return out;
     }
@@ -25,17 +27,17 @@ class SignatureRequest {
 
 class Signature {
     // unique id as used in TFGrid DB
-    twin_id: number;
+    @IsInt() @Min(1) twin_id: number;
     // signature (done with private key of the twin_id)
-    signature = "";
+    @IsString() @IsNotEmpty() signature: string;
 }
 
 class SignatureRequirement {
     // the requests which can allow to get to required quorum
-    requests: SignatureRequest[] = [];
+    @ValidateNested({ each: true }) requests: SignatureRequest[] = [];
     // minimal weight which needs to be achieved to let this workload become valid
-    weight_required: number;
-    signatures: Signature[] = [];
+    @IsInt() @Min(1) weight_required: number;
+    @ValidateNested({ each: true }) signatures: Signature[] = [];
 
     // Challenge computes challenge for SignatureRequest
     challenge() {
@@ -45,7 +47,7 @@ class SignatureRequirement {
             out += this.requests[i].challenge();
         }
 
-        out += this.weight_required || "";
+        out += this.weight_required;
         return out;
     }
 }
@@ -56,21 +58,21 @@ class SignatureRequirement {
 class Deployment {
     // increments for each new interation of this model
     // signature needs to be achieved when version goes up
-    version: number;
+    @IsInt() @Min(0) version: number;
     // the twin who is responsible for this deployment
-    twin_id: number;
+    @IsInt() @Min(1) twin_id: number;
     // each deployment has unique id (in relation to originator)
-    contract_id: number;
+    @IsInt() @Min(1) contract_id: number;
     // when the full workload will stop working
     // default, 0 means no expiration
-    expiration: number;
-    metadata = "";
-    description = "";
+    @IsInt() expiration: number;
+    @IsString() @IsDefined() metadata;
+    @IsString() @IsDefined() description;
 
     // list of all worklaods
-    workloads: Workload[];
+    @ValidateNested({ each: true }) workloads: Workload[];
 
-    signature_requirement: SignatureRequirement;
+    @ValidateNested() signature_requirement: SignatureRequirement;
 
     challenge() {
         let out = "";

@@ -1,14 +1,16 @@
+import { IsString, IsNotEmpty, IsIP, IsBoolean, IsInt, Min, ValidateNested } from "class-validator";
+
 import { ComputeCapacity } from "./computecapacity";
 
 class ZNetworkInterface {
-    network = "";
-    ip = "";
+    @IsString() @IsNotEmpty() network: string;
+    @IsIP() @IsNotEmpty() ip: string;
 }
 
 class ZmachineNetwork {
-    public_ip = "";
-    interfaces: ZNetworkInterface[] = [];
-    planetary = false;
+    @IsString() @IsNotEmpty() public_ip: string;
+    @ValidateNested({ each: true }) interfaces: ZNetworkInterface[];
+    @IsBoolean() planetary: boolean;
 
     challenge() {
         let out = "";
@@ -23,8 +25,8 @@ class ZmachineNetwork {
 }
 
 class Mount {
-    name = "";
-    mountpoint = "";
+    @IsString() @IsNotEmpty() name: string;
+    @IsString() @IsNotEmpty() mountpoint: string;
 
     challenge() {
         let out = "";
@@ -35,12 +37,12 @@ class Mount {
 }
 
 class Zmachine {
-    flist = ""; // if full url means custom flist meant for containers, if just name should be an official vm
-    network: ZmachineNetwork;
-    size: number;
-    compute_capacity: ComputeCapacity;
-    mounts: Mount[] = [];
-    entrypoint = ""; //how to invoke that in a vm?
+    @IsString() @IsNotEmpty() flist: string; // if full url means custom flist meant for containers, if just name should be an official vm
+    @ValidateNested() network: ZmachineNetwork;
+    @IsInt() @Min(1024 * 1024 * 250) size: number;
+    @ValidateNested() compute_capacity: ComputeCapacity;
+    @ValidateNested({ each: true }) mounts: Mount[];
+    @IsString() @IsNotEmpty() entrypoint: string; //how to invoke that in a vm?
     env: Record<string, unknown>; //environment for the zmachine
 
     challenge() {

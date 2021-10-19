@@ -1,3 +1,5 @@
+import { IsBoolean, IsString, IsNotEmpty, IsInt, Min } from "class-validator";
+
 enum ZdbModes {
     seq = "seq",
     user = "user",
@@ -9,17 +11,17 @@ enum DeviceTypes {
 }
 
 class Zdb {
-    namespace = "";
+    @IsString() @IsNotEmpty() namespace: string;
     // size in bytes
-    size: number;
+    @IsInt() @Min(1) size: number;
     mode: ZdbModes = ZdbModes.seq;
-    password = "";
+    @IsString() @IsNotEmpty() password: string;
     disk_type: DeviceTypes = DeviceTypes.hdd;
-    public = false;
+    @IsBoolean() public: boolean;
 
     challenge() {
         let out = "";
-        out += this.size || "";
+        out += this.size;
         out += this.mode.toString();
         out += this.password;
         out += this.public.toString();

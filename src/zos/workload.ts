@@ -1,3 +1,5 @@
+import { IsString, IsNotEmpty, IsDefined, IsInt, Min, ValidateNested } from "class-validator";
+
 import { Znet } from "./znet";
 import { Zmount, ZmountResult } from "./zmount";
 import { Zmachine, ZmachineResult } from "./zmachine";
@@ -45,15 +47,23 @@ class DeploymentResult {
 }
 
 class Workload {
-    version: number;
+    @IsInt() @Min(0) version: number;
     // unique name per Deployment
-    name: string;
+    @IsString() @IsNotEmpty() name: string;
     type: WorkloadTypes;
     // this should be something like json.RawMessage in golang
-    data: Zmount | Znet | Zmachine | Zdb | PublicIP | GatewayFQDNProxy | GatewayNameProxy | QuantumSafeFS; // serialize({size: 10}) ---> "data": {size:10},
+    @ValidateNested() data:
+        | Zmount
+        | Znet
+        | Zmachine
+        | Zdb
+        | PublicIP
+        | GatewayFQDNProxy
+        | GatewayNameProxy
+        | QuantumSafeFS; // serialize({size: 10}) ---> "data": {size:10},
 
-    metadata: string;
-    description: string;
+    @IsString() @IsDefined() metadata: string;
+    @IsString() @IsDefined() description: string;
 
     // list of Access Control Entries
     // what can an administrator do

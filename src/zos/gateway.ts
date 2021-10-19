@@ -1,7 +1,9 @@
+import { IsFQDN, IsBoolean, IsString, IsUrl, IsNotEmpty, ArrayNotEmpty } from "class-validator";
+
 class GatewayFQDNProxy {
-    fqdn: string;
-    tls_passthrough: boolean;
-    backends: string[];
+    @IsFQDN() fqdn: string;
+    @IsBoolean() tls_passthrough: boolean;
+    @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
 
     challenge() {
         let out = "";
@@ -15,9 +17,9 @@ class GatewayFQDNProxy {
 }
 
 class GatewayNameProxy {
-    name: string;
-    tls_passthrough: boolean;
-    backends: string[];
+    @IsString() @IsNotEmpty() name: string;
+    @IsBoolean() tls_passthrough: boolean;
+    @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
 
     challenge() {
         let out = "";

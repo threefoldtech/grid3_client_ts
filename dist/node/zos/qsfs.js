@@ -1,6 +1,13 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuantumCompression = exports.QuantumSafeConfig = exports.QuantumSafeMeta = exports.Encryption = exports.QuantumSafeFSConfig = exports.ZdbGroup = exports.ZdbBackend = exports.QuantumSafeFS = void 0;
+const class_validator_1 = require("class-validator");
 class Encryption {
     algorithm;
     key;
@@ -11,6 +18,14 @@ class Encryption {
         return out;
     }
 }
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)()
+], Encryption.prototype, "algorithm", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)()
+], Encryption.prototype, "key", void 0);
 exports.Encryption = Encryption;
 class ZdbBackend {
     address;
@@ -24,6 +39,18 @@ class ZdbBackend {
         return out;
     }
 }
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)()
+], ZdbBackend.prototype, "address", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)()
+], ZdbBackend.prototype, "namespace", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)()
+], ZdbBackend.prototype, "password", void 0);
 exports.ZdbBackend = ZdbBackend;
 class QuantumSafeConfig {
     prefix;
@@ -39,6 +66,16 @@ class QuantumSafeConfig {
         return out;
     }
 }
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)()
+], QuantumSafeConfig.prototype, "prefix", void 0);
+__decorate([
+    (0, class_validator_1.ValidateNested)()
+], QuantumSafeConfig.prototype, "encryption", void 0);
+__decorate([
+    (0, class_validator_1.ValidateNested)({ each: true })
+], QuantumSafeConfig.prototype, "backends", void 0);
 exports.QuantumSafeConfig = QuantumSafeConfig;
 class QuantumSafeMeta {
     type;
@@ -50,6 +87,13 @@ class QuantumSafeMeta {
         return out;
     }
 }
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)()
+], QuantumSafeMeta.prototype, "type", void 0);
+__decorate([
+    (0, class_validator_1.ValidateNested)()
+], QuantumSafeMeta.prototype, "config", void 0);
 exports.QuantumSafeMeta = QuantumSafeMeta;
 class ZdbGroup {
     backends;
@@ -61,6 +105,9 @@ class ZdbGroup {
         return out;
     }
 }
+__decorate([
+    (0, class_validator_1.ValidateNested)({ each: true })
+], ZdbGroup.prototype, "backends", void 0);
 exports.ZdbGroup = ZdbGroup;
 class QuantumCompression {
     algorithm;
@@ -68,6 +115,10 @@ class QuantumCompression {
         return this.algorithm;
     }
 }
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)()
+], QuantumCompression.prototype, "algorithm", void 0);
 exports.QuantumCompression = QuantumCompression;
 class QuantumSafeFSConfig {
     minimal_shards;
@@ -95,6 +146,38 @@ class QuantumSafeFSConfig {
         return out;
     }
 }
+__decorate([
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(2)
+], QuantumSafeFSConfig.prototype, "minimal_shards", void 0);
+__decorate([
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1)
+], QuantumSafeFSConfig.prototype, "expected_shards", void 0);
+__decorate([
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1)
+], QuantumSafeFSConfig.prototype, "redundant_groups", void 0);
+__decorate([
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1)
+], QuantumSafeFSConfig.prototype, "redundant_nodes", void 0);
+__decorate([
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1)
+], QuantumSafeFSConfig.prototype, "max_zdb_data_dir_size", void 0);
+__decorate([
+    (0, class_validator_1.ValidateNested)()
+], QuantumSafeFSConfig.prototype, "encryption", void 0);
+__decorate([
+    (0, class_validator_1.ValidateNested)()
+], QuantumSafeFSConfig.prototype, "meta", void 0);
+__decorate([
+    (0, class_validator_1.ValidateNested)({ each: true })
+], QuantumSafeFSConfig.prototype, "groups", void 0);
+__decorate([
+    (0, class_validator_1.ValidateNested)()
+], QuantumSafeFSConfig.prototype, "compression", void 0);
 exports.QuantumSafeFSConfig = QuantumSafeFSConfig;
 class QuantumSafeFS {
     cache;
@@ -106,6 +189,13 @@ class QuantumSafeFS {
         return out;
     }
 }
+__decorate([
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1024 * 1024 * 250)
+], QuantumSafeFS.prototype, "cache", void 0);
+__decorate([
+    (0, class_validator_1.ValidateNested)()
+], QuantumSafeFS.prototype, "config", void 0);
 exports.QuantumSafeFS = QuantumSafeFS;
 class QuatumSafeFSResult {
     path;

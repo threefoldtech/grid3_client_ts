@@ -30,7 +30,7 @@ class QSFSPrimitive {
         groups: ZdbGroup[],
         encryptionKey: string,
         metaType = "zdb",
-        cache: number = 1024 * 1024 * 1024, // 1 GB for qsfs
+        cache = 1, // 1 GB for qsfs
         maxZdbDataDirSize = 32, // in MB
         redundantGroups = 1,
         redundantNodes = 1,
@@ -70,7 +70,7 @@ class QSFSPrimitive {
         quantumSafeFSConfig.compression = quantumCompression;
 
         const quantumSafeFS = new QuantumSafeFS();
-        quantumSafeFS.cache = cache;
+        quantumSafeFS.cache = cache * 1024 * 1024 * 1024;
         quantumSafeFS.config = quantumSafeFSConfig;
 
         const zmount_workload = new Workload();

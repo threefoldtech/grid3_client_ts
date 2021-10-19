@@ -44,7 +44,7 @@ class VMHL extends base_1.HighLevelBase {
         // qsfs disks
         const qsfsPrimitive = new qsfs_1.QSFSPrimitive();
         for (const d of qsfsDisks) {
-            // the ratio that will be used for minimal_shards is 2/5 and expected_shards 3/5
+            // the ratio that will be used for minimal_shards to expected_shards is 3/5
             const qsfsZdbsModule = new qsfs_zdbs_1.QSFSZdbsModule(this.twin_id, this.url, this.mnemonic, this.rmbClient);
             if (qsfsProjectName) {
                 qsfsZdbsModule.fileName = PATH.join(qsfsProjectName, qsfsZdbsModule.fileName);
@@ -54,7 +54,7 @@ class VMHL extends base_1.HighLevelBase {
                 throw Error(`Couldn't find a qsfs zdbs with name ${d.qsfs_zdbs_name}. Please create one with qsfs_zdbs module`);
             }
             const minimalShards = Math.ceil((qsfsZdbs.groups.length * 3) / 5);
-            const expectedShards = qsfsZdbs.groups.length - minimalShards;
+            const expectedShards = qsfsZdbs.groups.length;
             const qsfsWorkload = qsfsPrimitive.create(d.name, minimalShards, expectedShards, d.prefix, qsfsZdbs.meta, qsfsZdbs.groups, d.encryption_key);
             workloads.push(qsfsWorkload);
             diskMounts.push(disk.createMount(d.name, d.mountpoint));

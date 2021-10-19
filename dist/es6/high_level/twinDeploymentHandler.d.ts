@@ -19,6 +19,7 @@ declare class TwinDeploymentHandler {
     _updateToLatest(twinDeployments: TwinDeployment[]): TwinDeployment;
     updateMerge(twinDeployments: TwinDeployment[]): TwinDeployment[];
     merge(twinDeployments: TwinDeployment[]): TwinDeployment[];
+    validate(twinDeployments: TwinDeployment[]): Promise<void>;
     handle(twinDeployments: TwinDeployment[]): Promise<{
         created: any[];
         updated: any[];

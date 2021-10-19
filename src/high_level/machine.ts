@@ -52,7 +52,7 @@ class VMHL extends HighLevelBase {
         // qsfs disks
         const qsfsPrimitive = new QSFSPrimitive();
         for (const d of qsfsDisks) {
-            // the ratio that will be used for minimal_shards is 2/5 and expected_shards 3/5
+            // the ratio that will be used for minimal_shards to expected_shards is 3/5
             const qsfsZdbsModule = new QSFSZdbsModule(this.twin_id, this.url, this.mnemonic, this.rmbClient);
             if (qsfsProjectName) {
                 qsfsZdbsModule.fileName = PATH.join(qsfsProjectName, qsfsZdbsModule.fileName);
@@ -64,7 +64,7 @@ class VMHL extends HighLevelBase {
                 );
             }
             const minimalShards = Math.ceil((qsfsZdbs.groups.length * 3) / 5);
-            const expectedShards = qsfsZdbs.groups.length - minimalShards;
+            const expectedShards = qsfsZdbs.groups.length;
             const qsfsWorkload = qsfsPrimitive.create(
                 d.name,
                 minimalShards,

@@ -12,6 +12,7 @@ import { TFClient } from "../tf-grid/client";
 import { Operations } from "./models";
 import { getNodeTwinId } from "../primitives/index";
 import { events } from "../helpers/events";
+import { validateObject } from "../helpers/validator";
 class TwinDeploymentHandler {
     constructor(rmbClient, twin_id, url, mnemonic) {
         this.rmbClient = rmbClient;
@@ -259,10 +260,18 @@ class TwinDeploymentHandler {
         deployments = deployments.concat(deletedDeployments);
         return deployments;
     }
+    validate(twinDeployments) {
+        return __awaiter(this, void 0, void 0, function* () {
+            for (const twinDeployment of twinDeployments) {
+                yield validateObject(twinDeployment.deployment);
+            }
+        });
+    }
     handle(twinDeployments) {
         return __awaiter(this, void 0, void 0, function* () {
             events.emit("logs", "Merging workloads");
             twinDeployments = this.merge(twinDeployments);
+            yield this.validate(twinDeployments);
             const contracts = { created: [], updated: [], deleted: [] };
             //TODO: check if it can be done to save the deployment here instead of doing this in the module.
             for (const twinDeployment of twinDeployments) {

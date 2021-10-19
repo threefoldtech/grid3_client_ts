@@ -29,6 +29,7 @@ class DeploymentFactory {
         const signature_request = new SignatureRequest();
         signature_request.twin_id = this.twin_id;
         signature_request.weight = 1;
+        signature_request.required = false;
 
         const signature_requirement = new SignatureRequirement();
         signature_requirement.weight_required = 1;

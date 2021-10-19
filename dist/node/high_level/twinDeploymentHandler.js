@@ -6,6 +6,7 @@ const client_1 = require("../tf-grid/client");
 const models_1 = require("./models");
 const index_1 = require("../primitives/index");
 const events_1 = require("../helpers/events");
+const validator_1 = require("../helpers/validator");
 class TwinDeploymentHandler {
     rmbClient;
     twin_id;
@@ -246,9 +247,15 @@ class TwinDeploymentHandler {
         deployments = deployments.concat(deletedDeployments);
         return deployments;
     }
+    async validate(twinDeployments) {
+        for (const twinDeployment of twinDeployments) {
+            await (0, validator_1.validateObject)(twinDeployment.deployment);
+        }
+    }
     async handle(twinDeployments) {
         events_1.events.emit("logs", "Merging workloads");
         twinDeployments = this.merge(twinDeployments);
+        await this.validate(twinDeployments);
         const contracts = { created: [], updated: [], deleted: [] };
         //TODO: check if it can be done to save the deployment here instead of doing this in the module.
         for (const twinDeployment of twinDeployments) {

@@ -123,6 +123,9 @@ class DeploymentFactory {
     async fromObj(deployment): Promise<Deployment> {
         for (const workload of deployment.workloads) {
             workload.data["__type"] = workload.type;
+            if (workload.result) {
+                workload.result.data["__type"] = workload.type;
+            }
         }
         const d = plainToClass(Deployment, deployment, { excludeExtraneousValues: true });
         await validateObject(d);

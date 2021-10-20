@@ -17,6 +17,7 @@ const ipv4_1 = require("./ipv4");
 const gateway_1 = require("./gateway");
 const qsfs_1 = require("./qsfs");
 const workload_base_1 = require("./workload_base");
+const _1 = require(".");
 var ResultStates;
 (function (ResultStates) {
     ResultStates["error"] = "error";
@@ -49,9 +50,37 @@ class ACE {
 class DeploymentResult {
     created;
     state;
-    error = "";
-    data = "";
+    message;
+    data;
 }
+__decorate([
+    (0, class_transformer_1.Expose)()
+], DeploymentResult.prototype, "created", void 0);
+__decorate([
+    (0, class_transformer_1.Expose)(),
+    (0, class_transformer_1.Transform)(({ value }) => ResultStates[value])
+], DeploymentResult.prototype, "state", void 0);
+__decorate([
+    (0, class_transformer_1.Expose)()
+], DeploymentResult.prototype, "message", void 0);
+__decorate([
+    (0, class_transformer_1.Expose)(),
+    (0, class_transformer_1.Type)(() => workload_base_1.WorkloadDataResult, {
+        discriminator: {
+            property: '__type',
+            subTypes: [
+                { value: zmount_1.ZmountResult, name: WorkloadTypes.zmount },
+                { value: _1.ZnetResult, name: WorkloadTypes.network },
+                { value: zmachine_1.ZmachineResult, name: WorkloadTypes.zmachine },
+                { value: zdb_1.ZdbResult, name: WorkloadTypes.zdb },
+                { value: _1.PublicIPResult, name: WorkloadTypes.ipv4 },
+                { value: gateway_1.GatewayResult, name: WorkloadTypes.gatewayfqdnproxy },
+                { value: gateway_1.GatewayResult, name: WorkloadTypes.gatewaynameproxy },
+                { value: qsfs_1.QuantumSafeFSResult, name: WorkloadTypes.qsfs },
+            ],
+        },
+    })
+], DeploymentResult.prototype, "data", void 0);
 class Workload {
     version;
     name;
@@ -88,7 +117,7 @@ __decorate([
 __decorate([
     (0, class_transformer_1.Expose)(),
     (0, class_validator_1.ValidateNested)(),
-    (0, class_transformer_1.Type)(() => workload_base_1.WorkloadBaseData, {
+    (0, class_transformer_1.Type)(() => workload_base_1.WorkloadData, {
         discriminator: {
             property: '__type',
             subTypes: [
@@ -114,4 +143,8 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsDefined)()
 ], Workload.prototype, "description", void 0);
+__decorate([
+    (0, class_transformer_1.Expose)(),
+    (0, class_transformer_1.Type)(() => DeploymentResult)
+], Workload.prototype, "result", void 0);
 exports.Workload = Workload;

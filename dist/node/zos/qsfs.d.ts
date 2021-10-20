@@ -1,4 +1,4 @@
-import { WorkloadBaseData } from "./workload_base";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 declare class Encryption {
     algorithm: string;
     key: string;
@@ -41,10 +41,14 @@ declare class QuantumSafeFSConfig {
     compression: QuantumCompression;
     challenge(): string;
 }
-declare class QuantumSafeFS extends WorkloadBaseData {
+declare class QuantumSafeFS extends WorkloadData {
     cache: number;
     config: QuantumSafeFSConfig;
     challenge(): string;
 }
-export { QuantumSafeFS, ZdbBackend, ZdbGroup, QuantumSafeFSConfig, Encryption, QuantumSafeMeta, QuantumSafeConfig, QuantumCompression, };
+declare class QuantumSafeFSResult extends WorkloadDataResult {
+    path: string;
+    metrics_endpoint: string;
+}
+export { QuantumSafeFS, ZdbBackend, ZdbGroup, QuantumSafeFSConfig, Encryption, QuantumSafeMeta, QuantumSafeConfig, QuantumCompression, QuantumSafeFSResult };
 //# sourceMappingURL=qsfs.d.ts.map

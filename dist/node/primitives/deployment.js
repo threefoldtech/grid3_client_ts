@@ -105,6 +105,9 @@ class DeploymentFactory {
     async fromObj(deployment) {
         for (const workload of deployment.workloads) {
             workload.data["__type"] = workload.type;
+            if (workload.result) {
+                workload.result.data["__type"] = workload.type;
+            }
         }
         const d = (0, class_transformer_1.plainToClass)(deployment_1.Deployment, deployment, { excludeExtraneousValues: true });
         await (0, validator_1.validateObject)(d);

@@ -22,7 +22,7 @@ var DeviceTypes;
     DeviceTypes["ssd"] = "ssd";
 })(DeviceTypes || (DeviceTypes = {}));
 exports.DeviceTypes = DeviceTypes;
-class Zdb extends workload_base_1.WorkloadBaseData {
+class Zdb extends workload_base_1.WorkloadData {
     namespace;
     size; // in bytes
     mode = ZdbModes.seq;
@@ -68,10 +68,18 @@ __decorate([
     (0, class_validator_1.IsBoolean)()
 ], Zdb.prototype, "public", void 0);
 exports.Zdb = Zdb;
-class ZdbResult {
-    name = "";
-    namespace = "";
+class ZdbResult extends workload_base_1.WorkloadDataResult {
+    namespace;
     ips;
-    port = 0;
+    port;
 }
+__decorate([
+    (0, class_transformer_1.Expose)()
+], ZdbResult.prototype, "namespace", void 0);
+__decorate([
+    (0, class_transformer_1.Expose)()
+], ZdbResult.prototype, "ips", void 0);
+__decorate([
+    (0, class_transformer_1.Expose)()
+], ZdbResult.prototype, "port", void 0);
 exports.ZdbResult = ZdbResult;

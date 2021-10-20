@@ -1,6 +1,10 @@
-import { WorkloadBaseData } from "./workload_base";
-declare class PublicIP extends WorkloadBaseData {
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
+declare class PublicIP extends WorkloadData {
     challenge(): string;
 }
-export { PublicIP };
+declare class PublicIPResult extends WorkloadDataResult {
+    ip: string;
+    gateway: string;
+}
+export { PublicIP, PublicIPResult };
 //# sourceMappingURL=ipv4.d.ts.map

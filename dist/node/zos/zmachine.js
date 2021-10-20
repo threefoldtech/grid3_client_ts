@@ -77,7 +77,7 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)()
 ], Mount.prototype, "mountpoint", void 0);
 exports.Mount = Mount;
-class Zmachine extends workload_base_1.WorkloadBaseData {
+class Zmachine extends workload_base_1.WorkloadData {
     flist;
     network;
     size; // in bytes
@@ -137,8 +137,18 @@ __decorate([
     (0, class_transformer_1.Expose)()
 ], Zmachine.prototype, "env", void 0);
 exports.Zmachine = Zmachine;
-class ZmachineResult {
-    id = "";
-    ip = "";
+class ZmachineResult extends workload_base_1.WorkloadDataResult {
+    id;
+    ip;
+    ygg_ip;
 }
+__decorate([
+    (0, class_transformer_1.Expose)()
+], ZmachineResult.prototype, "id", void 0);
+__decorate([
+    (0, class_transformer_1.Expose)()
+], ZmachineResult.prototype, "ip", void 0);
+__decorate([
+    (0, class_transformer_1.Expose)()
+], ZmachineResult.prototype, "ygg_ip", void 0);
 exports.ZmachineResult = ZmachineResult;

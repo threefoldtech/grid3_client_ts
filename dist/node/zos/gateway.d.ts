@@ -1,17 +1,17 @@
-import { WorkloadBaseData } from "./workload_base";
-declare class GatewayFQDNProxy extends WorkloadBaseData {
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
+declare class GatewayFQDNProxy extends WorkloadData {
     fqdn: string;
     tls_passthrough: boolean;
     backends: string[];
     challenge(): string;
 }
-declare class GatewayNameProxy extends WorkloadBaseData {
+declare class GatewayNameProxy extends WorkloadData {
     name: string;
     tls_passthrough: boolean;
     backends: string[];
     challenge(): string;
 }
-declare class GatewayResult {
+declare class GatewayResult extends WorkloadDataResult {
 }
 export { GatewayFQDNProxy, GatewayNameProxy, GatewayResult };
 //# sourceMappingURL=gateway.d.ts.map

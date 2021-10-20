@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { IsString, IsNotEmpty, IsIP, IsBoolean, IsInt, Min, ValidateNested } from "class-validator";
 import { Expose, Type } from "class-transformer";
 import { ComputeCapacity } from "./computecapacity";
-import { WorkloadBaseData } from "./workload_base";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 class ZNetworkInterface {
 }
 __decorate([
@@ -64,7 +64,7 @@ __decorate([
     IsString(),
     IsNotEmpty()
 ], Mount.prototype, "mountpoint", void 0);
-class Zmachine extends WorkloadBaseData {
+class Zmachine extends WorkloadData {
     challenge() {
         let out = "";
         out += this.flist;
@@ -116,10 +116,15 @@ __decorate([
 __decorate([
     Expose()
 ], Zmachine.prototype, "env", void 0);
-class ZmachineResult {
-    constructor() {
-        this.id = "";
-        this.ip = "";
-    }
+class ZmachineResult extends WorkloadDataResult {
 }
+__decorate([
+    Expose()
+], ZmachineResult.prototype, "id", void 0);
+__decorate([
+    Expose()
+], ZmachineResult.prototype, "ip", void 0);
+__decorate([
+    Expose()
+], ZmachineResult.prototype, "ygg_ip", void 0);
 export { Zmachine, ZmachineNetwork, ZNetworkInterface, Mount, ZmachineResult };

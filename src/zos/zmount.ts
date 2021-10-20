@@ -1,10 +1,10 @@
 import { IsInt, Min } from "class-validator";
 import { Expose } from "class-transformer";
 
-import { WorkloadBaseData } from "./workload_base";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 
 
-class Zmount extends WorkloadBaseData {
+class Zmount extends WorkloadData {
     @Expose() @IsInt() @Min(1) size: number; // in bytes
 
     challenge() {
@@ -12,7 +12,7 @@ class Zmount extends WorkloadBaseData {
     }
 }
 
-class ZmountResult {
-    volume_id: string;
+class ZmountResult extends WorkloadDataResult {
+    @Expose() volume_id: string;
 }
 export { Zmount, ZmountResult };

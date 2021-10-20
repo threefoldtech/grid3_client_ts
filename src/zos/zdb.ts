@@ -1,7 +1,7 @@
 import { IsBoolean, IsString, IsNotEmpty, IsInt, Min, IsEnum } from "class-validator";
 import { Expose, Transform } from "class-transformer";
 
-import { WorkloadBaseData } from "./workload_base";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 
 
 enum ZdbModes {
@@ -14,7 +14,7 @@ enum DeviceTypes {
     ssd = "ssd",
 }
 
-class Zdb extends WorkloadBaseData {
+class Zdb extends WorkloadData {
     @Expose() @IsString() @IsNotEmpty() namespace: string;
     @Expose() @IsInt() @Min(1) size: number; // in bytes
     @Expose() @Transform(({ value }) => ZdbModes[value]) @IsEnum(ZdbModes) mode: ZdbModes = ZdbModes.seq;
@@ -33,11 +33,10 @@ class Zdb extends WorkloadBaseData {
     }
 }
 
-class ZdbResult {
-    name = "";
-    namespace = "";
-    ips: string[];
-    port = 0;
+class ZdbResult extends WorkloadDataResult {
+    @Expose() namespace: string;
+    @Expose() ips: string[];
+    @Expose() port: number;
 }
 
 export { Zdb, ZdbResult, ZdbModes, DeviceTypes };

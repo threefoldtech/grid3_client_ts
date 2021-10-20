@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Peer = exports.Znet = void 0;
+exports.ZnetResult = exports.Peer = exports.Znet = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const workload_base_1 = require("./workload_base");
@@ -47,7 +47,7 @@ __decorate([
     (0, class_validator_1.IsDefined)()
 ], Peer.prototype, "endpoint", void 0);
 exports.Peer = Peer;
-class Znet extends workload_base_1.WorkloadBaseData {
+class Znet extends workload_base_1.WorkloadData {
     subnet;
     ip_range;
     wireguard_private_key;
@@ -92,3 +92,6 @@ __decorate([
     (0, class_validator_1.ArrayNotEmpty)()
 ], Znet.prototype, "peers", void 0);
 exports.Znet = Znet;
+class ZnetResult extends workload_base_1.WorkloadDataResult {
+}
+exports.ZnetResult = ZnetResult;

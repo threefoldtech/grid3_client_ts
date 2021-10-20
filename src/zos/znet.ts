@@ -1,7 +1,7 @@
 import { IsString, IsNotEmpty, ArrayNotEmpty, IsPort, IsDefined, ValidateNested } from "class-validator";
 import { Expose, Type } from "class-transformer";
 
-import { WorkloadBaseData } from "./workload_base";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 
 class Peer {
     @Expose() @IsString() @IsNotEmpty() subnet: string;
@@ -22,7 +22,7 @@ class Peer {
     }
 }
 
-class Znet extends WorkloadBaseData {
+class Znet extends WorkloadData {
     @Expose() @IsString() @IsNotEmpty() subnet: string;
     @Expose() @IsString() @IsNotEmpty() ip_range: string;
     @Expose() @IsString() @IsNotEmpty() wireguard_private_key: string;
@@ -43,4 +43,6 @@ class Znet extends WorkloadBaseData {
     }
 }
 
-export { Znet, Peer };
+class ZnetResult extends WorkloadDataResult {}
+
+export { Znet, Peer, ZnetResult };

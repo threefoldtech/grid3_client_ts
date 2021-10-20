@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.QuantumCompression = exports.QuantumSafeConfig = exports.QuantumSafeMeta = exports.Encryption = exports.QuantumSafeFSConfig = exports.ZdbGroup = exports.ZdbBackend = exports.QuantumSafeFS = void 0;
+exports.QuantumSafeFSResult = exports.QuantumCompression = exports.QuantumSafeConfig = exports.QuantumSafeMeta = exports.Encryption = exports.QuantumSafeFSConfig = exports.ZdbGroup = exports.ZdbBackend = exports.QuantumSafeFS = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const workload_base_1 = require("./workload_base");
@@ -210,7 +210,7 @@ __decorate([
     (0, class_validator_1.ValidateNested)()
 ], QuantumSafeFSConfig.prototype, "compression", void 0);
 exports.QuantumSafeFSConfig = QuantumSafeFSConfig;
-class QuantumSafeFS extends workload_base_1.WorkloadBaseData {
+class QuantumSafeFS extends workload_base_1.WorkloadData {
     cache;
     config;
     challenge() {
@@ -231,7 +231,8 @@ __decorate([
     (0, class_validator_1.ValidateNested)()
 ], QuantumSafeFS.prototype, "config", void 0);
 exports.QuantumSafeFS = QuantumSafeFS;
-class QuatumSafeFSResult {
+class QuantumSafeFSResult extends workload_base_1.WorkloadDataResult {
     path;
     metrics_endpoint;
 }
+exports.QuantumSafeFSResult = QuantumSafeFSResult;

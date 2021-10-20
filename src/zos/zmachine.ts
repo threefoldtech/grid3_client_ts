@@ -2,7 +2,7 @@ import { IsString, IsNotEmpty, IsIP, IsBoolean, IsInt, Min, ValidateNested } fro
 import { Expose, Type } from "class-transformer";
 
 import { ComputeCapacity } from "./computecapacity";
-import { WorkloadBaseData } from "./workload_base";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 
 
 class ZNetworkInterface {
@@ -39,7 +39,7 @@ class Mount {
     }
 }
 
-class Zmachine extends WorkloadBaseData {
+class Zmachine extends WorkloadData {
     @Expose() @IsString() @IsNotEmpty() flist: string;
     @Expose() @Type(() => ZmachineNetwork) @ValidateNested() network: ZmachineNetwork;
     @Expose() @IsInt() @Min(1024 * 1024 * 250) size: number; // in bytes
@@ -67,9 +67,10 @@ class Zmachine extends WorkloadBaseData {
     }
 }
 
-class ZmachineResult {
-    id = "";
-    ip = "";
+class ZmachineResult extends WorkloadDataResult {
+    @Expose() id: string;
+    @Expose() ip: string;
+    @Expose() ygg_ip: string;
 }
 
 export { Zmachine, ZmachineNetwork, ZNetworkInterface, Mount, ZmachineResult };

@@ -10,7 +10,7 @@ exports.GatewayResult = exports.GatewayNameProxy = exports.GatewayFQDNProxy = vo
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const workload_base_1 = require("./workload_base");
-class GatewayFQDNProxy extends workload_base_1.WorkloadBaseData {
+class GatewayFQDNProxy extends workload_base_1.WorkloadData {
     fqdn;
     tls_passthrough;
     backends;
@@ -38,7 +38,7 @@ __decorate([
     (0, class_validator_1.IsUrl)({ protocols: ["http", "https"] }, { each: true })
 ], GatewayFQDNProxy.prototype, "backends", void 0);
 exports.GatewayFQDNProxy = GatewayFQDNProxy;
-class GatewayNameProxy extends workload_base_1.WorkloadBaseData {
+class GatewayNameProxy extends workload_base_1.WorkloadData {
     name;
     tls_passthrough;
     backends;
@@ -67,6 +67,6 @@ __decorate([
     (0, class_validator_1.IsUrl)({ protocols: ["http", "https"] }, { each: true })
 ], GatewayNameProxy.prototype, "backends", void 0);
 exports.GatewayNameProxy = GatewayNameProxy;
-class GatewayResult {
+class GatewayResult extends workload_base_1.WorkloadDataResult {
 }
 exports.GatewayResult = GatewayResult;

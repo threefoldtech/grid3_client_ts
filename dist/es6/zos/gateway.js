@@ -6,8 +6,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { IsFQDN, IsBoolean, IsString, IsUrl, IsNotEmpty, ArrayNotEmpty } from "class-validator";
 import { Expose } from "class-transformer";
-import { WorkloadBaseData } from "./workload_base";
-class GatewayFQDNProxy extends WorkloadBaseData {
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
+class GatewayFQDNProxy extends WorkloadData {
     challenge() {
         let out = "";
         out += this.fqdn;
@@ -31,7 +31,7 @@ __decorate([
     ArrayNotEmpty(),
     IsUrl({ protocols: ["http", "https"] }, { each: true })
 ], GatewayFQDNProxy.prototype, "backends", void 0);
-class GatewayNameProxy extends WorkloadBaseData {
+class GatewayNameProxy extends WorkloadData {
     challenge() {
         let out = "";
         out += this.name;
@@ -56,6 +56,6 @@ __decorate([
     ArrayNotEmpty(),
     IsUrl({ protocols: ["http", "https"] }, { each: true })
 ], GatewayNameProxy.prototype, "backends", void 0);
-class GatewayResult {
+class GatewayResult extends WorkloadDataResult {
 }
 export { GatewayFQDNProxy, GatewayNameProxy, GatewayResult };

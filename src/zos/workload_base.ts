@@ -1,1 +1,4 @@
-export class WorkloadBaseData {}
+class WorkloadData {}
+class WorkloadDataResult {};
+
+export { WorkloadData, WorkloadDataResult };

@@ -2,7 +2,7 @@ import { IsString, IsNotEmpty, IsInt, Min, ValidateNested } from "class-validato
 import { Expose, Type } from "class-transformer";
 
 
-import { WorkloadBaseData } from "./workload_base";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 
 class Encryption {
     @Expose() @IsNotEmpty() @IsString() algorithm: string;
@@ -106,7 +106,7 @@ class QuantumSafeFSConfig {
     }
 }
 
-class QuantumSafeFS extends WorkloadBaseData {
+class QuantumSafeFS extends WorkloadData {
     @Expose() @IsInt() @Min(1024 * 1024 * 250) cache: number;
     @Expose() @Type(() => QuantumSafeFSConfig) @ValidateNested() config: QuantumSafeFSConfig;
 
@@ -118,7 +118,7 @@ class QuantumSafeFS extends WorkloadBaseData {
     }
 }
 
-class QuatumSafeFSResult {
+class QuantumSafeFSResult extends WorkloadDataResult {
     path: string;
     metrics_endpoint: string;
 }
@@ -132,4 +132,5 @@ export {
     QuantumSafeMeta,
     QuantumSafeConfig,
     QuantumCompression,
+    QuantumSafeFSResult
 };

@@ -7,8 +7,9 @@ import { Zmachine, ZmachineResult } from "./zmachine";
 import { Zdb, ZdbResult } from "./zdb";
 import { PublicIP } from "./ipv4";
 import { GatewayFQDNProxy, GatewayNameProxy, GatewayResult } from "./gateway";
-import { QuantumSafeFS } from "./qsfs";
-import { WorkloadBaseData } from "./workload_base";
+import { QuantumSafeFS, QuantumSafeFSResult } from "./qsfs";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
+import { PublicIPResult, ZnetResult } from ".";
 
 enum ResultStates {
     error = "error",
@@ -39,10 +40,25 @@ class ACE {
 }
 
 class DeploymentResult {
-    created: number;
-    state: ResultStates;
-    error = "";
-    data = "";
+    @Expose() created: number;
+    @Expose() @Transform(({ value }) => ResultStates[value]) state: ResultStates;
+    @Expose() message: string;
+    @Expose() @Type(() => WorkloadDataResult, {
+        discriminator: {
+            property: '__type',
+            subTypes: [
+                { value: ZmountResult, name: WorkloadTypes.zmount },
+                { value: ZnetResult, name: WorkloadTypes.network },
+                { value: ZmachineResult, name: WorkloadTypes.zmachine },
+                { value: ZdbResult, name: WorkloadTypes.zdb },
+                { value: PublicIPResult, name: WorkloadTypes.ipv4 },
+                { value: GatewayResult, name: WorkloadTypes.gatewayfqdnproxy },
+                { value: GatewayResult, name: WorkloadTypes.gatewaynameproxy },
+                { value: QuantumSafeFSResult, name: WorkloadTypes.qsfs },
+            ],
+        },
+    })
+    data: ZmountResult | ZnetResult | ZmachineResult | ZdbResult | PublicIPResult | GatewayResult | QuantumSafeFSResult;
 }
 
 
@@ -50,7 +66,7 @@ class Workload {
     @Expose() @IsInt() @Min(0) version: number;
     @Expose() @IsString() @IsNotEmpty() name: string;
     @Expose() @Transform(({ value }) => WorkloadTypes[value]) @IsEnum(WorkloadTypes) type: WorkloadTypes;
-    @Expose() @ValidateNested() @Type(() => WorkloadBaseData, {
+    @Expose() @ValidateNested() @Type(() => WorkloadData, {
         discriminator: {
             property: '__type',
             subTypes: [
@@ -76,9 +92,7 @@ class Workload {
 
     @Expose() @IsString() @IsDefined() metadata: string;
     @Expose() @IsString() @IsDefined() description: string;
-
-
-    result: DeploymentResult;
+    @Expose() @Type(() => DeploymentResult) result: DeploymentResult;
 
     challenge() {
         let out = "";
@@ -92,7 +106,5 @@ class Workload {
     }
 }
 
-type WorkloadData = Zmount | Zdb | Zmachine | Znet | GatewayFQDNProxy | GatewayNameProxy;
-type WorkloadDataResult = ZmountResult | ZdbResult | ZmachineResult | GatewayResult;
 
-export { Workload, WorkloadTypes, WorkloadData, WorkloadDataResult };
+export { Workload, WorkloadTypes };

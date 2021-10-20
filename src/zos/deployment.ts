@@ -51,9 +51,7 @@ class Deployment {
     @Expose() @IsInt() expiration: number;
     @Expose() @IsString() @IsDefined() metadata;
     @Expose() @IsString() @IsDefined() description;
-
     @Expose() @Type(() => Workload) @ValidateNested({ each: true }) workloads: Workload[];
-
     @Expose() @Type(() => SignatureRequirement) @ValidateNested() signature_requirement: SignatureRequirement;
 
     challenge() {

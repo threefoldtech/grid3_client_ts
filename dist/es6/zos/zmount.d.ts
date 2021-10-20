@@ -1,9 +1,9 @@
-import { WorkloadBaseData } from "./workload_base";
-declare class Zmount extends WorkloadBaseData {
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
+declare class Zmount extends WorkloadData {
     size: number;
     challenge(): number;
 }
-declare class ZmountResult {
+declare class ZmountResult extends WorkloadDataResult {
     volume_id: string;
 }
 export { Zmount, ZmountResult };

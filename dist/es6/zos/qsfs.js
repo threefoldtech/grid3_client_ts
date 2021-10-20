@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { IsString, IsNotEmpty, IsInt, Min, ValidateNested } from "class-validator";
 import { Expose, Type } from "class-transformer";
-import { WorkloadBaseData } from "./workload_base";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 class Encryption {
     challenge() {
         let out = "";
@@ -179,7 +179,7 @@ __decorate([
     Type(() => QuantumCompression),
     ValidateNested()
 ], QuantumSafeFSConfig.prototype, "compression", void 0);
-class QuantumSafeFS extends WorkloadBaseData {
+class QuantumSafeFS extends WorkloadData {
     challenge() {
         let out = "";
         out += this.cache;
@@ -197,6 +197,6 @@ __decorate([
     Type(() => QuantumSafeFSConfig),
     ValidateNested()
 ], QuantumSafeFS.prototype, "config", void 0);
-class QuatumSafeFSResult {
+class QuantumSafeFSResult extends WorkloadDataResult {
 }
-export { QuantumSafeFS, ZdbBackend, ZdbGroup, QuantumSafeFSConfig, Encryption, QuantumSafeMeta, QuantumSafeConfig, QuantumCompression, };
+export { QuantumSafeFS, ZdbBackend, ZdbGroup, QuantumSafeFSConfig, Encryption, QuantumSafeMeta, QuantumSafeConfig, QuantumCompression, QuantumSafeFSResult };

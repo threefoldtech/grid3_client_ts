@@ -7,13 +7,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { IsString, IsNotEmpty, IsDefined, IsInt, Min, ValidateNested, IsEnum } from "class-validator";
 import { Expose, Transform, Type } from "class-transformer";
 import { Znet } from "./znet";
-import { Zmount } from "./zmount";
-import { Zmachine } from "./zmachine";
-import { Zdb } from "./zdb";
+import { Zmount, ZmountResult } from "./zmount";
+import { Zmachine, ZmachineResult } from "./zmachine";
+import { Zdb, ZdbResult } from "./zdb";
 import { PublicIP } from "./ipv4";
-import { GatewayFQDNProxy, GatewayNameProxy } from "./gateway";
-import { QuantumSafeFS } from "./qsfs";
-import { WorkloadBaseData } from "./workload_base";
+import { GatewayFQDNProxy, GatewayNameProxy, GatewayResult } from "./gateway";
+import { QuantumSafeFS, QuantumSafeFSResult } from "./qsfs";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
+import { PublicIPResult, ZnetResult } from ".";
 var ResultStates;
 (function (ResultStates) {
     ResultStates["error"] = "error";
@@ -41,11 +42,35 @@ var Right;
 class ACE {
 }
 class DeploymentResult {
-    constructor() {
-        this.error = "";
-        this.data = "";
-    }
 }
+__decorate([
+    Expose()
+], DeploymentResult.prototype, "created", void 0);
+__decorate([
+    Expose(),
+    Transform(({ value }) => ResultStates[value])
+], DeploymentResult.prototype, "state", void 0);
+__decorate([
+    Expose()
+], DeploymentResult.prototype, "message", void 0);
+__decorate([
+    Expose(),
+    Type(() => WorkloadDataResult, {
+        discriminator: {
+            property: '__type',
+            subTypes: [
+                { value: ZmountResult, name: WorkloadTypes.zmount },
+                { value: ZnetResult, name: WorkloadTypes.network },
+                { value: ZmachineResult, name: WorkloadTypes.zmachine },
+                { value: ZdbResult, name: WorkloadTypes.zdb },
+                { value: PublicIPResult, name: WorkloadTypes.ipv4 },
+                { value: GatewayResult, name: WorkloadTypes.gatewayfqdnproxy },
+                { value: GatewayResult, name: WorkloadTypes.gatewaynameproxy },
+                { value: QuantumSafeFSResult, name: WorkloadTypes.qsfs },
+            ],
+        },
+    })
+], DeploymentResult.prototype, "data", void 0);
 class Workload {
     challenge() {
         let out = "";
@@ -75,7 +100,7 @@ __decorate([
 __decorate([
     Expose(),
     ValidateNested(),
-    Type(() => WorkloadBaseData, {
+    Type(() => WorkloadData, {
         discriminator: {
             property: '__type',
             subTypes: [
@@ -101,4 +126,8 @@ __decorate([
     IsString(),
     IsDefined()
 ], Workload.prototype, "description", void 0);
+__decorate([
+    Expose(),
+    Type(() => DeploymentResult)
+], Workload.prototype, "result", void 0);
 export { Workload, WorkloadTypes };

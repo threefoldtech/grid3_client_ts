@@ -1,9 +1,9 @@
 import { IsFQDN, IsBoolean, IsString, IsUrl, IsNotEmpty, ArrayNotEmpty } from "class-validator";
 import { Expose } from "class-transformer";
 
-import { WorkloadBaseData } from "./workload_base";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 
-class GatewayFQDNProxy extends WorkloadBaseData {
+class GatewayFQDNProxy extends WorkloadData {
     @Expose() @IsFQDN() fqdn: string;
     @Expose() @IsBoolean() tls_passthrough: boolean;
     @Expose() @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
@@ -19,7 +19,7 @@ class GatewayFQDNProxy extends WorkloadBaseData {
     }
 }
 
-class GatewayNameProxy extends WorkloadBaseData {
+class GatewayNameProxy extends WorkloadData {
     @Expose() @IsString() @IsNotEmpty() name: string;
     @Expose() @IsBoolean() tls_passthrough: boolean;
     @Expose() @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
@@ -35,6 +35,6 @@ class GatewayNameProxy extends WorkloadBaseData {
     }
 }
 
-class GatewayResult {}
+class GatewayResult extends WorkloadDataResult {}
 
 export { GatewayFQDNProxy, GatewayNameProxy, GatewayResult };

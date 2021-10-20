@@ -4,7 +4,8 @@ import { Zmachine, ZmachineResult } from "./zmachine";
 import { Zdb, ZdbResult } from "./zdb";
 import { PublicIP } from "./ipv4";
 import { GatewayFQDNProxy, GatewayNameProxy, GatewayResult } from "./gateway";
-import { QuantumSafeFS } from "./qsfs";
+import { QuantumSafeFS, QuantumSafeFSResult } from "./qsfs";
+import { PublicIPResult, ZnetResult } from ".";
 declare enum ResultStates {
     error = "error",
     ok = "ok",
@@ -23,8 +24,8 @@ declare enum WorkloadTypes {
 declare class DeploymentResult {
     created: number;
     state: ResultStates;
-    error: string;
-    data: string;
+    message: string;
+    data: ZmountResult | ZnetResult | ZmachineResult | ZdbResult | PublicIPResult | GatewayResult | QuantumSafeFSResult;
 }
 declare class Workload {
     version: number;
@@ -36,7 +37,5 @@ declare class Workload {
     result: DeploymentResult;
     challenge(): string;
 }
-declare type WorkloadData = Zmount | Zdb | Zmachine | Znet | GatewayFQDNProxy | GatewayNameProxy;
-declare type WorkloadDataResult = ZmountResult | ZdbResult | ZmachineResult | GatewayResult;
-export { Workload, WorkloadTypes, WorkloadData, WorkloadDataResult };
+export { Workload, WorkloadTypes };
 //# sourceMappingURL=workload.d.ts.map

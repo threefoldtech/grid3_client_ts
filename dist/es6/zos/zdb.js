@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { IsBoolean, IsString, IsNotEmpty, IsInt, Min, IsEnum } from "class-validator";
 import { Expose, Transform } from "class-transformer";
-import { WorkloadBaseData } from "./workload_base";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 var ZdbModes;
 (function (ZdbModes) {
     ZdbModes["seq"] = "seq";
@@ -17,7 +17,7 @@ var DeviceTypes;
     DeviceTypes["hdd"] = "hdd";
     DeviceTypes["ssd"] = "ssd";
 })(DeviceTypes || (DeviceTypes = {}));
-class Zdb extends WorkloadBaseData {
+class Zdb extends WorkloadData {
     constructor() {
         super(...arguments);
         this.mode = ZdbModes.seq;
@@ -61,11 +61,15 @@ __decorate([
     Expose(),
     IsBoolean()
 ], Zdb.prototype, "public", void 0);
-class ZdbResult {
-    constructor() {
-        this.name = "";
-        this.namespace = "";
-        this.port = 0;
-    }
+class ZdbResult extends WorkloadDataResult {
 }
+__decorate([
+    Expose()
+], ZdbResult.prototype, "namespace", void 0);
+__decorate([
+    Expose()
+], ZdbResult.prototype, "ips", void 0);
+__decorate([
+    Expose()
+], ZdbResult.prototype, "port", void 0);
 export { Zdb, ZdbResult, ZdbModes, DeviceTypes };

@@ -6,8 +6,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { IsInt, Min } from "class-validator";
 import { Expose } from "class-transformer";
-import { WorkloadBaseData } from "./workload_base";
-class Zmount extends WorkloadBaseData {
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
+class Zmount extends WorkloadData {
     challenge() {
         return this.size;
     }
@@ -17,6 +17,9 @@ __decorate([
     IsInt(),
     Min(1)
 ], Zmount.prototype, "size", void 0);
-class ZmountResult {
+class ZmountResult extends WorkloadDataResult {
 }
+__decorate([
+    Expose()
+], ZmountResult.prototype, "volume_id", void 0);
 export { Zmount, ZmountResult };

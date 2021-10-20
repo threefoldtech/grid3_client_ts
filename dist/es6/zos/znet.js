@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { IsString, IsNotEmpty, ArrayNotEmpty, IsPort, IsDefined, ValidateNested } from "class-validator";
 import { Expose, Type } from "class-transformer";
-import { WorkloadBaseData } from "./workload_base";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 class Peer {
     challenge() {
         let out = "";
@@ -39,7 +39,7 @@ __decorate([
     IsString(),
     IsDefined()
 ], Peer.prototype, "endpoint", void 0);
-class Znet extends WorkloadBaseData {
+class Znet extends WorkloadData {
     challenge() {
         let out = "";
         out += this.ip_range;
@@ -78,4 +78,6 @@ __decorate([
     ValidateNested({ each: true }),
     ArrayNotEmpty()
 ], Znet.prototype, "peers", void 0);
-export { Znet, Peer };
+class ZnetResult extends WorkloadDataResult {
+}
+export { Znet, Peer, ZnetResult };

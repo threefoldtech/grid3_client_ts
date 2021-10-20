@@ -1,4 +1,4 @@
-import { WorkloadBaseData } from "./workload_base";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 declare enum ZdbModes {
     seq = "seq",
     user = "user"
@@ -7,7 +7,7 @@ declare enum DeviceTypes {
     hdd = "hdd",
     ssd = "ssd"
 }
-declare class Zdb extends WorkloadBaseData {
+declare class Zdb extends WorkloadData {
     namespace: string;
     size: number;
     mode: ZdbModes;
@@ -16,8 +16,7 @@ declare class Zdb extends WorkloadBaseData {
     public: boolean;
     challenge(): string;
 }
-declare class ZdbResult {
-    name: string;
+declare class ZdbResult extends WorkloadDataResult {
     namespace: string;
     ips: string[];
     port: number;

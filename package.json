@@ -1,19 +1,43 @@
 {
     "name": "grid3_client",
     "author": "Ahmed Hanafy",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "dependencies": {
+        "appdata-path": "^1.0.0",
+        "axios": "^0.22.0",
+        "buffer": "^6.0.3",
         "crypto-js": "^4.1.1",
-        "@types/node": "^16.4.10",
+        "ip": "^1.1.5",
+        "netaddr": "^1.1.0",
         "tfgrid-api-client": "^0.1.1",
+        "ts-rmb-client-base": "^0.0.1",
+        "tweetnacl": "^1.0.3",
         "typescript": "^4.3.5",
-        "uuid4": "^2.0.2",
-        "redis": "^3.1.2",
-        "stellar-sdk": "^8.2.2"
+        "uuid4": "^2.0.2"
     },
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^4.31.2",
+        "@typescript-eslint/parser": "^4.31.2",
+        "eslint": "^7.32.0",
+        "eslint-plugin-prettier": "^4.0.0",
+        "npm-run-all": "^4.1.5",
+        "prettier": "^2.4.1",
+        "ts-loader": "^9.2.6",
+        "tsconfig-paths-webpack-plugin": "^3.5.1",
+        "webpack": "^5.57.1",
+        "webpack-cli": "^4.8.0"
+    },
+    "exports": {
+        "require": "./dist/node/index.js",
+        "import": "./dist/es6/index.js"
+    },
+    "types": "dist/es6/index.d.ts",
     "files": [
         "/dist"
-    ]
+    ],
+    "scripts": {
+        "build": "npm-run-all es6-build node-build",
+        "node-build": "tsc --build tsconfig-node.json",
+        "es6-build": "tsc --build tsconfig-es6.json"
+    }
 }

@@ -2,15 +2,14 @@
 
 // ONLY possible on SSD
 class Zmount {
-	size: number; // bytes
+    size: number; // bytes
 
-	challenge() {
-		return this.size || "";
-	}
+    challenge() {
+        return this.size || "";
+    }
 }
-
 
 class ZmountResult {
-	volume_id: string;
+    volume_id: string;
 }
-export { Zmount, ZmountResult }
+export { Zmount, ZmountResult };

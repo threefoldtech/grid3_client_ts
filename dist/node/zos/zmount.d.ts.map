@@ -1,1 +1,1 @@
-{"version":3,"file":"zmount.d.ts","sourceRoot":"","sources":["../../../src/zos/zmount.ts"],"names":[],"mappings":"AAKA,cAAM,MAAM;IACS,IAAI,EAAE,MAAM,CAAC;IAE9B,SAAS;CAGZ;AAED,cAAM,YAAY;IACd,SAAS,EAAE,MAAM,CAAC;CACrB;AACD,OAAO,EAAE,MAAM,EAAE,YAAY,EAAE,CAAC"}
+{"version":3,"file":"zmount.d.ts","sourceRoot":"","sources":["../../../src/zos/zmount.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,gBAAgB,EAAE,MAAM,iBAAiB,CAAC;AAGnD,cAAM,MAAO,SAAQ,gBAAgB;IACN,IAAI,EAAE,MAAM,CAAC;IAExC,SAAS;CAGZ;AAED,cAAM,YAAY;IACd,SAAS,EAAE,MAAM,CAAC;CACrB;AACD,OAAO,EAAE,MAAM,EAAE,YAAY,EAAE,CAAC"}

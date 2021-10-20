@@ -8,6 +8,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WorkloadTypes = exports.Workload = void 0;
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
+const znet_1 = require("./znet");
+const zmount_1 = require("./zmount");
+const zmachine_1 = require("./zmachine");
+const zdb_1 = require("./zdb");
+const ipv4_1 = require("./ipv4");
+const gateway_1 = require("./gateway");
+const qsfs_1 = require("./qsfs");
+const workload_base_1 = require("./workload_base");
 var ResultStates;
 (function (ResultStates) {
     ResultStates["error"] = "error";
@@ -33,9 +42,7 @@ var Right;
     Right[Right["stats"] = 2] = "stats";
     Right[Right["logs"] = 3] = "logs";
 })(Right || (Right = {}));
-// Access Control Entry
 class ACE {
-    // the administrator twin id
     twin_ids;
     rights;
 }
@@ -43,21 +50,15 @@ class DeploymentResult {
     created;
     state;
     error = "";
-    data = ""; // also json.RawMessage
+    data = "";
 }
 class Workload {
     version;
-    // unique name per Deployment
     name;
     type;
-    // this should be something like json.RawMessage in golang
-    data; // serialize({size: 10}) ---> "data": {size:10},
+    data;
     metadata;
     description;
-    // list of Access Control Entries
-    // what can an administrator do
-    // not implemented in zos
-    // acl []ACE
     result;
     challenge() {
         let out = "";
@@ -70,21 +71,46 @@ class Workload {
     }
 }
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(0)
 ], Workload.prototype, "version", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Workload.prototype, "name", void 0);
 __decorate([
-    (0, class_validator_1.ValidateNested)()
+    (0, class_transformer_1.Expose)(),
+    (0, class_transformer_1.Transform)(({ value }) => WorkloadTypes[value]),
+    (0, class_validator_1.IsEnum)(WorkloadTypes)
+], Workload.prototype, "type", void 0);
+__decorate([
+    (0, class_transformer_1.Expose)(),
+    (0, class_validator_1.ValidateNested)(),
+    (0, class_transformer_1.Type)(() => workload_base_1.WorkloadBaseData, {
+        discriminator: {
+            property: '__type',
+            subTypes: [
+                { value: zmount_1.Zmount, name: WorkloadTypes.zmount },
+                { value: znet_1.Znet, name: WorkloadTypes.network },
+                { value: zmachine_1.Zmachine, name: WorkloadTypes.zmachine },
+                { value: zdb_1.Zdb, name: WorkloadTypes.zdb },
+                { value: ipv4_1.PublicIP, name: WorkloadTypes.ipv4 },
+                { value: gateway_1.GatewayFQDNProxy, name: WorkloadTypes.gatewayfqdnproxy },
+                { value: gateway_1.GatewayNameProxy, name: WorkloadTypes.gatewaynameproxy },
+                { value: qsfs_1.QuantumSafeFS, name: WorkloadTypes.qsfs },
+            ],
+        },
+    })
 ], Workload.prototype, "data", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsDefined)()
 ], Workload.prototype, "metadata", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsDefined)()
 ], Workload.prototype, "description", void 0);

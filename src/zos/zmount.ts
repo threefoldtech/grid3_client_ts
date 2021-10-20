@@ -1,10 +1,11 @@
 import { IsInt, Min } from "class-validator";
+import { Expose } from "class-transformer";
 
-// ssd mounts under zmachine
+import { WorkloadBaseData } from "./workload_base";
 
-// ONLY possible on SSD
-class Zmount {
-    @IsInt() @Min(1) size: number; // bytes
+
+class Zmount extends WorkloadBaseData {
+    @Expose() @IsInt() @Min(1) size: number; // in bytes
 
     challenge() {
         return this.size;

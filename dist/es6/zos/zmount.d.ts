@@ -1,4 +1,5 @@
-declare class Zmount {
+import { WorkloadBaseData } from "./workload_base";
+declare class Zmount extends WorkloadBaseData {
     size: number;
     challenge(): number;
 }

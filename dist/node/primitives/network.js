@@ -26,6 +26,7 @@ exports.Network = void 0;
 const PATH = __importStar(require("path"));
 const tweetnacl_1 = __importDefault(require("tweetnacl"));
 const buffer_1 = require("buffer");
+const class_transformer_1 = require("class-transformer");
 const netaddr_1 = require("netaddr");
 const ip_1 = __importDefault(require("ip"));
 const workload_1 = require("../zos/workload");
@@ -221,15 +222,7 @@ class Network {
         }
     }
     _fromObj(net) {
-        const znet = new znet_1.Znet();
-        Object.assign(znet, net);
-        const peers = [];
-        for (const peer of znet.peers) {
-            const p = new znet_1.Peer();
-            Object.assign(p, peer);
-            peers.push(p);
-        }
-        znet.peers = peers;
+        const znet = (0, class_transformer_1.plainToClass)(znet_1.Znet, net);
         return znet;
     }
     exists() {

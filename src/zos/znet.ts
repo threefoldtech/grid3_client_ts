@@ -1,15 +1,13 @@
 import { IsString, IsNotEmpty, ArrayNotEmpty, IsPort, IsDefined, ValidateNested } from "class-validator";
+import { Expose, Type } from "class-transformer";
 
-// is a remote wireguard client which can connect to this node
+import { WorkloadBaseData } from "./workload_base";
+
 class Peer {
-    // is another class C in same class B as above
-    @IsString() @IsNotEmpty() subnet: string;
-    // wireguard public key, curve25519
-    @IsString() @IsNotEmpty() wireguard_public_key: string;
-    @IsString({ each: true }) @ArrayNotEmpty() allowed_ips: string[];
-    // ipv4 or ipv6
-    // can be empty, one of the 2 need to be filled in though
-    @IsString() @IsDefined() endpoint: string;
+    @Expose() @IsString() @IsNotEmpty() subnet: string;
+    @Expose() @IsString() @IsNotEmpty() wireguard_public_key: string;
+    @Expose() @IsString({ each: true }) @ArrayNotEmpty() allowed_ips: string[];
+    @Expose() @IsString() @IsDefined() endpoint: string;
 
     challenge() {
         let out = "";
@@ -24,20 +22,12 @@ class Peer {
     }
 }
 
-// wg network reservation (znet)
-class Znet {
-    // unique nr for each network chosen, this identified private networks as connected to a container or vm or ...
-    // corresponds to the 2nd number of a class B ipv4 address
-    // is a class C of a chosen class B
-    // form: e.g. 192.168.16.0/24
-    // needs to be a private subnet
-    @IsString() @IsNotEmpty() subnet: string;
-    @IsString() @IsNotEmpty() ip_range: string;
-    // wireguard private key, curve25519
-    @IsString() @IsNotEmpty() wireguard_private_key: string;
-    //>1024?
-    @IsPort() @IsNotEmpty() wireguard_listen_port: number;
-    @ValidateNested({ each: true }) @ArrayNotEmpty() peers: Peer[];
+class Znet extends WorkloadBaseData {
+    @Expose() @IsString() @IsNotEmpty() subnet: string;
+    @Expose() @IsString() @IsNotEmpty() ip_range: string;
+    @Expose() @IsString() @IsNotEmpty() wireguard_private_key: string;
+    @Expose() @IsPort() @IsNotEmpty() wireguard_listen_port: number;
+    @Expose() @Type(() => Peer) @ValidateNested({ each: true }) @ArrayNotEmpty() peers: Peer[];
 
     challenge() {
         let out = "";

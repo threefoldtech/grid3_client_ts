@@ -1,4 +1,5 @@
 import { IsString, IsNotEmpty, IsBoolean, IsDefined, IsInt, Min, ValidateNested } from "class-validator";
+import { Expose, Type } from "class-transformer";
 
 import { Workload } from "./workload";
 
@@ -6,12 +7,9 @@ import { default as md5 } from "crypto-js/md5";
 import { Keyring } from "@polkadot/keyring";
 
 class SignatureRequest {
-    // unique id as used in TFGrid DB
-    @IsInt() @Min(1) twin_id: number;
-    // if put on required then this twin_id needs to sign
-    @IsBoolean() required: boolean;
-    // signing weight
-    @IsInt() @Min(1) weight: number;
+    @Expose() @IsInt() @Min(1) twin_id: number;
+    @Expose() @IsBoolean() required: boolean;
+    @Expose() @IsInt() @Min(1) weight: number;
 
     challenge() {
         let out = "";
@@ -23,23 +21,17 @@ class SignatureRequest {
     }
 }
 
-// Challenge computes challenge for SignatureRequest
 
 class Signature {
-    // unique id as used in TFGrid DB
-    @IsInt() @Min(1) twin_id: number;
-    // signature (done with private key of the twin_id)
-    @IsString() @IsNotEmpty() signature: string;
+    @Expose() @IsInt() @Min(1) twin_id: number;
+    @Expose() @IsString() @IsNotEmpty() signature: string;
 }
 
 class SignatureRequirement {
-    // the requests which can allow to get to required quorum
-    @ValidateNested({ each: true }) requests: SignatureRequest[] = [];
-    // minimal weight which needs to be achieved to let this workload become valid
-    @IsInt() @Min(1) weight_required: number;
-    @ValidateNested({ each: true }) signatures: Signature[] = [];
+    @Expose() @Type(() => SignatureRequest) @ValidateNested({ each: true }) requests: SignatureRequest[] = [];
+    @Expose() @IsInt() @Min(1) weight_required: number;
+    @Expose() @Type(() => Signature) @ValidateNested({ each: true }) signatures: Signature[] = [];
 
-    // Challenge computes challenge for SignatureRequest
     challenge() {
         let out = "";
 
@@ -52,27 +44,17 @@ class SignatureRequirement {
     }
 }
 
-// deployment is given to each Zero-OS who needs to deploy something
-// the zero-os'es will only take out what is relevant for them
-// if signature not done on the main Deployment one, nothing will happen
 class Deployment {
-    // increments for each new interation of this model
-    // signature needs to be achieved when version goes up
-    @IsInt() @Min(0) version: number;
-    // the twin who is responsible for this deployment
-    @IsInt() @Min(1) twin_id: number;
-    // each deployment has unique id (in relation to originator)
-    @IsInt() @Min(1) contract_id: number;
-    // when the full workload will stop working
-    // default, 0 means no expiration
-    @IsInt() expiration: number;
-    @IsString() @IsDefined() metadata;
-    @IsString() @IsDefined() description;
+    @Expose() @IsInt() @Min(0) version: number;
+    @Expose() @IsInt() @Min(1) twin_id: number;
+    @Expose() @IsInt() @Min(1) contract_id: number;
+    @Expose() @IsInt() expiration: number;
+    @Expose() @IsString() @IsDefined() metadata;
+    @Expose() @IsString() @IsDefined() description;
 
-    // list of all worklaods
-    @ValidateNested({ each: true }) workloads: Workload[];
+    @Expose() @Type(() => Workload) @ValidateNested({ each: true }) workloads: Workload[];
 
-    @ValidateNested() signature_requirement: SignatureRequirement;
+    @Expose() @Type(() => SignatureRequirement) @ValidateNested() signature_requirement: SignatureRequirement;
 
     challenge() {
         let out = "";
@@ -89,8 +71,7 @@ class Deployment {
         out += this.signature_requirement.challenge();
         return out;
     }
-    // ChallengeHash computes the hash of the challenge signed
-    // by the user. used for validation
+
     challenge_hash() {
         return md5(this.challenge()).toString();
     }

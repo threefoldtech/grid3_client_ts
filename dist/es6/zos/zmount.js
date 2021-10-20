@@ -5,14 +5,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { IsInt, Min } from "class-validator";
-// ssd mounts under zmachine
-// ONLY possible on SSD
-class Zmount {
+import { Expose } from "class-transformer";
+import { WorkloadBaseData } from "./workload_base";
+class Zmount extends WorkloadBaseData {
     challenge() {
         return this.size;
     }
 }
 __decorate([
+    Expose(),
     IsInt(),
     Min(1)
 ], Zmount.prototype, "size", void 0);

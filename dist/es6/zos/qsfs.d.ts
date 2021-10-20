@@ -1,3 +1,4 @@
+import { WorkloadBaseData } from "./workload_base";
 declare class Encryption {
     algorithm: string;
     key: string;
@@ -40,7 +41,7 @@ declare class QuantumSafeFSConfig {
     compression: QuantumCompression;
     challenge(): string;
 }
-declare class QuantumSafeFS {
+declare class QuantumSafeFS extends WorkloadBaseData {
     cache: number;
     config: QuantumSafeFSConfig;
     challenge(): string;

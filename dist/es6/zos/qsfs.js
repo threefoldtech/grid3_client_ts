@@ -5,6 +5,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { IsString, IsNotEmpty, IsInt, Min, ValidateNested } from "class-validator";
+import { Expose, Type } from "class-transformer";
+import { WorkloadBaseData } from "./workload_base";
 class Encryption {
     challenge() {
         let out = "";
@@ -14,10 +16,12 @@ class Encryption {
     }
 }
 __decorate([
+    Expose(),
     IsNotEmpty(),
     IsString()
 ], Encryption.prototype, "algorithm", void 0);
 __decorate([
+    Expose(),
     IsNotEmpty(),
     IsString()
 ], Encryption.prototype, "key", void 0);
@@ -31,14 +35,17 @@ class ZdbBackend {
     }
 }
 __decorate([
+    Expose(),
     IsNotEmpty(),
     IsString()
 ], ZdbBackend.prototype, "address", void 0);
 __decorate([
+    Expose(),
     IsNotEmpty(),
     IsString()
 ], ZdbBackend.prototype, "namespace", void 0);
 __decorate([
+    Expose(),
     IsNotEmpty(),
     IsString()
 ], ZdbBackend.prototype, "password", void 0);
@@ -54,13 +61,18 @@ class QuantumSafeConfig {
     }
 }
 __decorate([
+    Expose(),
     IsNotEmpty(),
     IsString()
 ], QuantumSafeConfig.prototype, "prefix", void 0);
 __decorate([
+    Expose(),
+    Type(() => Encryption),
     ValidateNested()
 ], QuantumSafeConfig.prototype, "encryption", void 0);
 __decorate([
+    Expose(),
+    Type(() => ZdbBackend),
     ValidateNested({ each: true })
 ], QuantumSafeConfig.prototype, "backends", void 0);
 class QuantumSafeMeta {
@@ -72,10 +84,13 @@ class QuantumSafeMeta {
     }
 }
 __decorate([
+    Expose(),
     IsNotEmpty(),
     IsString()
 ], QuantumSafeMeta.prototype, "type", void 0);
 __decorate([
+    Expose(),
+    Type(() => QuantumSafeConfig),
     ValidateNested()
 ], QuantumSafeMeta.prototype, "config", void 0);
 class ZdbGroup {
@@ -88,6 +103,8 @@ class ZdbGroup {
     }
 }
 __decorate([
+    Expose(),
+    Type(() => ZdbBackend),
     ValidateNested({ each: true })
 ], ZdbGroup.prototype, "backends", void 0);
 class QuantumCompression {
@@ -96,6 +113,7 @@ class QuantumCompression {
     }
 }
 __decorate([
+    Expose(),
     IsNotEmpty(),
     IsString()
 ], QuantumCompression.prototype, "algorithm", void 0);
@@ -117,38 +135,51 @@ class QuantumSafeFSConfig {
     }
 }
 __decorate([
+    Expose(),
     IsInt(),
     Min(2)
 ], QuantumSafeFSConfig.prototype, "minimal_shards", void 0);
 __decorate([
+    Expose(),
     IsInt(),
     Min(1)
 ], QuantumSafeFSConfig.prototype, "expected_shards", void 0);
 __decorate([
+    Expose(),
     IsInt(),
     Min(1)
 ], QuantumSafeFSConfig.prototype, "redundant_groups", void 0);
 __decorate([
+    Expose(),
     IsInt(),
     Min(1)
 ], QuantumSafeFSConfig.prototype, "redundant_nodes", void 0);
 __decorate([
+    Expose(),
     IsInt(),
     Min(1)
 ], QuantumSafeFSConfig.prototype, "max_zdb_data_dir_size", void 0);
 __decorate([
+    Expose(),
+    Type(() => Encryption),
     ValidateNested()
 ], QuantumSafeFSConfig.prototype, "encryption", void 0);
 __decorate([
+    Expose(),
+    Type(() => QuantumSafeMeta),
     ValidateNested()
 ], QuantumSafeFSConfig.prototype, "meta", void 0);
 __decorate([
+    Expose(),
+    Type(() => ZdbGroup),
     ValidateNested({ each: true })
 ], QuantumSafeFSConfig.prototype, "groups", void 0);
 __decorate([
+    Expose(),
+    Type(() => QuantumCompression),
     ValidateNested()
 ], QuantumSafeFSConfig.prototype, "compression", void 0);
-class QuantumSafeFS {
+class QuantumSafeFS extends WorkloadBaseData {
     challenge() {
         let out = "";
         out += this.cache;
@@ -157,10 +188,13 @@ class QuantumSafeFS {
     }
 }
 __decorate([
+    Expose(),
     IsInt(),
     Min(1024 * 1024 * 250)
 ], QuantumSafeFS.prototype, "cache", void 0);
 __decorate([
+    Expose(),
+    Type(() => QuantumSafeFSConfig),
     ValidateNested()
 ], QuantumSafeFS.prototype, "config", void 0);
 class QuatumSafeFSResult {

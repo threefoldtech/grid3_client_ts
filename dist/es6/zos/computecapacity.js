@@ -5,10 +5,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { IsInt, Min } from "class-validator";
+import { Expose } from "class-transformer";
 class ComputeCapacity {
-    // min disk size reserved (to make sure you have growth potential)
-    // when reserved it means you payment
-    // if you use more, you pay for it
     challenge() {
         let out = "";
         out += this.cpu;
@@ -17,10 +15,12 @@ class ComputeCapacity {
     }
 }
 __decorate([
+    Expose(),
     IsInt(),
     Min(1)
 ], ComputeCapacity.prototype, "cpu", void 0);
 __decorate([
+    Expose(),
     IsInt(),
     Min(1024 * 1024 * 250)
 ], ComputeCapacity.prototype, "memory", void 0);

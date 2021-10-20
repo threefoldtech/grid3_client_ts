@@ -84,7 +84,7 @@ class VMHL extends HighLevelBase {
             if (znet_workload && network.exists()) {
                 // update network
                 for (const deployment of network.deployments) {
-                    const d = deploymentFactory.fromObj(deployment);
+                    const d = yield deploymentFactory.fromObj(deployment);
                     for (const workload of d["workloads"]) {
                         if (workload["type"] !== WorkloadTypes.network ||
                             !Addr(network.ipRange).contains(Addr(workload["data"]["subnet"]))) {

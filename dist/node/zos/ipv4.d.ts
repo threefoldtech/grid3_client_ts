@@ -1,4 +1,5 @@
-declare class PublicIP {
+import { WorkloadBaseData } from "./workload_base";
+declare class PublicIP extends WorkloadBaseData {
     challenge(): string;
 }
 export { PublicIP };

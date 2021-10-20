@@ -5,7 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { IsFQDN, IsBoolean, IsString, IsUrl, IsNotEmpty, ArrayNotEmpty } from "class-validator";
-class GatewayFQDNProxy {
+import { Expose } from "class-transformer";
+import { WorkloadBaseData } from "./workload_base";
+class GatewayFQDNProxy extends WorkloadBaseData {
     challenge() {
         let out = "";
         out += this.fqdn;
@@ -17,16 +19,19 @@ class GatewayFQDNProxy {
     }
 }
 __decorate([
+    Expose(),
     IsFQDN()
 ], GatewayFQDNProxy.prototype, "fqdn", void 0);
 __decorate([
+    Expose(),
     IsBoolean()
 ], GatewayFQDNProxy.prototype, "tls_passthrough", void 0);
 __decorate([
+    Expose(),
     ArrayNotEmpty(),
     IsUrl({ protocols: ["http", "https"] }, { each: true })
 ], GatewayFQDNProxy.prototype, "backends", void 0);
-class GatewayNameProxy {
+class GatewayNameProxy extends WorkloadBaseData {
     challenge() {
         let out = "";
         out += this.name;
@@ -38,13 +43,16 @@ class GatewayNameProxy {
     }
 }
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], GatewayNameProxy.prototype, "name", void 0);
 __decorate([
+    Expose(),
     IsBoolean()
 ], GatewayNameProxy.prototype, "tls_passthrough", void 0);
 __decorate([
+    Expose(),
     ArrayNotEmpty(),
     IsUrl({ protocols: ["http", "https"] }, { each: true })
 ], GatewayNameProxy.prototype, "backends", void 0);

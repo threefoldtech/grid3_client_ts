@@ -1,3 +1,4 @@
+import { WorkloadBaseData } from "./workload_base";
 declare class Peer {
     subnet: string;
     wireguard_public_key: string;
@@ -5,7 +6,7 @@ declare class Peer {
     endpoint: string;
     challenge(): string;
 }
-declare class Znet {
+declare class Znet extends WorkloadBaseData {
     subnet: string;
     ip_range: string;
     wireguard_private_key: string;

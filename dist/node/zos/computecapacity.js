@@ -8,16 +8,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ComputeCapacity = void 0;
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
 class ComputeCapacity {
-    // cpu cores, minimal 10 cpu_centi_core
-    // always reserved with overprovisioning of about 1/4-1/6
     cpu;
-    // memory in bytes, minimal 100 MB
-    // always reserved
-    memory;
-    // min disk size reserved (to make sure you have growth potential)
-    // when reserved it means you payment
-    // if you use more, you pay for it
+    memory; // in bytes
     challenge() {
         let out = "";
         out += this.cpu;
@@ -26,10 +20,12 @@ class ComputeCapacity {
     }
 }
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1)
 ], ComputeCapacity.prototype, "cpu", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1024 * 1024 * 250)
 ], ComputeCapacity.prototype, "memory", void 0);

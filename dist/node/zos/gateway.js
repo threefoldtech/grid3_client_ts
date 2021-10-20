@@ -8,7 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GatewayResult = exports.GatewayNameProxy = exports.GatewayFQDNProxy = void 0;
 const class_validator_1 = require("class-validator");
-class GatewayFQDNProxy {
+const class_transformer_1 = require("class-transformer");
+const workload_base_1 = require("./workload_base");
+class GatewayFQDNProxy extends workload_base_1.WorkloadBaseData {
     fqdn;
     tls_passthrough;
     backends;
@@ -23,17 +25,20 @@ class GatewayFQDNProxy {
     }
 }
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsFQDN)()
 ], GatewayFQDNProxy.prototype, "fqdn", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsBoolean)()
 ], GatewayFQDNProxy.prototype, "tls_passthrough", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.ArrayNotEmpty)(),
     (0, class_validator_1.IsUrl)({ protocols: ["http", "https"] }, { each: true })
 ], GatewayFQDNProxy.prototype, "backends", void 0);
 exports.GatewayFQDNProxy = GatewayFQDNProxy;
-class GatewayNameProxy {
+class GatewayNameProxy extends workload_base_1.WorkloadBaseData {
     name;
     tls_passthrough;
     backends;
@@ -48,13 +53,16 @@ class GatewayNameProxy {
     }
 }
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], GatewayNameProxy.prototype, "name", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsBoolean)()
 ], GatewayNameProxy.prototype, "tls_passthrough", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.ArrayNotEmpty)(),
     (0, class_validator_1.IsUrl)({ protocols: ["http", "https"] }, { each: true })
 ], GatewayNameProxy.prototype, "backends", void 0);

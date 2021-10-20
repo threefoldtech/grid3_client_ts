@@ -4,7 +4,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { IsString, IsNotEmpty, IsDefined, IsInt, Min, ValidateNested } from "class-validator";
+import { IsString, IsNotEmpty, IsDefined, IsInt, Min, ValidateNested, IsEnum } from "class-validator";
+import { Expose, Transform, Type } from "class-transformer";
+import { Znet } from "./znet";
+import { Zmount } from "./zmount";
+import { Zmachine } from "./zmachine";
+import { Zdb } from "./zdb";
+import { PublicIP } from "./ipv4";
+import { GatewayFQDNProxy, GatewayNameProxy } from "./gateway";
+import { QuantumSafeFS } from "./qsfs";
+import { WorkloadBaseData } from "./workload_base";
 var ResultStates;
 (function (ResultStates) {
     ResultStates["error"] = "error";
@@ -29,13 +38,12 @@ var Right;
     Right[Right["stats"] = 2] = "stats";
     Right[Right["logs"] = 3] = "logs";
 })(Right || (Right = {}));
-// Access Control Entry
 class ACE {
 }
 class DeploymentResult {
     constructor() {
         this.error = "";
-        this.data = ""; // also json.RawMessage
+        this.data = "";
     }
 }
 class Workload {
@@ -50,25 +58,47 @@ class Workload {
     }
 }
 __decorate([
+    Expose(),
     IsInt(),
     Min(0)
 ], Workload.prototype, "version", void 0);
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], Workload.prototype, "name", void 0);
 __decorate([
-    ValidateNested()
+    Expose(),
+    Transform(({ value }) => WorkloadTypes[value]),
+    IsEnum(WorkloadTypes)
+], Workload.prototype, "type", void 0);
+__decorate([
+    Expose(),
+    ValidateNested(),
+    Type(() => WorkloadBaseData, {
+        discriminator: {
+            property: '__type',
+            subTypes: [
+                { value: Zmount, name: WorkloadTypes.zmount },
+                { value: Znet, name: WorkloadTypes.network },
+                { value: Zmachine, name: WorkloadTypes.zmachine },
+                { value: Zdb, name: WorkloadTypes.zdb },
+                { value: PublicIP, name: WorkloadTypes.ipv4 },
+                { value: GatewayFQDNProxy, name: WorkloadTypes.gatewayfqdnproxy },
+                { value: GatewayNameProxy, name: WorkloadTypes.gatewaynameproxy },
+                { value: QuantumSafeFS, name: WorkloadTypes.qsfs },
+            ],
+        },
+    })
 ], Workload.prototype, "data", void 0);
 __decorate([
+    Expose(),
     IsString(),
     IsDefined()
 ], Workload.prototype, "metadata", void 0);
 __decorate([
+    Expose(),
     IsString(),
     IsDefined()
 ], Workload.prototype, "description", void 0);
-// pub fn(mut w WorkloadData) challenge() string {
-// 	return w.challenge()
-// }
 export { Workload, WorkloadTypes };

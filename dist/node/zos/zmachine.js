@@ -8,15 +8,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ZmachineResult = exports.Mount = exports.ZNetworkInterface = exports.ZmachineNetwork = exports.Zmachine = void 0;
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
+const computecapacity_1 = require("./computecapacity");
+const workload_base_1 = require("./workload_base");
 class ZNetworkInterface {
     network;
     ip;
 }
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], ZNetworkInterface.prototype, "network", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsIP)(),
     (0, class_validator_1.IsNotEmpty)()
 ], ZNetworkInterface.prototype, "ip", void 0);
@@ -37,13 +42,17 @@ class ZmachineNetwork {
     }
 }
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], ZmachineNetwork.prototype, "public_ip", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
+    (0, class_transformer_1.Type)(() => ZNetworkInterface),
     (0, class_validator_1.ValidateNested)({ each: true })
 ], ZmachineNetwork.prototype, "interfaces", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsBoolean)()
 ], ZmachineNetwork.prototype, "planetary", void 0);
 exports.ZmachineNetwork = ZmachineNetwork;
@@ -58,22 +67,24 @@ class Mount {
     }
 }
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Mount.prototype, "name", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Mount.prototype, "mountpoint", void 0);
 exports.Mount = Mount;
-class Zmachine {
-    flist; // if full url means custom flist meant for containers, if just name should be an official vm
+class Zmachine extends workload_base_1.WorkloadBaseData {
+    flist;
     network;
-    size;
+    size; // in bytes
     compute_capacity;
     mounts;
-    entrypoint; //how to invoke that in a vm?
-    env; //environment for the zmachine
+    entrypoint;
+    env;
     challenge() {
         let out = "";
         out += this.flist;
@@ -93,30 +104,40 @@ class Zmachine {
     }
 }
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Zmachine.prototype, "flist", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
+    (0, class_transformer_1.Type)(() => ZmachineNetwork),
     (0, class_validator_1.ValidateNested)()
 ], Zmachine.prototype, "network", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1024 * 1024 * 250)
 ], Zmachine.prototype, "size", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
+    (0, class_transformer_1.Type)(() => computecapacity_1.ComputeCapacity),
     (0, class_validator_1.ValidateNested)()
 ], Zmachine.prototype, "compute_capacity", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
+    (0, class_transformer_1.Type)(() => Mount),
     (0, class_validator_1.ValidateNested)({ each: true })
 ], Zmachine.prototype, "mounts", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Zmachine.prototype, "entrypoint", void 0);
+__decorate([
+    (0, class_transformer_1.Expose)()
+], Zmachine.prototype, "env", void 0);
 exports.Zmachine = Zmachine;
-// response of the deployment
 class ZmachineResult {
-    // name unique per deployment, re-used in request & response
     id = "";
     ip = "";
 }

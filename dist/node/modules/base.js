@@ -165,7 +165,7 @@ class BaseModule {
         const deploymentNodeIds = this._getDeploymentNodeIds(name);
         finalTwinDeployments = finalTwinDeployments.concat(twinDeployments.filter(d => !deploymentNodeIds.includes(d.nodeId)));
         for (let oldDeployment of oldDeployments) {
-            oldDeployment = this.deploymentFactory.fromObj(oldDeployment);
+            oldDeployment = await this.deploymentFactory.fromObj(oldDeployment);
             const node_id = this._getNodeIdFromContractId(name, oldDeployment.contract_id);
             let deploymentFound = false;
             for (const twinDeployment of twinDeployments) {
@@ -198,11 +198,11 @@ class BaseModule {
         const contract_id = this._getContractIdFromNodeId(deployment_name, node_id);
         if (contract_id) {
             for (let oldDeployment of oldDeployments) {
-                oldDeployment = this.deploymentFactory.fromObj(oldDeployment);
+                oldDeployment = await this.deploymentFactory.fromObj(oldDeployment);
                 if (oldDeployment.contract_id !== contract_id) {
                     continue;
                 }
-                const newDeployment = this.deploymentFactory.fromObj(oldDeployment);
+                const newDeployment = await this.deploymentFactory.fromObj(oldDeployment);
                 newDeployment.workloads = newDeployment.workloads.concat(twinDeployment.deployment.workloads);
                 const deployment = await this.deploymentFactory.UpdateDeployment(oldDeployment, newDeployment, network);
                 twinDeployment.deployment = deployment;

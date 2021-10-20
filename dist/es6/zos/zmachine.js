@@ -5,13 +5,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { IsString, IsNotEmpty, IsIP, IsBoolean, IsInt, Min, ValidateNested } from "class-validator";
+import { Expose, Type } from "class-transformer";
+import { ComputeCapacity } from "./computecapacity";
+import { WorkloadBaseData } from "./workload_base";
 class ZNetworkInterface {
 }
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], ZNetworkInterface.prototype, "network", void 0);
 __decorate([
+    Expose(),
     IsIP(),
     IsNotEmpty()
 ], ZNetworkInterface.prototype, "ip", void 0);
@@ -28,13 +33,17 @@ class ZmachineNetwork {
     }
 }
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], ZmachineNetwork.prototype, "public_ip", void 0);
 __decorate([
+    Expose(),
+    Type(() => ZNetworkInterface),
     ValidateNested({ each: true })
 ], ZmachineNetwork.prototype, "interfaces", void 0);
 __decorate([
+    Expose(),
     IsBoolean()
 ], ZmachineNetwork.prototype, "planetary", void 0);
 class Mount {
@@ -46,14 +55,16 @@ class Mount {
     }
 }
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], Mount.prototype, "name", void 0);
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], Mount.prototype, "mountpoint", void 0);
-class Zmachine {
+class Zmachine extends WorkloadBaseData {
     challenge() {
         let out = "";
         out += this.flist;
@@ -73,30 +84,40 @@ class Zmachine {
     }
 }
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], Zmachine.prototype, "flist", void 0);
 __decorate([
+    Expose(),
+    Type(() => ZmachineNetwork),
     ValidateNested()
 ], Zmachine.prototype, "network", void 0);
 __decorate([
+    Expose(),
     IsInt(),
     Min(1024 * 1024 * 250)
 ], Zmachine.prototype, "size", void 0);
 __decorate([
+    Expose(),
+    Type(() => ComputeCapacity),
     ValidateNested()
 ], Zmachine.prototype, "compute_capacity", void 0);
 __decorate([
+    Expose(),
+    Type(() => Mount),
     ValidateNested({ each: true })
 ], Zmachine.prototype, "mounts", void 0);
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], Zmachine.prototype, "entrypoint", void 0);
-// response of the deployment
+__decorate([
+    Expose()
+], Zmachine.prototype, "env", void 0);
 class ZmachineResult {
     constructor() {
-        // name unique per deployment, re-used in request & response
         this.id = "";
         this.ip = "";
     }

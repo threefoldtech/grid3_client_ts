@@ -5,7 +5,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { IsString, IsNotEmpty, ArrayNotEmpty, IsPort, IsDefined, ValidateNested } from "class-validator";
-// is a remote wireguard client which can connect to this node
+import { Expose, Type } from "class-transformer";
+import { WorkloadBaseData } from "./workload_base";
 class Peer {
     challenge() {
         let out = "";
@@ -19,23 +20,26 @@ class Peer {
     }
 }
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], Peer.prototype, "subnet", void 0);
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], Peer.prototype, "wireguard_public_key", void 0);
 __decorate([
+    Expose(),
     IsString({ each: true }),
     ArrayNotEmpty()
 ], Peer.prototype, "allowed_ips", void 0);
 __decorate([
+    Expose(),
     IsString(),
     IsDefined()
 ], Peer.prototype, "endpoint", void 0);
-// wg network reservation (znet)
-class Znet {
+class Znet extends WorkloadBaseData {
     challenge() {
         let out = "";
         out += this.ip_range;
@@ -49,22 +53,28 @@ class Znet {
     }
 }
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], Znet.prototype, "subnet", void 0);
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], Znet.prototype, "ip_range", void 0);
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], Znet.prototype, "wireguard_private_key", void 0);
 __decorate([
+    Expose(),
     IsPort(),
     IsNotEmpty()
 ], Znet.prototype, "wireguard_listen_port", void 0);
 __decorate([
+    Expose(),
+    Type(() => Peer),
     ValidateNested({ each: true }),
     ArrayNotEmpty()
 ], Znet.prototype, "peers", void 0);

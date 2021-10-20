@@ -1,4 +1,5 @@
 import { ComputeCapacity } from "./computecapacity";
+import { WorkloadBaseData } from "./workload_base";
 declare class ZNetworkInterface {
     network: string;
     ip: string;
@@ -14,7 +15,7 @@ declare class Mount {
     mountpoint: string;
     challenge(): string;
 }
-declare class Zmachine {
+declare class Zmachine extends WorkloadBaseData {
     flist: string;
     network: ZmachineNetwork;
     size: number;

@@ -5,6 +5,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { IsString, IsNotEmpty, IsBoolean, IsDefined, IsInt, Min, ValidateNested } from "class-validator";
+import { Expose, Type } from "class-transformer";
+import { Workload } from "./workload";
 import { default as md5 } from "crypto-js/md5";
 import { Keyring } from "@polkadot/keyring";
 class SignatureRequest {
@@ -17,34 +19,36 @@ class SignatureRequest {
     }
 }
 __decorate([
+    Expose(),
     IsInt(),
     Min(1)
 ], SignatureRequest.prototype, "twin_id", void 0);
 __decorate([
+    Expose(),
     IsBoolean()
 ], SignatureRequest.prototype, "required", void 0);
 __decorate([
+    Expose(),
     IsInt(),
     Min(1)
 ], SignatureRequest.prototype, "weight", void 0);
-// Challenge computes challenge for SignatureRequest
 class Signature {
 }
 __decorate([
+    Expose(),
     IsInt(),
     Min(1)
 ], Signature.prototype, "twin_id", void 0);
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], Signature.prototype, "signature", void 0);
 class SignatureRequirement {
     constructor() {
-        // the requests which can allow to get to required quorum
         this.requests = [];
         this.signatures = [];
     }
-    // Challenge computes challenge for SignatureRequest
     challenge() {
         let out = "";
         for (let i = 0; i < this.requests.length; i++) {
@@ -55,18 +59,20 @@ class SignatureRequirement {
     }
 }
 __decorate([
+    Expose(),
+    Type(() => SignatureRequest),
     ValidateNested({ each: true })
 ], SignatureRequirement.prototype, "requests", void 0);
 __decorate([
+    Expose(),
     IsInt(),
     Min(1)
 ], SignatureRequirement.prototype, "weight_required", void 0);
 __decorate([
+    Expose(),
+    Type(() => Signature),
     ValidateNested({ each: true })
 ], SignatureRequirement.prototype, "signatures", void 0);
-// deployment is given to each Zero-OS who needs to deploy something
-// the zero-os'es will only take out what is relevant for them
-// if signature not done on the main Deployment one, nothing will happen
 class Deployment {
     challenge() {
         let out = "";
@@ -81,8 +87,6 @@ class Deployment {
         out += this.signature_requirement.challenge();
         return out;
     }
-    // ChallengeHash computes the hash of the challenge signed
-    // by the user. used for validation
     challenge_hash() {
         return md5(this.challenge()).toString();
     }
@@ -120,32 +124,42 @@ class Deployment {
     }
 }
 __decorate([
+    Expose(),
     IsInt(),
     Min(0)
 ], Deployment.prototype, "version", void 0);
 __decorate([
+    Expose(),
     IsInt(),
     Min(1)
 ], Deployment.prototype, "twin_id", void 0);
 __decorate([
+    Expose(),
     IsInt(),
     Min(1)
 ], Deployment.prototype, "contract_id", void 0);
 __decorate([
+    Expose(),
     IsInt()
 ], Deployment.prototype, "expiration", void 0);
 __decorate([
+    Expose(),
     IsString(),
     IsDefined()
 ], Deployment.prototype, "metadata", void 0);
 __decorate([
+    Expose(),
     IsString(),
     IsDefined()
 ], Deployment.prototype, "description", void 0);
 __decorate([
+    Expose(),
+    Type(() => Workload),
     ValidateNested({ each: true })
 ], Deployment.prototype, "workloads", void 0);
 __decorate([
+    Expose(),
+    Type(() => SignatureRequirement),
     ValidateNested()
 ], Deployment.prototype, "signature_requirement", void 0);
 export { Deployment, SignatureRequirement, SignatureRequest };

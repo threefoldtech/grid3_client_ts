@@ -8,6 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeviceTypes = exports.ZdbModes = exports.ZdbResult = exports.Zdb = void 0;
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
+const workload_base_1 = require("./workload_base");
 var ZdbModes;
 (function (ZdbModes) {
     ZdbModes["seq"] = "seq";
@@ -20,10 +22,9 @@ var DeviceTypes;
     DeviceTypes["ssd"] = "ssd";
 })(DeviceTypes || (DeviceTypes = {}));
 exports.DeviceTypes = DeviceTypes;
-class Zdb {
+class Zdb extends workload_base_1.WorkloadBaseData {
     namespace;
-    // size in bytes
-    size;
+    size; // in bytes
     mode = ZdbModes.seq;
     password;
     disk_type = DeviceTypes.hdd;
@@ -38,18 +39,32 @@ class Zdb {
     }
 }
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Zdb.prototype, "namespace", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1)
 ], Zdb.prototype, "size", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
+    (0, class_transformer_1.Transform)(({ value }) => ZdbModes[value]),
+    (0, class_validator_1.IsEnum)(ZdbModes)
+], Zdb.prototype, "mode", void 0);
+__decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Zdb.prototype, "password", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
+    (0, class_transformer_1.Transform)(({ value }) => DeviceTypes[value]),
+    (0, class_validator_1.IsEnum)(DeviceTypes)
+], Zdb.prototype, "disk_type", void 0);
+__decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsBoolean)()
 ], Zdb.prototype, "public", void 0);
 exports.Zdb = Zdb;

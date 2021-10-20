@@ -8,15 +8,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ZmountResult = exports.Zmount = void 0;
 const class_validator_1 = require("class-validator");
-// ssd mounts under zmachine
-// ONLY possible on SSD
-class Zmount {
-    size; // bytes
+const class_transformer_1 = require("class-transformer");
+const workload_base_1 = require("./workload_base");
+class Zmount extends workload_base_1.WorkloadBaseData {
+    size; // in bytes
     challenge() {
         return this.size;
     }
 }
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1)
 ], Zmount.prototype, "size", void 0);

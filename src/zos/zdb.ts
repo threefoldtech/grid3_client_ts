@@ -1,4 +1,8 @@
-import { IsBoolean, IsString, IsNotEmpty, IsInt, Min } from "class-validator";
+import { IsBoolean, IsString, IsNotEmpty, IsInt, Min, IsEnum } from "class-validator";
+import { Expose, Transform } from "class-transformer";
+
+import { WorkloadBaseData } from "./workload_base";
+
 
 enum ZdbModes {
     seq = "seq",
@@ -10,14 +14,13 @@ enum DeviceTypes {
     ssd = "ssd",
 }
 
-class Zdb {
-    @IsString() @IsNotEmpty() namespace: string;
-    // size in bytes
-    @IsInt() @Min(1) size: number;
-    mode: ZdbModes = ZdbModes.seq;
-    @IsString() @IsNotEmpty() password: string;
-    disk_type: DeviceTypes = DeviceTypes.hdd;
-    @IsBoolean() public: boolean;
+class Zdb extends WorkloadBaseData {
+    @Expose() @IsString() @IsNotEmpty() namespace: string;
+    @Expose() @IsInt() @Min(1) size: number; // in bytes
+    @Expose() @Transform(({ value }) => ZdbModes[value]) @IsEnum(ZdbModes) mode: ZdbModes = ZdbModes.seq;
+    @Expose() @IsString() @IsNotEmpty() password: string;
+    @Expose() @Transform(({ value }) => DeviceTypes[value]) @IsEnum(DeviceTypes) disk_type: DeviceTypes = DeviceTypes.hdd;
+    @Expose() @IsBoolean() public: boolean;
 
     challenge() {
         let out = "";

@@ -94,7 +94,7 @@ class HighLevelBase {
                 else {
                     // check that the deployment doesn't have another workloads
                     for (let d of network.deployments) {
-                        d = deploymentFactory.fromObj(d);
+                        d = yield deploymentFactory.fromObj(d);
                         if (d.contract_id !== contract_id) {
                             continue;
                         }
@@ -111,7 +111,7 @@ class HighLevelBase {
                 if (network.nodes.length === 1 && network.getNodeReservedIps(network.nodes[0].node_id).length === 0) {
                     const contract_id = network.deleteNode(network.nodes[0].node_id);
                     for (let d of network.deployments) {
-                        d = deploymentFactory.fromObj(d);
+                        d = yield deploymentFactory.fromObj(d);
                         if (d.contract_id !== contract_id) {
                             continue;
                         }
@@ -137,7 +137,7 @@ class HighLevelBase {
             let twinDeployments = [];
             const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
             const numberOfWorkloads = deployment.workloads.length;
-            deployment = deploymentFactory.fromObj(deployment);
+            deployment = yield deploymentFactory.fromObj(deployment);
             const filteredWorkloads = this._filterWorkloads(deployment, names, types);
             let remainingWorkloads = filteredWorkloads[0];
             const deletedMachineWorkloads = filteredWorkloads[1];

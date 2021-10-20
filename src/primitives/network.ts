@@ -2,7 +2,7 @@ import * as PATH from "path";
 
 import { default as TweetNACL } from "tweetnacl";
 import { Buffer } from "buffer";
-
+import { plainToClass } from "class-transformer";
 import { Addr } from "netaddr";
 import { default as IP } from "ip";
 
@@ -214,15 +214,7 @@ class Network {
     }
 
     _fromObj(net: Znet): Znet {
-        const znet = new Znet();
-        Object.assign(znet, net);
-        const peers = [];
-        for (const peer of znet.peers) {
-            const p = new Peer();
-            Object.assign(p, peer);
-            peers.push(p);
-        }
-        znet.peers = peers;
+        const znet = plainToClass(Znet, net);
         return znet;
     }
 

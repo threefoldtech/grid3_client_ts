@@ -4,7 +4,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { IsBoolean, IsString, IsNotEmpty, IsInt, Min } from "class-validator";
+import { IsBoolean, IsString, IsNotEmpty, IsInt, Min, IsEnum } from "class-validator";
+import { Expose, Transform } from "class-transformer";
+import { WorkloadBaseData } from "./workload_base";
 var ZdbModes;
 (function (ZdbModes) {
     ZdbModes["seq"] = "seq";
@@ -15,8 +17,9 @@ var DeviceTypes;
     DeviceTypes["hdd"] = "hdd";
     DeviceTypes["ssd"] = "ssd";
 })(DeviceTypes || (DeviceTypes = {}));
-class Zdb {
+class Zdb extends WorkloadBaseData {
     constructor() {
+        super(...arguments);
         this.mode = ZdbModes.seq;
         this.disk_type = DeviceTypes.hdd;
     }
@@ -30,18 +33,32 @@ class Zdb {
     }
 }
 __decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], Zdb.prototype, "namespace", void 0);
 __decorate([
+    Expose(),
     IsInt(),
     Min(1)
 ], Zdb.prototype, "size", void 0);
 __decorate([
+    Expose(),
+    Transform(({ value }) => ZdbModes[value]),
+    IsEnum(ZdbModes)
+], Zdb.prototype, "mode", void 0);
+__decorate([
+    Expose(),
     IsString(),
     IsNotEmpty()
 ], Zdb.prototype, "password", void 0);
 __decorate([
+    Expose(),
+    Transform(({ value }) => DeviceTypes[value]),
+    IsEnum(DeviceTypes)
+], Zdb.prototype, "disk_type", void 0);
+__decorate([
+    Expose(),
     IsBoolean()
 ], Zdb.prototype, "public", void 0);
 class ZdbResult {

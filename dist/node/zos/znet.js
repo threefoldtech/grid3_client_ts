@@ -8,15 +8,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Peer = exports.Znet = void 0;
 const class_validator_1 = require("class-validator");
-// is a remote wireguard client which can connect to this node
+const class_transformer_1 = require("class-transformer");
+const workload_base_1 = require("./workload_base");
 class Peer {
-    // is another class C in same class B as above
     subnet;
-    // wireguard public key, curve25519
     wireguard_public_key;
     allowed_ips;
-    // ipv4 or ipv6
-    // can be empty, one of the 2 need to be filled in though
     endpoint;
     challenge() {
         let out = "";
@@ -30,34 +27,30 @@ class Peer {
     }
 }
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Peer.prototype, "subnet", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Peer.prototype, "wireguard_public_key", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)({ each: true }),
     (0, class_validator_1.ArrayNotEmpty)()
 ], Peer.prototype, "allowed_ips", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsDefined)()
 ], Peer.prototype, "endpoint", void 0);
 exports.Peer = Peer;
-// wg network reservation (znet)
-class Znet {
-    // unique nr for each network chosen, this identified private networks as connected to a container or vm or ...
-    // corresponds to the 2nd number of a class B ipv4 address
-    // is a class C of a chosen class B
-    // form: e.g. 192.168.16.0/24
-    // needs to be a private subnet
+class Znet extends workload_base_1.WorkloadBaseData {
     subnet;
     ip_range;
-    // wireguard private key, curve25519
     wireguard_private_key;
-    //>1024?
     wireguard_listen_port;
     peers;
     challenge() {
@@ -73,22 +66,28 @@ class Znet {
     }
 }
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Znet.prototype, "subnet", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Znet.prototype, "ip_range", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Znet.prototype, "wireguard_private_key", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsPort)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Znet.prototype, "wireguard_listen_port", void 0);
 __decorate([
+    (0, class_transformer_1.Expose)(),
+    (0, class_transformer_1.Type)(() => Peer),
     (0, class_validator_1.ValidateNested)({ each: true }),
     (0, class_validator_1.ArrayNotEmpty)()
 ], Znet.prototype, "peers", void 0);

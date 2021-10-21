@@ -82,7 +82,7 @@ class TwinDeploymentHandler {
         return contract_id;
     }
 
-    async getDeployment(contract_id) {
+    async getDeployment(contract_id: number) {
         await this.tfclient.connect();
         const contract = await this.tfclient.contracts.get(contract_id);
         const node_twin_id = await getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);

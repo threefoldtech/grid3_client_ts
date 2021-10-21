@@ -32,15 +32,16 @@ var WorkloadTypes;
     WorkloadTypes["gatewaynameproxy"] = "gateway-name-proxy";
     WorkloadTypes["qsfs"] = "qsfs";
 })(WorkloadTypes || (WorkloadTypes = {}));
-var Right;
-(function (Right) {
-    Right[Right["restart"] = 0] = "restart";
-    Right[Right["delete"] = 1] = "delete";
-    Right[Right["stats"] = 2] = "stats";
-    Right[Right["logs"] = 3] = "logs";
-})(Right || (Right = {}));
-class ACE {
-}
+// enum Right {
+//     restart,
+//     delete,
+//     stats,
+//     logs,
+// }
+// class ACE {
+//     twin_ids: number[];
+//     rights: Right[];
+// }
 class DeploymentResult {
 }
 __decorate([
@@ -57,7 +58,7 @@ __decorate([
     Expose(),
     Type(() => WorkloadDataResult, {
         discriminator: {
-            property: '__type',
+            property: "__type",
             subTypes: [
                 { value: ZmountResult, name: WorkloadTypes.zmount },
                 { value: ZnetResult, name: WorkloadTypes.network },
@@ -102,7 +103,7 @@ __decorate([
     ValidateNested(),
     Type(() => WorkloadData, {
         discriminator: {
-            property: '__type',
+            property: "__type",
             subTypes: [
                 { value: Zmount, name: WorkloadTypes.zmount },
                 { value: Znet, name: WorkloadTypes.network },

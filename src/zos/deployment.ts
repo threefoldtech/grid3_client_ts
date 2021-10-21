@@ -11,7 +11,7 @@ class SignatureRequest {
     @Expose() @IsBoolean() required: boolean;
     @Expose() @IsInt() @Min(1) weight: number;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.twin_id;
         out += this.required;
@@ -20,7 +20,6 @@ class SignatureRequest {
         return out;
     }
 }
-
 
 class Signature {
     @Expose() @IsInt() @Min(1) twin_id: number;
@@ -32,7 +31,7 @@ class SignatureRequirement {
     @Expose() @IsInt() @Min(1) weight_required: number;
     @Expose() @Type(() => Signature) @ValidateNested({ each: true }) signatures: Signature[] = [];
 
-    challenge() {
+    challenge(): string {
         let out = "";
 
         for (let i = 0; i < this.requests.length; i++) {
@@ -54,7 +53,7 @@ class Deployment {
     @Expose() @Type(() => Workload) @ValidateNested({ each: true }) workloads: Workload[];
     @Expose() @Type(() => SignatureRequirement) @ValidateNested() signature_requirement: SignatureRequirement;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.version;
         out += this.twin_id || "";
@@ -70,18 +69,18 @@ class Deployment {
         return out;
     }
 
-    challenge_hash() {
+    challenge_hash(): string {
         return md5(this.challenge()).toString();
     }
 
-    from_hex(s) {
+    from_hex(s: string) {
         const result = new Uint8Array(s.length / 2);
         for (let i = 0; i < s.length / 2; i++) {
             result[i] = parseInt(s.substr(2 * i, 2), 16);
         }
         return result;
     }
-    to_hex(bs) {
+    to_hex(bs): string {
         const encoded = [];
         for (let i = 0; i < bs.length; i++) {
             encoded.push("0123456789abcdef"[(bs[i] >> 4) & 15]);
@@ -90,7 +89,7 @@ class Deployment {
         return encoded.join("");
     }
 
-    sign(twin_id, mnemonic, hash = "") {
+    sign(twin_id: number, mnemonic: string, hash = ""): void {
         const message = hash || this.challenge_hash();
         const message_bytes = this.from_hex(message);
 

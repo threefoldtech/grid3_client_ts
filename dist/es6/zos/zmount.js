@@ -9,7 +9,7 @@ import { Expose } from "class-transformer";
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
 class Zmount extends WorkloadData {
     challenge() {
-        return this.size;
+        return this.size.toString();
     }
 }
 __decorate([

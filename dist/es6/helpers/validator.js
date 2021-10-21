@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { validate } from 'class-validator';
+import { validate } from "class-validator";
 function validateObject(obj) {
     return __awaiter(this, void 0, void 0, function* () {
         const errors = yield validate(obj);
@@ -17,7 +17,7 @@ function validateObject(obj) {
             throw Error(`Validation failed. errors: ${errors}`);
         }
         else {
-            console.log('Validation succeed');
+            console.log("Validation succeed");
         }
     });
 }

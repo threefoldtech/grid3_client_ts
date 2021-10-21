@@ -3,26 +3,26 @@ import { Contracts } from "./contracts";
 import { Twins } from "./twins";
 
 class TFClient {
-    client: any;
+    client;
     contracts: Contracts;
     twins: Twins;
 
-    constructor(url, mnemonic) {
+    constructor(url: string, mnemonic: string) {
         this.client = new Client(url, mnemonic);
         this.contracts = new Contracts(this);
         this.twins = new Twins(this);
     }
-    async connect() {
+    async connect(): Promise<void> {
         try {
             await this.client.init();
         } catch (err) {
             console.error(err);
         }
     }
-    disconnect() {
+    disconnect(): void {
         this.client.api.disconnect();
     }
-    applyExtrinsic(func, args, resultSecttion, resultName) {
+    applyExtrinsic(func, args, resultSecttion: string, resultName: string) {
         const context = this.client;
         return new Promise(async (resolve, reject) => {
             function callback(res) {

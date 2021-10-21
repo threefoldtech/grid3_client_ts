@@ -27,7 +27,7 @@ class QSFSZdbsModule extends BaseModule {
         }
         const count = options.count + 4; // 4 zdbs for meta
         const twinDeployments = [];
-        for (let i = 1; i <= options.count; i++) {
+        for (let i = 1; i <= count; i++) {
             let mode = "seq";
             if (i > options.count) {
                 mode = "user";
@@ -72,7 +72,7 @@ class QSFSZdbsModule extends BaseModule {
         return await this._delete(options.name);
     }
 
-    async getZdbs(name) {
+    async getZdbs(name: string) {
         const deployments = await this._get(name);
         const zdbs = [];
         for (const deployment of deployments) {

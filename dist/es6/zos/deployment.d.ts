@@ -25,10 +25,10 @@ declare class Deployment {
     workloads: Workload[];
     signature_requirement: SignatureRequirement;
     challenge(): string;
-    challenge_hash(): any;
-    from_hex(s: any): Uint8Array;
+    challenge_hash(): string;
+    from_hex(s: string): Uint8Array;
     to_hex(bs: any): string;
-    sign(twin_id: any, mnemonic: any, hash?: string): void;
+    sign(twin_id: number, mnemonic: string, hash?: string): void;
 }
 export { Deployment, SignatureRequirement, SignatureRequest };
 //# sourceMappingURL=deployment.d.ts.map

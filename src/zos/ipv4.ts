@@ -1,7 +1,7 @@
 import { Expose } from "class-transformer";
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
 class PublicIP extends WorkloadData {
-    challenge() {
+    challenge(): string {
         return "";
     }
 }

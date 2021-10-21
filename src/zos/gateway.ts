@@ -8,7 +8,7 @@ class GatewayFQDNProxy extends WorkloadData {
     @Expose() @IsBoolean() tls_passthrough: boolean;
     @Expose() @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.fqdn;
         out += this.tls_passthrough.toString();
@@ -24,7 +24,7 @@ class GatewayNameProxy extends WorkloadData {
     @Expose() @IsBoolean() tls_passthrough: boolean;
     @Expose() @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.name;
         out += this.tls_passthrough.toString();

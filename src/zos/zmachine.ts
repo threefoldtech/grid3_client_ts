@@ -4,7 +4,6 @@ import { Expose, Type } from "class-transformer";
 import { ComputeCapacity } from "./computecapacity";
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
 
-
 class ZNetworkInterface {
     @Expose() @IsString() @IsNotEmpty() network: string;
     @Expose() @IsIP() @IsNotEmpty() ip: string;
@@ -15,7 +14,7 @@ class ZmachineNetwork {
     @Expose() @Type(() => ZNetworkInterface) @ValidateNested({ each: true }) interfaces: ZNetworkInterface[];
     @Expose() @IsBoolean() planetary: boolean;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.public_ip;
         out += this.planetary.toString();
@@ -31,7 +30,7 @@ class Mount {
     @Expose() @IsString() @IsNotEmpty() name: string;
     @Expose() @IsString() @IsNotEmpty() mountpoint: string;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.name;
         out += this.mountpoint;
@@ -48,7 +47,7 @@ class Zmachine extends WorkloadData {
     @Expose() @IsString() @IsNotEmpty() entrypoint: string;
     @Expose() env: Record<string, unknown>;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.flist;
         out += this.network.challenge();

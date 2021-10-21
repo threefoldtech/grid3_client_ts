@@ -36,17 +36,16 @@ var WorkloadTypes;
     WorkloadTypes["qsfs"] = "qsfs";
 })(WorkloadTypes || (WorkloadTypes = {}));
 exports.WorkloadTypes = WorkloadTypes;
-var Right;
-(function (Right) {
-    Right[Right["restart"] = 0] = "restart";
-    Right[Right["delete"] = 1] = "delete";
-    Right[Right["stats"] = 2] = "stats";
-    Right[Right["logs"] = 3] = "logs";
-})(Right || (Right = {}));
-class ACE {
-    twin_ids;
-    rights;
-}
+// enum Right {
+//     restart,
+//     delete,
+//     stats,
+//     logs,
+// }
+// class ACE {
+//     twin_ids: number[];
+//     rights: Right[];
+// }
 class DeploymentResult {
     created;
     state;
@@ -67,7 +66,7 @@ __decorate([
     (0, class_transformer_1.Expose)(),
     (0, class_transformer_1.Type)(() => workload_base_1.WorkloadDataResult, {
         discriminator: {
-            property: '__type',
+            property: "__type",
             subTypes: [
                 { value: zmount_1.ZmountResult, name: WorkloadTypes.zmount },
                 { value: _1.ZnetResult, name: WorkloadTypes.network },
@@ -119,7 +118,7 @@ __decorate([
     (0, class_validator_1.ValidateNested)(),
     (0, class_transformer_1.Type)(() => workload_base_1.WorkloadData, {
         discriminator: {
-            property: '__type',
+            property: "__type",
             subTypes: [
                 { value: zmount_1.Zmount, name: WorkloadTypes.zmount },
                 { value: znet_1.Znet, name: WorkloadTypes.network },

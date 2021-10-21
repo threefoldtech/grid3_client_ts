@@ -1,5 +1,4 @@
-import { validate } from 'class-validator';
-
+import { validate } from "class-validator";
 
 async function validateObject(obj) {
     const errors = await validate(obj);
@@ -8,7 +7,7 @@ async function validateObject(obj) {
         console.log("Validation failed. errors:", errors);
         throw Error(`Validation failed. errors: ${errors}`);
     } else {
-        console.log('Validation succeed');
+        console.log("Validation succeed");
     }
 }
 

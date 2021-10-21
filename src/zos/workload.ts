@@ -28,24 +28,25 @@ enum WorkloadTypes {
     qsfs = "qsfs",
 }
 
-enum Right {
-    restart,
-    delete,
-    stats,
-    logs,
-}
-class ACE {
-    twin_ids: number[];
-    rights: Right[];
-}
+// enum Right {
+//     restart,
+//     delete,
+//     stats,
+//     logs,
+// }
+// class ACE {
+//     twin_ids: number[];
+//     rights: Right[];
+// }
 
 class DeploymentResult {
     @Expose() created: number;
     @Expose() @Transform(({ value }) => ResultStates[value]) state: ResultStates;
     @Expose() message: string;
-    @Expose() @Type(() => WorkloadDataResult, {
+    @Expose()
+    @Type(() => WorkloadDataResult, {
         discriminator: {
-            property: '__type',
+            property: "__type",
             subTypes: [
                 { value: ZmountResult, name: WorkloadTypes.zmount },
                 { value: ZnetResult, name: WorkloadTypes.network },
@@ -61,14 +62,15 @@ class DeploymentResult {
     data: ZmountResult | ZnetResult | ZmachineResult | ZdbResult | PublicIPResult | GatewayResult | QuantumSafeFSResult;
 }
 
-
 class Workload {
     @Expose() @IsInt() @Min(0) version: number;
     @Expose() @IsString() @IsNotEmpty() name: string;
     @Expose() @Transform(({ value }) => WorkloadTypes[value]) @IsEnum(WorkloadTypes) type: WorkloadTypes;
-    @Expose() @ValidateNested() @Type(() => WorkloadData, {
+    @Expose()
+    @ValidateNested()
+    @Type(() => WorkloadData, {
         discriminator: {
-            property: '__type',
+            property: "__type",
             subTypes: [
                 { value: Zmount, name: WorkloadTypes.zmount },
                 { value: Znet, name: WorkloadTypes.network },
@@ -80,21 +82,14 @@ class Workload {
                 { value: QuantumSafeFS, name: WorkloadTypes.qsfs },
             ],
         },
-    }) data:
-        | Zmount
-        | Znet
-        | Zmachine
-        | Zdb
-        | PublicIP
-        | GatewayFQDNProxy
-        | GatewayNameProxy
-        | QuantumSafeFS;
+    })
+    data: Zmount | Znet | Zmachine | Zdb | PublicIP | GatewayFQDNProxy | GatewayNameProxy | QuantumSafeFS;
 
     @Expose() @IsString() @IsDefined() metadata: string;
     @Expose() @IsString() @IsDefined() description: string;
     @Expose() @Type(() => DeploymentResult) result: DeploymentResult;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.version;
         out += this.type.toString();
@@ -105,6 +100,5 @@ class Workload {
         return out;
     }
 }
-
 
 export { Workload, WorkloadTypes };

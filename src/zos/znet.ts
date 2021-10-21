@@ -9,7 +9,7 @@ class Peer {
     @Expose() @IsString({ each: true }) @ArrayNotEmpty() allowed_ips: string[];
     @Expose() @IsString() @IsDefined() endpoint: string;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.wireguard_public_key;
         out += this.endpoint;
@@ -29,7 +29,7 @@ class Znet extends WorkloadData {
     @Expose() @IsPort() @IsNotEmpty() wireguard_listen_port: number;
     @Expose() @Type(() => Peer) @ValidateNested({ each: true }) @ArrayNotEmpty() peers: Peer[];
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.ip_range;
         out += this.subnet;

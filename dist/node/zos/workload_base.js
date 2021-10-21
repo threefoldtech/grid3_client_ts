@@ -7,4 +7,3 @@ exports.WorkloadData = WorkloadData;
 class WorkloadDataResult {
 }
 exports.WorkloadDataResult = WorkloadDataResult;
-;

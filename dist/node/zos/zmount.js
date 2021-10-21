@@ -13,7 +13,7 @@ const workload_base_1 = require("./workload_base");
 class Zmount extends workload_base_1.WorkloadData {
     size; // in bytes
     challenge() {
-        return this.size;
+        return this.size.toString();
     }
 }
 __decorate([

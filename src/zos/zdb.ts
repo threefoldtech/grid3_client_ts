@@ -3,7 +3,6 @@ import { Expose, Transform } from "class-transformer";
 
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
 
-
 enum ZdbModes {
     seq = "seq",
     user = "user",
@@ -19,10 +18,11 @@ class Zdb extends WorkloadData {
     @Expose() @IsInt() @Min(1) size: number; // in bytes
     @Expose() @Transform(({ value }) => ZdbModes[value]) @IsEnum(ZdbModes) mode: ZdbModes = ZdbModes.seq;
     @Expose() @IsString() @IsNotEmpty() password: string;
-    @Expose() @Transform(({ value }) => DeviceTypes[value]) @IsEnum(DeviceTypes) disk_type: DeviceTypes = DeviceTypes.hdd;
+    @Expose() @Transform(({ value }) => DeviceTypes[value]) @IsEnum(DeviceTypes) disk_type: DeviceTypes =
+        DeviceTypes.hdd;
     @Expose() @IsBoolean() public: boolean;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.size;
         out += this.mode.toString();

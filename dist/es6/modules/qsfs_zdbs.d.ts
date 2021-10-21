@@ -27,7 +27,7 @@ declare class QSFSZdbsModule extends BaseModule {
         deleted: any[];
         updated: any[];
     }>;
-    getZdbs(name: any): Promise<{
+    getZdbs(name: string): Promise<{
         meta: any[];
         groups: any[];
     }>;

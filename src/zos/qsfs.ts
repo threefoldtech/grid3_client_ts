@@ -1,14 +1,13 @@
 import { IsString, IsNotEmpty, IsInt, Min, ValidateNested } from "class-validator";
 import { Expose, Type } from "class-transformer";
 
-
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
 
 class Encryption {
     @Expose() @IsNotEmpty() @IsString() algorithm: string;
     @Expose() @IsNotEmpty() @IsString() key: string;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.algorithm;
         out += this.key;
@@ -21,7 +20,7 @@ class ZdbBackend {
     @Expose() @IsNotEmpty() @IsString() namespace: string;
     @Expose() @IsNotEmpty() @IsString() password: string;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.address;
         out += this.namespace;
@@ -35,7 +34,7 @@ class QuantumSafeConfig {
     @Expose() @Type(() => Encryption) @ValidateNested() encryption: Encryption;
     @Expose() @Type(() => ZdbBackend) @ValidateNested({ each: true }) backends: ZdbBackend[];
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.prefix;
         out += this.encryption.challenge();
@@ -50,7 +49,7 @@ class QuantumSafeMeta {
     @Expose() @IsNotEmpty() @IsString() type: string;
     @Expose() @Type(() => QuantumSafeConfig) @ValidateNested() config: QuantumSafeConfig;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.type;
         out += this.config.challenge();
@@ -61,7 +60,7 @@ class QuantumSafeMeta {
 class ZdbGroup {
     @Expose() @Type(() => ZdbBackend) @ValidateNested({ each: true }) backends: ZdbBackend[];
 
-    challenge() {
+    challenge(): string {
         let out = "";
         for (const backend of this.backends) {
             out += backend.challenge();
@@ -73,7 +72,7 @@ class ZdbGroup {
 class QuantumCompression {
     @Expose() @IsNotEmpty() @IsString() algorithm: string;
 
-    challenge() {
+    challenge(): string {
         return this.algorithm;
     }
 }
@@ -89,7 +88,7 @@ class QuantumSafeFSConfig {
     @Expose() @Type(() => ZdbGroup) @ValidateNested({ each: true }) groups: ZdbGroup[];
     @Expose() @Type(() => QuantumCompression) @ValidateNested() compression: QuantumCompression;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.minimal_shards;
         out += this.expected_shards;
@@ -110,7 +109,7 @@ class QuantumSafeFS extends WorkloadData {
     @Expose() @IsInt() @Min(1024 * 1024 * 250) cache: number;
     @Expose() @Type(() => QuantumSafeFSConfig) @ValidateNested() config: QuantumSafeFSConfig;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.cache;
         out += this.config.challenge();
@@ -132,5 +131,5 @@ export {
     QuantumSafeMeta,
     QuantumSafeConfig,
     QuantumCompression,
-    QuantumSafeFSResult
+    QuantumSafeFSResult,
 };

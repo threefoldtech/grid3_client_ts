@@ -1,4 +1,4 @@
 class WorkloadData {}
-class WorkloadDataResult {};
+class WorkloadDataResult {}
 
 export { WorkloadData, WorkloadDataResult };

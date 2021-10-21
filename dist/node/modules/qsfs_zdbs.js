@@ -28,7 +28,7 @@ class QSFSZdbsModule extends base_1.BaseModule {
         }
         const count = options.count + 4; // 4 zdbs for meta
         const twinDeployments = [];
-        for (let i = 1; i <= options.count; i++) {
+        for (let i = 1; i <= count; i++) {
             let mode = "seq";
             if (i > options.count) {
                 mode = "user";

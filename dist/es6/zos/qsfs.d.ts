@@ -50,5 +50,5 @@ declare class QuantumSafeFSResult extends WorkloadDataResult {
     path: string;
     metrics_endpoint: string;
 }
-export { QuantumSafeFS, ZdbBackend, ZdbGroup, QuantumSafeFSConfig, Encryption, QuantumSafeMeta, QuantumSafeConfig, QuantumCompression, QuantumSafeFSResult };
+export { QuantumSafeFS, ZdbBackend, ZdbGroup, QuantumSafeFSConfig, Encryption, QuantumSafeMeta, QuantumSafeConfig, QuantumCompression, QuantumSafeFSResult, };
 //# sourceMappingURL=qsfs.d.ts.map

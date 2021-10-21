@@ -7,16 +7,6 @@ import { WorkloadTypes } from "../zos/workload";
 import { getNodeIdFromContractId } from "./nodes";
 
 import { Network } from "./network";
-import {
-    QuantumSafeFS,
-    QuantumSafeFSConfig,
-    Encryption,
-    QuantumSafeMeta,
-    QuantumSafeConfig,
-    ZdbBackend,
-    ZdbGroup,
-    QuantumCompression,
-} from "../zos/qsfs";
 
 class DeploymentFactory {
     constructor(public twin_id: number, public url: string, public mnemonic: string) {}

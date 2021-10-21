@@ -10,7 +10,7 @@ async function validateObject(obj) {
         throw Error(`Validation failed. errors: ${errors}`);
     }
     else {
-        console.log('Validation succeed');
+        console.log("Validation succeed");
     }
 }
 exports.validateObject = validateObject;

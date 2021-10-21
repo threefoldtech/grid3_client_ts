@@ -11,7 +11,7 @@ import { Addr } from "netaddr";
 import { WorkloadTypes } from "../zos/workload";
 import { TwinDeployment, Operations } from "./models";
 import { HighLevelBase } from "./base";
-import { DiskPrimitive, VMPrimitive, IPv4Primitive, DeploymentFactory, getAccessNodes, } from "../primitives/index";
+import { DiskPrimitive, VMPrimitive, IPv4Primitive, DeploymentFactory, Nodes } from "../primitives/index";
 import { randomChoice } from "../helpers/utils";
 import { events } from "../helpers/events";
 import { QSFSPrimitive } from "../primitives/qsfs";
@@ -57,7 +57,8 @@ class VMHL extends HighLevelBase {
             }
             // network
             const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
-            const accessNodes = yield getAccessNodes();
+            const nodes = new Nodes(this.url);
+            const accessNodes = yield nodes.getAccessNodes();
             let access_net_workload;
             let wgConfig = "";
             let hasAccessNode = false;

@@ -50,7 +50,8 @@ class VMHL extends base_1.HighLevelBase {
         }
         // network
         const deploymentFactory = new index_1.DeploymentFactory(this.twin_id, this.url, this.mnemonic);
-        const accessNodes = await (0, index_1.getAccessNodes)();
+        const nodes = new index_1.Nodes(this.url);
+        const accessNodes = await nodes.getAccessNodes();
         let access_net_workload;
         let wgConfig = "";
         let hasAccessNode = false;

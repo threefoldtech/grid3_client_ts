@@ -11,7 +11,7 @@ import { WorkloadTypes } from "../zos/workload";
 import { Addr } from "netaddr";
 import { DeploymentFactory } from "../primitives/deployment";
 import { Network } from "../primitives/network";
-import { getNodeIdFromContractId } from "../primitives/nodes";
+import { Nodes } from "../primitives/nodes";
 import { TwinDeployment, Operations } from "../high_level/models";
 import { events } from "../helpers/events";
 class HighLevelBase {
@@ -65,7 +65,7 @@ class HighLevelBase {
             for (const workload of deletedMachineWorkloads) {
                 const networkName = workload.data["network"].interfaces[0].network;
                 const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
-                const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath);
+                const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
                 yield network.load(true);
                 const machineIp = workload.data["network"].interfaces[0].ip;
                 events.emit("logs", `Deleting ip: ${machineIp} from node: ${node_id}, network ${network.name}`);
@@ -134,7 +134,8 @@ class HighLevelBase {
             if (types.includes(WorkloadTypes.network)) {
                 throw Error("network can't be deleted");
             }
-            const node_id = yield getNodeIdFromContractId(deployment.contract_id, this.url, this.mnemonic);
+            const nodes = new Nodes(this.url);
+            const node_id = yield nodes.getNodeIdFromContractId(deployment.contract_id, this.mnemonic);
             let twinDeployments = [];
             const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
             const numberOfWorkloads = deployment.workloads.length;
@@ -152,7 +153,7 @@ class HighLevelBase {
                 let network = null;
                 for (const workload of remainingWorkloads) {
                     if (workload.type === WorkloadTypes.network) {
-                        network = new Network(workload.name, workload.data["ip_range"], this.rmbClient, this.storePath);
+                        network = new Network(workload.name, workload.data["ip_range"], this.rmbClient, this.storePath, this.url);
                         yield network.load(true);
                         break;
                     }

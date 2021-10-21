@@ -29,7 +29,8 @@ class TwinDeploymentHandler {
         events_1.events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
         deployment.contract_id = contract["contract_id"];
         const payload = JSON.stringify(deployment);
-        const node_twin_id = await (0, index_1.getNodeTwinId)(node_id);
+        const nodes = new index_1.Nodes(this.url);
+        const node_twin_id = await nodes.getNodeTwinId(node_id);
         try {
             const msg = this.rmbClient.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
             const message = await this.rmbClient.send(msg, payload);
@@ -56,7 +57,8 @@ class TwinDeploymentHandler {
         }
         events_1.events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
         const payload = JSON.stringify(deployment);
-        const node_twin_id = await (0, index_1.getNodeTwinId)(contract["contract_type"]["nodeContract"]["node_id"]);
+        const nodes = new index_1.Nodes(this.url);
+        const node_twin_id = await nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
         try {
             const msg = this.rmbClient.prepare("zos.deployment.update", [node_twin_id], 0, 2);
             const message = await this.rmbClient.send(msg, payload);
@@ -89,7 +91,8 @@ class TwinDeploymentHandler {
     async getDeployment(contract_id) {
         await this.tfclient.connect();
         const contract = await this.tfclient.contracts.get(contract_id);
-        const node_twin_id = await (0, index_1.getNodeTwinId)(contract["contract_type"]["nodeContract"]["node_id"]);
+        const nodes = new index_1.Nodes(this.url);
+        const node_twin_id = await nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
         const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
         const payload = { contract_id: contract_id };
         const message = await this.rmbClient.send(msg, JSON.stringify(payload));

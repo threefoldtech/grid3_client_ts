@@ -12,7 +12,7 @@ import { HighLevelBase } from "../high_level/base";
 import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { TwinDeployment, Operations } from "../high_level/models";
 import { loadFromFile, updatejson } from "../helpers/jsonfs";
-import { getNodeTwinId } from "../primitives/nodes";
+import { Nodes } from "../primitives/nodes";
 import { DeploymentFactory } from "../primitives/deployment";
 import { TFClient } from "../tf-grid/client";
 class BaseModule {
@@ -116,7 +116,8 @@ class BaseModule {
                 finally {
                     tfClient.disconnect();
                 }
-                const node_twin_id = yield getNodeTwinId(contract["node_id"]);
+                const nodes = new Nodes(this.url);
+                const node_twin_id = yield nodes.getNodeTwinId(contract["node_id"]);
                 const payload = JSON.stringify({ contract_id: contract["contract_id"] });
                 const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
                 const messgae = yield this.rmbClient.send(msg, payload);

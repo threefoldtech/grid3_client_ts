@@ -1,5 +1,10 @@
-declare function getNodeTwinId(node_id: number): Promise<number>;
-declare function getAccessNodes(): Promise<Record<string, unknown>>;
-declare function getNodeIdFromContractId(contractId: number, url: string, mnemonic: string): Promise<number>;
-export { getNodeTwinId, getAccessNodes, getNodeIdFromContractId };
+declare class Nodes {
+    url: string;
+    graphqlURL: string;
+    constructor(url: string);
+    getNodeTwinId(node_id: number): Promise<number>;
+    getAccessNodes(): Promise<Record<string, unknown>>;
+    getNodeIdFromContractId(contractId: number, mnemonic: string): Promise<number>;
+}
+export { Nodes };
 //# sourceMappingURL=nodes.d.ts.map

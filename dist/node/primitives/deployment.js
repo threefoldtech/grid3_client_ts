@@ -73,7 +73,8 @@ class DeploymentFactory {
                 workload.version = 0;
                 // Don't change the machine ip
                 if (w.type === workload_1.WorkloadTypes.zmachine) {
-                    const node_id = await (0, nodes_1.getNodeIdFromContractId)(oldDeployment.contract_id, this.url, this.mnemonic);
+                    const nodes = new nodes_1.Nodes(this.url);
+                    const node_id = await nodes.getNodeIdFromContractId(oldDeployment.contract_id, this.mnemonic);
                     const oldIp = workload.data["network"]["interfaces"][0]["ip"];
                     const newIp = w.data["network"]["interfaces"][0]["ip"];
                     if (newIp !== oldIp) {

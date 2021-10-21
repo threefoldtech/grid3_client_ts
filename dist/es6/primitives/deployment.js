@@ -11,7 +11,7 @@ import { plainToClass } from "class-transformer";
 import { validateObject } from "../helpers/validator";
 import { Deployment, SignatureRequest, SignatureRequirement } from "../zos/deployment";
 import { WorkloadTypes } from "../zos/workload";
-import { getNodeIdFromContractId } from "./nodes";
+import { Nodes } from "./nodes";
 class DeploymentFactory {
     constructor(twin_id, url, mnemonic) {
         this.twin_id = twin_id;
@@ -77,7 +77,8 @@ class DeploymentFactory {
                     workload.version = 0;
                     // Don't change the machine ip
                     if (w.type === WorkloadTypes.zmachine) {
-                        const node_id = yield getNodeIdFromContractId(oldDeployment.contract_id, this.url, this.mnemonic);
+                        const nodes = new Nodes(this.url);
+                        const node_id = yield nodes.getNodeIdFromContractId(oldDeployment.contract_id, this.mnemonic);
                         const oldIp = workload.data["network"]["interfaces"][0]["ip"];
                         const newIp = w.data["network"]["interfaces"][0]["ip"];
                         if (newIp !== oldIp) {

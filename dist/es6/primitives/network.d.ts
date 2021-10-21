@@ -20,12 +20,13 @@ declare class Network {
     ipRange: string;
     rmbClient: any;
     storePath: string;
+    url: string;
     nodes: Node[];
     deployments: Deployment[];
     reservedSubnets: string[];
     networks: Znet[];
     accessPoints: AccessPoint[];
-    constructor(name: string, ipRange: string, rmbClient: any, storePath: string);
+    constructor(name: string, ipRange: string, rmbClient: any, storePath: string, url: string);
     addAccess(node_id: number, ipv4: boolean): Promise<string>;
     addNode(node_id: number, metadata?: string, description?: string): Promise<Workload>;
     deleteNode(node_id: number): number;

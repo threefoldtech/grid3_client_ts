@@ -135,7 +135,8 @@ class BaseModule {
             finally {
                 tfClient.disconnect();
             }
-            const node_twin_id = await (0, nodes_1.getNodeTwinId)(contract["node_id"]);
+            const nodes = new nodes_1.Nodes(this.url);
+            const node_twin_id = await nodes.getNodeTwinId(contract["node_id"]);
             const payload = JSON.stringify({ contract_id: contract["contract_id"] });
             const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
             const messgae = await this.rmbClient.send(msg, payload);

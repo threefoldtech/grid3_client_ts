@@ -17,7 +17,7 @@ import { Workload, WorkloadTypes } from "../zos/workload";
 import { Znet, Peer } from "../zos/znet";
 import { loadFromFile, dumpToFile } from "../helpers/jsonfs";
 import { getRandomNumber } from "../helpers/utils";
-import { getNodeTwinId, getAccessNodes } from "./nodes";
+import { Nodes } from "./nodes";
 import { events } from "../helpers/events";
 class WireGuardKeys {
 }
@@ -29,11 +29,12 @@ class Node {
 class AccessPoint {
 }
 class Network {
-    constructor(name, ipRange, rmbClient, storePath) {
+    constructor(name, ipRange, rmbClient, storePath, url) {
         this.name = name;
         this.ipRange = ipRange;
         this.rmbClient = rmbClient;
         this.storePath = storePath;
+        this.url = url;
         this.nodes = [];
         this.deployments = [];
         this.reservedSubnets = [];
@@ -52,7 +53,8 @@ class Network {
                 throw Error(`Node ${node_id} does not exist in the network. Please add it first`);
             }
             events.emit("logs", `Adding access to node ${node_id}`);
-            const accessNodes = yield getAccessNodes();
+            const nodes = new Nodes(this.url);
+            const accessNodes = yield nodes.getAccessNodes();
             if (Object.keys(accessNodes).includes(node_id.toString())) {
                 if (ipv4 && !accessNodes[node_id]["ipv4"]) {
                     throw Error(`Node ${node_id} does not have ipv4 public config.`);
@@ -176,7 +178,8 @@ class Network {
             }
             if (deployments) {
                 for (const node of this.nodes) {
-                    const node_twin_id = yield getNodeTwinId(node.node_id);
+                    const nodes = new Nodes(this.url);
+                    const node_twin_id = yield nodes.getNodeTwinId(node.node_id);
                     const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
                     const message = yield this.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
                     const result = yield this.rmbClient.read(message);
@@ -365,7 +368,8 @@ class Network {
     }
     getFreePort(node_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const node_twin_id = yield getNodeTwinId(node_id);
+            const nodes = new Nodes(this.url);
+            const node_twin_id = yield nodes.getNodeTwinId(node_id);
             const msg = this.rmbClient.prepare("zos.network.list_wg_ports", [node_twin_id], 0, 2);
             const message = yield this.rmbClient.send(msg, "");
             const result = yield this.rmbClient.read(message);
@@ -382,7 +386,8 @@ class Network {
     }
     getNodeEndpoint(node_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const node_twin_id = yield getNodeTwinId(node_id);
+            const nodes = new Nodes(this.url);
+            const node_twin_id = yield nodes.getNodeTwinId(node_id);
             let msg = this.rmbClient.prepare("zos.network.public_config_get", [node_twin_id], 0, 2);
             let message = yield this.rmbClient.send(msg, "");
             let result = yield this.rmbClient.read(message);

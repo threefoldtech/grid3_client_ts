@@ -3,7 +3,7 @@ import { WorkloadTypes } from "../zos/workload";
 import { TFClient } from "../tf-grid/client";
 
 import { Operations, TwinDeployment } from "./models";
-import { getNodeTwinId } from "../primitives/index";
+import { Nodes } from "../primitives/index";
 import { events } from "../helpers/events";
 import { validateObject } from "../helpers/validator";
 
@@ -23,7 +23,8 @@ class TwinDeploymentHandler {
         events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
         deployment.contract_id = contract["contract_id"];
         const payload = JSON.stringify(deployment);
-        const node_twin_id = await getNodeTwinId(node_id);
+        const nodes = new Nodes(this.url);
+        const node_twin_id = await nodes.getNodeTwinId(node_id);
         try {
             const msg = this.rmbClient.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
             const message = await this.rmbClient.send(msg, payload);
@@ -54,7 +55,8 @@ class TwinDeploymentHandler {
         events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
 
         const payload = JSON.stringify(deployment);
-        const node_twin_id = await getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
+        const nodes = new Nodes(this.url);
+        const node_twin_id = await nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
         try {
             const msg = this.rmbClient.prepare("zos.deployment.update", [node_twin_id], 0, 2);
             const message = await this.rmbClient.send(msg, payload);
@@ -85,7 +87,8 @@ class TwinDeploymentHandler {
     async getDeployment(contract_id: number) {
         await this.tfclient.connect();
         const contract = await this.tfclient.contracts.get(contract_id);
-        const node_twin_id = await getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
+        const nodes = new Nodes(this.url);
+        const node_twin_id = await nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
         const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
         const payload = { contract_id: contract_id };
         const message = await this.rmbClient.send(msg, JSON.stringify(payload));

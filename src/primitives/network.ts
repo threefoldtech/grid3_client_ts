@@ -11,7 +11,7 @@ import { Znet, Peer } from "../zos/znet";
 import { Deployment } from "../zos/deployment";
 import { loadFromFile, dumpToFile, appPath } from "../helpers/jsonfs";
 import { getRandomNumber } from "../helpers/utils";
-import { getNodeTwinId, getAccessNodes } from "./nodes";
+import { Nodes } from "./nodes";
 import { events } from "../helpers/events";
 
 class WireGuardKeys {
@@ -38,7 +38,13 @@ class Network {
     networks: Znet[] = [];
     accessPoints: AccessPoint[] = [];
 
-    constructor(public name: string, public ipRange: string, public rmbClient, public storePath: string) {
+    constructor(
+        public name: string,
+        public ipRange: string,
+        public rmbClient,
+        public storePath: string,
+        public url: string,
+    ) {
         if (Addr(ipRange).prefix !== 16) {
             throw Error("Network ip_range should be with prefix 16");
         }
@@ -52,7 +58,8 @@ class Network {
             throw Error(`Node ${node_id} does not exist in the network. Please add it first`);
         }
         events.emit("logs", `Adding access to node ${node_id}`);
-        const accessNodes = await getAccessNodes();
+        const nodes = new Nodes(this.url);
+        const accessNodes = await nodes.getAccessNodes();
         if (Object.keys(accessNodes).includes(node_id.toString())) {
             if (ipv4 && !accessNodes[node_id]["ipv4"]) {
                 throw Error(`Node ${node_id} does not have ipv4 public config.`);
@@ -181,7 +188,9 @@ class Network {
         }
         if (deployments) {
             for (const node of this.nodes) {
-                const node_twin_id = await getNodeTwinId(node.node_id);
+                const nodes = new Nodes(this.url);
+
+                const node_twin_id = await nodes.getNodeTwinId(node.node_id);
                 const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
                 const message = await this.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
                 const result = await this.rmbClient.read(message);
@@ -384,7 +393,8 @@ class Network {
     }
 
     async getFreePort(node_id: number): Promise<number> {
-        const node_twin_id = await getNodeTwinId(node_id);
+        const nodes = new Nodes(this.url);
+        const node_twin_id = await nodes.getNodeTwinId(node_id);
         const msg = this.rmbClient.prepare("zos.network.list_wg_ports", [node_twin_id], 0, 2);
         const message = await this.rmbClient.send(msg, "");
         const result = await this.rmbClient.read(message);
@@ -402,7 +412,8 @@ class Network {
     }
 
     async getNodeEndpoint(node_id: number): Promise<string> {
-        const node_twin_id = await getNodeTwinId(node_id);
+        const nodes = new Nodes(this.url);
+        const node_twin_id = await nodes.getNodeTwinId(node_id);
         let msg = this.rmbClient.prepare("zos.network.public_config_get", [node_twin_id], 0, 2);
         let message = await this.rmbClient.send(msg, "");
         let result = await this.rmbClient.read(message);

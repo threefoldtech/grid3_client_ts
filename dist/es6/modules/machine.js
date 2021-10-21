@@ -27,7 +27,7 @@ class MachineModule extends BaseModule {
     _createDeloyment(options) {
         return __awaiter(this, void 0, void 0, function* () {
             const networkName = options.network.name;
-            const network = new Network(networkName, options.network.ip_range, this.rmbClient, this.storePath);
+            const network = new Network(networkName, options.network.ip_range, this.rmbClient, this.storePath, this.url);
             yield network.load(true);
             let twinDeployments = [];
             let wireguardConfig = "";
@@ -99,7 +99,7 @@ class MachineModule extends BaseModule {
             const workload = this._getMachineWorkload(oldDeployments);
             const networkName = workload.data["network"].interfaces[0].network;
             const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
-            const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath);
+            const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
             yield network.load(true);
             const [twinDeployments, wgConfig] = yield this.vm.create(options.name, options.node_id, options.flist, options.cpu, options.memory, options.rootfs_size, options.disks, options.public_ip, options.planetary, network, options.entrypoint, options.env, workload.metadata, workload.description, options.qsfs_disks, this.projectName);
             return yield this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);

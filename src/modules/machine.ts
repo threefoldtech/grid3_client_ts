@@ -26,7 +26,7 @@ class MachineModule extends BaseModule {
 
     async _createDeloyment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]> {
         const networkName = options.network.name;
-        const network = new Network(networkName, options.network.ip_range, this.rmbClient, this.storePath);
+        const network = new Network(networkName, options.network.ip_range, this.rmbClient, this.storePath, this.url);
         await network.load(true);
 
         let twinDeployments = [];
@@ -117,7 +117,7 @@ class MachineModule extends BaseModule {
         const workload = this._getMachineWorkload(oldDeployments);
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
-        const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath);
+        const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
         await network.load(true);
 
         const [twinDeployments, wgConfig] = await this.vm.create(

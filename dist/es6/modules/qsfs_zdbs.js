@@ -13,15 +13,16 @@ import { ZdbModes } from "../zos/zdb";
 import { WorkloadTypes } from "../zos/workload";
 import { ZdbBackend } from "../zos/qsfs";
 class QSFSZdbsModule extends BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient) {
-        super(twin_id, url, mnemonic, rmbClient);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
+        super(twin_id, url, mnemonic, rmbClient, storePath);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
         this.fileName = "qsfs_zdbs.json";
         this.workloadTypes = [WorkloadTypes.zdb];
-        this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient);
+        this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
     _createDeployment(options) {
         if (options.count < 3) {

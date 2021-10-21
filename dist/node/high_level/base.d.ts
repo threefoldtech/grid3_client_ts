@@ -7,7 +7,8 @@ declare class HighLevelBase {
     url: string;
     mnemonic: string;
     rmbClient: MessageBusClientInterface;
-    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
+    storePath: string;
+    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string);
     _filterWorkloads(deployment: Deployment, names: string[], types?: WorkloadTypes[]): [Workload[], Workload[]];
     _deleteMachineNetwork(deployment: Deployment, remainingWorkloads: Workload[], deletedMachineWorkloads: Workload[], node_id: number): Promise<[TwinDeployment[], Workload[], number[], string[]]>;
     _delete(deployment: Deployment, names: string[], types?: WorkloadTypes[]): Promise<TwinDeployment[]>;

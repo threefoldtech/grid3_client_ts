@@ -28,7 +28,7 @@ class KubernetesHL extends HighLevelBase {
         qsfsProjectName = "",
     ) {
         events.emit("logs", `Creating a master with name: ${name} on node: ${nodeId}, network: ${network.name}`);
-        const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+        const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
         const mountpoint = "/mnt/data";
         const env = {
             SSH_KEY: sshKey,
@@ -82,7 +82,7 @@ class KubernetesHL extends HighLevelBase {
         qsfsProjectName = "",
     ) {
         events.emit("logs", `Creating a worker with name: ${name} on node: ${nodeId}, network: ${network.name}`);
-        const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+        const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
         const mountpoint = "/mnt/data";
         const env = {
             SSH_KEY: sshKey,

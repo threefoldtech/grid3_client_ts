@@ -18,9 +18,10 @@ class K8sModule extends BaseModule {
         public url: string,
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
+        public storePath: string,
     ) {
-        super(twin_id, url, mnemonic, rmbClient);
-        this.kubernetes = new KubernetesHL(twin_id, url, mnemonic, rmbClient);
+        super(twin_id, url, mnemonic, rmbClient, storePath);
+        this.kubernetes = new KubernetesHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
 
     _getMastersWorkload(deployments): Workload[] {
@@ -49,7 +50,7 @@ class K8sModule extends BaseModule {
     }
 
     async _createDeployment(options: K8SModel, masterIps: string[] = []): Promise<[TwinDeployment[], Network, string]> {
-        const network = new Network(options.network.name, options.network.ip_range, this.rmbClient);
+        const network = new Network(options.network.name, options.network.ip_range, this.rmbClient, this.storePath);
         await network.load(true);
 
         let deployments = [];
@@ -179,7 +180,7 @@ class K8sModule extends BaseModule {
         const masterWorkload = masterWorkloads[0];
         const networkName = masterWorkload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(masterWorkload.data["network"].interfaces[0].ip).mask(16).toString();
-        const network = new Network(networkName, networkIpRange, this.rmbClient);
+        const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath);
         await network.load(true);
         const [twinDeployments, _] = await this.kubernetes.add_worker(
             options.name,

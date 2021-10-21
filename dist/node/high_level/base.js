@@ -13,11 +13,13 @@ class HighLevelBase {
     url;
     mnemonic;
     rmbClient;
-    constructor(twin_id, url, mnemonic, rmbClient) {
+    storePath;
+    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
     }
     _filterWorkloads(deployment, names, types = [workload_1.WorkloadTypes.ipv4, workload_1.WorkloadTypes.zmachine, workload_1.WorkloadTypes.zmount, workload_1.WorkloadTypes.zdb]) {
         let deletedMachineWorkloads = [];
@@ -61,7 +63,7 @@ class HighLevelBase {
         for (const workload of deletedMachineWorkloads) {
             const networkName = workload.data["network"].interfaces[0].network;
             const networkIpRange = (0, netaddr_1.Addr)(workload.data["network"].interfaces[0].ip).mask(16).toString();
-            const network = new network_1.Network(networkName, networkIpRange, this.rmbClient);
+            const network = new network_1.Network(networkName, networkIpRange, this.rmbClient, this.storePath);
             await network.load(true);
             const machineIp = workload.data["network"].interfaces[0].ip;
             events_1.events.emit("logs", `Deleting ip: ${machineIp} from node: ${node_id}, network ${network.name}`);
@@ -146,7 +148,7 @@ class HighLevelBase {
             let network = null;
             for (const workload of remainingWorkloads) {
                 if (workload.type === workload_1.WorkloadTypes.network) {
-                    network = new network_1.Network(workload.name, workload.data["ip_range"], this.rmbClient);
+                    network = new network_1.Network(workload.name, workload.data["ip_range"], this.rmbClient, this.storePath);
                     await network.load(true);
                     break;
                 }

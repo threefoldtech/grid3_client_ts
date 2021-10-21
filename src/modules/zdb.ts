@@ -14,9 +14,10 @@ class ZdbsModule extends BaseModule {
         public url: string,
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
+        public storePath: string,
     ) {
-        super(twin_id, url, mnemonic, rmbClient);
-        this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient);
+        super(twin_id, url, mnemonic, rmbClient, storePath);
+        this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
 
     _createDeployment(options: ZDBSModel): TwinDeployment[] {

@@ -10,10 +10,11 @@ declare class MachineModule extends BaseModule {
     url: string;
     mnemonic: string;
     rmbClient: MessageBusClientInterface;
+    storePath: string;
     fileName: string;
     workloadTypes: WorkloadTypes[];
     vm: VMHL;
-    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
+    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string);
     _createDeloyment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]>;
     _getMachineWorkload(deployments: any): Workload;
     deploy(options: MachinesModel): Promise<{

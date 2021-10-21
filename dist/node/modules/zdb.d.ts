@@ -9,10 +9,11 @@ declare class ZdbsModule extends BaseModule {
     url: string;
     mnemonic: string;
     rmbClient: MessageBusClientInterface;
+    storePath: string;
     fileName: string;
     workloadTypes: WorkloadTypes[];
     zdb: ZdbHL;
-    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
+    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string);
     _createDeployment(options: ZDBSModel): TwinDeployment[];
     deploy(options: ZDBSModel): Promise<{
         contracts: {

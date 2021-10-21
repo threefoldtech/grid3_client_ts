@@ -38,7 +38,7 @@ class Network {
     networks: Znet[] = [];
     accessPoints: AccessPoint[] = [];
 
-    constructor(public name: string, public ipRange: string, public rmbClient) {
+    constructor(public name: string, public ipRange: string, public rmbClient, public storePath: string) {
         if (Addr(ipRange).prefix !== 16) {
             throw Error("Network ip_range should be with prefix 16");
         }
@@ -374,7 +374,7 @@ class Network {
     }
 
     getNetworks() {
-        const path = PATH.join(appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         return loadFromFile(path);
     }
 
@@ -492,7 +492,7 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     _save(network): void {
         const networks = this.getNetworks();
         networks[this.name] = network;
-        const path = PATH.join(appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         dumpToFile(path, networks);
     }
 
@@ -500,7 +500,7 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
         events.emit("logs", `Deleting network ${this.name}`);
         const networks = this.getNetworks();
         delete networks[this.name];
-        const path = PATH.join(appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         dumpToFile(path, networks);
     }
 

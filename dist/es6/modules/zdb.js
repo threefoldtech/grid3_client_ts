@@ -11,15 +11,16 @@ import { BaseModule } from "./base";
 import { ZdbHL } from "../high_level/zdb";
 import { WorkloadTypes } from "../zos/workload";
 class ZdbsModule extends BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient) {
-        super(twin_id, url, mnemonic, rmbClient);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
+        super(twin_id, url, mnemonic, rmbClient, storePath);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
         this.fileName = "zdbs.json";
         this.workloadTypes = [WorkloadTypes.zdb];
-        this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient);
+        this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
     _createDeployment(options) {
         const twinDeployments = [];

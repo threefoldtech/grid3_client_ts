@@ -7,7 +7,7 @@ import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { TwinDeployment, Operations } from "../high_level/models";
 import { KubernetesHL } from "../high_level/kubernetes";
 import { ZdbHL } from "../high_level/zdb";
-import { loadFromFile, updatejson, appPath } from "../helpers/jsonfs";
+import { loadFromFile, updatejson } from "../helpers/jsonfs";
 import { getNodeTwinId } from "../primitives/nodes";
 import { DeploymentFactory } from "../primitives/deployment";
 import { Network } from "../primitives/network";
@@ -27,13 +27,14 @@ class BaseModule {
         public url: string,
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
+        public storePath: string,
     ) {
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
     }
 
     _load() {
-        const path = PATH.join(appPath, this.projectName, this.fileName);
+        const path = PATH.join(this.storePath, this.projectName, this.fileName);
         return [path, loadFromFile(path)];
     }
 
@@ -253,7 +254,7 @@ class BaseModule {
             return contracts;
         }
         const deployments = await this._get(name);
-        const highlvl = new HighLevelBase(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+        const highlvl = new HighLevelBase(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
         for (const deployment of deployments) {
             const twinDeployments = await highlvl._delete(deployment, []);
             const contract = await this.twinDeploymentHandler.handle(twinDeployments);

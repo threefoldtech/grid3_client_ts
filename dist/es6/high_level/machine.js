@@ -7,7 +7,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import * as PATH from "path";
 import { Addr } from "netaddr";
 import { WorkloadTypes } from "../zos/workload";
 import { TwinDeployment, Operations } from "./models";
@@ -33,9 +32,9 @@ class VMHL extends HighLevelBase {
             const qsfsPrimitive = new QSFSPrimitive();
             for (const d of qsfsDisks) {
                 // the ratio that will be used for minimal_shards to expected_shards is 3/5
-                const qsfsZdbsModule = new QSFSZdbsModule(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+                const qsfsZdbsModule = new QSFSZdbsModule(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
                 if (qsfsProjectName) {
-                    qsfsZdbsModule.fileName = PATH.join(qsfsProjectName, qsfsZdbsModule.fileName);
+                    qsfsZdbsModule.projectName = qsfsProjectName;
                 }
                 const qsfsZdbs = yield qsfsZdbsModule.getZdbs(d.qsfs_zdbs_name);
                 if (qsfsZdbs.groups.length === 0 || qsfsZdbs.meta.length === 0) {

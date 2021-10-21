@@ -1,26 +1,6 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VMHL = void 0;
-const PATH = __importStar(require("path"));
 const netaddr_1 = require("netaddr");
 const workload_1 = require("../zos/workload");
 const models_1 = require("./models");
@@ -45,9 +25,9 @@ class VMHL extends base_1.HighLevelBase {
         const qsfsPrimitive = new qsfs_1.QSFSPrimitive();
         for (const d of qsfsDisks) {
             // the ratio that will be used for minimal_shards to expected_shards is 3/5
-            const qsfsZdbsModule = new qsfs_zdbs_1.QSFSZdbsModule(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+            const qsfsZdbsModule = new qsfs_zdbs_1.QSFSZdbsModule(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
             if (qsfsProjectName) {
-                qsfsZdbsModule.fileName = PATH.join(qsfsProjectName, qsfsZdbsModule.fileName);
+                qsfsZdbsModule.projectName = qsfsProjectName;
             }
             const qsfsZdbs = await qsfsZdbsModule.getZdbs(d.qsfs_zdbs_name);
             if (qsfsZdbs.groups.length === 0 || qsfsZdbs.meta.length === 0) {

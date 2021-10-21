@@ -13,20 +13,21 @@ import { BaseModule } from "./base";
 import { Network } from "../primitives/network";
 import { VMHL } from "../high_level/machine";
 class MachineModule extends BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient) {
-        super(twin_id, url, mnemonic, rmbClient);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
+        super(twin_id, url, mnemonic, rmbClient, storePath);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
         this.fileName = "machines.json";
         this.workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
-        this.vm = new VMHL(twin_id, url, mnemonic, rmbClient);
+        this.vm = new VMHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
     _createDeloyment(options) {
         return __awaiter(this, void 0, void 0, function* () {
             const networkName = options.network.name;
-            const network = new Network(networkName, options.network.ip_range, this.rmbClient);
+            const network = new Network(networkName, options.network.ip_range, this.rmbClient, this.storePath);
             yield network.load(true);
             let twinDeployments = [];
             let wireguardConfig = "";
@@ -98,7 +99,7 @@ class MachineModule extends BaseModule {
             const workload = this._getMachineWorkload(oldDeployments);
             const networkName = workload.data["network"].interfaces[0].network;
             const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
-            const network = new Network(networkName, networkIpRange, this.rmbClient);
+            const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath);
             yield network.load(true);
             const [twinDeployments, wgConfig] = yield this.vm.create(options.name, options.node_id, options.flist, options.cpu, options.memory, options.rootfs_size, options.disks, options.public_ip, options.planetary, network, options.entrypoint, options.env, workload.metadata, workload.description, options.qsfs_disks, this.projectName);
             return yield this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);

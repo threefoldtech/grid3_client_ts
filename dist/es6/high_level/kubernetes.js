@@ -16,7 +16,7 @@ class KubernetesHL extends HighLevelBase {
     add_master(name, nodeId, secret, cpu, memory, rootfs_size, diskSize, publicIp, planetary, network, sshKey, metadata = "", description = "", qsfs_disks = [], qsfsProjectName = "") {
         return __awaiter(this, void 0, void 0, function* () {
             events.emit("logs", `Creating a master with name: ${name} on node: ${nodeId}, network: ${network.name}`);
-            const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+            const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
             const mountpoint = "/mnt/data";
             const env = {
                 SSH_KEY: sshKey,
@@ -37,7 +37,7 @@ class KubernetesHL extends HighLevelBase {
     add_worker(name, nodeId, secret, masterIp, cpu, memory, rootfs_size, diskSize, publicIp, planetary, network, sshKey, metadata = "", description = "", qsfs_disks = [], qsfsProjectName = "") {
         return __awaiter(this, void 0, void 0, function* () {
             events.emit("logs", `Creating a worker with name: ${name} on node: ${nodeId}, network: ${network.name}`);
-            const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+            const machine = new VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
             const mountpoint = "/mnt/data";
             const env = {
                 SSH_KEY: sshKey,

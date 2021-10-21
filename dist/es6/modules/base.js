@@ -11,16 +11,17 @@ import * as PATH from "path";
 import { HighLevelBase } from "../high_level/base";
 import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { TwinDeployment, Operations } from "../high_level/models";
-import { loadFromFile, updatejson, appPath } from "../helpers/jsonfs";
+import { loadFromFile, updatejson } from "../helpers/jsonfs";
 import { getNodeTwinId } from "../primitives/nodes";
 import { DeploymentFactory } from "../primitives/deployment";
 import { TFClient } from "../tf-grid/client";
 class BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient) {
+    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
         this.projectName = "";
         this.fileName = "";
         this.workloadTypes = [];
@@ -28,7 +29,7 @@ class BaseModule {
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
     }
     _load() {
-        const path = PATH.join(appPath, this.projectName, this.fileName);
+        const path = PATH.join(this.storePath, this.projectName, this.fileName);
         return [path, loadFromFile(path)];
     }
     save(name, contracts, wgConfig = "") {
@@ -225,7 +226,7 @@ class BaseModule {
                 return contracts;
             }
             const deployments = yield this._get(name);
-            const highlvl = new HighLevelBase(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+            const highlvl = new HighLevelBase(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
             for (const deployment of deployments) {
                 const twinDeployments = yield highlvl._delete(deployment, []);
                 const contract = yield this.twinDeploymentHandler.handle(twinDeployments);

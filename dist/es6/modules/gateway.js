@@ -11,15 +11,16 @@ import { BaseModule } from "./base";
 import { GatewayHL } from "../high_level/gateway";
 import { WorkloadTypes } from "../zos/workload";
 class GWModule extends BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient) {
-        super(twin_id, url, mnemonic, rmbClient);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
+        super(twin_id, url, mnemonic, rmbClient, storePath);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
         this.fileName = "gateway.json";
         this.workloadTypes = [WorkloadTypes.gatewayfqdnproxy, WorkloadTypes.gatewaynameproxy];
-        this.gateway = new GatewayHL(twin_id, url, mnemonic, rmbClient);
+        this.gateway = new GatewayHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
     deploy_fqdn(options) {
         return __awaiter(this, void 0, void 0, function* () {

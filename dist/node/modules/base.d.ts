@@ -12,12 +12,13 @@ declare class BaseModule {
     url: string;
     mnemonic: string;
     rmbClient: MessageBusClientInterface;
+    storePath: string;
     projectName: string;
     fileName: string;
     workloadTypes: any[];
     deploymentFactory: DeploymentFactory;
     twinDeploymentHandler: TwinDeploymentHandler;
-    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
+    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string);
     _load(): any[];
     save(name: string, contracts: Record<string, unknown[]>, wgConfig?: string): {
         contracts: any[];

@@ -14,15 +14,16 @@ import { TwinDeployment } from "../high_level/models";
 import { KubernetesHL } from "../high_level/kubernetes";
 import { Network } from "../primitives/network";
 class K8sModule extends BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient) {
-        super(twin_id, url, mnemonic, rmbClient);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
+        super(twin_id, url, mnemonic, rmbClient, storePath);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
         this.fileName = "kubernetes.json";
         this.workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
-        this.kubernetes = new KubernetesHL(twin_id, url, mnemonic, rmbClient);
+        this.kubernetes = new KubernetesHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
     _getMastersWorkload(deployments) {
         const workloads = [];
@@ -49,7 +50,7 @@ class K8sModule extends BaseModule {
     }
     _createDeployment(options, masterIps = []) {
         return __awaiter(this, void 0, void 0, function* () {
-            const network = new Network(options.network.name, options.network.ip_range, this.rmbClient);
+            const network = new Network(options.network.name, options.network.ip_range, this.rmbClient, this.storePath);
             yield network.load(true);
             let deployments = [];
             let wireguardConfig = "";
@@ -144,7 +145,7 @@ class K8sModule extends BaseModule {
             const masterWorkload = masterWorkloads[0];
             const networkName = masterWorkload.data["network"].interfaces[0].network;
             const networkIpRange = Addr(masterWorkload.data["network"].interfaces[0].ip).mask(16).toString();
-            const network = new Network(networkName, networkIpRange, this.rmbClient);
+            const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath);
             yield network.load(true);
             const [twinDeployments, _] = yield this.kubernetes.add_worker(options.name, options.node_id, masterWorkload.data["env"]["K3S_TOKEN"], masterWorkload.data["network"]["interfaces"][0]["ip"], options.cpu, options.memory, options.rootfs_size, options.disk_size, options.public_ip, options.planetary, network, masterWorkload.data["env"]["SSH_KEY"], masterWorkload.metadata, masterWorkload.description, options.qsfs_disks, this.projectName);
             return yield this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);

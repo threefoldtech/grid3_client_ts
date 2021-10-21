@@ -9,16 +9,18 @@ class GWModule extends base_1.BaseModule {
     url;
     mnemonic;
     rmbClient;
+    storePath;
     fileName = "gateway.json";
     workloadTypes = [workload_1.WorkloadTypes.gatewayfqdnproxy, workload_1.WorkloadTypes.gatewaynameproxy];
     gateway;
-    constructor(twin_id, url, mnemonic, rmbClient) {
-        super(twin_id, url, mnemonic, rmbClient);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
+        super(twin_id, url, mnemonic, rmbClient, storePath);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
-        this.gateway = new gateway_1.GatewayHL(twin_id, url, mnemonic, rmbClient);
+        this.storePath = storePath;
+        this.gateway = new gateway_1.GatewayHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
     async deploy_fqdn(options) {
         if (this.exists(options.name)) {

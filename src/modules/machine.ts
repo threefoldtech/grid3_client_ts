@@ -18,14 +18,15 @@ class MachineModule extends BaseModule {
         public url: string,
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
+        public storePath: string,
     ) {
-        super(twin_id, url, mnemonic, rmbClient);
-        this.vm = new VMHL(twin_id, url, mnemonic, rmbClient);
+        super(twin_id, url, mnemonic, rmbClient, storePath);
+        this.vm = new VMHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
 
     async _createDeloyment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]> {
         const networkName = options.network.name;
-        const network = new Network(networkName, options.network.ip_range, this.rmbClient);
+        const network = new Network(networkName, options.network.ip_range, this.rmbClient, this.storePath);
         await network.load(true);
 
         let twinDeployments = [];
@@ -116,7 +117,7 @@ class MachineModule extends BaseModule {
         const workload = this._getMachineWorkload(oldDeployments);
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
-        const network = new Network(networkName, networkIpRange, this.rmbClient);
+        const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath);
         await network.load(true);
 
         const [twinDeployments, wgConfig] = await this.vm.create(

@@ -53,15 +53,17 @@ class Network {
     name;
     ipRange;
     rmbClient;
+    storePath;
     nodes = [];
     deployments = [];
     reservedSubnets = [];
     networks = [];
     accessPoints = [];
-    constructor(name, ipRange, rmbClient) {
+    constructor(name, ipRange, rmbClient, storePath) {
         this.name = name;
         this.ipRange = ipRange;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
         if ((0, netaddr_1.Addr)(ipRange).prefix !== 16) {
             throw Error("Network ip_range should be with prefix 16");
         }
@@ -369,7 +371,7 @@ class Network {
         return this.accessPoints;
     }
     getNetworks() {
-        const path = PATH.join(jsonfs_1.appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         return (0, jsonfs_1.loadFromFile)(path);
     }
     getNetworkNames() {
@@ -474,14 +476,14 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     _save(network) {
         const networks = this.getNetworks();
         networks[this.name] = network;
-        const path = PATH.join(jsonfs_1.appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         (0, jsonfs_1.dumpToFile)(path, networks);
     }
     delete() {
         events_1.events.emit("logs", `Deleting network ${this.name}`);
         const networks = this.getNetworks();
         delete networks[this.name];
-        const path = PATH.join(jsonfs_1.appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         (0, jsonfs_1.dumpToFile)(path, networks);
     }
     async generatePeers() {

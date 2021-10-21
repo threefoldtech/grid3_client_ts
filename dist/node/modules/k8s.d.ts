@@ -10,10 +10,11 @@ declare class K8sModule extends BaseModule {
     url: string;
     mnemonic: string;
     rmbClient: MessageBusClientInterface;
+    storePath: string;
     fileName: string;
     workloadTypes: WorkloadTypes[];
     kubernetes: KubernetesHL;
-    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
+    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string);
     _getMastersWorkload(deployments: any): Workload[];
     _getMastersIp(deployments: any): string[];
     _createDeployment(options: K8SModel, masterIps?: string[]): Promise<[TwinDeployment[], Network, string]>;

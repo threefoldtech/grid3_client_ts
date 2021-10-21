@@ -15,7 +15,7 @@ import { Addr } from "netaddr";
 import { default as IP } from "ip";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Znet, Peer } from "../zos/znet";
-import { loadFromFile, dumpToFile, appPath } from "../helpers/jsonfs";
+import { loadFromFile, dumpToFile } from "../helpers/jsonfs";
 import { getRandomNumber } from "../helpers/utils";
 import { getNodeTwinId, getAccessNodes } from "./nodes";
 import { events } from "../helpers/events";
@@ -29,10 +29,11 @@ class Node {
 class AccessPoint {
 }
 class Network {
-    constructor(name, ipRange, rmbClient) {
+    constructor(name, ipRange, rmbClient, storePath) {
         this.name = name;
         this.ipRange = ipRange;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
         this.nodes = [];
         this.deployments = [];
         this.reservedSubnets = [];
@@ -355,7 +356,7 @@ class Network {
         });
     }
     getNetworks() {
-        const path = PATH.join(appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         return loadFromFile(path);
     }
     getNetworkNames() {
@@ -464,14 +465,14 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     _save(network) {
         const networks = this.getNetworks();
         networks[this.name] = network;
-        const path = PATH.join(appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         dumpToFile(path, networks);
     }
     delete() {
         events.emit("logs", `Deleting network ${this.name}`);
         const networks = this.getNetworks();
         delete networks[this.name];
-        const path = PATH.join(appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         dumpToFile(path, networks);
     }
     generatePeers() {

@@ -33,21 +33,23 @@ class BaseModule {
     url;
     mnemonic;
     rmbClient;
+    storePath;
     projectName = "";
     fileName = "";
     workloadTypes = [];
     deploymentFactory;
     twinDeploymentHandler;
-    constructor(twin_id, url, mnemonic, rmbClient) {
+    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
         this.deploymentFactory = new deployment_1.DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new twinDeploymentHandler_1.TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
     }
     _load() {
-        const path = PATH.join(jsonfs_1.appPath, this.projectName, this.fileName);
+        const path = PATH.join(this.storePath, this.projectName, this.fileName);
         return [path, (0, jsonfs_1.loadFromFile)(path)];
     }
     save(name, contracts, wgConfig = "") {
@@ -235,7 +237,7 @@ class BaseModule {
             return contracts;
         }
         const deployments = await this._get(name);
-        const highlvl = new base_1.HighLevelBase(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+        const highlvl = new base_1.HighLevelBase(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
         for (const deployment of deployments) {
             const twinDeployments = await highlvl._delete(deployment, []);
             const contract = await this.twinDeploymentHandler.handle(twinDeployments);

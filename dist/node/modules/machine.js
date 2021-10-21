@@ -11,20 +11,22 @@ class MachineModule extends base_1.BaseModule {
     url;
     mnemonic;
     rmbClient;
+    storePath;
     fileName = "machines.json";
     workloadTypes = [workload_1.WorkloadTypes.zmachine, workload_1.WorkloadTypes.zmount, workload_1.WorkloadTypes.qsfs, workload_1.WorkloadTypes.ipv4];
     vm;
-    constructor(twin_id, url, mnemonic, rmbClient) {
-        super(twin_id, url, mnemonic, rmbClient);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
+        super(twin_id, url, mnemonic, rmbClient, storePath);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
-        this.vm = new machine_1.VMHL(twin_id, url, mnemonic, rmbClient);
+        this.storePath = storePath;
+        this.vm = new machine_1.VMHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
     async _createDeloyment(options) {
         const networkName = options.network.name;
-        const network = new network_1.Network(networkName, options.network.ip_range, this.rmbClient);
+        const network = new network_1.Network(networkName, options.network.ip_range, this.rmbClient, this.storePath);
         await network.load(true);
         let twinDeployments = [];
         let wireguardConfig = "";
@@ -86,7 +88,7 @@ class MachineModule extends base_1.BaseModule {
         const workload = this._getMachineWorkload(oldDeployments);
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = (0, netaddr_1.Addr)(workload.data["network"].interfaces[0].ip).mask(16).toString();
-        const network = new network_1.Network(networkName, networkIpRange, this.rmbClient);
+        const network = new network_1.Network(networkName, networkIpRange, this.rmbClient, this.storePath);
         await network.load(true);
         const [twinDeployments, wgConfig] = await this.vm.create(options.name, options.node_id, options.flist, options.cpu, options.memory, options.rootfs_size, options.disks, options.public_ip, options.planetary, network, options.entrypoint, options.env, workload.metadata, workload.description, options.qsfs_disks, this.projectName);
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);

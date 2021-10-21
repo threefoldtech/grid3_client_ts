@@ -8,10 +8,11 @@ declare class GWModule extends BaseModule {
     url: string;
     mnemonic: string;
     rmbClient: MessageBusClientInterface;
+    storePath: string;
     fileName: string;
     workloadTypes: WorkloadTypes[];
     gateway: GatewayHL;
-    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
+    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string);
     deploy_fqdn(options: DeployGatewayFQDNModel): Promise<{
         contracts: {
             created: any[];

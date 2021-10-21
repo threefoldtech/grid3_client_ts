@@ -17,3 +17,4 @@ __exportStar(require("./primitives/index"), exports);
 __exportStar(require("./high_level/index"), exports);
 __exportStar(require("./helpers"), exports);
 __exportStar(require("./modules/index"), exports);
+__exportStar(require("./client"), exports);

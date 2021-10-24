@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, ArrayNotEmpty, IsPort, IsDefined, ValidateNested } from "class-validator";
+import { IsString, IsNotEmpty, ArrayNotEmpty, IsInt, IsDefined, ValidateNested } from "class-validator";
 import { Expose, Type } from "class-transformer";
 
 import { WorkloadData } from "./workload_base";
@@ -26,7 +26,7 @@ class Znet extends WorkloadData {
     @Expose() @IsString() @IsNotEmpty() subnet: string;
     @Expose() @IsString() @IsNotEmpty() ip_range: string;
     @Expose() @IsString() @IsNotEmpty() wireguard_private_key: string;
-    @Expose() @IsPort() @IsNotEmpty() wireguard_listen_port: number;
+    @Expose() @IsInt() @IsNotEmpty() wireguard_listen_port: number;
     @Expose() @Type(() => Peer) @ValidateNested({ each: true }) @ArrayNotEmpty() peers: Peer[];
 
     challenge(): string {

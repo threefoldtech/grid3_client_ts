@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsIP, IsBoolean, IsInt, Min, ValidateNested } from "class-validator";
+import { IsString, IsNotEmpty, IsIP, IsBoolean, IsInt, Min, ValidateNested, IsDefined } from "class-validator";
 import { Expose, Type } from "class-transformer";
 
 import { ComputeCapacity } from "./computecapacity";
@@ -10,7 +10,7 @@ class ZNetworkInterface {
 }
 
 class ZmachineNetwork {
-    @Expose() @IsString() @IsNotEmpty() public_ip: string;
+    @Expose() @IsString() @IsDefined() public_ip: string;
     @Expose() @Type(() => ZNetworkInterface) @ValidateNested({ each: true }) interfaces: ZNetworkInterface[];
     @Expose() @IsBoolean() planetary: boolean;
 

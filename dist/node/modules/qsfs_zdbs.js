@@ -67,16 +67,16 @@ class QSFSZdbsModule extends base_1.BaseModule {
                 if (workload.type !== workload_1.WorkloadTypes.zdb) {
                     continue;
                 }
-                zdbs.push(workload.data);
+                zdbs.push(workload);
             }
         }
         const qsfsZdbs = { meta: [], groups: [] };
         for (const zdb of zdbs) {
             const zdbBackend = new qsfs_1.ZdbBackend();
-            zdbBackend.namespace = zdb.namespace;
-            zdbBackend.password = zdb.password;
-            zdbBackend.address = `[${zdb.result.data.ips[0]}]:${zdb.result.data.port}`;
-            if (zdb.mode === zdb_2.ZdbModes.user) {
+            zdbBackend.namespace = zdb.data.namespace;
+            zdbBackend.password = zdb.data.password;
+            zdbBackend.address = `[${zdb.result.data.IPs[0]}]:${zdb.result.data.Port}`;
+            if (zdb.data.mode === zdb_2.ZdbModes.user) {
                 qsfsZdbs.meta.push(zdbBackend);
             }
             else {

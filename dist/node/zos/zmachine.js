@@ -44,7 +44,7 @@ class ZmachineNetwork {
 __decorate([
     (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)()
+    (0, class_validator_1.IsDefined)()
 ], ZmachineNetwork.prototype, "public_ip", void 0);
 __decorate([
     (0, class_transformer_1.Expose)(),

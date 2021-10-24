@@ -82,7 +82,7 @@ __decorate([
 ], Znet.prototype, "wireguard_private_key", void 0);
 __decorate([
     (0, class_transformer_1.Expose)(),
-    (0, class_validator_1.IsPort)(),
+    (0, class_validator_1.IsInt)(),
     (0, class_validator_1.IsNotEmpty)()
 ], Znet.prototype, "wireguard_listen_port", void 0);
 __decorate([

@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { IsString, IsNotEmpty, ArrayNotEmpty, IsPort, IsDefined, ValidateNested } from "class-validator";
+import { IsString, IsNotEmpty, ArrayNotEmpty, IsInt, IsDefined, ValidateNested } from "class-validator";
 import { Expose, Type } from "class-transformer";
 import { WorkloadData } from "./workload_base";
 class Peer {
@@ -69,7 +69,7 @@ __decorate([
 ], Znet.prototype, "wireguard_private_key", void 0);
 __decorate([
     Expose(),
-    IsPort(),
+    IsInt(),
     IsNotEmpty()
 ], Znet.prototype, "wireguard_listen_port", void 0);
 __decorate([

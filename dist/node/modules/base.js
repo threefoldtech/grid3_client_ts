@@ -39,7 +39,7 @@ class BaseModule {
     workloadTypes = [];
     deploymentFactory;
     twinDeploymentHandler;
-    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
@@ -47,6 +47,7 @@ class BaseModule {
         this.storePath = storePath;
         this.deploymentFactory = new deployment_1.DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new twinDeploymentHandler_1.TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
+        this.projectName = projectName;
     }
     _load() {
         const path = PATH.join(this.storePath, this.projectName, this.fileName);
@@ -125,7 +126,7 @@ class BaseModule {
         for (const contract of data[name]["contracts"]) {
             const tfClient = new client_1.TFClient(this.url, this.mnemonic);
             try {
-                tfClient.connect();
+                await tfClient.connect();
                 const c = await tfClient.contracts.get(contract["contract_id"]);
                 if (c.state !== "Created") {
                     this.save(name, { deleted: [contract["contract_id"]] });

@@ -13,7 +13,7 @@ declare class ZdbsModule extends BaseModule {
     fileName: string;
     workloadTypes: WorkloadTypes[];
     zdb: ZdbHL;
-    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string);
+    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string, projectName?: string);
     _createDeployment(options: ZDBSModel): TwinDeployment[];
     deploy(options: ZDBSModel): Promise<{
         contracts: {

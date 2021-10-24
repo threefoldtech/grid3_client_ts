@@ -13,8 +13,8 @@ import { BaseModule } from "./base";
 import { Network } from "../primitives/network";
 import { VMHL } from "../high_level/machine";
 class MachineModule extends BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
-        super(twin_id, url, mnemonic, rmbClient, storePath);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;

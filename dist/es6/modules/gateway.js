@@ -11,8 +11,8 @@ import { BaseModule } from "./base";
 import { GatewayHL } from "../high_level/gateway";
 import { WorkloadTypes } from "../zos/workload";
 class GWModule extends BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
-        super(twin_id, url, mnemonic, rmbClient, storePath);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;

@@ -14,7 +14,7 @@ declare class MachineModule extends BaseModule {
     fileName: string;
     workloadTypes: WorkloadTypes[];
     vm: VMHL;
-    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string);
+    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string, projectName?: string);
     _createDeloyment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]>;
     _getMachineWorkload(deployments: any): Workload;
     deploy(options: MachinesModel): Promise<{

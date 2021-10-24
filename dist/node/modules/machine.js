@@ -15,8 +15,8 @@ class MachineModule extends base_1.BaseModule {
     fileName = "machines.json";
     workloadTypes = [workload_1.WorkloadTypes.zmachine, workload_1.WorkloadTypes.zmount, workload_1.WorkloadTypes.qsfs, workload_1.WorkloadTypes.ipv4];
     vm;
-    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
-        super(twin_id, url, mnemonic, rmbClient, storePath);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;

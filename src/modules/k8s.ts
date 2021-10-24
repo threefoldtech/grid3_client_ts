@@ -19,8 +19,9 @@ class K8sModule extends BaseModule {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
+        projectName: string = ""
     ) {
-        super(twin_id, url, mnemonic, rmbClient, storePath);
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.kubernetes = new KubernetesHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
 

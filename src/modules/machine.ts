@@ -19,8 +19,10 @@ class MachineModule extends BaseModule {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
+        projectName: string = ""
+
     ) {
-        super(twin_id, url, mnemonic, rmbClient, storePath);
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.vm = new VMHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
 

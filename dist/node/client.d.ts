@@ -14,7 +14,7 @@ declare class GridClient {
     zdbs: ZdbsModule;
     gateway: GWModule;
     qsfs_zdbs: QSFSZdbsModule;
-    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
+    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, projectName?: string);
 }
 export { GridClient };
 //# sourceMappingURL=client.d.ts.map

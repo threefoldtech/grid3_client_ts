@@ -12,7 +12,7 @@ declare class GWModule extends BaseModule {
     fileName: string;
     workloadTypes: WorkloadTypes[];
     gateway: GatewayHL;
-    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string);
+    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string, projectName?: string);
     deploy_fqdn(options: DeployGatewayFQDNModel): Promise<{
         contracts: {
             created: any[];

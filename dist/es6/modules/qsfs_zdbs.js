@@ -13,8 +13,8 @@ import { ZdbModes } from "../zos/zdb";
 import { WorkloadTypes } from "../zos/workload";
 import { ZdbBackend } from "../zos/qsfs";
 class QSFSZdbsModule extends BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
-        super(twin_id, url, mnemonic, rmbClient, storePath);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;

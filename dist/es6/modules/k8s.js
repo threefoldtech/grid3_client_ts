@@ -14,8 +14,8 @@ import { TwinDeployment } from "../high_level/models";
 import { KubernetesHL } from "../high_level/kubernetes";
 import { Network } from "../primitives/network";
 class K8sModule extends BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
-        super(twin_id, url, mnemonic, rmbClient, storePath);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;

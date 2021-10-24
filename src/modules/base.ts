@@ -28,9 +28,11 @@ class BaseModule {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
+        projectName: string = ""
     ) {
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
+        this.projectName = projectName;
     }
 
     _load() {
@@ -120,7 +122,7 @@ class BaseModule {
         for (const contract of data[name]["contracts"]) {
             const tfClient = new TFClient(this.url, this.mnemonic);
             try {
-                tfClient.connect();
+                await tfClient.connect();
                 const c = await tfClient.contracts.get(contract["contract_id"]);
                 if (c.state !== "Created") {
                     this.save(name, { deleted: [contract["contract_id"]] });

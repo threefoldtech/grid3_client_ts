@@ -13,8 +13,8 @@ class GWModule extends base_1.BaseModule {
     fileName = "gateway.json";
     workloadTypes = [workload_1.WorkloadTypes.gatewayfqdnproxy, workload_1.WorkloadTypes.gatewaynameproxy];
     gateway;
-    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
-        super(twin_id, url, mnemonic, rmbClient, storePath);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;

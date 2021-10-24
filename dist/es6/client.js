@@ -6,7 +6,7 @@ import { GWModule } from "./modules/gateway";
 import { QSFSZdbsModule } from "./modules/qsfs_zdbs";
 import { appPath } from "./helpers/jsonfs";
 class GridClient {
-    constructor(twin_id, url, mnemonic, rmbClient) {
+    constructor(twin_id, url, mnemonic, rmbClient, projectName = "") {
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
@@ -19,11 +19,11 @@ class GridClient {
             env = "testnet";
         }
         const storePath = PATH.join(appPath, env);
-        this.machines = new MachineModule(twin_id, url, mnemonic, rmbClient, storePath);
-        this.k8s = new K8sModule(twin_id, url, mnemonic, rmbClient, storePath);
-        this.zdbs = new ZdbsModule(twin_id, url, mnemonic, rmbClient, storePath);
-        this.gateway = new GWModule(twin_id, url, mnemonic, rmbClient, storePath);
-        this.qsfs_zdbs = new QSFSZdbsModule(twin_id, url, mnemonic, rmbClient, storePath);
+        this.machines = new MachineModule(twin_id, url, mnemonic, rmbClient, storePath, projectName);
+        this.k8s = new K8sModule(twin_id, url, mnemonic, rmbClient, storePath, projectName);
+        this.zdbs = new ZdbsModule(twin_id, url, mnemonic, rmbClient, storePath, projectName);
+        this.gateway = new GWModule(twin_id, url, mnemonic, rmbClient, storePath, projectName);
+        this.qsfs_zdbs = new QSFSZdbsModule(twin_id, url, mnemonic, rmbClient, storePath, projectName);
     }
 }
 export { GridClient };

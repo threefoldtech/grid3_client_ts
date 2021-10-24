@@ -11,8 +11,8 @@ import { BaseModule } from "./base";
 import { ZdbHL } from "../high_level/zdb";
 import { WorkloadTypes } from "../zos/workload";
 class ZdbsModule extends BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
-        super(twin_id, url, mnemonic, rmbClient, storePath);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;

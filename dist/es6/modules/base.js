@@ -16,7 +16,7 @@ import { Nodes } from "../primitives/nodes";
 import { DeploymentFactory } from "../primitives/deployment";
 import { TFClient } from "../tf-grid/client";
 class BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
@@ -27,6 +27,7 @@ class BaseModule {
         this.workloadTypes = [];
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
+        this.projectName = projectName;
     }
     _load() {
         const path = PATH.join(this.storePath, this.projectName, this.fileName);
@@ -106,7 +107,7 @@ class BaseModule {
             for (const contract of data[name]["contracts"]) {
                 const tfClient = new TFClient(this.url, this.mnemonic);
                 try {
-                    tfClient.connect();
+                    yield tfClient.connect();
                     const c = yield tfClient.contracts.get(contract["contract_id"]);
                     if (c.state !== "Created") {
                         this.save(name, { deleted: [contract["contract_id"]] });

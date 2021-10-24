@@ -13,7 +13,7 @@ declare class QSFSZdbsModule extends BaseModule {
     fileName: string;
     workloadTypes: WorkloadTypes[];
     zdb: ZdbHL;
-    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string);
+    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string, projectName?: string);
     _createDeployment(options: QSFSZDBSModel): TwinDeployment[];
     deploy(options: QSFSZDBSModel): Promise<{
         contracts: {

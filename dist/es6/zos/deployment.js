@@ -134,9 +134,7 @@ __decorate([
     Min(1)
 ], Deployment.prototype, "twin_id", void 0);
 __decorate([
-    Expose(),
-    IsInt(),
-    Min(1)
+    Expose()
 ], Deployment.prototype, "contract_id", void 0);
 __decorate([
     Expose(),

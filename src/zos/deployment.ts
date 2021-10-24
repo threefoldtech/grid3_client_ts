@@ -46,7 +46,7 @@ class SignatureRequirement {
 class Deployment {
     @Expose() @IsInt() @Min(0) version: number;
     @Expose() @IsInt() @Min(1) twin_id: number;
-    @Expose() @IsInt() @Min(1) contract_id: number;
+    @Expose() contract_id: number;
     @Expose() @IsInt() expiration: number;
     @Expose() @IsString() @IsDefined() metadata;
     @Expose() @IsString() @IsDefined() description;

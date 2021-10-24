@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { IsString, IsNotEmpty, ArrayNotEmpty, IsPort, IsDefined, ValidateNested } from "class-validator";
 import { Expose, Type } from "class-transformer";
-import { WorkloadData, WorkloadDataResult } from "./workload_base";
+import { WorkloadData } from "./workload_base";
 class Peer {
     challenge() {
         let out = "";
@@ -78,6 +78,4 @@ __decorate([
     ValidateNested({ each: true }),
     ArrayNotEmpty()
 ], Znet.prototype, "peers", void 0);
-class ZnetResult extends WorkloadDataResult {
-}
-export { Znet, Peer, ZnetResult };
+export { Znet, Peer };

@@ -1,4 +1,4 @@
-import { WorkloadData, WorkloadDataResult } from "./workload_base";
+import { WorkloadData } from "./workload_base";
 declare class GatewayFQDNProxy extends WorkloadData {
     fqdn: string;
     tls_passthrough: boolean;
@@ -11,7 +11,5 @@ declare class GatewayNameProxy extends WorkloadData {
     backends: string[];
     challenge(): string;
 }
-declare class GatewayResult extends WorkloadDataResult {
-}
-export { GatewayFQDNProxy, GatewayNameProxy, GatewayResult };
+export { GatewayFQDNProxy, GatewayNameProxy };
 //# sourceMappingURL=gateway.d.ts.map

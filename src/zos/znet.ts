@@ -1,7 +1,7 @@
 import { IsString, IsNotEmpty, ArrayNotEmpty, IsPort, IsDefined, ValidateNested } from "class-validator";
 import { Expose, Type } from "class-transformer";
 
-import { WorkloadData, WorkloadDataResult } from "./workload_base";
+import { WorkloadData } from "./workload_base";
 
 class Peer {
     @Expose() @IsString() @IsNotEmpty() subnet: string;
@@ -43,6 +43,5 @@ class Znet extends WorkloadData {
     }
 }
 
-class ZnetResult extends WorkloadDataResult {}
 
-export { Znet, Peer, ZnetResult };
+export { Znet, Peer };

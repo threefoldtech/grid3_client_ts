@@ -1,4 +1,4 @@
-import { WorkloadData, WorkloadDataResult } from "./workload_base";
+import { WorkloadData } from "./workload_base";
 declare class Peer {
     subnet: string;
     wireguard_public_key: string;
@@ -14,7 +14,5 @@ declare class Znet extends WorkloadData {
     peers: Peer[];
     challenge(): string;
 }
-declare class ZnetResult extends WorkloadDataResult {
-}
-export { Znet, Peer, ZnetResult };
+export { Znet, Peer };
 //# sourceMappingURL=znet.d.ts.map

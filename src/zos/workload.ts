@@ -6,10 +6,10 @@ import { Zmount, ZmountResult } from "./zmount";
 import { Zmachine, ZmachineResult } from "./zmachine";
 import { Zdb, ZdbResult } from "./zdb";
 import { PublicIP } from "./ipv4";
-import { GatewayFQDNProxy, GatewayNameProxy, GatewayResult } from "./gateway";
+import { GatewayFQDNProxy, GatewayNameProxy } from "./gateway";
 import { QuantumSafeFS, QuantumSafeFSResult } from "./qsfs";
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
-import { PublicIPResult, ZnetResult } from ".";
+import { PublicIPResult } from ".";
 
 enum ResultStates {
     error = "error",
@@ -49,17 +49,17 @@ class DeploymentResult {
             property: "__type",
             subTypes: [
                 { value: ZmountResult, name: WorkloadTypes.zmount },
-                { value: ZnetResult, name: WorkloadTypes.network },
+                { value: WorkloadDataResult, name: WorkloadTypes.network },
                 { value: ZmachineResult, name: WorkloadTypes.zmachine },
                 { value: ZdbResult, name: WorkloadTypes.zdb },
                 { value: PublicIPResult, name: WorkloadTypes.ipv4 },
-                { value: GatewayResult, name: WorkloadTypes.gatewayfqdnproxy },
-                { value: GatewayResult, name: WorkloadTypes.gatewaynameproxy },
+                { value: WorkloadDataResult, name: WorkloadTypes.gatewayfqdnproxy },
+                { value: WorkloadDataResult, name: WorkloadTypes.gatewaynameproxy },
                 { value: QuantumSafeFSResult, name: WorkloadTypes.qsfs },
             ],
         },
     })
-    data: ZmountResult | ZnetResult | ZmachineResult | ZdbResult | PublicIPResult | GatewayResult | QuantumSafeFSResult;
+    data: ZmountResult | ZmachineResult | ZdbResult | PublicIPResult | QuantumSafeFSResult | WorkloadDataResult;
 }
 
 class Workload {

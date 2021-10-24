@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GatewayResult = exports.GatewayNameProxy = exports.GatewayFQDNProxy = void 0;
+exports.GatewayNameProxy = exports.GatewayFQDNProxy = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const workload_base_1 = require("./workload_base");
@@ -67,6 +67,3 @@ __decorate([
     (0, class_validator_1.IsUrl)({ protocols: ["http", "https"] }, { each: true })
 ], GatewayNameProxy.prototype, "backends", void 0);
 exports.GatewayNameProxy = GatewayNameProxy;
-class GatewayResult extends workload_base_1.WorkloadDataResult {
-}
-exports.GatewayResult = GatewayResult;

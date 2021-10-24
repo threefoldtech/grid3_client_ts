@@ -3,9 +3,10 @@ import { Zmount, ZmountResult } from "./zmount";
 import { Zmachine, ZmachineResult } from "./zmachine";
 import { Zdb, ZdbResult } from "./zdb";
 import { PublicIP } from "./ipv4";
-import { GatewayFQDNProxy, GatewayNameProxy, GatewayResult } from "./gateway";
+import { GatewayFQDNProxy, GatewayNameProxy } from "./gateway";
 import { QuantumSafeFS, QuantumSafeFSResult } from "./qsfs";
-import { PublicIPResult, ZnetResult } from ".";
+import { WorkloadDataResult } from "./workload_base";
+import { PublicIPResult } from ".";
 declare enum ResultStates {
     error = "error",
     ok = "ok",
@@ -25,7 +26,7 @@ declare class DeploymentResult {
     created: number;
     state: ResultStates;
     message: string;
-    data: ZmountResult | ZnetResult | ZmachineResult | ZdbResult | PublicIPResult | GatewayResult | QuantumSafeFSResult;
+    data: ZmountResult | ZmachineResult | ZdbResult | PublicIPResult | QuantumSafeFSResult | WorkloadDataResult;
 }
 declare class Workload {
     version: number;

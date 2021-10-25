@@ -1,5 +1,4 @@
 import { default as md5 } from "crypto-js/md5";
-import { Buffer } from "buffer";
 import { WorkloadTypes, Workload } from "../zos/workload";
 import { QuantumSafeFS, QuantumSafeFSConfig, Encryption, QuantumSafeMeta, QuantumSafeConfig, QuantumCompression, } from "../zos/qsfs";
 import { Mount } from "../zos/zmachine";
@@ -14,10 +13,9 @@ class QSFSPrimitive {
     maxZdbDataDirSize = 32, // in MB
     redundantGroups = 1, redundantNodes = 1, encryptionAlgorithm = "AES", compressionAlgorithm = "snappy", metadata = "", description = "", version = 0) {
         const key = md5(encryptionKey).toString();
-        const hexKey = Buffer.from(key).toString("hex");
         const encryption = new Encryption();
         encryption.algorithm = encryptionAlgorithm;
-        encryption.key = hexKey;
+        encryption.key = key;
         const quantumSafeConfig = new QuantumSafeConfig();
         quantumSafeConfig.prefix = metaPrefix;
         quantumSafeConfig.encryption = encryption;
@@ -40,14 +38,14 @@ class QSFSPrimitive {
         const quantumSafeFS = new QuantumSafeFS();
         quantumSafeFS.cache = cache * 1024 * 1024 * 1024;
         quantumSafeFS.config = quantumSafeFSConfig;
-        const zmount_workload = new Workload();
-        zmount_workload.version = version;
-        zmount_workload.name = name;
-        zmount_workload.type = WorkloadTypes.qsfs;
-        zmount_workload.data = quantumSafeFS;
-        zmount_workload.metadata = metadata;
-        zmount_workload.description = description;
-        return zmount_workload;
+        const qsfs_workload = new Workload();
+        qsfs_workload.version = version;
+        qsfs_workload.name = name;
+        qsfs_workload.type = WorkloadTypes.qsfs;
+        qsfs_workload.data = quantumSafeFS;
+        qsfs_workload.metadata = metadata;
+        qsfs_workload.description = description;
+        return qsfs_workload;
     }
 }
 export { QSFSPrimitive };

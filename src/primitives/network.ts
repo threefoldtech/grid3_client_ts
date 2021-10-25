@@ -4,7 +4,7 @@ import { default as TweetNACL } from "tweetnacl";
 import { Buffer } from "buffer";
 import { plainToClass } from "class-transformer";
 import { Addr } from "netaddr";
-import { default as IP } from "ip";
+import { default as PrivateIp } from "private-ip";
 
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Znet, Peer } from "../zos/znet";
@@ -408,7 +408,7 @@ class Network {
     }
 
     isPrivateIP(ip: string): boolean {
-        return IP.isPrivate(ip.split("/")[0]);
+        return PrivateIp(ip.split("/")[0]);
     }
 
     async getNodeEndpoint(node_id: number): Promise<string> {

@@ -1,4 +1,4 @@
-import { default as IP } from "ip";
+import { default as PrivateIp } from "private-ip";
 import { default as urlParser } from "url-parse";
 import { default as urlJoin } from "url-join";
 
@@ -62,10 +62,7 @@ class Nodes {
                 if (config === conf["id"]) {
                     const ipv4 = conf["ipv4"];
                     const ipv6 = conf["ipv6"];
-                    if (
-                        (IP.isV4Format(ipv4.split("/")[0]) && !IP.isPrivate(ipv4.split("/")[0])) ||
-                        (IP.isV6Format(ipv6.split("/")[0]) && !IP.isPrivate(ipv6.split("/")[0]))
-                    ) {
+                    if (!PrivateIp(ipv4.split("/")[0]) || !PrivateIp(ipv6.split("/")[0])) {
                         accessNodes[nodeId] = { ipv4: ipv4, ipv6: ipv6 };
                     }
                 }

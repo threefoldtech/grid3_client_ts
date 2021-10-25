@@ -28,7 +28,7 @@ const tweetnacl_1 = __importDefault(require("tweetnacl"));
 const buffer_1 = require("buffer");
 const class_transformer_1 = require("class-transformer");
 const netaddr_1 = require("netaddr");
-const ip_1 = __importDefault(require("ip"));
+const private_ip_1 = __importDefault(require("private-ip"));
 const workload_1 = require("../zos/workload");
 const znet_1 = require("../zos/znet");
 const jsonfs_1 = require("../helpers/jsonfs");
@@ -396,7 +396,7 @@ class Network {
         return port;
     }
     isPrivateIP(ip) {
-        return ip_1.default.isPrivate(ip.split("/")[0]);
+        return (0, private_ip_1.default)(ip.split("/")[0]);
     }
     async getNodeEndpoint(node_id) {
         const nodes = new nodes_1.Nodes(this.url);

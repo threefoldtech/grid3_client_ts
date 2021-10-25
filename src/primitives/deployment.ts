@@ -114,7 +114,7 @@ class DeploymentFactory {
     async fromObj(deployment): Promise<Deployment> {
         for (const workload of deployment.workloads) {
             workload.data["__type"] = workload.type;
-            if (workload.result) {
+            if (workload.result && workload.result.data) {
                 workload.result.data["__type"] = workload.type;
             }
         }

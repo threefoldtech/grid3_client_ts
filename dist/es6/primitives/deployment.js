@@ -112,7 +112,7 @@ class DeploymentFactory {
         return __awaiter(this, void 0, void 0, function* () {
             for (const workload of deployment.workloads) {
                 workload.data["__type"] = workload.type;
-                if (workload.result) {
+                if (workload.result && workload.result.data) {
                     workload.result.data["__type"] = workload.type;
                 }
             }

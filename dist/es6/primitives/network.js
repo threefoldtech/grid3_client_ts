@@ -12,7 +12,7 @@ import { default as TweetNACL } from "tweetnacl";
 import { Buffer } from "buffer";
 import { plainToClass } from "class-transformer";
 import { Addr } from "netaddr";
-import { default as IP } from "ip";
+import { default as PrivateIp } from "private-ip";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Znet, Peer } from "../zos/znet";
 import { loadFromFile, dumpToFile } from "../helpers/jsonfs";
@@ -382,7 +382,7 @@ class Network {
         });
     }
     isPrivateIP(ip) {
-        return IP.isPrivate(ip.split("/")[0]);
+        return PrivateIp(ip.split("/")[0]);
     }
     getNodeEndpoint(node_id) {
         return __awaiter(this, void 0, void 0, function* () {

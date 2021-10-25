@@ -21,6 +21,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseModule = void 0;
 const PATH = __importStar(require("path"));
+const workload_1 = require("../zos/workload");
 const base_1 = require("../high_level/base");
 const twinDeploymentHandler_1 = require("../high_level/twinDeploymentHandler");
 const models_1 = require("../high_level/models");
@@ -114,6 +115,57 @@ class BaseModule {
         for (const contract of contracts) {
             if (contract["contract_id"] === contractId) {
                 return contract["node_id"];
+            }
+        }
+    }
+    _getWorkloadsByType(deployments, type) {
+        let r = [];
+        for (const deployment of deployments) {
+            for (const workload of deployment.workloads) {
+                if (workload.type === type) {
+                    r.push(workload);
+                }
+            }
+        }
+        return r;
+    }
+    _getZmachineData(deployments, workload) {
+        const data = workload.data;
+        return {
+            version: workload.version,
+            name: workload.name,
+            created: workload.result.created,
+            status: workload.result.state,
+            message: workload.result.message,
+            flist: data.flist,
+            publicIP: data.network.public_ip,
+            planetary: data.network.planetary,
+            yggIP: data.network.planetary ? workload.result.data.ygg_ip : "",
+            interfaces: data.network.interfaces.map(n => ({
+                network: n.network,
+                ip: n.ip,
+            })),
+            capacity: {
+                cpu: data.compute_capacity.cpu,
+                memory: data.compute_capacity.memory / (1024 * 1024), // MB
+            },
+            mounts: data.mounts.map(m => ({
+                name: m.name,
+                mountPoint: m.mountpoint,
+                ...this._getZMountData(deployments, m.name),
+            })),
+            env: data.env,
+            entrypoint: data.entrypoint,
+            metadata: workload.metadata,
+            description: workload.description,
+        };
+    }
+    _getZMountData(deployments, name) {
+        for (const deployment of deployments) {
+            for (const workload of deployment.workloads) {
+                if (workload.type === workload_1.WorkloadTypes.zmount && workload.name === name) {
+                    return { size: workload.data.size, state: workload.result.state, message: workload.result.message };
+                }
             }
         }
     }

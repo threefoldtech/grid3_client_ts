@@ -7,13 +7,18 @@ async function main() {
         "muffin reward plug grant able market nerve orphan token foster major relax",
     );
     await c.connect();
-    const contracts = [228];
-    const C = new Contracts(c);
-
-    for (const contract of contracts) {
-        console.log(contract);
-        const res = await C.cancel(contract);
-        console.log(res);
+    const contracts = [59,60];
+    try {
+        for (const contract of contracts) {
+            console.log(contract);
+            const res = await c.contracts.cancel(contract);
+            console.log(res);
+        }
+    } catch (err) {
+        console.log(err);
+    } finally {
+        c.disconnect();
     }
-    c.disconnect();
 }
+
+main();

@@ -67,49 +67,6 @@ class K8sModule extends BaseModule {
         return ips;
     }
 
-    
-    _getZMountData(deployments, name) {
-        for (const deployment of deployments) {
-            for (const workload of deployment.workloads) {
-                if (workload.type === WorkloadTypes.zmount && workload.name === name) {
-                    return { size: workload.data.size, state: workload.result.state, error: workload.result.error };
-                }
-            }
-        }
-    }
-
-    _getZmachineData(deployments, workload: Workload): Record<string, unknown> {
-        const data = workload.data as Zmachine;
-        return {
-            version: workload.version,
-            name: workload.name,
-            created: workload.result.created,
-            status: workload.result.state,
-            error: workload.result.error,
-            flist: data.flist,
-            publicIP: data.network.public_ip,
-            planetary: data.network.planetary,
-            yggIP: data.network.planetary ? JSON.parse(workload.result.data).ygg_ip : "",
-            interfaces: data.network.interfaces.map(n => ({
-                network: n.network,
-                ip: n.network,
-            })),
-            capacity: {
-                cpu: data.compute_capacity.cpu,
-                memory: data.compute_capacity.memory / (1024 * 1024), // MB
-            },
-            mounts: data.mounts.map(m => ({
-                name: m.name,
-                mountPoint: m.mountpoint,
-                ...this._getZMountData(deployments, m.name),
-            })),
-            env: data.env,
-            entrypoint: data.entrypoint,
-            metadata: workload.metadata,
-            description: workload.description,
-        };
-    }
-
     async _createDeployment(options: K8SModel, masterIps: string[] = []): Promise<[TwinDeployment[], Network, string]> {
         const network = new Network(
             options.network.name,
@@ -195,7 +152,7 @@ class K8sModule extends BaseModule {
         return this._list();
     }
 
-    async getPrettyObj(deploymentName: string) {
+    async getObj(deploymentName: string) {
         let k = { masters: [], workers: [] };
         const deployments = await this._get(deploymentName);
         const masters = this._getMastersWorkload(deployments);

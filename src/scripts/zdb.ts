@@ -1,70 +1,42 @@
-import { ZDBModel, ZDBSModel, ZDBDeleteModel } from "../modules/models";
-import { ZdbModes, DeviceTypes } from "../zos/zdb";
-import { ZdbsModule } from "../modules/zdb";
+import "reflect-metadata";
 
-import { HTTPMessageBusClient } from "ts-rmb-http-client";
+import { ZDBModel, ZDBSModel, ZDBDeleteModel } from "../dist/node/modules/models";
+import { ZdbModes, DeviceTypes } from "../dist/node/zos/zdb";
 
-const rmb = new HTTPMessageBusClient(3, "https://rmbproxy1.devnet.grid.tf");
-const zdbDeployment = new ZdbsModule(
-    3,
-    "wss://tfchain.dev.threefold.io",
-    "muffin reward plug grant able market nerve orphan token foster major relax",
-    rmb,
-);
-function get(name: string) {
-    return zdbDeployment.getPrettyObj(name);
-}
+import { getClient } from "./base";
 
-function listDeploymentNames(): string[] {
-    return zdbDeployment.list();
-}
+const grid3 = getClient();
 
-function listAll() {
-    let ret = {};
-    listDeploymentNames().forEach(d => {
-        ret[d] = get(d);
-    });
-}
+// create zdb object
+const zdb = new ZDBModel();
+zdb.name = "hamada";
+zdb.node_id = 18;
+zdb.mode = ZdbModes.user;
+zdb.disk_size = 9;
+zdb.disk_type = DeviceTypes.ssd;
+zdb.public = false;
+zdb.namespace = "test";
+zdb.password = "testzdb";
 
-async function remove(name: string) {
-    // delete the deployment
-    const m = new ZDBDeleteModel();
-    m.name = name;
-    const d = await zdbDeployment.delete(m);
-    console.log(d);
-}
+// create zdbs object
+const zdbs = new ZDBSModel();
+zdbs.name = "tttzdbs";
+zdbs.zdbs = [zdb];
+zdbs.metadata = '{"test": "test"}';
 
-async function deploy() {
-    // create zdb object
-    const zdb = new ZDBModel();
-    zdb.name = "testzdb";
-    zdb.node_id = 4;
-    zdb.mode = ZdbModes.user;
-    zdb.disk_size = 10;
-    zdb.disk_type = DeviceTypes.ssd;
-    zdb.public = false;
-    zdb.namespace = "test";
-    zdb.password = "test";
-
-    // create zdbs object
-    const zdbs = new ZDBSModel();
-    zdbs.name = "wedzdbs";
-    zdbs.zdbs = [zdb];
-    zdbs.metadata = "";
-    zdbs.description = "";
-
-    const res = await zdbDeployment.deploy(zdbs);
+async function main() {
+    const res = await grid3.zdbs.deploy(zdbs);
     console.log(JSON.stringify(res));
 
     // get the deployment
-    const l = await zdbDeployment.getPrettyObj(zdbs.name);
+    const l = await grid3.zdbs.getObj(zdbs.name);
     console.log(l);
 
-}
-
-function main() {
-    // deploy();
-    listAll();
+    // // delete
+    // const m = new ZDBDeleteModel();
+    // m.name = zdbs.name;
+    // const d = await grid3.zdbs.delete(m);
+    // console.log(d);
 }
 
 main();

@@ -40,5 +40,25 @@ class GWModule extends base_1.BaseModule {
         this.save(options.name, contracts);
         return { contracts: contracts };
     }
+    async getObj(deploymentName) {
+        const deployments = await this._get(deploymentName);
+        const workloads = this._getWorkloadsByType(deployments, workload_1.WorkloadTypes.gatewayfqdnproxy);
+        workloads.forEach(workload => {
+            const data = workload.data;
+            return {
+                version: workload.version,
+                name: workload.name,
+                created: workload.result.created,
+                status: workload.result.state,
+                message: workload.result.message,
+                fqdn: data.fqdn,
+                tls_passthrough: data.tls_passthrough,
+                backends: data.backends,
+                metadata: workload.metadata,
+                description: workload.description,
+                ...workload.result.data,
+            };
+        });
+    }
 }
 exports.GWModule = GWModule;

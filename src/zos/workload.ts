@@ -101,11 +101,4 @@ class Workload {
     }
 }
 
-type WorkloadData = Zmount | Zdb | Zmachine | Znet | GatewayFQDNProxy | GatewayNameProxy;
-type WorkloadDataResult = ZmountResult | ZdbResult | ZmachineResult | GatewayResult;
-
-// pub fn(mut w WorkloadData) challenge() string {
-// 	return w.challenge()
-// }
-
-export { Workload, WorkloadTypes, WorkloadData, WorkloadDataResult, ResultStates };
+export { Workload, WorkloadTypes };

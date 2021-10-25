@@ -27,6 +27,13 @@ declare class K8sModule extends BaseModule {
         wireguard_config: string;
     }>;
     list(): string[];
+<<<<<<< HEAD
+=======
+    getObj(deploymentName: string): Promise<{
+        masters: any[];
+        workers: any[];
+    }>;
+>>>>>>> update scripts
     get(options: K8SGetModel): Promise<any[]>;
     delete(options: K8SDeleteModel): Promise<{
         deleted: any[];

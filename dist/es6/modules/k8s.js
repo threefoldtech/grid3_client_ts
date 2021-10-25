@@ -91,6 +91,24 @@ class K8sModule extends BaseModule {
     list() {
         return this._list();
     }
+<<<<<<< HEAD
+=======
+    getObj(deploymentName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let k = { masters: [], workers: [] };
+            const deployments = yield this._get(deploymentName);
+            const masters = this._getMastersWorkload(deployments);
+            const workers = this._getWorkersWorkload(deployments);
+            masters.forEach(workload => {
+                k.masters.push(this._getZmachineData(deployments, workload));
+            });
+            workers.forEach(workload => {
+                k.masters.push(this._getZmachineData(deployments, workload));
+            });
+            return k;
+        });
+    }
+>>>>>>> update scripts
     get(options) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this._get(options.name);

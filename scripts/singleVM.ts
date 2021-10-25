@@ -7,8 +7,8 @@ const grid3 = getClient();
 
 // create network Object
 const n = new NetworkModel();
-n.name = "monNetwork";
-n.ip_range = "10.238.0.0/16";
+n.name = "montest";
+n.ip_range = "10.232.0.0/16";
 
 // create disk Object
 const disk = new DiskModel();
@@ -19,7 +19,7 @@ disk.mountpoint = "/newDisk";
 // create vm node Object
 const vm = new MachineModel();
 vm.name = "testvm";
-vm.node_id = 12;
+vm.node_id = 4;
 vm.disks = [disk];
 vm.public_ip = false;
 vm.planetary = true;
@@ -48,7 +48,7 @@ async function main() {
 
     // get the deployment
     const l = await grid3.machines.getObj(vms.name);
-    console.log(l);
+    console.log(JSON.stringify(l));
 
     // // delete
     // const m = new MachinesDeleteModel();

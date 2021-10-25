@@ -67,7 +67,7 @@ class Nodes {
                     if (config === conf["id"]) {
                         const ipv4 = conf["ipv4"];
                         const ipv6 = conf["ipv6"];
-                        if (!PrivateIp(ipv4.split("/")[0]) || !PrivateIp(ipv6.split("/")[0])) {
+                        if ((PrivateIp(ipv4.split("/")[0]) === false) || (PrivateIp(ipv6.split("/")[0]) === false)) {
                             accessNodes[nodeId] = { ipv4: ipv4, ipv6: ipv6 };
                         }
                     }

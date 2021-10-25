@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../dist/node/modules/models";
-import { getClient } from "./base";
+import { getClient } from "./clientLoader";
 
 const grid3 = getClient();
 
@@ -66,19 +66,19 @@ vms.metadata = "{'testVMs': true}";
 vms.description = "test deploying VMs via ts grid3 client";
 
 async function main() {
-    // deploy vms
-    const res = await grid3.machines.deploy(vms);
-    console.log(JSON.stringify(res));
+    // // deploy vms
+    // const res = await grid3.machines.deploy(vms);
+    // console.log(JSON.stringify(res));
 
     // get the deployment
     const l = await grid3.machines.getObj(vms.name);
     console.log(l);
 
-    // // delete
-    // const m = new MachinesDeleteModel();
-    // m.name = vms.name;
-    // const d = await grid3.machines.delete(m);
-    // console.log(d);
+    // delete
+    const m = new MachinesDeleteModel();
+    m.name = vms.name;
+    const d = await grid3.machines.delete(m);
+    console.log(d);
 }
 
 main();

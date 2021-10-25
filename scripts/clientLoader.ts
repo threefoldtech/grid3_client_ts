@@ -6,7 +6,7 @@ import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import { MessageBusClient } from "ts-rmb-redis-client";
 
-const config = JSON.parse(fs.readFileSync(path.join(__dirname, "./devConfig.json"), "utf-8"));
+const config = JSON.parse(fs.readFileSync(path.join(__dirname, "./devnetConfig.json"), "utf-8"));
 
 function getClient(): GridClient {
     let rmb: MessageBusClientInterface;

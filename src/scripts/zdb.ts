@@ -3,7 +3,7 @@ import "reflect-metadata";
 import { ZDBModel, ZDBSModel, ZDBDeleteModel } from "../dist/node/modules/models";
 import { ZdbModes, DeviceTypes } from "../dist/node/zos/zdb";
 
-import { getClient } from "./base";
+import { getClient } from "./clientLoader";
 
 const grid3 = getClient();
 

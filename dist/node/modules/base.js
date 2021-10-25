@@ -129,7 +129,7 @@ class BaseModule {
                 await tfClient.connect();
                 const c = await tfClient.contracts.get(contract["contract_id"]);
                 if (c.state !== "Created") {
-                    this.save(name, { created: [], deleted: [contract["contract_id"]] });
+                    this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
                     continue;
                 }
             }
@@ -157,7 +157,7 @@ class BaseModule {
                 deployments.push(deployment);
             }
             else {
-                this.save(name, { created: [], deleted: [contract["contract_id"]] });
+                this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
             }
         }
         return deployments;

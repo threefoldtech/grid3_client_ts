@@ -161,7 +161,7 @@ class K8sModule extends BaseModule {
             k.masters.push(this._getZmachineData(deployments, workload));
         });
         workers.forEach(workload => {
-            k.masters.push(this._getZmachineData(deployments, workload));
+            k.workers.push(this._getZmachineData(deployments, workload));
         });
         return k;
     }

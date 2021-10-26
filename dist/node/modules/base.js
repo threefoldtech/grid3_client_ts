@@ -119,7 +119,7 @@ class BaseModule {
         }
     }
     _getWorkloadsByType(deployments, type) {
-        let r = [];
+        const r = [];
         for (const deployment of deployments) {
             for (const workload of deployment.workloads) {
                 if (workload.type === type) {

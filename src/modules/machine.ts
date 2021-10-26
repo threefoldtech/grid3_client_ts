@@ -79,7 +79,7 @@ class MachineModule extends BaseModule {
     async getObj(deploymentName: string) {
         const deployments = await this._get(deploymentName);
         const workloads = this._getWorkloadsByType(deployments, WorkloadTypes.zmachine);
-        
+
         return workloads.map(workload => this._getZmachineData(deployments, workload));
     }
 

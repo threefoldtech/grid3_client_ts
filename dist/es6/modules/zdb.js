@@ -48,7 +48,7 @@ class ZdbsModule extends BaseModule {
         return __awaiter(this, void 0, void 0, function* () {
             const deployments = yield this._get(deploymentName);
             const workloads = this._getWorkloadsByType(deployments, WorkloadTypes.zdb);
-            let ret = [];
+            const ret = [];
             for (const workload of workloads) {
                 const data = workload.data;
                 ret.push({

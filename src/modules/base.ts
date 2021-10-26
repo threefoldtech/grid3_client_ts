@@ -31,7 +31,7 @@ class BaseModule {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName: string = "",
+        projectName = "",
     ) {
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
@@ -117,7 +117,7 @@ class BaseModule {
     }
 
     _getWorkloadsByType(deployments, type: WorkloadTypes): Workload[] {
-        let r = [];
+        const r = [];
         for (const deployment of deployments) {
             for (const workload of deployment.workloads) {
                 if (workload.type === type) {
@@ -130,9 +130,9 @@ class BaseModule {
 
     _getMachinePubIP(deployments, ipv4WorkloadName: string): PublicIPResult {
         const ipv4Workloads = this._getWorkloadsByType(deployments, WorkloadTypes.ipv4);
-        for (const workload of ipv4Workloads){
-            if (workload.name === ipv4WorkloadName){
-                return workload.result.data as PublicIPResult
+        for (const workload of ipv4Workloads) {
+            if (workload.name === ipv4WorkloadName) {
+                return workload.result.data as PublicIPResult;
             }
         }
         return null;

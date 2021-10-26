@@ -103,7 +103,7 @@ class K8sModule extends base_1.BaseModule {
         return this._list();
     }
     async getObj(deploymentName) {
-        let k = { masters: [], workers: [] };
+        const k = { masters: [], workers: [] };
         const deployments = await this._get(deploymentName);
         const masters = this._getMastersWorkload(deployments);
         const workers = this._getWorkersWorkload(deployments);

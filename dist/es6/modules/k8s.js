@@ -108,7 +108,7 @@ class K8sModule extends BaseModule {
     }
     getObj(deploymentName) {
         return __awaiter(this, void 0, void 0, function* () {
-            let k = { masters: [], workers: [] };
+            const k = { masters: [], workers: [] };
             const deployments = yield this._get(deploymentName);
             const masters = this._getMastersWorkload(deployments);
             const workers = this._getWorkersWorkload(deployments);

@@ -33,7 +33,7 @@ declare class BaseModule {
     _getContractIdFromNodeId(name: string, nodeId: number): number;
     _getNodeIdFromContractId(name: string, contractId: number): number;
     _getWorkloadsByType(deployments: any, type: WorkloadTypes): Workload[];
-    _getMachinePubIP(deployments: any, vmWorkload: Workload): PublicIPResult;
+    _getMachinePubIP(deployments: any, ipv4WorkloadName: string): PublicIPResult;
     _getZmachineData(deployments: any, workload: Workload): Record<string, unknown>;
     _getZMountData(deployments: any, name: any): {
         size: any;

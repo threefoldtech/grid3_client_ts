@@ -128,11 +128,11 @@ class BaseModule {
         return r;
     }
 
-    _getMachinePubIP(deployments, vmWorkload: Workload): PublicIPResult {
+    _getMachinePubIP(deployments, ipv4WorkloadName: string): PublicIPResult {
         const ipv4Workloads = this._getWorkloadsByType(deployments, WorkloadTypes.ipv4);
-        for (const workload of ipv4Workloads) {
-            if (workload.name.startsWith(vmWorkload.name)) {
-                return workload.result.data as PublicIPResult;
+        for (const workload of ipv4Workloads){
+            if (workload.name === ipv4WorkloadName){
+                return workload.result.data as PublicIPResult
             }
         }
         return null;
@@ -147,7 +147,7 @@ class BaseModule {
             status: workload.result.state,
             message: workload.result.message,
             flist: data.flist,
-            publicIP: this._getMachinePubIP(deployments, workload),
+            publicIP: this._getMachinePubIP(deployments, data.network.public_ip),
             planetary: data.network.planetary,
             yggIP: data.network.planetary ? (workload.result.data as ZmachineResult).ygg_ip : "",
             interfaces: data.network.interfaces.map(n => ({

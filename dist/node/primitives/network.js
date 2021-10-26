@@ -361,6 +361,9 @@ class Network {
                 if (nodesWGPubkeys.includes(peer.wireguard_public_key)) {
                     continue;
                 }
+                if (peer.endpoint !== "") {
+                    continue;
+                }
                 const accessPoint = new AccessPoint();
                 accessPoint.subnet = peer.subnet;
                 accessPoint.wireguard_public_key = peer.wireguard_public_key;

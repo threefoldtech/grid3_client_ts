@@ -39,19 +39,4 @@ declare class Workload {
     challenge(): string;
 }
 export { Workload, WorkloadTypes };
-<<<<<<< HEAD
 //# sourceMappingURL=workload.d.ts.map
-=======
-declare type WorkloadData = Zmount | Zdb | Zmachine | Znet | GatewayFQDNProxy | GatewayNameProxy;
-declare type WorkloadDataResult = ZmountResult | ZdbResult | ZmachineResult | GatewayResult;
-<<<<<<< HEAD
-export { Workload, WorkloadTypes, WorkloadData, WorkloadDataResult, ResultStates };
-//# sourceMappingURL=workload.d.ts.map
-=======
-export { Workload, WorkloadTypes, WorkloadData, WorkloadDataResult };
-//# sourceMappingURL=workload.d.ts.map
->>>>>>> Revert "build"
->>>>>>> Revert "build"
-=======
-//# sourceMappingURL=workload.d.ts.map
->>>>>>> update scripts

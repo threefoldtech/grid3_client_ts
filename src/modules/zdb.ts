@@ -1,7 +1,7 @@
 import { BaseModule } from "./base";
 import { ZDBSModel, DeleteZDBModel, AddZDBModel, ZDBGetModel, ZDBDeleteModel } from "./models";
 import { WorkloadTypes } from "../zos/workload";
-import { Zdb } from "../zos/zdb";
+import { Zdb, ZdbResult } from "../zos/zdb";
 import { ZdbHL } from "../high_level/zdb";
 import { TwinDeployment } from "../high_level/models";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
@@ -60,22 +60,19 @@ class ZdbsModule extends BaseModule {
         let ret = [];
         for (const workload of workloads) {
             const data = workload.data as Zdb;
-            const resData = { ...JSON.parse(JSON.stringify(workload.result.data)) };
             ret.push({
                 version: workload.version,
                 name: workload.name,
                 created: workload.result.created,
                 status: workload.result.state,
                 message: workload.result.message,
-                namespace: data.namespace,
                 size: data.size , // GB
                 mode: data.mode,
-                diskType: data.disk_type,
                 public: data.public,
                 password: data.password,
                 metadata: workload.metadata,
                 description: workload.description,
-                resData: JSON.stringify(resData) ,
+                resData: workload.result.data as ZdbResult ,
             });
         }
         return ret;

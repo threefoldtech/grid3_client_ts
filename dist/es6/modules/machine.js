@@ -38,22 +38,9 @@ class MachineModule extends BaseModule {
                     wireguardConfig = wgConfig;
                 }
             }
-            ;
             return [twinDeployments, network, wireguardConfig];
         });
     }
-<<<<<<< HEAD
-    _getMachineWorkload(deployments) {
-        for (const deployment of deployments) {
-            for (const workload of deployment.workloads) {
-                if (workload.type !== WorkloadTypes.zmachine) {
-                    return workload;
-                }
-            }
-        }
-    }
-=======
->>>>>>> update scripts
     deploy(options) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.exists(options.name)) {
@@ -68,8 +55,6 @@ class MachineModule extends BaseModule {
     list() {
         return this._list();
     }
-<<<<<<< HEAD
-=======
     getObj(deploymentName) {
         return __awaiter(this, void 0, void 0, function* () {
             const deployments = yield this._get(deploymentName);
@@ -77,7 +62,6 @@ class MachineModule extends BaseModule {
             return workloads.map(workload => this._getZmachineData(deployments, workload));
         });
     }
->>>>>>> update scripts
     get(options) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this._get(options.name);

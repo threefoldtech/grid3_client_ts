@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import { ZDBModel, ZDBSModel, ZDBDeleteModel } from "../dist/node/modules/models";
-import { ZdbModes, DeviceTypes } from "../dist/node/zos/zdb";
+import { ZdbModes } from "../dist/node/zos/zdb";
 
 import { getClient } from "./clientLoader";
 
@@ -13,9 +13,7 @@ zdb.name = "hamada";
 zdb.node_id = 18;
 zdb.mode = ZdbModes.user;
 zdb.disk_size = 9;
-zdb.disk_type = DeviceTypes.ssd;
 zdb.public = false;
-zdb.namespace = "test";
 zdb.password = "testzdb";
 
 // create zdbs object

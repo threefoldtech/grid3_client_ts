@@ -131,12 +131,4 @@ __decorate([
     Expose(),
     Type(() => DeploymentResult)
 ], Workload.prototype, "result", void 0);
-<<<<<<< HEAD
-=======
-// pub fn(mut w WorkloadData) challenge() string {
-// 	return w.challenge()
-// }
->>>>>>> Revert "build"
-=======
->>>>>>> update scripts
 export { Workload, WorkloadTypes };

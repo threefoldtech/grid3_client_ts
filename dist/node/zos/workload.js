@@ -17,16 +17,7 @@ const ipv4_1 = require("./ipv4");
 const gateway_1 = require("./gateway");
 const qsfs_1 = require("./qsfs");
 const workload_base_1 = require("./workload_base");
-<<<<<<< HEAD
 const ipv4_2 = require("./ipv4");
-=======
-const _1 = require(".");
-<<<<<<< HEAD
-=======
->>>>>>> Revert "build"
->>>>>>> Revert "build"
-=======
->>>>>>> update scripts
 var ResultStates;
 (function (ResultStates) {
     ResultStates["error"] = "error";

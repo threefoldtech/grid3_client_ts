@@ -1,9 +1,6 @@
 import { BaseModule } from "./base";
 import { ZDBSModel, DeleteZDBModel, AddZDBModel, ZDBGetModel, ZDBDeleteModel } from "./models";
-<<<<<<< HEAD
-=======
 import { WorkloadTypes } from "../zos/workload";
->>>>>>> update scripts
 import { ZdbHL } from "../high_level/zdb";
 import { TwinDeployment } from "../high_level/models";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
@@ -26,10 +23,7 @@ declare class ZdbsModule extends BaseModule {
         };
     }>;
     list(): string[];
-<<<<<<< HEAD
-=======
     getObj(deploymentName: string): Promise<any[]>;
->>>>>>> update scripts
     get(options: ZDBGetModel): Promise<any[]>;
     delete(options: ZDBDeleteModel): Promise<{
         deleted: any[];

@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { BaseModule } from "./base";
+import { WorkloadTypes } from "../zos/workload";
 import { ZdbHL } from "../high_level/zdb";
 class ZdbsModule extends BaseModule {
     constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
@@ -43,8 +44,6 @@ class ZdbsModule extends BaseModule {
     list() {
         return this._list();
     }
-<<<<<<< HEAD
-=======
     getObj(deploymentName) {
         return __awaiter(this, void 0, void 0, function* () {
             const deployments = yield this._get(deploymentName);
@@ -52,28 +51,24 @@ class ZdbsModule extends BaseModule {
             let ret = [];
             for (const workload of workloads) {
                 const data = workload.data;
-                const resData = Object.assign({}, JSON.parse(JSON.stringify(workload.result.data)));
                 ret.push({
                     version: workload.version,
                     name: workload.name,
                     created: workload.result.created,
                     status: workload.result.state,
                     message: workload.result.message,
-                    namespace: data.namespace,
                     size: data.size,
                     mode: data.mode,
-                    diskType: data.disk_type,
                     public: data.public,
                     password: data.password,
                     metadata: workload.metadata,
                     description: workload.description,
-                    resData: JSON.stringify(resData),
+                    resData: workload.result.data,
                 });
             }
             return ret;
         });
     }
->>>>>>> update scripts
     get(options) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this._get(options.name);

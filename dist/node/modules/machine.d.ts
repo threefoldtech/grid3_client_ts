@@ -16,10 +16,6 @@ declare class MachineModule extends BaseModule {
     vm: VMHL;
     constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string, projectName?: string);
     _createDeloyment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]>;
-<<<<<<< HEAD
-    _getMachineWorkload(deployments: any): Workload;
-=======
->>>>>>> update scripts
     deploy(options: MachinesModel): Promise<{
         contracts: {
             created: any[];
@@ -29,10 +25,7 @@ declare class MachineModule extends BaseModule {
         wireguard_config: string;
     }>;
     list(): string[];
-<<<<<<< HEAD
-=======
     getObj(deploymentName: string): Promise<Record<string, unknown>[]>;
->>>>>>> update scripts
     get(options: MachinesGetModel): Promise<any[]>;
     delete(options: MachinesDeleteModel): Promise<{
         deleted: any[];

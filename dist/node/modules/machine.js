@@ -37,21 +37,8 @@ class MachineModule extends base_1.BaseModule {
                 wireguardConfig = wgConfig;
             }
         }
-        ;
         return [twinDeployments, network, wireguardConfig];
     }
-<<<<<<< HEAD
-    _getMachineWorkload(deployments) {
-        for (const deployment of deployments) {
-            for (const workload of deployment.workloads) {
-                if (workload.type !== workload_1.WorkloadTypes.zmachine) {
-                    return workload;
-                }
-            }
-        }
-    }
-=======
->>>>>>> update scripts
     async deploy(options) {
         if (this.exists(options.name)) {
             throw Error(`Another machine deployment with the same name ${options.name} is already exist`);
@@ -64,14 +51,11 @@ class MachineModule extends base_1.BaseModule {
     list() {
         return this._list();
     }
-<<<<<<< HEAD
-=======
     async getObj(deploymentName) {
         const deployments = await this._get(deploymentName);
         const workloads = this._getWorkloadsByType(deployments, workload_1.WorkloadTypes.zmachine);
         return workloads.map(workload => this._getZmachineData(deployments, workload));
     }
->>>>>>> update scripts
     async get(options) {
         return await this._get(options.name);
     }

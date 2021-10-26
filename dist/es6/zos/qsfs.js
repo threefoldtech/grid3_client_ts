@@ -147,12 +147,12 @@ __decorate([
 __decorate([
     Expose(),
     IsInt(),
-    Min(1)
+    Min(0)
 ], QuantumSafeFSConfig.prototype, "redundant_groups", void 0);
 __decorate([
     Expose(),
     IsInt(),
-    Min(1)
+    Min(0)
 ], QuantumSafeFSConfig.prototype, "redundant_nodes", void 0);
 __decorate([
     Expose(),

@@ -32,8 +32,8 @@ class QSFSPrimitive {
         metaType = "zdb",
         cache = 1, // 1 GB for qsfs
         maxZdbDataDirSize = 32, // in MB
-        redundantGroups = 1,
-        redundantNodes = 1,
+        redundantGroups = 0,
+        redundantNodes = 0,
         encryptionAlgorithm = "AES",
         compressionAlgorithm = "snappy",
         metadata = "",

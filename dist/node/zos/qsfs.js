@@ -177,12 +177,12 @@ __decorate([
 __decorate([
     (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.Min)(1)
+    (0, class_validator_1.Min)(0)
 ], QuantumSafeFSConfig.prototype, "redundant_groups", void 0);
 __decorate([
     (0, class_transformer_1.Expose)(),
     (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.Min)(1)
+    (0, class_validator_1.Min)(0)
 ], QuantumSafeFSConfig.prototype, "redundant_nodes", void 0);
 __decorate([
     (0, class_transformer_1.Expose)(),

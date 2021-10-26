@@ -12,16 +12,10 @@ var ZdbModes;
     ZdbModes["seq"] = "seq";
     ZdbModes["user"] = "user";
 })(ZdbModes || (ZdbModes = {}));
-var DeviceTypes;
-(function (DeviceTypes) {
-    DeviceTypes["hdd"] = "hdd";
-    DeviceTypes["ssd"] = "ssd";
-})(DeviceTypes || (DeviceTypes = {}));
 class Zdb extends WorkloadData {
     constructor() {
         super(...arguments);
         this.mode = ZdbModes.seq;
-        this.disk_type = DeviceTypes.hdd;
     }
     challenge() {
         let out = "";
@@ -32,11 +26,6 @@ class Zdb extends WorkloadData {
         return out;
     }
 }
-__decorate([
-    Expose(),
-    IsString(),
-    IsNotEmpty()
-], Zdb.prototype, "namespace", void 0);
 __decorate([
     Expose(),
     IsInt(),
@@ -54,22 +43,17 @@ __decorate([
 ], Zdb.prototype, "password", void 0);
 __decorate([
     Expose(),
-    Transform(({ value }) => DeviceTypes[value]),
-    IsEnum(DeviceTypes)
-], Zdb.prototype, "disk_type", void 0);
-__decorate([
-    Expose(),
     IsBoolean()
 ], Zdb.prototype, "public", void 0);
 class ZdbResult extends WorkloadDataResult {
 }
 __decorate([
     Expose()
-], ZdbResult.prototype, "namespace", void 0);
+], ZdbResult.prototype, "Namespace", void 0);
 __decorate([
     Expose()
-], ZdbResult.prototype, "ips", void 0);
+], ZdbResult.prototype, "IPs", void 0);
 __decorate([
     Expose()
-], ZdbResult.prototype, "port", void 0);
-export { Zdb, ZdbResult, ZdbModes, DeviceTypes };
+], ZdbResult.prototype, "Port", void 0);
+export { Zdb, ZdbResult, ZdbModes };

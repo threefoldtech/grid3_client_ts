@@ -32,7 +32,7 @@ declare class Network {
     deleteNode(node_id: number): number;
     updateNetwork(znet: any): Znet;
     updateNetworkDeployments(): void;
-    load(deployments?: boolean): Promise<void>;
+    load(): Promise<void>;
     _fromObj(net: Znet): Znet;
     exists(): boolean;
     nodeExists(node_id: number): boolean;

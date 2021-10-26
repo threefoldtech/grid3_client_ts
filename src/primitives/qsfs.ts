@@ -41,9 +41,10 @@ class QSFSPrimitive {
         version = 0,
     ): Workload {
         const key = md5(encryptionKey).toString();
+        const hexKey = Buffer.from(key).toString("hex");
         const encryption = new Encryption();
         encryption.algorithm = encryptionAlgorithm;
-        encryption.key = key;
+        encryption.key = hexKey;
 
         const quantumSafeConfig = new QuantumSafeConfig();
         quantumSafeConfig.prefix = metaPrefix;

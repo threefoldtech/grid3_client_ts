@@ -6,7 +6,7 @@ import { PublicIP } from "./ipv4";
 import { GatewayFQDNProxy, GatewayNameProxy } from "./gateway";
 import { QuantumSafeFS, QuantumSafeFSResult } from "./qsfs";
 import { WorkloadDataResult } from "./workload_base";
-import { PublicIPResult } from ".";
+import { PublicIPResult } from "./ipv4";
 declare enum ResultStates {
     error = "error",
     ok = "ok",

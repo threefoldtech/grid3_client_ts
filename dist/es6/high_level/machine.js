@@ -16,6 +16,7 @@ import { randomChoice } from "../helpers/utils";
 import { events } from "../helpers/events";
 import { QSFSPrimitive } from "../primitives/qsfs";
 import { QSFSZdbsModule } from "../modules/qsfs_zdbs";
+import { ZdbGroup } from "../zos";
 class VMHL extends HighLevelBase {
     create(name, nodeId, flist, cpu, memory, rootfs_size, disks, publicIp, planetary, network, entrypoint, env, metadata = "", description = "", qsfsDisks = [], qsfsProjectName = "") {
         return __awaiter(this, void 0, void 0, function* () {
@@ -42,7 +43,9 @@ class VMHL extends HighLevelBase {
                 }
                 const minimalShards = Math.ceil((qsfsZdbs.groups.length * 3) / 5);
                 const expectedShards = qsfsZdbs.groups.length;
-                const qsfsWorkload = qsfsPrimitive.create(d.name, minimalShards, expectedShards, d.prefix, qsfsZdbs.meta, qsfsZdbs.groups, d.encryption_key);
+                const groups = new ZdbGroup();
+                groups.backends = qsfsZdbs.groups;
+                const qsfsWorkload = qsfsPrimitive.create(d.name, minimalShards, expectedShards, d.prefix, qsfsZdbs.meta, [groups], d.encryption_key);
                 workloads.push(qsfsWorkload);
                 diskMounts.push(disk.createMount(d.name, d.mountpoint));
             }

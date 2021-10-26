@@ -7,19 +7,10 @@ enum ZdbModes {
     seq = "seq",
     user = "user",
 }
-
-enum DeviceTypes {
-    hdd = "hdd",
-    ssd = "ssd",
-}
-
 class Zdb extends WorkloadData {
-    @Expose() @IsString() @IsNotEmpty() namespace: string;
     @Expose() @IsInt() @Min(1) size: number; // in bytes
     @Expose() @Transform(({ value }) => ZdbModes[value]) @IsEnum(ZdbModes) mode: ZdbModes = ZdbModes.seq;
     @Expose() @IsString() @IsNotEmpty() password: string;
-    @Expose() @Transform(({ value }) => DeviceTypes[value]) @IsEnum(DeviceTypes) disk_type: DeviceTypes =
-        DeviceTypes.hdd;
     @Expose() @IsBoolean() public: boolean;
 
     challenge(): string {
@@ -34,9 +25,9 @@ class Zdb extends WorkloadData {
 }
 
 class ZdbResult extends WorkloadDataResult {
-    @Expose() namespace: string;
-    @Expose() ips: string[];
-    @Expose() port: number;
+    @Expose() Namespace: string;
+    @Expose() IPs: string[];
+    @Expose() Port: number;
 }
 
-export { Zdb, ZdbResult, ZdbModes, DeviceTypes };
+export { Zdb, ZdbResult, ZdbModes };

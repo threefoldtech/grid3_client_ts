@@ -19,7 +19,7 @@ class K8sModule extends BaseModule {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName: string = ""
+        projectName = "",
     ) {
         super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.kubernetes = new KubernetesHL(twin_id, url, mnemonic, rmbClient, this.storePath);
@@ -58,7 +58,7 @@ class K8sModule extends BaseModule {
             this.storePath,
             this.url,
         );
-        await network.load(true);
+        await network.load();
 
         let deployments = [];
         let wireguardConfig = "";
@@ -188,7 +188,7 @@ class K8sModule extends BaseModule {
         const networkName = masterWorkload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(masterWorkload.data["network"].interfaces[0].ip).mask(16).toString();
         const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
-        await network.load(true);
+        await network.load();
         const [twinDeployments, _] = await this.kubernetes.add_worker(
             options.name,
             options.node_id,

@@ -72,7 +72,7 @@ class HighLevelBase {
             const networkName = workload.data["network"].interfaces[0].network;
             const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
             const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
-            await network.load(true);
+            await network.load();
 
             const machineIp = workload.data["network"].interfaces[0].ip;
             events.emit("logs", `Deleting ip: ${machineIp} from node: ${node_id}, network ${network.name}`);
@@ -175,7 +175,7 @@ class HighLevelBase {
                         this.storePath,
                         this.url,
                     );
-                    await network.load(true);
+                    await network.load();
                     break;
                 }
             }

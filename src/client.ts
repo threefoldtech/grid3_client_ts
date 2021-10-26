@@ -21,7 +21,7 @@ class GridClient {
         public url: string,
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
-        projectName: string = ""
+        projectName = "",
     ) {
         let env = "mainnet";
         if (this.url.includes("dev")) {

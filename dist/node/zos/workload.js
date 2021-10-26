@@ -17,7 +17,7 @@ const ipv4_1 = require("./ipv4");
 const gateway_1 = require("./gateway");
 const qsfs_1 = require("./qsfs");
 const workload_base_1 = require("./workload_base");
-const _1 = require(".");
+const ipv4_2 = require("./ipv4");
 var ResultStates;
 (function (ResultStates) {
     ResultStates["error"] = "error";
@@ -72,7 +72,7 @@ __decorate([
                 { value: workload_base_1.WorkloadDataResult, name: WorkloadTypes.network },
                 { value: zmachine_1.ZmachineResult, name: WorkloadTypes.zmachine },
                 { value: zdb_1.ZdbResult, name: WorkloadTypes.zdb },
-                { value: _1.PublicIPResult, name: WorkloadTypes.ipv4 },
+                { value: ipv4_2.PublicIPResult, name: WorkloadTypes.ipv4 },
                 { value: workload_base_1.WorkloadDataResult, name: WorkloadTypes.gatewayfqdnproxy },
                 { value: workload_base_1.WorkloadDataResult, name: WorkloadTypes.gatewaynameproxy },
                 { value: qsfs_1.QuantumSafeFSResult, name: WorkloadTypes.qsfs },

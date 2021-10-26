@@ -10,6 +10,7 @@ const utils_1 = require("../helpers/utils");
 const events_1 = require("../helpers/events");
 const qsfs_1 = require("../primitives/qsfs");
 const qsfs_zdbs_1 = require("../modules/qsfs_zdbs");
+const zos_1 = require("../zos");
 class VMHL extends base_1.HighLevelBase {
     async create(name, nodeId, flist, cpu, memory, rootfs_size, disks, publicIp, planetary, network, entrypoint, env, metadata = "", description = "", qsfsDisks = [], qsfsProjectName = "") {
         const deployments = [];
@@ -35,7 +36,9 @@ class VMHL extends base_1.HighLevelBase {
             }
             const minimalShards = Math.ceil((qsfsZdbs.groups.length * 3) / 5);
             const expectedShards = qsfsZdbs.groups.length;
-            const qsfsWorkload = qsfsPrimitive.create(d.name, minimalShards, expectedShards, d.prefix, qsfsZdbs.meta, qsfsZdbs.groups, d.encryption_key);
+            const groups = new zos_1.ZdbGroup();
+            groups.backends = qsfsZdbs.groups;
+            const qsfsWorkload = qsfsPrimitive.create(d.name, minimalShards, expectedShards, d.prefix, qsfsZdbs.meta, [groups], d.encryption_key);
             workloads.push(qsfsWorkload);
             diskMounts.push(disk.createMount(d.name, d.mountpoint));
         }

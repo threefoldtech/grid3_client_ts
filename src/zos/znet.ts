@@ -43,5 +43,4 @@ class Znet extends WorkloadData {
     }
 }
 
-
 export { Znet, Peer };

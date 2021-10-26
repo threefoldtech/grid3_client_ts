@@ -64,7 +64,7 @@ class HighLevelBase {
             const networkName = workload.data["network"].interfaces[0].network;
             const networkIpRange = (0, netaddr_1.Addr)(workload.data["network"].interfaces[0].ip).mask(16).toString();
             const network = new network_1.Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
-            await network.load(true);
+            await network.load();
             const machineIp = workload.data["network"].interfaces[0].ip;
             events_1.events.emit("logs", `Deleting ip: ${machineIp} from node: ${node_id}, network ${network.name}`);
             //TODO: Reproduce: Sometimes the network is free and it keeps getting wrong result here
@@ -150,7 +150,7 @@ class HighLevelBase {
             for (const workload of remainingWorkloads) {
                 if (workload.type === workload_1.WorkloadTypes.network) {
                     network = new network_1.Network(workload.name, workload.data["ip_range"], this.rmbClient, this.storePath, this.url);
-                    await network.load(true);
+                    await network.load();
                     break;
                 }
             }

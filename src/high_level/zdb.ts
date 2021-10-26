@@ -1,4 +1,4 @@
-import { DeviceTypes, ZdbModes } from "../zos/zdb";
+import { ZdbModes } from "../zos/zdb";
 import { Deployment } from "../zos/deployment";
 import { WorkloadTypes } from "../zos/workload";
 
@@ -12,9 +12,7 @@ class ZdbHL extends HighLevelBase {
     create(
         name: string,
         node_id: number,
-        namespace: string,
         disk_size: number,
-        disk_type: DeviceTypes,
         mode: ZdbModes,
         password: string,
         publicIpv6: boolean,
@@ -24,17 +22,7 @@ class ZdbHL extends HighLevelBase {
         events.emit("logs", `Creating a zdb on node: ${node_id}`);
         const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
         const zdbFactory = new ZdbPrimitive();
-        const zdbWorkload = zdbFactory.create(
-            name,
-            namespace,
-            disk_size,
-            mode,
-            password,
-            disk_type,
-            publicIpv6,
-            metadata,
-            description,
-        );
+        const zdbWorkload = zdbFactory.create(name, disk_size, mode, password, publicIpv6, metadata, description);
         const deployment = deploymentFactory.create([zdbWorkload], 1626394539, metadata, description);
         return new TwinDeployment(deployment, Operations.deploy, 0, node_id);
     }

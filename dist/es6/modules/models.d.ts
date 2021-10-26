@@ -1,5 +1,5 @@
 import { Deployment } from "../zos/deployment";
-import { ZdbModes, DeviceTypes } from "../zos/zdb";
+import { ZdbModes } from "../zos/zdb";
 declare class DiskModel {
     name: string;
     size: number;
@@ -88,9 +88,7 @@ declare class ZDBModel {
     node_id: number;
     mode: ZdbModes;
     disk_size: number;
-    disk_type: DeviceTypes;
     public: boolean;
-    namespace: string;
     password: string;
 }
 declare class ZDBSModel {
@@ -113,8 +111,6 @@ declare class QSFSZDBSModel {
     count: number;
     node_ids: number[];
     disk_size: number;
-    disk_type: DeviceTypes;
-    namespace: string;
     password: string;
     metadata: string;
     description: string;

@@ -14,7 +14,7 @@ import { PublicIP } from "./ipv4";
 import { GatewayFQDNProxy, GatewayNameProxy } from "./gateway";
 import { QuantumSafeFS, QuantumSafeFSResult } from "./qsfs";
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
-import { PublicIPResult } from ".";
+import { PublicIPResult } from "./ipv4";
 var ResultStates;
 (function (ResultStates) {
     ResultStates["error"] = "error";

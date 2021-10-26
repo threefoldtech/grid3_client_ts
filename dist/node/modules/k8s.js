@@ -50,7 +50,7 @@ class K8sModule extends base_1.BaseModule {
     }
     async _createDeployment(options, masterIps = []) {
         const network = new network_1.Network(options.network.name, options.network.ip_range, this.rmbClient, this.storePath, this.url);
-        await network.load(true);
+        await network.load();
         let deployments = [];
         let wireguardConfig = "";
         for (const master of options.masters) {
@@ -135,7 +135,7 @@ class K8sModule extends base_1.BaseModule {
         const networkName = masterWorkload.data["network"].interfaces[0].network;
         const networkIpRange = (0, netaddr_1.Addr)(masterWorkload.data["network"].interfaces[0].ip).mask(16).toString();
         const network = new network_1.Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
-        await network.load(true);
+        await network.load();
         const [twinDeployments, _] = await this.kubernetes.add_worker(options.name, options.node_id, masterWorkload.data["env"]["K3S_TOKEN"], masterWorkload.data["network"]["interfaces"][0]["ip"], options.cpu, options.memory, options.rootfs_size, options.disk_size, options.public_ip, options.planetary, network, masterWorkload.data["env"]["SSH_KEY"], masterWorkload.metadata, masterWorkload.description, options.qsfs_disks, this.projectName);
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }

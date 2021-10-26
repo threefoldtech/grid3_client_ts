@@ -1,5 +1,5 @@
 import { Deployment } from "../zos/deployment";
-import { ZdbModes, DeviceTypes } from "../zos/zdb";
+import { ZdbModes } from "../zos/zdb";
 
 //TODO: find a way to validate all fields are passed while casting data to any of these classes.
 class DiskModel {
@@ -102,9 +102,7 @@ class ZDBModel {
     node_id: number;
     mode: ZdbModes;
     disk_size: number;
-    disk_type: DeviceTypes;
     public: boolean;
-    namespace: string;
     password: string;
 }
 
@@ -130,8 +128,6 @@ class QSFSZDBSModel {
     count: number;
     node_ids: number[];
     disk_size: number;
-    disk_type: DeviceTypes;
-    namespace: string;
     password: string;
     metadata: string;
     description: string;

@@ -15,8 +15,7 @@ class ZdbsModule extends BaseModule {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName: string = ""
-
+        projectName = "",
     ) {
         super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient, this.storePath);
@@ -28,9 +27,7 @@ class ZdbsModule extends BaseModule {
             const twinDeployment = this.zdb.create(
                 instance.name,
                 instance.node_id,
-                instance.namespace,
                 instance.disk_size,
-                instance.disk_type,
                 instance.mode,
                 instance.password,
                 instance.public,
@@ -81,9 +78,7 @@ class ZdbsModule extends BaseModule {
         const twinDeployment = this.zdb.create(
             options.name,
             options.node_id,
-            options.namespace,
             options.disk_size,
-            options.disk_type,
             options.mode,
             options.password,
             options.public,

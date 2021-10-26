@@ -27,7 +27,7 @@ class MachineModule extends base_1.BaseModule {
     async _createDeloyment(options) {
         const networkName = options.network.name;
         const network = new network_1.Network(networkName, options.network.ip_range, this.rmbClient, this.storePath, this.url);
-        await network.load(true);
+        await network.load();
         let twinDeployments = [];
         let wireguardConfig = "";
         for (const machine of options.machines) {
@@ -89,7 +89,7 @@ class MachineModule extends base_1.BaseModule {
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = (0, netaddr_1.Addr)(workload.data["network"].interfaces[0].ip).mask(16).toString();
         const network = new network_1.Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
-        await network.load(true);
+        await network.load();
         const [twinDeployments, wgConfig] = await this.vm.create(options.name, options.node_id, options.flist, options.cpu, options.memory, options.rootfs_size, options.disks, options.public_ip, options.planetary, network, options.entrypoint, options.env, workload.metadata, workload.description, options.qsfs_disks, this.projectName);
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }

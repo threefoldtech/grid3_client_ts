@@ -28,7 +28,7 @@ class BaseModule {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName: string = ""
+        projectName = "",
     ) {
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);

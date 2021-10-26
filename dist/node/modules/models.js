@@ -106,9 +106,7 @@ class ZDBModel {
     node_id;
     mode;
     disk_size;
-    disk_type;
     public;
-    namespace;
     password;
 }
 exports.ZDBModel = ZDBModel;
@@ -137,8 +135,6 @@ class QSFSZDBSModel {
     count;
     node_ids;
     disk_size;
-    disk_type;
-    namespace;
     password;
     metadata;
     description;

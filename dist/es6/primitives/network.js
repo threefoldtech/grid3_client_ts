@@ -161,7 +161,7 @@ class Network {
             }
         }
     }
-    load(deployments = false) {
+    load() {
         return __awaiter(this, void 0, void 0, function* () {
             const networks = this.getNetworks();
             if (!Object.keys(networks).includes(this.name)) {
@@ -173,38 +173,34 @@ class Network {
                 throw Error(`The same network name ${this.name} with different ip range is already exist`);
             }
             for (const node of network.nodes) {
-                const n = node;
-                this.nodes.push(n);
-            }
-            if (deployments) {
-                for (const node of this.nodes) {
-                    const nodes = new Nodes(this.url);
-                    const node_twin_id = yield nodes.getNodeTwinId(node.node_id);
-                    const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
-                    const message = yield this.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
-                    const result = yield this.rmbClient.read(message);
-                    if (result[0].err) {
-                        console.error(`Could not load network deployment ${node.contract_id} due to error: ${result[0].err} `);
-                    }
-                    const res = JSON.parse(result[0].dat);
-                    res["node_id"] = node.node_id;
-                    for (const workload of res["workloads"]) {
-                        if (workload["type"] !== WorkloadTypes.network ||
-                            !Addr(this.ipRange).contains(Addr(workload["data"]["subnet"]))) {
-                            continue;
-                        }
-                        if (workload.result.state === "deleted") {
-                            continue;
-                        }
-                        const znet = this._fromObj(workload["data"]);
-                        znet["node_id"] = node.node_id;
-                        this.networks.push(znet);
-                        this.deployments.push(res);
-                    }
+                const nodes = new Nodes(this.url);
+                const node_twin_id = yield nodes.getNodeTwinId(node.node_id);
+                const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
+                const message = yield this.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
+                const result = yield this.rmbClient.read(message);
+                if (result[0].err) {
+                    console.error(`Could not load network deployment ${node.contract_id} due to error: ${result[0].err} `);
                 }
-                yield this.getAccessPoints();
-                this.save();
+                const res = JSON.parse(result[0].dat);
+                res["node_id"] = node.node_id;
+                for (const workload of res["workloads"]) {
+                    if (workload["type"] !== WorkloadTypes.network ||
+                        !Addr(this.ipRange).contains(Addr(workload["data"]["subnet"]))) {
+                        continue;
+                    }
+                    if (workload.result.state === "deleted") {
+                        continue;
+                    }
+                    const znet = this._fromObj(workload["data"]);
+                    znet["node_id"] = node.node_id;
+                    const n = node;
+                    this.nodes.push(n);
+                    this.networks.push(znet);
+                    this.deployments.push(res);
+                }
             }
+            yield this.getAccessPoints();
+            this.save();
         });
     }
     _fromObj(net) {
@@ -465,7 +461,12 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
             });
         }
         network.nodes = nodes;
-        this._save(network);
+        if (nodes.length !== 0) {
+            this._save(network);
+        }
+        else {
+            this.delete();
+        }
     }
     _save(network) {
         const networks = this.getNetworks();

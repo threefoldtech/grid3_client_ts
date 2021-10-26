@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QSFSPrimitive = void 0;
 const md5_1 = __importDefault(require("crypto-js/md5"));
+const buffer_1 = require("buffer");
 const workload_1 = require("../zos/workload");
 const qsfs_1 = require("../zos/qsfs");
 const zmachine_1 = require("../zos/zmachine");
@@ -19,9 +20,10 @@ class QSFSPrimitive {
     maxZdbDataDirSize = 32, // in MB
     redundantGroups = 1, redundantNodes = 1, encryptionAlgorithm = "AES", compressionAlgorithm = "snappy", metadata = "", description = "", version = 0) {
         const key = (0, md5_1.default)(encryptionKey).toString();
+        const hexKey = buffer_1.Buffer.from(key).toString("hex");
         const encryption = new qsfs_1.Encryption();
         encryption.algorithm = encryptionAlgorithm;
-        encryption.key = key;
+        encryption.key = hexKey;
         const quantumSafeConfig = new qsfs_1.QuantumSafeConfig();
         quantumSafeConfig.prefix = metaPrefix;
         quantumSafeConfig.encryption = encryption;

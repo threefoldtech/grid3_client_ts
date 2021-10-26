@@ -12,6 +12,7 @@ import { DiskModel, QSFSDisk } from "../modules/models";
 import { events } from "../helpers/events";
 import { QSFSPrimitive } from "../primitives/qsfs";
 import { QSFSZdbsModule } from "../modules/qsfs_zdbs";
+import { ZdbGroup } from "../zos";
 
 class VMHL extends HighLevelBase {
     async create(
@@ -64,13 +65,15 @@ class VMHL extends HighLevelBase {
             }
             const minimalShards = Math.ceil((qsfsZdbs.groups.length * 3) / 5);
             const expectedShards = qsfsZdbs.groups.length;
+            const groups = new ZdbGroup();
+            groups.backends = qsfsZdbs.groups;
             const qsfsWorkload = qsfsPrimitive.create(
                 d.name,
                 minimalShards,
                 expectedShards,
                 d.prefix,
                 qsfsZdbs.meta,
-                qsfsZdbs.groups,
+                [groups],
                 d.encryption_key,
             );
             workloads.push(qsfsWorkload);

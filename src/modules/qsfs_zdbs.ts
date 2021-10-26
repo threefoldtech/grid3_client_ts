@@ -17,7 +17,7 @@ class QSFSZdbsModule extends BaseModule {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName: string = ""
+        projectName = "",
     ) {
         super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient, this.storePath);
@@ -38,9 +38,7 @@ class QSFSZdbsModule extends BaseModule {
             const twinDeployment = this.zdb.create(
                 options.name + i,
                 nodeId,
-                options.namespace,
                 options.disk_size,
-                options.disk_type,
                 mode as ZdbModes,
                 options.password,
                 true,
@@ -88,9 +86,9 @@ class QSFSZdbsModule extends BaseModule {
         const qsfsZdbs = { meta: [], groups: [] };
         for (const zdb of zdbs) {
             const zdbBackend = new ZdbBackend();
-            zdbBackend.namespace = zdb.data.namespace;
+            zdbBackend.namespace = zdb.result.data.Namespace;
             zdbBackend.password = zdb.data.password;
-            zdbBackend.address = `[${zdb.result.data.IPs[0]}]:${zdb.result.data.Port}`;
+            zdbBackend.address = `[${zdb.result.data.IPs[1]}]:${zdb.result.data.Port}`;
             if (zdb.data.mode === ZdbModes.user) {
                 qsfsZdbs.meta.push(zdbBackend);
             } else {

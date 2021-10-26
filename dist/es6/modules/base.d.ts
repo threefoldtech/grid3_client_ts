@@ -1,4 +1,5 @@
 import { Deployment } from "../zos/deployment";
+import { PublicIPResult } from "../zos/ipv4";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { TwinDeployment } from "../high_level/models";
@@ -32,6 +33,7 @@ declare class BaseModule {
     _getContractIdFromNodeId(name: string, nodeId: number): number;
     _getNodeIdFromContractId(name: string, contractId: number): number;
     _getWorkloadsByType(deployments: any, type: WorkloadTypes): Workload[];
+    _getMachinePubIP(deployments: any, vmWorkload: Workload): PublicIPResult;
     _getZmachineData(deployments: any, workload: Workload): Record<string, unknown>;
     _getZMountData(deployments: any, name: any): {
         size: any;

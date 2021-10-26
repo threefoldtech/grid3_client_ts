@@ -1,6 +1,7 @@
 import * as PATH from "path";
 
 import { Deployment } from "../zos/deployment";
+import { PublicIPResult } from "../zos/ipv4";
 import { Zmachine, ZmachineResult } from "../zos/zmachine";
 import { Workload, WorkloadTypes } from "../zos/workload";
 
@@ -30,7 +31,7 @@ class BaseModule {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName = "",
+        projectName: string = "",
     ) {
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
@@ -127,6 +128,16 @@ class BaseModule {
         return r;
     }
 
+    _getMachinePubIP(deployments, vmWorkload: Workload): PublicIPResult {
+        const ipv4Workloads = this._getWorkloadsByType(deployments, WorkloadTypes.ipv4);
+        for (const workload of ipv4Workloads) {
+            if (workload.name.startsWith(vmWorkload.name)) {
+                return workload.result.data as PublicIPResult;
+            }
+        }
+        return null;
+    }
+
     _getZmachineData(deployments, workload: Workload): Record<string, unknown> {
         const data = workload.data as Zmachine;
         return {
@@ -136,7 +147,7 @@ class BaseModule {
             status: workload.result.state,
             message: workload.result.message,
             flist: data.flist,
-            publicIP: data.network.public_ip,
+            publicIP: this._getMachinePubIP(deployments, workload),
             planetary: data.network.planetary,
             yggIP: data.network.planetary ? (workload.result.data as ZmachineResult).ygg_ip : "",
             interfaces: data.network.interfaces.map(n => ({

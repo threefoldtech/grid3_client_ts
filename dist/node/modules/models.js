@@ -1,14 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ZOSModel = exports.DeployGatewayNameModel = exports.DeployGatewayFQDNModel = exports.DeleteZDBModel = exports.AddZDBModel = exports.ZDBDeleteModel = exports.ZDBGetModel = exports.ZDBSModel = exports.ZDBModel = exports.DeleteWorkerModel = exports.AddWorkerModel = exports.K8SDeleteModel = exports.K8SGetModel = exports.K8SModel = exports.KubernetesNodeModel = exports.DeleteMachineModel = exports.AddMachineModel = exports.MachinesDeleteModel = exports.MachinesGetModel = exports.MachinesModel = exports.MachineModel = exports.NetworkModel = exports.DiskModel = void 0;
+exports.QSFSZDBDeleteModel = exports.QSFSZDBGetModel = exports.QSFSZDBSModel = exports.QSFSDisk = exports.ZOSModel = exports.DeployGatewayNameModel = exports.DeployGatewayFQDNModel = exports.DeleteZDBModel = exports.AddZDBModel = exports.ZDBDeleteModel = exports.ZDBGetModel = exports.ZDBSModel = exports.ZDBModel = exports.DeleteWorkerModel = exports.AddWorkerModel = exports.K8SDeleteModel = exports.K8SGetModel = exports.K8SModel = exports.KubernetesNodeModel = exports.DeleteMachineModel = exports.AddMachineModel = exports.MachinesDeleteModel = exports.MachinesGetModel = exports.MachinesModel = exports.MachineModel = exports.NetworkModel = exports.DiskModel = void 0;
 const deployment_1 = require("../zos/deployment");
+//TODO: find a way to validate all fields are passed while casting data to any of these classes.
 class DiskModel {
     name;
     size; // in GB
     mountpoint;
 }
 exports.DiskModel = DiskModel;
-;
+class QSFSDisk {
+    qsfs_zdbs_name;
+    name;
+    prefix;
+    encryption_key;
+    mountpoint;
+}
+exports.QSFSDisk = QSFSDisk;
 class NetworkModel {
     name;
     ip_range;
@@ -21,6 +29,7 @@ class MachineModel {
     name;
     node_id;
     disks;
+    qsfs_disks;
     public_ip;
     planetary;
     cpu;
@@ -61,6 +70,7 @@ class KubernetesNodeModel {
     memory; // in MB
     rootfs_size; // in GB
     disk_size; // in GB
+    qsfs_disks;
     public_ip;
     planetary;
 }
@@ -96,9 +106,7 @@ class ZDBModel {
     node_id;
     mode;
     disk_size;
-    disk_type;
     public;
-    namespace;
     password;
 }
 exports.ZDBModel = ZDBModel;
@@ -122,6 +130,22 @@ exports.AddZDBModel = AddZDBModel;
 class DeleteZDBModel extends DeleteWorkerModel {
 }
 exports.DeleteZDBModel = DeleteZDBModel;
+class QSFSZDBSModel {
+    name;
+    count;
+    node_ids;
+    disk_size;
+    password;
+    metadata;
+    description;
+}
+exports.QSFSZDBSModel = QSFSZDBSModel;
+class QSFSZDBGetModel extends BaseGetDeleteModel {
+}
+exports.QSFSZDBGetModel = QSFSZDBGetModel;
+class QSFSZDBDeleteModel extends BaseGetDeleteModel {
+}
+exports.QSFSZDBDeleteModel = QSFSZDBDeleteModel;
 class DeployGatewayFQDNModel {
     name;
     node_id;

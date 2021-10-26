@@ -7,9 +7,9 @@ const base_1 = require("./base");
 const events_1 = require("../helpers/events");
 const Flist = "https://hub.grid.tf/ahmed_hanafy_1/ahmedhanafy725-k3s-latest.flist";
 class KubernetesHL extends base_1.HighLevelBase {
-    async add_master(name, nodeId, secret, cpu, memory, rootfs_size, diskSize, publicIp, planetary, network, sshKey, metadata = "", description = "") {
+    async add_master(name, nodeId, secret, cpu, memory, rootfs_size, diskSize, publicIp, planetary, network, sshKey, metadata = "", description = "", qsfs_disks = [], qsfsProjectName = "") {
         events_1.events.emit("logs", `Creating a master with name: ${name} on node: ${nodeId}, network: ${network.name}`);
-        const machine = new machine_1.VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+        const machine = new machine_1.VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
         const mountpoint = "/mnt/data";
         const env = {
             SSH_KEY: sshKey,
@@ -24,11 +24,11 @@ class KubernetesHL extends base_1.HighLevelBase {
             size: diskSize,
             mountpoint: mountpoint,
         };
-        return await machine.create(name, nodeId, Flist, cpu, memory, rootfs_size, [disk], publicIp, planetary, network, "/sbin/zinit init", env, metadata, description);
+        return await machine.create(name, nodeId, Flist, cpu, memory, rootfs_size, [disk], publicIp, planetary, network, "/sbin/zinit init", env, metadata, description, qsfs_disks, qsfsProjectName);
     }
-    async add_worker(name, nodeId, secret, masterIp, cpu, memory, rootfs_size, diskSize, publicIp, planetary, network, sshKey, metadata = "", description = "") {
+    async add_worker(name, nodeId, secret, masterIp, cpu, memory, rootfs_size, diskSize, publicIp, planetary, network, sshKey, metadata = "", description = "", qsfs_disks = [], qsfsProjectName = "") {
         events_1.events.emit("logs", `Creating a worker with name: ${name} on node: ${nodeId}, network: ${network.name}`);
-        const machine = new machine_1.VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+        const machine = new machine_1.VMHL(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
         const mountpoint = "/mnt/data";
         const env = {
             SSH_KEY: sshKey,
@@ -43,7 +43,7 @@ class KubernetesHL extends base_1.HighLevelBase {
             size: diskSize,
             mountpoint: mountpoint,
         };
-        return await machine.create(name, nodeId, Flist, cpu, memory, rootfs_size, [disk], publicIp, planetary, network, "/sbin/zinit init", env, metadata, description);
+        return await machine.create(name, nodeId, Flist, cpu, memory, rootfs_size, [disk], publicIp, planetary, network, "/sbin/zinit init", env, metadata, description, qsfs_disks, qsfsProjectName);
     }
     async delete(deployment, names) {
         return await this._delete(deployment, names, [

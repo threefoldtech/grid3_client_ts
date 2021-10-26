@@ -7,17 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { plainToClass } from "class-transformer";
+import { validateObject } from "../helpers/validator";
 import { Deployment, SignatureRequest, SignatureRequirement } from "../zos/deployment";
-import { Workload } from "../zos/workload";
-import { Zdb } from "../zos/zdb";
 import { WorkloadTypes } from "../zos/workload";
-import { GatewayFQDNProxy, GatewayNameProxy } from "../zos/gateway";
-import { ZmachineNetwork, Zmachine, Mount } from "../zos/zmachine";
-import { Zmount } from "../zos/zmount";
-import { Znet, Peer } from "../zos/znet";
-import { PublicIP } from "../zos/ipv4";
-import { ComputeCapacity } from "../zos/computecapacity";
-import { getNodeIdFromContractId } from "./nodes";
+import { Nodes } from "./nodes";
 class DeploymentFactory {
     constructor(twin_id, url, mnemonic) {
         this.twin_id = twin_id;
@@ -28,6 +22,7 @@ class DeploymentFactory {
         const signature_request = new SignatureRequest();
         signature_request.twin_id = this.twin_id;
         signature_request.weight = 1;
+        signature_request.required = false;
         const signature_requirement = new SignatureRequirement();
         signature_requirement.weight_required = 1;
         signature_requirement.requests = [signature_request];
@@ -82,7 +77,8 @@ class DeploymentFactory {
                     workload.version = 0;
                     // Don't change the machine ip
                     if (w.type === WorkloadTypes.zmachine) {
-                        const node_id = yield getNodeIdFromContractId(oldDeployment.contract_id, this.url, this.mnemonic);
+                        const nodes = new Nodes(this.url);
+                        const node_id = yield nodes.getNodeIdFromContractId(oldDeployment.contract_id, this.mnemonic);
                         const oldIp = workload.data["network"]["interfaces"][0]["ip"];
                         const newIp = w.data["network"]["interfaces"][0]["ip"];
                         if (newIp !== oldIp) {
@@ -113,87 +109,17 @@ class DeploymentFactory {
         });
     }
     fromObj(deployment) {
-        const d = new Deployment();
-        Object.assign(d, deployment);
-        const signature_requirement = new SignatureRequirement();
-        Object.assign(signature_requirement, d.signature_requirement);
-        const requests = [];
-        for (const request of signature_requirement.requests) {
-            const r = new SignatureRequest();
-            Object.assign(r, request);
-            requests.push(r);
-        }
-        signature_requirement.requests = requests;
-        d.signature_requirement = signature_requirement;
-        const workloads = [];
-        for (const workload of d.workloads) {
-            const w = new Workload();
-            Object.assign(w, workload);
-            if (workload.type === WorkloadTypes.ipv4) {
-                const ipv4 = new PublicIP();
-                Object.assign(ipv4, w.data);
-                w.data = ipv4;
-                workloads.push(w);
-            }
-            else if (workload.type === WorkloadTypes.zdb) {
-                const zdb = new Zdb();
-                Object.assign(zdb, w.data);
-                w.data = zdb;
-                workloads.push(w);
-            }
-            else if (workload.type === WorkloadTypes.network) {
-                const znet = new Znet();
-                Object.assign(znet, w.data);
-                const peers = [];
-                for (const peer of znet.peers) {
-                    const p = new Peer();
-                    Object.assign(p, peer);
-                    peers.push(p);
+        return __awaiter(this, void 0, void 0, function* () {
+            for (const workload of deployment.workloads) {
+                workload.data["__type"] = workload.type;
+                if (workload.result && workload.result.data) {
+                    workload.result.data["__type"] = workload.type;
                 }
-                znet.peers = peers;
-                w.data = znet;
-                workloads.push(w);
             }
-            else if (workload.type === WorkloadTypes.zmount) {
-                const zmount = new Zmount();
-                Object.assign(zmount, w.data);
-                w.data = zmount;
-                workloads.push(w);
-            }
-            else if (workload.type === WorkloadTypes.zmachine) {
-                const zmachine = new Zmachine();
-                Object.assign(zmachine, w.data);
-                const net = new ZmachineNetwork();
-                Object.assign(net, zmachine.network);
-                zmachine.network = net;
-                const computeCapacity = new ComputeCapacity();
-                Object.assign(computeCapacity, zmachine.compute_capacity);
-                zmachine.compute_capacity = computeCapacity;
-                const mounts = [];
-                for (const mount of zmachine.mounts) {
-                    const m = new Mount();
-                    Object.assign(m, mount);
-                    mounts.push(m);
-                }
-                zmachine.mounts = mounts;
-                w.data = zmachine;
-                workloads.push(w);
-            }
-            else if (workload.type === WorkloadTypes.gatewayfqdnproxy) {
-                const fqdngw = new GatewayFQDNProxy();
-                Object.assign(fqdngw, w.data);
-                w.data = fqdngw;
-                workloads.push(w);
-            }
-            else if (workload.type === WorkloadTypes.gatewaynameproxy) {
-                const namegw = new GatewayNameProxy();
-                Object.assign(namegw, w.data);
-                w.data = namegw;
-                workloads.push(w);
-            }
-        }
-        d.workloads = workloads;
-        return d;
+            const d = plainToClass(Deployment, deployment, { excludeExtraneousValues: true });
+            yield validateObject(d);
+            return d;
+        });
     }
 }
 export { DeploymentFactory };

@@ -11,40 +11,33 @@ class MachineModule extends base_1.BaseModule {
     url;
     mnemonic;
     rmbClient;
+    storePath;
     fileName = "machines.json";
+    workloadTypes = [workload_1.WorkloadTypes.zmachine, workload_1.WorkloadTypes.zmount, workload_1.WorkloadTypes.qsfs, workload_1.WorkloadTypes.ipv4];
     vm;
-    constructor(twin_id, url, mnemonic, rmbClient) {
-        super(twin_id, url, mnemonic, rmbClient);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
-        this.vm = new machine_1.VMHL(twin_id, url, mnemonic, rmbClient);
+        this.storePath = storePath;
+        this.vm = new machine_1.VMHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
     async _createDeloyment(options) {
         const networkName = options.network.name;
-        const network = new network_1.Network(networkName, options.network.ip_range, this.rmbClient);
-        await network.load(true);
+        const network = new network_1.Network(networkName, options.network.ip_range, this.rmbClient, this.storePath, this.url);
+        await network.load();
         let twinDeployments = [];
         let wireguardConfig = "";
         for (const machine of options.machines) {
-            const [TDeployments, wgConfig] = await this.vm.create(machine.name, machine.node_id, machine.flist, machine.cpu, machine.memory, machine.rootfs_size, machine.disks, machine.public_ip, machine.planetary, network, machine.entrypoint, machine.env, options.metadata, options.description);
+            const [TDeployments, wgConfig] = await this.vm.create(machine.name, machine.node_id, machine.flist, machine.cpu, machine.memory, machine.rootfs_size, machine.disks, machine.public_ip, machine.planetary, network, machine.entrypoint, machine.env, options.metadata, options.description, machine.qsfs_disks, this.projectName);
             twinDeployments = twinDeployments.concat(TDeployments);
             if (wgConfig) {
                 wireguardConfig = wgConfig;
             }
         }
-        ;
         return [twinDeployments, network, wireguardConfig];
-    }
-    _getMachineWorkload(deployments) {
-        for (const deployment of deployments) {
-            for (const workload of deployment.workloads) {
-                if (workload.type === workload_1.WorkloadTypes.zmachine) {
-                    return workload;
-                }
-            }
-        }
     }
     async deploy(options) {
         if (this.exists(options.name)) {
@@ -58,6 +51,11 @@ class MachineModule extends base_1.BaseModule {
     list() {
         return this._list();
     }
+    async getObj(deploymentName) {
+        const deployments = await this._get(deploymentName);
+        const workloads = this._getWorkloadsByType(deployments, workload_1.WorkloadTypes.zmachine);
+        return workloads.map(workload => this._getZmachineData(deployments, workload));
+    }
     async get(options) {
         return await this._get(options.name);
     }
@@ -69,7 +67,7 @@ class MachineModule extends base_1.BaseModule {
             throw Error(`There is no machine with name: ${options.name}`);
         }
         const oldDeployments = await this._get(options.name);
-        const workload = this._getMachineWorkload(oldDeployments);
+        const workload = this._getWorkloadsByType(oldDeployments, workload_1.WorkloadTypes.zmachine)[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = (0, netaddr_1.Addr)(workload.data["network"].interfaces[0].ip).mask(16).toString();
         if (networkName !== options.network.name || networkIpRange !== options.network.ip_range) {
@@ -83,12 +81,12 @@ class MachineModule extends base_1.BaseModule {
             throw Error(`There is no machines deployment with name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
-        const workload = this._getMachineWorkload(oldDeployments);
+        const workload = this._getWorkloadsByType(oldDeployments, workload_1.WorkloadTypes.zmachine)[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = (0, netaddr_1.Addr)(workload.data["network"].interfaces[0].ip).mask(16).toString();
-        const network = new network_1.Network(networkName, networkIpRange, this.rmbClient);
-        await network.load(true);
-        const [twinDeployments, wgConfig] = await this.vm.create(options.name, options.node_id, options.flist, options.cpu, options.memory, options.rootfs_size, options.disks, options.public_ip, options.planetary, network, options.entrypoint, options.env, workload.metadata, workload.description);
+        const network = new network_1.Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
+        await network.load();
+        const [twinDeployments, wgConfig] = await this.vm.create(options.name, options.node_id, options.flist, options.cpu, options.memory, options.rootfs_size, options.disks, options.public_ip, options.planetary, network, options.entrypoint, options.env, workload.metadata, workload.description, options.qsfs_disks, this.projectName);
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }
     async deleteMachine(options) {

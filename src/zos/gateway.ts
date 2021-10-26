@@ -1,9 +1,14 @@
-class GatewayFQDNProxy {
-    fqdn: string;
-    tls_passthrough: boolean;
-    backends: string[];
+import { IsFQDN, IsBoolean, IsString, IsUrl, IsNotEmpty, ArrayNotEmpty } from "class-validator";
+import { Expose } from "class-transformer";
 
-    challenge() {
+import { WorkloadData } from "./workload_base";
+
+class GatewayFQDNProxy extends WorkloadData {
+    @Expose() @IsFQDN() fqdn: string;
+    @Expose() @IsBoolean() tls_passthrough: boolean;
+    @Expose() @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
+
+    challenge(): string {
         let out = "";
         out += this.fqdn;
         out += this.tls_passthrough.toString();
@@ -14,12 +19,12 @@ class GatewayFQDNProxy {
     }
 }
 
-class GatewayNameProxy {
-    name: string;
-    tls_passthrough: boolean;
-    backends: string[];
+class GatewayNameProxy extends WorkloadData {
+    @Expose() @IsString() @IsNotEmpty() name: string;
+    @Expose() @IsBoolean() tls_passthrough: boolean;
+    @Expose() @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.name;
         out += this.tls_passthrough.toString();
@@ -30,6 +35,4 @@ class GatewayNameProxy {
     }
 }
 
-class GatewayResult {}
-
-export { GatewayFQDNProxy, GatewayNameProxy, GatewayResult };
+export { GatewayFQDNProxy, GatewayNameProxy };

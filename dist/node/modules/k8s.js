@@ -12,15 +12,18 @@ class K8sModule extends base_1.BaseModule {
     url;
     mnemonic;
     rmbClient;
+    storePath;
     fileName = "kubernetes.json";
+    workloadTypes = [workload_1.WorkloadTypes.zmachine, workload_1.WorkloadTypes.zmount, workload_1.WorkloadTypes.qsfs, workload_1.WorkloadTypes.ipv4];
     kubernetes;
-    constructor(twin_id, url, mnemonic, rmbClient) {
-        super(twin_id, url, mnemonic, rmbClient);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
-        this.kubernetes = new kubernetes_1.KubernetesHL(twin_id, url, mnemonic, rmbClient);
+        this.storePath = storePath;
+        this.kubernetes = new kubernetes_1.KubernetesHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
     _getMastersWorkload(deployments) {
         const workloads = [];
@@ -37,6 +40,21 @@ class K8sModule extends base_1.BaseModule {
         }
         return workloads;
     }
+    _getWorkersWorkload(deployments) {
+        const workloads = [];
+        for (const deployment of deployments) {
+            let d = deployment;
+            if (deployment instanceof models_1.TwinDeployment) {
+                d = deployment.deployment;
+            }
+            for (const workload of d.workloads) {
+                if (workload.type === workload_1.WorkloadTypes.zmachine && workload.data["env"]["K3S_URL"] !== "") {
+                    workloads.push(workload);
+                }
+            }
+        }
+        return workloads;
+    }
     _getMastersIp(deployments) {
         const ips = [];
         const workloads = this._getMastersWorkload(deployments);
@@ -46,12 +64,12 @@ class K8sModule extends base_1.BaseModule {
         return ips;
     }
     async _createDeployment(options, masterIps = []) {
-        const network = new network_1.Network(options.network.name, options.network.ip_range, this.rmbClient);
-        await network.load(true);
+        const network = new network_1.Network(options.network.name, options.network.ip_range, this.rmbClient, this.storePath, this.url);
+        await network.load();
         let deployments = [];
         let wireguardConfig = "";
         for (const master of options.masters) {
-            const [twinDeployments, wgConfig] = await this.kubernetes.add_master(master.name, master.node_id, options.secret, master.cpu, master.memory, master.rootfs_size, master.disk_size, master.public_ip, master.planetary, network, options.ssh_key, options.metadata, options.description);
+            const [twinDeployments, wgConfig] = await this.kubernetes.add_master(master.name, master.node_id, options.secret, master.cpu, master.memory, master.rootfs_size, master.disk_size, master.public_ip, master.planetary, network, options.ssh_key, options.metadata, options.description, master.qsfs_disks, this.projectName);
             deployments = deployments.concat(twinDeployments);
             if (wgConfig) {
                 wireguardConfig = wgConfig;
@@ -83,6 +101,19 @@ class K8sModule extends base_1.BaseModule {
     }
     list() {
         return this._list();
+    }
+    async getObj(deploymentName) {
+        const k = { masters: [], workers: [] };
+        const deployments = await this._get(deploymentName);
+        const masters = this._getMastersWorkload(deployments);
+        const workers = this._getWorkersWorkload(deployments);
+        masters.forEach(workload => {
+            k.masters.push(this._getZmachineData(deployments, workload));
+        });
+        workers.forEach(workload => {
+            k.workers.push(this._getZmachineData(deployments, workload));
+        });
+        return k;
     }
     async get(options) {
         return await this._get(options.name);
@@ -131,9 +162,9 @@ class K8sModule extends base_1.BaseModule {
         const masterWorkload = masterWorkloads[0];
         const networkName = masterWorkload.data["network"].interfaces[0].network;
         const networkIpRange = (0, netaddr_1.Addr)(masterWorkload.data["network"].interfaces[0].ip).mask(16).toString();
-        const network = new network_1.Network(networkName, networkIpRange, this.rmbClient);
-        await network.load(true);
-        const [twinDeployments, _] = await this.kubernetes.add_worker(options.name, options.node_id, masterWorkload.data["env"]["K3S_TOKEN"], masterWorkload.data["network"]["interfaces"][0]["ip"], options.cpu, options.memory, options.rootfs_size, options.disk_size, options.public_ip, options.planetary, network, masterWorkload.data["env"]["SSH_KEY"], masterWorkload.metadata, masterWorkload.description);
+        const network = new network_1.Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
+        await network.load();
+        const [twinDeployments, _] = await this.kubernetes.add_worker(options.name, options.node_id, masterWorkload.data["env"]["K3S_TOKEN"], masterWorkload.data["network"]["interfaces"][0]["ip"], options.cpu, options.memory, options.rootfs_size, options.disk_size, options.public_ip, options.planetary, network, masterWorkload.data["env"]["SSH_KEY"], masterWorkload.metadata, masterWorkload.description, options.qsfs_disks, this.projectName);
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }
     async deleteWorker(options) {

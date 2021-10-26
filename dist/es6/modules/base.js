@@ -8,49 +8,60 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as PATH from "path";
+import { WorkloadTypes } from "../zos/workload";
 import { HighLevelBase } from "../high_level/base";
 import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { TwinDeployment, Operations } from "../high_level/models";
-import { loadFromFile, updatejson, appPath } from "../helpers/jsonfs";
-import { getNodeTwinId } from "../primitives/nodes";
+import { loadFromFile, updatejson } from "../helpers/jsonfs";
+import { Nodes } from "../primitives/nodes";
 import { DeploymentFactory } from "../primitives/deployment";
+import { TFClient } from "../tf-grid/client";
 class BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient) {
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
+        this.projectName = "";
         this.fileName = "";
+        this.workloadTypes = [];
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
+        this.projectName = projectName;
     }
-    save(name, contracts, wgConfig = "", action = "add") {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+    _load() {
+        const path = PATH.join(this.storePath, this.projectName, this.fileName);
+        return [path, loadFromFile(path)];
+    }
+    save(name, contracts, wgConfig = "") {
+        const [path, data] = this._load();
         let deploymentData = { contracts: [], wireguard_config: "" };
         if (Object.keys(data).includes(name)) {
             deploymentData = data[name];
         }
         for (const contract of contracts["created"]) {
-            deploymentData.contracts.push({ contract_id: contract["contract_id"], node_id: contract["contract_type"]["nodeContract"]["node_id"] });
+            deploymentData.contracts.push({
+                contract_id: contract["contract_id"],
+                node_id: contract["contract_type"]["nodeContract"]["node_id"],
+            });
         }
         for (const contract of contracts["deleted"]) {
             deploymentData.contracts = deploymentData.contracts.filter(c => c["contract_id"] !== contract["contract_id"]);
         }
-        if (action === "delete") {
-            for (const contract of contracts["updated"]) {
-                deploymentData.contracts = deploymentData.contracts.filter(c => c["contract_id"] !== contract["contract_id"]);
-            }
-        }
         if (wgConfig) {
             deploymentData["wireguard_config"] = wgConfig;
         }
-        updatejson(path, name, deploymentData);
+        if (deploymentData.contracts.length !== 0) {
+            updatejson(path, name, deploymentData);
+        }
+        else {
+            updatejson(path, name, deploymentData, "delete");
+        }
         return deploymentData;
     }
     _list() {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+        const [_, data] = this._load();
         return Object.keys(data);
     }
     exists(name) {
@@ -65,8 +76,7 @@ class BaseModule {
         return nodeIds;
     }
     _getContracts(name) {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+        const [_, data] = this._load();
         if (!Object.keys(data).includes(name)) {
             return [];
         }
@@ -88,16 +98,84 @@ class BaseModule {
             }
         }
     }
+    _getWorkloadsByType(deployments, type) {
+        const r = [];
+        for (const deployment of deployments) {
+            for (const workload of deployment.workloads) {
+                if (workload.type === type) {
+                    r.push(workload);
+                }
+            }
+        }
+        return r;
+    }
+    _getMachinePubIP(deployments, ipv4WorkloadName) {
+        const ipv4Workloads = this._getWorkloadsByType(deployments, WorkloadTypes.ipv4);
+        for (const workload of ipv4Workloads) {
+            if (workload.name === ipv4WorkloadName) {
+                return workload.result.data;
+            }
+        }
+        return null;
+    }
+    _getZmachineData(deployments, workload) {
+        const data = workload.data;
+        return {
+            version: workload.version,
+            name: workload.name,
+            created: workload.result.created,
+            status: workload.result.state,
+            message: workload.result.message,
+            flist: data.flist,
+            publicIP: this._getMachinePubIP(deployments, data.network.public_ip),
+            planetary: data.network.planetary,
+            yggIP: data.network.planetary ? workload.result.data.ygg_ip : "",
+            interfaces: data.network.interfaces.map(n => ({
+                network: n.network,
+                ip: n.ip,
+            })),
+            capacity: {
+                cpu: data.compute_capacity.cpu,
+                memory: data.compute_capacity.memory / (1024 * 1024), // MB
+            },
+            mounts: data.mounts.map(m => (Object.assign({ name: m.name, mountPoint: m.mountpoint }, this._getZMountData(deployments, m.name)))),
+            env: data.env,
+            entrypoint: data.entrypoint,
+            metadata: workload.metadata,
+            description: workload.description,
+        };
+    }
+    _getZMountData(deployments, name) {
+        for (const deployment of deployments) {
+            for (const workload of deployment.workloads) {
+                if (workload.type === WorkloadTypes.zmount && workload.name === name) {
+                    return { size: workload.data.size, state: workload.result.state, message: workload.result.message };
+                }
+            }
+        }
+    }
     _get(name) {
         return __awaiter(this, void 0, void 0, function* () {
-            const path = PATH.join(appPath, this.fileName);
-            const data = loadFromFile(path);
+            const [_, data] = this._load();
             if (!Object.keys(data).includes(name)) {
                 return [];
             }
             const deployments = [];
             for (const contract of data[name]["contracts"]) {
-                const node_twin_id = yield getNodeTwinId(contract["node_id"]);
+                const tfClient = new TFClient(this.url, this.mnemonic);
+                try {
+                    yield tfClient.connect();
+                    const c = yield tfClient.contracts.get(contract["contract_id"]);
+                    if (c.state !== "Created") {
+                        this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
+                        continue;
+                    }
+                }
+                finally {
+                    tfClient.disconnect();
+                }
+                const nodes = new Nodes(this.url);
+                const node_twin_id = yield nodes.getNodeTwinId(contract["node_id"]);
                 const payload = JSON.stringify({ contract_id: contract["contract_id"] });
                 const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
                 const messgae = yield this.rmbClient.send(msg, payload);
@@ -105,7 +183,20 @@ class BaseModule {
                 if (result[0].err) {
                     throw Error(String(result[0].err));
                 }
-                deployments.push(JSON.parse(String(result[0].dat)));
+                const deployment = JSON.parse(String(result[0].dat));
+                let found = false;
+                for (const workload of deployment.workloads) {
+                    if (this.workloadTypes.includes(workload.type) && workload.result.state !== "deleted") {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    deployments.push(deployment);
+                }
+                else {
+                    this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
+                }
             }
             return deployments;
         });
@@ -118,7 +209,7 @@ class BaseModule {
             const deploymentNodeIds = this._getDeploymentNodeIds(name);
             finalTwinDeployments = finalTwinDeployments.concat(twinDeployments.filter(d => !deploymentNodeIds.includes(d.nodeId)));
             for (let oldDeployment of oldDeployments) {
-                oldDeployment = this.deploymentFactory.fromObj(oldDeployment);
+                oldDeployment = yield this.deploymentFactory.fromObj(oldDeployment);
                 const node_id = this._getNodeIdFromContractId(name, oldDeployment.contract_id);
                 let deploymentFound = false;
                 for (const twinDeployment of twinDeployments) {
@@ -153,11 +244,11 @@ class BaseModule {
             const contract_id = this._getContractIdFromNodeId(deployment_name, node_id);
             if (contract_id) {
                 for (let oldDeployment of oldDeployments) {
-                    oldDeployment = this.deploymentFactory.fromObj(oldDeployment);
+                    oldDeployment = yield this.deploymentFactory.fromObj(oldDeployment);
                     if (oldDeployment.contract_id !== contract_id) {
                         continue;
                     }
-                    const newDeployment = this.deploymentFactory.fromObj(oldDeployment);
+                    const newDeployment = yield this.deploymentFactory.fromObj(oldDeployment);
                     newDeployment.workloads = newDeployment.workloads.concat(twinDeployment.deployment.workloads);
                     const deployment = yield this.deploymentFactory.UpdateDeployment(oldDeployment, newDeployment, network);
                     twinDeployment.deployment = deployment;
@@ -178,7 +269,8 @@ class BaseModule {
                 const twinDeployments = yield module.delete(deployment, [name]);
                 const contracts = yield this.twinDeploymentHandler.handle(twinDeployments);
                 if (contracts["deleted"].length > 0 || contracts["updated"].length > 0) {
-                    this.save(deployment_name, contracts, "", "delete");
+                    this.save(deployment_name, contracts, "");
+                    this._get(deployment_name);
                     return contracts;
                 }
             }
@@ -187,14 +279,13 @@ class BaseModule {
     }
     _delete(name) {
         return __awaiter(this, void 0, void 0, function* () {
-            const path = PATH.join(appPath, this.fileName);
-            const data = loadFromFile(path);
+            const [path, data] = this._load();
             const contracts = { deleted: [], updated: [] };
             if (!Object.keys(data).includes(name)) {
                 return contracts;
             }
             const deployments = yield this._get(name);
-            const highlvl = new HighLevelBase(this.twin_id, this.url, this.mnemonic, this.rmbClient);
+            const highlvl = new HighLevelBase(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
             for (const deployment of deployments) {
                 const twinDeployments = yield highlvl._delete(deployment, []);
                 const contract = yield this.twinDeploymentHandler.handle(twinDeployments);

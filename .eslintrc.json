@@ -17,6 +17,7 @@
     ],
     "rules": {
         "no-console": "off",
+        "no-async-promise-executor": "off",
         "prettier/prettier": "error"
     }
 }

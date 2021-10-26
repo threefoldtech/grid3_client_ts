@@ -1,17 +1,14 @@
+import { IsInt, Min } from "class-validator";
+import { Expose } from "class-transformer";
+
 class ComputeCapacity {
-    // cpu cores, minimal 10 cpu_centi_core
-    // always reserved with overprovisioning of about 1/4-1/6
-    cpu: number;
-    // memory in bytes, minimal 100 MB
-    // always reserved
-    memory: number;
-    // min disk size reserved (to make sure you have growth potential)
-    // when reserved it means you payment
-    // if you use more, you pay for it
-    challenge() {
+    @Expose() @IsInt() @Min(1) cpu: number;
+    @Expose() @IsInt() @Min(1024 * 1024 * 250) memory: number; // in bytes
+
+    challenge(): string {
         let out = "";
-        out += this.cpu || "";
-        out += this.memory || "";
+        out += this.cpu;
+        out += this.memory;
         return out;
     }
 }

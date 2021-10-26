@@ -1,4 +1,6 @@
 import { Deployment } from "../zos/deployment";
+import { PublicIPResult } from "../zos/ipv4";
+import { Workload, WorkloadTypes } from "../zos/workload";
 import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { TwinDeployment } from "../high_level/models";
 import { KubernetesHL } from "../high_level/kubernetes";
@@ -12,11 +14,15 @@ declare class BaseModule {
     url: string;
     mnemonic: string;
     rmbClient: MessageBusClientInterface;
+    storePath: string;
+    projectName: string;
     fileName: string;
+    workloadTypes: any[];
     deploymentFactory: DeploymentFactory;
     twinDeploymentHandler: TwinDeploymentHandler;
-    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
-    save(name: string, contracts: Record<string, unknown[]>, wgConfig?: string, action?: string): {
+    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string, projectName?: string);
+    _load(): any[];
+    save(name: string, contracts: Record<string, unknown[]>, wgConfig?: string): {
         contracts: any[];
         wireguard_config: string;
     };
@@ -26,6 +32,14 @@ declare class BaseModule {
     _getContracts(name: string): string[];
     _getContractIdFromNodeId(name: string, nodeId: number): number;
     _getNodeIdFromContractId(name: string, contractId: number): number;
+    _getWorkloadsByType(deployments: any, type: WorkloadTypes): Workload[];
+    _getMachinePubIP(deployments: any, ipv4WorkloadName: string): PublicIPResult;
+    _getZmachineData(deployments: any, workload: Workload): Record<string, unknown>;
+    _getZMountData(deployments: any, name: any): {
+        size: any;
+        state: any;
+        message: any;
+    };
     _get(name: string): Promise<any[]>;
     _update(module: KubernetesHL | ZdbHL | VMHL, name: string, oldDeployments: Deployment[], twinDeployments: TwinDeployment[], network?: Network): Promise<"Nothing found to update" | {
         contracts: {

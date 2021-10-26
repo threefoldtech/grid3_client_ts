@@ -10,13 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import * as PATH from "path";
 import { default as TweetNACL } from "tweetnacl";
 import { Buffer } from "buffer";
+import { plainToClass } from "class-transformer";
 import { Addr } from "netaddr";
-import { default as IP } from "ip";
+import { default as PrivateIp } from "private-ip";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Znet, Peer } from "../zos/znet";
-import { loadFromFile, dumpToFile, appPath } from "../helpers/jsonfs";
+import { loadFromFile, dumpToFile } from "../helpers/jsonfs";
 import { getRandomNumber } from "../helpers/utils";
-import { getNodeTwinId, getAccessNodes } from "./nodes";
+import { Nodes } from "./nodes";
 import { events } from "../helpers/events";
 class WireGuardKeys {
 }
@@ -28,10 +29,12 @@ class Node {
 class AccessPoint {
 }
 class Network {
-    constructor(name, ipRange, rmbClient) {
+    constructor(name, ipRange, rmbClient, storePath, url) {
         this.name = name;
         this.ipRange = ipRange;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
+        this.url = url;
         this.nodes = [];
         this.deployments = [];
         this.reservedSubnets = [];
@@ -50,7 +53,8 @@ class Network {
                 throw Error(`Node ${node_id} does not exist in the network. Please add it first`);
             }
             events.emit("logs", `Adding access to node ${node_id}`);
-            const accessNodes = yield getAccessNodes();
+            const nodes = new Nodes(this.url);
+            const accessNodes = yield nodes.getAccessNodes();
             if (Object.keys(accessNodes).includes(node_id.toString())) {
                 if (ipv4 && !accessNodes[node_id]["ipv4"]) {
                     throw Error(`Node ${node_id} does not have ipv4 public config.`);
@@ -157,7 +161,7 @@ class Network {
             }
         }
     }
-    load(deployments = false) {
+    load() {
         return __awaiter(this, void 0, void 0, function* () {
             const networks = this.getNetworks();
             if (!Object.keys(networks).includes(this.name)) {
@@ -169,45 +173,38 @@ class Network {
                 throw Error(`The same network name ${this.name} with different ip range is already exist`);
             }
             for (const node of network.nodes) {
-                const n = node;
-                this.nodes.push(n);
-            }
-            if (deployments) {
-                for (const node of this.nodes) {
-                    const node_twin_id = yield getNodeTwinId(node.node_id);
-                    const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
-                    const message = yield this.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
-                    const result = yield this.rmbClient.read(message);
-                    if (result[0].err) {
-                        console.error(`Could not load network deployment ${node.contract_id} due to error: ${result[0].err} `);
-                    }
-                    const res = JSON.parse(result[0].dat);
-                    res["node_id"] = node.node_id;
-                    this.deployments.push(res);
-                    for (const workload of res["workloads"]) {
-                        if (workload["type"] !== WorkloadTypes.network ||
-                            !Addr(this.ipRange).contains(Addr(workload["data"]["subnet"]))) {
-                            continue;
-                        }
-                        const znet = this._fromObj(workload["data"]);
-                        znet["node_id"] = node.node_id;
-                        this.networks.push(znet);
-                    }
+                const nodes = new Nodes(this.url);
+                const node_twin_id = yield nodes.getNodeTwinId(node.node_id);
+                const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
+                const message = yield this.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
+                const result = yield this.rmbClient.read(message);
+                if (result[0].err) {
+                    console.error(`Could not load network deployment ${node.contract_id} due to error: ${result[0].err} `);
                 }
-                yield this.getAccessPoints();
+                const res = JSON.parse(result[0].dat);
+                res["node_id"] = node.node_id;
+                for (const workload of res["workloads"]) {
+                    if (workload["type"] !== WorkloadTypes.network ||
+                        !Addr(this.ipRange).contains(Addr(workload["data"]["subnet"]))) {
+                        continue;
+                    }
+                    if (workload.result.state === "deleted") {
+                        continue;
+                    }
+                    const znet = this._fromObj(workload["data"]);
+                    znet["node_id"] = node.node_id;
+                    const n = node;
+                    this.nodes.push(n);
+                    this.networks.push(znet);
+                    this.deployments.push(res);
+                }
             }
+            yield this.getAccessPoints();
+            this.save();
         });
     }
     _fromObj(net) {
-        const znet = new Znet();
-        Object.assign(znet, net);
-        const peers = [];
-        for (const peer of znet.peers) {
-            const p = new Peer();
-            Object.assign(p, peer);
-            peers.push(p);
-        }
-        znet.peers = peers;
+        const znet = plainToClass(Znet, net);
         return znet;
     }
     exists() {
@@ -358,7 +355,7 @@ class Network {
         });
     }
     getNetworks() {
-        const path = PATH.join(appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         return loadFromFile(path);
     }
     getNetworkNames() {
@@ -367,7 +364,8 @@ class Network {
     }
     getFreePort(node_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const node_twin_id = yield getNodeTwinId(node_id);
+            const nodes = new Nodes(this.url);
+            const node_twin_id = yield nodes.getNodeTwinId(node_id);
             const msg = this.rmbClient.prepare("zos.network.list_wg_ports", [node_twin_id], 0, 2);
             const message = yield this.rmbClient.send(msg, "");
             const result = yield this.rmbClient.read(message);
@@ -380,11 +378,12 @@ class Network {
         });
     }
     isPrivateIP(ip) {
-        return IP.isPrivate(ip.split("/")[0]);
+        return PrivateIp(ip.split("/")[0]);
     }
     getNodeEndpoint(node_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const node_twin_id = yield getNodeTwinId(node_id);
+            const nodes = new Nodes(this.url);
+            const node_twin_id = yield nodes.getNodeTwinId(node_id);
             let msg = this.rmbClient.prepare("zos.network.public_config_get", [node_twin_id], 0, 2);
             let message = yield this.rmbClient.send(msg, "");
             let result = yield this.rmbClient.read(message);
@@ -433,50 +432,53 @@ AllowedIPs = ${this.ipRange}, ${networkIP}
 PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     }
     save(contract_id = 0, node_id = 0) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let network;
-            if (this.exists()) {
-                network = this.getNetworks()[this.name];
+        let network;
+        if (this.exists()) {
+            network = this.getNetworks()[this.name];
+        }
+        else {
+            network = {
+                ip_range: this.ipRange,
+                nodes: [],
+            };
+        }
+        if (this.nodes.length === 0) {
+            this.delete();
+            return;
+        }
+        const nodes = [];
+        for (const node of this.nodes) {
+            if (node.node_id === node_id) {
+                node.contract_id = contract_id;
             }
-            else {
-                network = {
-                    ip_range: this.ipRange,
-                    nodes: [],
-                };
+            if (!node.contract_id) {
+                continue;
             }
-            if (this.nodes.length === 0) {
-                this.delete();
-                return;
-            }
-            const nodes = [];
-            for (const node of this.nodes) {
-                if (node.node_id === node_id) {
-                    node.contract_id = contract_id;
-                }
-                if (!node.contract_id) {
-                    continue;
-                }
-                nodes.push({
-                    contract_id: node.contract_id,
-                    node_id: node.node_id,
-                    reserved_ips: this.getNodeReservedIps(node.node_id),
-                });
-            }
-            network.nodes = nodes;
+            nodes.push({
+                contract_id: node.contract_id,
+                node_id: node.node_id,
+                reserved_ips: this.getNodeReservedIps(node.node_id),
+            });
+        }
+        network.nodes = nodes;
+        if (nodes.length !== 0) {
             this._save(network);
-        });
+        }
+        else {
+            this.delete();
+        }
     }
     _save(network) {
         const networks = this.getNetworks();
         networks[this.name] = network;
-        const path = PATH.join(appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         dumpToFile(path, networks);
     }
     delete() {
         events.emit("logs", `Deleting network ${this.name}`);
         const networks = this.getNetworks();
         delete networks[this.name];
-        const path = PATH.join(appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         dumpToFile(path, networks);
     }
     generatePeers() {

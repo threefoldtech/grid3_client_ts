@@ -10,8 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { WorkloadTypes } from "../zos/workload";
 import { TFClient } from "../tf-grid/client";
 import { Operations } from "./models";
-import { getNodeTwinId } from "../primitives/index";
+import { Nodes } from "../primitives/index";
 import { events } from "../helpers/events";
+import { validateObject } from "../helpers/validator";
 class TwinDeploymentHandler {
     constructor(rmbClient, twin_id, url, mnemonic) {
         this.rmbClient = rmbClient;
@@ -30,7 +31,8 @@ class TwinDeploymentHandler {
             events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
             deployment.contract_id = contract["contract_id"];
             const payload = JSON.stringify(deployment);
-            const node_twin_id = yield getNodeTwinId(node_id);
+            const nodes = new Nodes(this.url);
+            const node_twin_id = yield nodes.getNodeTwinId(node_id);
             try {
                 const msg = this.rmbClient.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
                 const message = yield this.rmbClient.send(msg, payload);
@@ -59,7 +61,8 @@ class TwinDeploymentHandler {
             }
             events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
             const payload = JSON.stringify(deployment);
-            const node_twin_id = yield getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
+            const nodes = new Nodes(this.url);
+            const node_twin_id = yield nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
             try {
                 const msg = this.rmbClient.prepare("zos.deployment.update", [node_twin_id], 0, 2);
                 const message = yield this.rmbClient.send(msg, payload);
@@ -96,7 +99,8 @@ class TwinDeploymentHandler {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.tfclient.connect();
             const contract = yield this.tfclient.contracts.get(contract_id);
-            const node_twin_id = yield getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
+            const nodes = new Nodes(this.url);
+            const node_twin_id = yield nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
             const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
             const payload = { contract_id: contract_id };
             const message = yield this.rmbClient.send(msg, JSON.stringify(payload));
@@ -259,11 +263,20 @@ class TwinDeploymentHandler {
         deployments = deployments.concat(deletedDeployments);
         return deployments;
     }
+    validate(twinDeployments) {
+        return __awaiter(this, void 0, void 0, function* () {
+            for (const twinDeployment of twinDeployments) {
+                yield validateObject(twinDeployment.deployment);
+            }
+        });
+    }
     handle(twinDeployments) {
         return __awaiter(this, void 0, void 0, function* () {
             events.emit("logs", "Merging workloads");
             twinDeployments = this.merge(twinDeployments);
+            yield this.validate(twinDeployments);
             const contracts = { created: [], updated: [], deleted: [] };
+            //TODO: check if it can be done to save the deployment here instead of doing this in the module.
             for (const twinDeployment of twinDeployments) {
                 for (const workload of twinDeployment.deployment.workloads) {
                     if (!twinDeployment.network) {
@@ -281,7 +294,7 @@ class TwinDeploymentHandler {
                     twinDeployment.deployment.contract_id = contract["contract_id"];
                     contracts.created.push(contract);
                     if (twinDeployment.network) {
-                        yield twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
+                        twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
                     }
                     events.emit("logs", `A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contract_type"]["nodeContract"]["node_id"]}`);
                 }
@@ -291,7 +304,7 @@ class TwinDeploymentHandler {
                     const contract = yield this.update(twinDeployment.deployment, twinDeployment.publicIps);
                     contracts.updated.push(contract);
                     if (twinDeployment.network) {
-                        yield twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
+                        twinDeployment.network.save(contract["contract_id"], contract["contract_type"]["nodeContract"]["node_id"]);
                     }
                     events.emit("logs", `Deployment has been updated with contract_id: ${contract["contract_id"]}`);
                 }
@@ -300,7 +313,7 @@ class TwinDeploymentHandler {
                     const contract = yield this.delete(twinDeployment.deployment.contract_id);
                     contracts.deleted.push({ contract_id: contract });
                     if (twinDeployment.network) {
-                        yield twinDeployment.network.save();
+                        twinDeployment.network.save();
                     }
                     events.emit("logs", `Deployment has been deleted with contract_id: ${contract}`);
                 }

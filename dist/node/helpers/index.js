@@ -13,3 +13,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./utils"), exports);
 __exportStar(require("./jsonfs"), exports);
 __exportStar(require("./requests"), exports);
+__exportStar(require("./events"), exports);
+__exportStar(require("./validator"), exports);

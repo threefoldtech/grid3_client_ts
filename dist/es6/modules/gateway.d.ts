@@ -1,15 +1,18 @@
 import { BaseModule } from "./base";
 import { DeployGatewayFQDNModel, DeployGatewayNameModel } from "./models";
 import { GatewayHL } from "../high_level/gateway";
+import { WorkloadTypes } from "../zos/workload";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 declare class GWModule extends BaseModule {
     twin_id: number;
     url: string;
     mnemonic: string;
     rmbClient: MessageBusClientInterface;
+    storePath: string;
     fileName: string;
+    workloadTypes: WorkloadTypes[];
     gateway: GatewayHL;
-    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface);
+    constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string, projectName?: string);
     deploy_fqdn(options: DeployGatewayFQDNModel): Promise<{
         contracts: {
             created: any[];
@@ -24,6 +27,7 @@ declare class GWModule extends BaseModule {
             deleted: any[];
         };
     }>;
+    getObj(deploymentName: string): Promise<void>;
 }
 export { GWModule };
 //# sourceMappingURL=gateway.d.ts.map

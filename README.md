@@ -1,33 +1,21 @@
 # grid3_client_ts
 
+[![Build](https://github.com/threefoldtech/grid3_client_ts/actions/workflows/build.yml/badge.svg)](https://github.com/threefoldtech/grid3_client_ts/actions/workflows/build.yml)
+
 Github repo: [grid3_client_ts](https://github.com/threefoldtech/grid3_client_ts.git)
 
 ## Prerequisites
 
-- node
-- npm
+- node 14.4.0 or higher
+- npm 6.14.5 or higher
 
 ## Installation
 
 ```bash
-npm install typescript -g
-npm install
+npm install typescript yarn -g
+yarn install
 ```
 
-## How to run
+## Usage
 
-*note*: Before running any of the scripts, the twinid, nodes selection, and the mnemonics of the user should be added in the scripts themsevles (the flow is still being adjusted)
-
-- One virtual machine with ubuntu
-
-    ```bash
-    cd scripts
-    tsc test.ts && node test.js
-    ```
-
-- Two virtual machines with kubernetes master and worker nodes
-
-    ```bash
-    cd scripts
-    tsc test_kubernetes.ts && node test_kubernetes.js
-    ```
+see [scripts](./scripts/README.md)

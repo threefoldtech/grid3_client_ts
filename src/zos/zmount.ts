@@ -1,15 +1,17 @@
-// ssd mounts under zmachine
+import { IsInt, Min } from "class-validator";
+import { Expose } from "class-transformer";
 
-// ONLY possible on SSD
-class Zmount {
-    size: number; // bytes
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 
-    challenge() {
-        return this.size || "";
+class Zmount extends WorkloadData {
+    @Expose() @IsInt() @Min(1) size: number; // in bytes
+
+    challenge(): string {
+        return this.size.toString();
     }
 }
 
-class ZmountResult {
-    volume_id: string;
+class ZmountResult extends WorkloadDataResult {
+    @Expose() volume_id: string;
 }
 export { Zmount, ZmountResult };

@@ -14,14 +14,16 @@ import { TwinDeployment } from "../high_level/models";
 import { KubernetesHL } from "../high_level/kubernetes";
 import { Network } from "../primitives/network";
 class K8sModule extends BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient) {
-        super(twin_id, url, mnemonic, rmbClient);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
         this.fileName = "kubernetes.json";
-        this.kubernetes = new KubernetesHL(twin_id, url, mnemonic, rmbClient);
+        this.workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
+        this.kubernetes = new KubernetesHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
     _getMastersWorkload(deployments) {
         const workloads = [];
@@ -38,6 +40,21 @@ class K8sModule extends BaseModule {
         }
         return workloads;
     }
+    _getWorkersWorkload(deployments) {
+        const workloads = [];
+        for (const deployment of deployments) {
+            let d = deployment;
+            if (deployment instanceof TwinDeployment) {
+                d = deployment.deployment;
+            }
+            for (const workload of d.workloads) {
+                if (workload.type === WorkloadTypes.zmachine && workload.data["env"]["K3S_URL"] !== "") {
+                    workloads.push(workload);
+                }
+            }
+        }
+        return workloads;
+    }
     _getMastersIp(deployments) {
         const ips = [];
         const workloads = this._getMastersWorkload(deployments);
@@ -48,12 +65,12 @@ class K8sModule extends BaseModule {
     }
     _createDeployment(options, masterIps = []) {
         return __awaiter(this, void 0, void 0, function* () {
-            const network = new Network(options.network.name, options.network.ip_range, this.rmbClient);
-            yield network.load(true);
+            const network = new Network(options.network.name, options.network.ip_range, this.rmbClient, this.storePath, this.url);
+            yield network.load();
             let deployments = [];
             let wireguardConfig = "";
             for (const master of options.masters) {
-                const [twinDeployments, wgConfig] = yield this.kubernetes.add_master(master.name, master.node_id, options.secret, master.cpu, master.memory, master.rootfs_size, master.disk_size, master.public_ip, master.planetary, network, options.ssh_key, options.metadata, options.description);
+                const [twinDeployments, wgConfig] = yield this.kubernetes.add_master(master.name, master.node_id, options.secret, master.cpu, master.memory, master.rootfs_size, master.disk_size, master.public_ip, master.planetary, network, options.ssh_key, options.metadata, options.description, master.qsfs_disks, this.projectName);
                 deployments = deployments.concat(twinDeployments);
                 if (wgConfig) {
                     wireguardConfig = wgConfig;
@@ -88,6 +105,21 @@ class K8sModule extends BaseModule {
     }
     list() {
         return this._list();
+    }
+    getObj(deploymentName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const k = { masters: [], workers: [] };
+            const deployments = yield this._get(deploymentName);
+            const masters = this._getMastersWorkload(deployments);
+            const workers = this._getWorkersWorkload(deployments);
+            masters.forEach(workload => {
+                k.masters.push(this._getZmachineData(deployments, workload));
+            });
+            workers.forEach(workload => {
+                k.workers.push(this._getZmachineData(deployments, workload));
+            });
+            return k;
+        });
     }
     get(options) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -143,9 +175,9 @@ class K8sModule extends BaseModule {
             const masterWorkload = masterWorkloads[0];
             const networkName = masterWorkload.data["network"].interfaces[0].network;
             const networkIpRange = Addr(masterWorkload.data["network"].interfaces[0].ip).mask(16).toString();
-            const network = new Network(networkName, networkIpRange, this.rmbClient);
-            yield network.load(true);
-            const [twinDeployments, _] = yield this.kubernetes.add_worker(options.name, options.node_id, masterWorkload.data["env"]["K3S_TOKEN"], masterWorkload.data["network"]["interfaces"][0]["ip"], options.cpu, options.memory, options.rootfs_size, options.disk_size, options.public_ip, options.planetary, network, masterWorkload.data["env"]["SSH_KEY"], masterWorkload.metadata, masterWorkload.description);
+            const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
+            yield network.load();
+            const [twinDeployments, _] = yield this.kubernetes.add_worker(options.name, options.node_id, masterWorkload.data["env"]["K3S_TOKEN"], masterWorkload.data["network"]["interfaces"][0]["ip"], options.cpu, options.memory, options.rootfs_size, options.disk_size, options.public_ip, options.planetary, network, masterWorkload.data["env"]["SSH_KEY"], masterWorkload.metadata, masterWorkload.description, options.qsfs_disks, this.projectName);
             return yield this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
         });
     }

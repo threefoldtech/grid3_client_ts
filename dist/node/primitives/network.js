@@ -26,8 +26,9 @@ exports.Network = void 0;
 const PATH = __importStar(require("path"));
 const tweetnacl_1 = __importDefault(require("tweetnacl"));
 const buffer_1 = require("buffer");
+const class_transformer_1 = require("class-transformer");
 const netaddr_1 = require("netaddr");
-const ip_1 = __importDefault(require("ip"));
+const private_ip_1 = __importDefault(require("private-ip"));
 const workload_1 = require("../zos/workload");
 const znet_1 = require("../zos/znet");
 const jsonfs_1 = require("../helpers/jsonfs");
@@ -52,15 +53,19 @@ class Network {
     name;
     ipRange;
     rmbClient;
+    storePath;
+    url;
     nodes = [];
     deployments = [];
     reservedSubnets = [];
     networks = [];
     accessPoints = [];
-    constructor(name, ipRange, rmbClient) {
+    constructor(name, ipRange, rmbClient, storePath, url) {
         this.name = name;
         this.ipRange = ipRange;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
+        this.url = url;
         if ((0, netaddr_1.Addr)(ipRange).prefix !== 16) {
             throw Error("Network ip_range should be with prefix 16");
         }
@@ -73,7 +78,8 @@ class Network {
             throw Error(`Node ${node_id} does not exist in the network. Please add it first`);
         }
         events_1.events.emit("logs", `Adding access to node ${node_id}`);
-        const accessNodes = await (0, nodes_1.getAccessNodes)();
+        const nodes = new nodes_1.Nodes(this.url);
+        const accessNodes = await nodes.getAccessNodes();
         if (Object.keys(accessNodes).includes(node_id.toString())) {
             if (ipv4 && !accessNodes[node_id]["ipv4"]) {
                 throw Error(`Node ${node_id} does not have ipv4 public config.`);
@@ -177,7 +183,7 @@ class Network {
             }
         }
     }
-    async load(deployments = false) {
+    async load() {
         const networks = this.getNetworks();
         if (!Object.keys(networks).includes(this.name)) {
             return;
@@ -188,44 +194,37 @@ class Network {
             throw Error(`The same network name ${this.name} with different ip range is already exist`);
         }
         for (const node of network.nodes) {
-            const n = node;
-            this.nodes.push(n);
-        }
-        if (deployments) {
-            for (const node of this.nodes) {
-                const node_twin_id = await (0, nodes_1.getNodeTwinId)(node.node_id);
-                const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
-                const message = await this.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
-                const result = await this.rmbClient.read(message);
-                if (result[0].err) {
-                    console.error(`Could not load network deployment ${node.contract_id} due to error: ${result[0].err} `);
-                }
-                const res = JSON.parse(result[0].dat);
-                res["node_id"] = node.node_id;
-                this.deployments.push(res);
-                for (const workload of res["workloads"]) {
-                    if (workload["type"] !== workload_1.WorkloadTypes.network ||
-                        !(0, netaddr_1.Addr)(this.ipRange).contains((0, netaddr_1.Addr)(workload["data"]["subnet"]))) {
-                        continue;
-                    }
-                    const znet = this._fromObj(workload["data"]);
-                    znet["node_id"] = node.node_id;
-                    this.networks.push(znet);
-                }
+            const nodes = new nodes_1.Nodes(this.url);
+            const node_twin_id = await nodes.getNodeTwinId(node.node_id);
+            const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
+            const message = await this.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
+            const result = await this.rmbClient.read(message);
+            if (result[0].err) {
+                console.error(`Could not load network deployment ${node.contract_id} due to error: ${result[0].err} `);
             }
-            await this.getAccessPoints();
+            const res = JSON.parse(result[0].dat);
+            res["node_id"] = node.node_id;
+            for (const workload of res["workloads"]) {
+                if (workload["type"] !== workload_1.WorkloadTypes.network ||
+                    !(0, netaddr_1.Addr)(this.ipRange).contains((0, netaddr_1.Addr)(workload["data"]["subnet"]))) {
+                    continue;
+                }
+                if (workload.result.state === "deleted") {
+                    continue;
+                }
+                const znet = this._fromObj(workload["data"]);
+                znet["node_id"] = node.node_id;
+                const n = node;
+                this.nodes.push(n);
+                this.networks.push(znet);
+                this.deployments.push(res);
+            }
         }
+        await this.getAccessPoints();
+        this.save();
     }
     _fromObj(net) {
-        const znet = new znet_1.Znet();
-        Object.assign(znet, net);
-        const peers = [];
-        for (const peer of znet.peers) {
-            const p = new znet_1.Peer();
-            Object.assign(p, peer);
-            peers.push(p);
-        }
-        znet.peers = peers;
+        const znet = (0, class_transformer_1.plainToClass)(znet_1.Znet, net);
         return znet;
     }
     exists() {
@@ -372,7 +371,7 @@ class Network {
         return this.accessPoints;
     }
     getNetworks() {
-        const path = PATH.join(jsonfs_1.appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         return (0, jsonfs_1.loadFromFile)(path);
     }
     getNetworkNames() {
@@ -380,7 +379,8 @@ class Network {
         return Object.keys(networks);
     }
     async getFreePort(node_id) {
-        const node_twin_id = await (0, nodes_1.getNodeTwinId)(node_id);
+        const nodes = new nodes_1.Nodes(this.url);
+        const node_twin_id = await nodes.getNodeTwinId(node_id);
         const msg = this.rmbClient.prepare("zos.network.list_wg_ports", [node_twin_id], 0, 2);
         const message = await this.rmbClient.send(msg, "");
         const result = await this.rmbClient.read(message);
@@ -392,10 +392,11 @@ class Network {
         return port;
     }
     isPrivateIP(ip) {
-        return ip_1.default.isPrivate(ip.split("/")[0]);
+        return (0, private_ip_1.default)(ip.split("/")[0]);
     }
     async getNodeEndpoint(node_id) {
-        const node_twin_id = await (0, nodes_1.getNodeTwinId)(node_id);
+        const nodes = new nodes_1.Nodes(this.url);
+        const node_twin_id = await nodes.getNodeTwinId(node_id);
         let msg = this.rmbClient.prepare("zos.network.public_config_get", [node_twin_id], 0, 2);
         let message = await this.rmbClient.send(msg, "");
         let result = await this.rmbClient.read(message);
@@ -442,7 +443,7 @@ PrivateKey = ${userprivKey}\n\n[Peer]\nPublicKey = ${peerPubkey}
 AllowedIPs = ${this.ipRange}, ${networkIP}
 PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     }
-    async save(contract_id = 0, node_id = 0) {
+    save(contract_id = 0, node_id = 0) {
         let network;
         if (this.exists()) {
             network = this.getNetworks()[this.name];
@@ -472,19 +473,24 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
             });
         }
         network.nodes = nodes;
-        this._save(network);
+        if (nodes.length !== 0) {
+            this._save(network);
+        }
+        else {
+            this.delete();
+        }
     }
     _save(network) {
         const networks = this.getNetworks();
         networks[this.name] = network;
-        const path = PATH.join(jsonfs_1.appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         (0, jsonfs_1.dumpToFile)(path, networks);
     }
     delete() {
         events_1.events.emit("logs", `Deleting network ${this.name}`);
         const networks = this.getNetworks();
         delete networks[this.name];
-        const path = PATH.join(jsonfs_1.appPath, "network.json");
+        const path = PATH.join(this.storePath, "network.json");
         (0, jsonfs_1.dumpToFile)(path, networks);
     }
     async generatePeers() {

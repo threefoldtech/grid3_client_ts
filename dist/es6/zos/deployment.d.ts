@@ -20,15 +20,15 @@ declare class Deployment {
     twin_id: number;
     contract_id: number;
     expiration: number;
-    metadata: string;
-    description: string;
+    metadata: any;
+    description: any;
     workloads: Workload[];
     signature_requirement: SignatureRequirement;
     challenge(): string;
-    challenge_hash(): any;
-    from_hex(s: any): Uint8Array;
+    challenge_hash(): string;
+    from_hex(s: string): Uint8Array;
     to_hex(bs: any): string;
-    sign(twin_id: any, mnemonic: any, hash?: string): void;
+    sign(twin_id: number, mnemonic: string, hash?: string): void;
 }
 export { Deployment, SignatureRequirement, SignatureRequest };
 //# sourceMappingURL=deployment.d.ts.map

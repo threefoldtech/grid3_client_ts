@@ -1,25 +1,21 @@
-import { Zdb, ZdbModes, DeviceTypes } from "../zos/zdb";
+import { Zdb, ZdbModes } from "../zos/zdb";
 import { WorkloadTypes, Workload } from "../zos/workload";
 
 class ZdbPrimitive {
     create(
         name: string,
-        namespace: string,
         size: number,
         mode: ZdbModes = ZdbModes.seq,
         password: string,
-        type: DeviceTypes = DeviceTypes.hdd,
         pub: boolean,
         metadata = "",
         description = "",
         version = 0,
     ): Workload {
         const zdb = new Zdb();
-        zdb.namespace = namespace;
         zdb.size = size;
         zdb.mode = mode;
         zdb.password = password;
-        zdb.disk_type = type;
         zdb.public = pub;
 
         const zdb_workload = new Workload();
@@ -33,17 +29,15 @@ class ZdbPrimitive {
     }
     update(
         name: string,
-        namespace: string,
         size: number,
         mode: ZdbModes = ZdbModes.seq,
         password: string,
-        type: DeviceTypes = DeviceTypes.hdd,
         pub: boolean,
         metadata = "",
         description = "",
         version = 1,
     ): Workload {
-        return this.create(name, namespace, size, mode, password, type, pub, metadata, description, version);
+        return this.create(name, size, mode, password, pub, metadata, description, version);
     }
 }
 export { ZdbPrimitive };

@@ -4,10 +4,10 @@ declare class TFClient {
     client: any;
     contracts: Contracts;
     twins: Twins;
-    constructor(url: any, mnemonic: any);
+    constructor(url: string, mnemonic: string);
     connect(): Promise<void>;
     disconnect(): void;
-    applyExtrinsic(func: any, args: any, resultSecttion: any, resultName: any): Promise<unknown>;
+    applyExtrinsic(func: any, args: any, resultSecttion: string, resultName: string): Promise<unknown>;
 }
 export { TFClient };
 //# sourceMappingURL=client.d.ts.map

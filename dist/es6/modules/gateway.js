@@ -9,15 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { BaseModule } from "./base";
 import { GatewayHL } from "../high_level/gateway";
+import { WorkloadTypes } from "../zos/workload";
 class GWModule extends BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient) {
-        super(twin_id, url, mnemonic, rmbClient);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
         this.fileName = "gateway.json";
-        this.gateway = new GatewayHL(twin_id, url, mnemonic, rmbClient);
+        this.workloadTypes = [WorkloadTypes.gatewayfqdnproxy, WorkloadTypes.gatewaynameproxy];
+        this.gateway = new GatewayHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
     deploy_fqdn(options) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -39,6 +42,16 @@ class GWModule extends BaseModule {
             const contracts = yield this.twinDeploymentHandler.handle(twinDeployments);
             this.save(options.name, contracts);
             return { contracts: contracts };
+        });
+    }
+    getObj(deploymentName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const deployments = yield this._get(deploymentName);
+            const workloads = this._getWorkloadsByType(deployments, WorkloadTypes.gatewayfqdnproxy);
+            workloads.forEach(workload => {
+                const data = workload.data;
+                return Object.assign({ version: workload.version, name: workload.name, created: workload.result.created, status: workload.result.state, message: workload.result.message, fqdn: data.fqdn, tls_passthrough: data.tls_passthrough, backends: data.backends, metadata: workload.metadata, description: workload.description }, workload.result.data);
+            });
         });
     }
 }

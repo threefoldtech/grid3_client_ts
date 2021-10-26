@@ -11,15 +11,16 @@ import { WorkloadTypes } from "../zos/workload";
 import { Addr } from "netaddr";
 import { DeploymentFactory } from "../primitives/deployment";
 import { Network } from "../primitives/network";
-import { getNodeIdFromContractId } from "../primitives/nodes";
+import { Nodes } from "../primitives/nodes";
 import { TwinDeployment, Operations } from "../high_level/models";
 import { events } from "../helpers/events";
 class HighLevelBase {
-    constructor(twin_id, url, mnemonic, rmbClient) {
+    constructor(twin_id, url, mnemonic, rmbClient, storePath) {
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
     }
     _filterWorkloads(deployment, names, types = [WorkloadTypes.ipv4, WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.zdb]) {
         let deletedMachineWorkloads = [];
@@ -64,10 +65,12 @@ class HighLevelBase {
             for (const workload of deletedMachineWorkloads) {
                 const networkName = workload.data["network"].interfaces[0].network;
                 const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
-                const network = new Network(networkName, networkIpRange, this.rmbClient);
-                yield network.load(true);
+                const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
+                yield network.load();
                 const machineIp = workload.data["network"].interfaces[0].ip;
                 events.emit("logs", `Deleting ip: ${machineIp} from node: ${node_id}, network ${network.name}`);
+                //TODO: Reproduce: Sometimes the network is free and it keeps getting wrong result here
+                // so it doesn't delete the deployment, but it updates the deployment.
                 const deletedIp = network.deleteReservedIp(node_id, machineIp);
                 if (network.getNodeReservedIps(node_id).length !== 0) {
                     deletedIps.push(deletedIp);
@@ -92,7 +95,7 @@ class HighLevelBase {
                 else {
                     // check that the deployment doesn't have another workloads
                     for (let d of network.deployments) {
-                        d = deploymentFactory.fromObj(d);
+                        d = yield deploymentFactory.fromObj(d);
                         if (d.contract_id !== contract_id) {
                             continue;
                         }
@@ -109,7 +112,7 @@ class HighLevelBase {
                 if (network.nodes.length === 1 && network.getNodeReservedIps(network.nodes[0].node_id).length === 0) {
                     const contract_id = network.deleteNode(network.nodes[0].node_id);
                     for (let d of network.deployments) {
-                        d = deploymentFactory.fromObj(d);
+                        d = yield deploymentFactory.fromObj(d);
                         if (d.contract_id !== contract_id) {
                             continue;
                         }
@@ -131,11 +134,12 @@ class HighLevelBase {
             if (types.includes(WorkloadTypes.network)) {
                 throw Error("network can't be deleted");
             }
-            const node_id = yield getNodeIdFromContractId(deployment.contract_id, this.url, this.mnemonic);
+            const nodes = new Nodes(this.url);
+            const node_id = yield nodes.getNodeIdFromContractId(deployment.contract_id, this.mnemonic);
             let twinDeployments = [];
             const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
             const numberOfWorkloads = deployment.workloads.length;
-            deployment = deploymentFactory.fromObj(deployment);
+            deployment = yield deploymentFactory.fromObj(deployment);
             const filteredWorkloads = this._filterWorkloads(deployment, names, types);
             let remainingWorkloads = filteredWorkloads[0];
             const deletedMachineWorkloads = filteredWorkloads[1];
@@ -149,8 +153,8 @@ class HighLevelBase {
                 let network = null;
                 for (const workload of remainingWorkloads) {
                     if (workload.type === WorkloadTypes.network) {
-                        network = new Network(workload.name, workload.data["ip_range"], this.rmbClient);
-                        yield network.load(true);
+                        network = new Network(workload.name, workload.data["ip_range"], this.rmbClient, this.storePath, this.url);
+                        yield network.load();
                         break;
                     }
                 }

@@ -1,78 +1,59 @@
+import { IsString, IsNotEmpty, IsBoolean, IsDefined, IsInt, Min, ValidateNested } from "class-validator";
+import { Expose, Type } from "class-transformer";
+
 import { Workload } from "./workload";
 
 import { default as md5 } from "crypto-js/md5";
 import { Keyring } from "@polkadot/keyring";
 
 class SignatureRequest {
-    // unique id as used in TFGrid DB
-    twin_id: number;
-    // if put on required then this twin_id needs to sign
-    required = false;
-    // signing weight
-    weight: number;
+    @Expose() @IsInt() @Min(1) twin_id: number;
+    @Expose() @IsBoolean() required: boolean;
+    @Expose() @IsInt() @Min(1) weight: number;
 
-    challenge() {
+    challenge(): string {
         let out = "";
-        out += this.twin_id || "";
+        out += this.twin_id;
         out += this.required;
-        out += this.weight || "";
+        out += this.weight;
 
         return out;
     }
 }
 
-// Challenge computes challenge for SignatureRequest
-
 class Signature {
-    // unique id as used in TFGrid DB
-    twin_id: number;
-    // signature (done with private key of the twin_id)
-    signature = "";
+    @Expose() @IsInt() @Min(1) twin_id: number;
+    @Expose() @IsString() @IsNotEmpty() signature: string;
 }
 
 class SignatureRequirement {
-    // the requests which can allow to get to required quorum
-    requests: SignatureRequest[] = [];
-    // minimal weight which needs to be achieved to let this workload become valid
-    weight_required: number;
-    signatures: Signature[] = [];
+    @Expose() @Type(() => SignatureRequest) @ValidateNested({ each: true }) requests: SignatureRequest[] = [];
+    @Expose() @IsInt() @Min(1) weight_required: number;
+    @Expose() @Type(() => Signature) @ValidateNested({ each: true }) signatures: Signature[] = [];
 
-    // Challenge computes challenge for SignatureRequest
-    challenge() {
+    challenge(): string {
         let out = "";
 
         for (let i = 0; i < this.requests.length; i++) {
             out += this.requests[i].challenge();
         }
 
-        out += this.weight_required || "";
+        out += this.weight_required;
         return out;
     }
 }
 
-// deployment is given to each Zero-OS who needs to deploy something
-// the zero-os'es will only take out what is relevant for them
-// if signature not done on the main Deployment one, nothing will happen
 class Deployment {
-    // increments for each new interation of this model
-    // signature needs to be achieved when version goes up
-    version: number;
-    // the twin who is responsible for this deployment
-    twin_id: number;
-    // each deployment has unique id (in relation to originator)
-    contract_id: number;
-    // when the full workload will stop working
-    // default, 0 means no expiration
-    expiration: number;
-    metadata = "";
-    description = "";
+    @Expose() @IsInt() @Min(0) version: number;
+    @Expose() @IsInt() @Min(1) twin_id: number;
+    @Expose() contract_id: number;
+    @Expose() @IsInt() expiration: number;
+    @Expose() @IsString() @IsDefined() metadata;
+    @Expose() @IsString() @IsDefined() description;
+    @Expose() @Type(() => Workload) @ValidateNested({ each: true }) workloads: Workload[];
+    @Expose() @Type(() => SignatureRequirement) @ValidateNested() signature_requirement: SignatureRequirement;
 
-    // list of all worklaods
-    workloads: Workload[];
-
-    signature_requirement: SignatureRequirement;
-
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.version;
         out += this.twin_id || "";
@@ -87,20 +68,19 @@ class Deployment {
         out += this.signature_requirement.challenge();
         return out;
     }
-    // ChallengeHash computes the hash of the challenge signed
-    // by the user. used for validation
-    challenge_hash() {
+
+    challenge_hash(): string {
         return md5(this.challenge()).toString();
     }
 
-    from_hex(s) {
+    from_hex(s: string) {
         const result = new Uint8Array(s.length / 2);
         for (let i = 0; i < s.length / 2; i++) {
             result[i] = parseInt(s.substr(2 * i, 2), 16);
         }
         return result;
     }
-    to_hex(bs) {
+    to_hex(bs): string {
         const encoded = [];
         for (let i = 0; i < bs.length; i++) {
             encoded.push("0123456789abcdef"[(bs[i] >> 4) & 15]);
@@ -109,7 +89,7 @@ class Deployment {
         return encoded.join("");
     }
 
-    sign(twin_id, mnemonic, hash = "") {
+    sign(twin_id: number, mnemonic: string, hash = ""): void {
         const message = hash || this.challenge_hash();
         const message_bytes = this.from_hex(message);
 

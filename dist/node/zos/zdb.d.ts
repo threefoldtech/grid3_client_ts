@@ -1,25 +1,19 @@
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 declare enum ZdbModes {
     seq = "seq",
     user = "user"
 }
-declare enum DeviceTypes {
-    hdd = "hdd",
-    ssd = "ssd"
-}
-declare class Zdb {
-    namespace: string;
+declare class Zdb extends WorkloadData {
     size: number;
     mode: ZdbModes;
     password: string;
-    disk_type: DeviceTypes;
     public: boolean;
     challenge(): string;
 }
-declare class ZdbResult {
-    name: string;
-    namespace: string;
-    ips: string[];
-    port: number;
+declare class ZdbResult extends WorkloadDataResult {
+    Namespace: string;
+    IPs: string[];
+    Port: number;
 }
-export { Zdb, ZdbResult, ZdbModes, DeviceTypes };
+export { Zdb, ZdbResult, ZdbModes };
 //# sourceMappingURL=zdb.d.ts.map

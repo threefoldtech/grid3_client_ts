@@ -1,16 +1,20 @@
+import { IsString, IsNotEmpty, IsIP, IsBoolean, IsInt, Min, ValidateNested, IsDefined } from "class-validator";
+import { Expose, Type } from "class-transformer";
+
 import { ComputeCapacity } from "./computecapacity";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 
 class ZNetworkInterface {
-    network = "";
-    ip = "";
+    @Expose() @IsString() @IsNotEmpty() network: string;
+    @Expose() @IsIP() @IsNotEmpty() ip: string;
 }
 
 class ZmachineNetwork {
-    public_ip = "";
-    interfaces: ZNetworkInterface[] = [];
-    planetary = false;
+    @Expose() @IsString() @IsDefined() public_ip: string;
+    @Expose() @Type(() => ZNetworkInterface) @ValidateNested({ each: true }) interfaces: ZNetworkInterface[];
+    @Expose() @IsBoolean() planetary: boolean;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.public_ip;
         out += this.planetary.toString();
@@ -23,10 +27,10 @@ class ZmachineNetwork {
 }
 
 class Mount {
-    name = "";
-    mountpoint = "";
+    @Expose() @IsString() @IsNotEmpty() name: string;
+    @Expose() @IsString() @IsNotEmpty() mountpoint: string;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.name;
         out += this.mountpoint;
@@ -34,16 +38,16 @@ class Mount {
     }
 }
 
-class Zmachine {
-    flist = ""; // if full url means custom flist meant for containers, if just name should be an official vm
-    network: ZmachineNetwork;
-    size: number;
-    compute_capacity: ComputeCapacity;
-    mounts: Mount[] = [];
-    entrypoint = ""; //how to invoke that in a vm?
-    env: Record<string, unknown>; //environment for the zmachine
+class Zmachine extends WorkloadData {
+    @Expose() @IsString() @IsNotEmpty() flist: string;
+    @Expose() @Type(() => ZmachineNetwork) @ValidateNested() network: ZmachineNetwork;
+    @Expose() @IsInt() @Min(1024 * 1024 * 250) size: number; // in bytes
+    @Expose() @Type(() => ComputeCapacity) @ValidateNested() compute_capacity: ComputeCapacity;
+    @Expose() @Type(() => Mount) @ValidateNested({ each: true }) mounts: Mount[];
+    @Expose() @IsString() @IsNotEmpty() entrypoint: string;
+    @Expose() env: Record<string, unknown>;
 
-    challenge() {
+    challenge(): string {
         let out = "";
         out += this.flist;
         out += this.network.challenge();
@@ -62,11 +66,10 @@ class Zmachine {
     }
 }
 
-// response of the deployment
-class ZmachineResult {
-    // name unique per deployment, re-used in request & response
-    id = "";
-    ip = "";
+class ZmachineResult extends WorkloadDataResult {
+    @Expose() id: string;
+    @Expose() ip: string;
+    @Expose() ygg_ip: string;
 }
 
 export { Zmachine, ZmachineNetwork, ZNetworkInterface, Mount, ZmachineResult };

@@ -1,10 +1,10 @@
 class Contracts {
-    tfclient: any;
+    tfclient;
 
     constructor(client) {
         this.tfclient = client;
     }
-    async createNode(nodeID, hash, data, publicIPs) {
+    async createNode(nodeID: number, hash: string, data: string, publicIPs: number) {
         return this.tfclient.applyExtrinsic(
             this.tfclient.client.createNodeContract,
             [nodeID, data, hash, publicIPs],
@@ -13,7 +13,7 @@ class Contracts {
         );
     }
 
-    async createName(name) {
+    async createName(name: string) {
         return this.tfclient.applyExtrinsic(
             this.tfclient.client.createNameContract,
             [name],
@@ -22,7 +22,7 @@ class Contracts {
         );
     }
 
-    async updateNode(id, data, hash) {
+    async updateNode(id: number, data: string, hash: string) {
         return this.tfclient.applyExtrinsic(
             this.tfclient.client.updateNodeContract,
             [id, data, hash],
@@ -31,7 +31,7 @@ class Contracts {
         );
     }
 
-    async cancel(id) {
+    async cancel(id: number) {
         return this.tfclient.applyExtrinsic(
             this.tfclient.client.cancelContract,
             [id],
@@ -40,7 +40,7 @@ class Contracts {
         );
     }
 
-    async get(id) {
+    async get(id: number) {
         return this.tfclient.client.getContractByID(id);
     }
 }

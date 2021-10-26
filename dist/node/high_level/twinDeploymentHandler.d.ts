@@ -11,7 +11,7 @@ declare class TwinDeploymentHandler {
     deploy(deployment: Deployment, node_id: number, publicIps: number): Promise<any>;
     update(deployment: Deployment, publicIps: number): Promise<any>;
     delete(contract_id: number): Promise<number>;
-    getDeployment(contract_id: any): Promise<any>;
+    getDeployment(contract_id: number): Promise<any>;
     checkWorkload(workload: any, targetWorkload: any): boolean;
     waitForDeployment(twinDeployment: TwinDeployment, timeout?: number): Promise<boolean>;
     waitForDeployments(twinDeployments: TwinDeployment[], timeout?: number): Promise<boolean>;
@@ -19,6 +19,7 @@ declare class TwinDeploymentHandler {
     _updateToLatest(twinDeployments: TwinDeployment[]): TwinDeployment;
     updateMerge(twinDeployments: TwinDeployment[]): TwinDeployment[];
     merge(twinDeployments: TwinDeployment[]): TwinDeployment[];
+    validate(twinDeployments: TwinDeployment[]): Promise<void>;
     handle(twinDeployments: TwinDeployment[]): Promise<{
         created: any[];
         updated: any[];

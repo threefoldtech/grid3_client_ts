@@ -8,21 +8,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { BaseModule } from "./base";
+import { WorkloadTypes } from "../zos/workload";
 import { ZdbHL } from "../high_level/zdb";
 class ZdbsModule extends BaseModule {
-    constructor(twin_id, url, mnemonic, rmbClient) {
-        super(twin_id, url, mnemonic, rmbClient);
+    constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.twin_id = twin_id;
         this.url = url;
         this.mnemonic = mnemonic;
         this.rmbClient = rmbClient;
+        this.storePath = storePath;
         this.fileName = "zdbs.json";
-        this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient);
+        this.workloadTypes = [WorkloadTypes.zdb];
+        this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
     _createDeployment(options) {
         const twinDeployments = [];
         for (const instance of options.zdbs) {
-            const twinDeployment = this.zdb.create(instance.name, instance.node_id, instance.namespace, instance.disk_size, instance.disk_type, instance.mode, instance.password, instance.public, options.metadata, options.description);
+            const twinDeployment = this.zdb.create(instance.name, instance.node_id, instance.disk_size, instance.mode, instance.password, instance.public, options.metadata, options.description);
             twinDeployments.push(twinDeployment);
         }
         return twinDeployments;
@@ -40,6 +43,31 @@ class ZdbsModule extends BaseModule {
     }
     list() {
         return this._list();
+    }
+    getObj(deploymentName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const deployments = yield this._get(deploymentName);
+            const workloads = this._getWorkloadsByType(deployments, WorkloadTypes.zdb);
+            const ret = [];
+            for (const workload of workloads) {
+                const data = workload.data;
+                ret.push({
+                    version: workload.version,
+                    name: workload.name,
+                    created: workload.result.created,
+                    status: workload.result.state,
+                    message: workload.result.message,
+                    size: data.size,
+                    mode: data.mode,
+                    public: data.public,
+                    password: data.password,
+                    metadata: workload.metadata,
+                    description: workload.description,
+                    resData: workload.result.data,
+                });
+            }
+            return ret;
+        });
     }
     get(options) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -67,7 +95,7 @@ class ZdbsModule extends BaseModule {
                 throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
             }
             const oldDeployments = yield this._get(options.deployment_name);
-            const twinDeployment = this.zdb.create(options.name, options.node_id, options.namespace, options.disk_size, options.disk_type, options.mode, options.password, options.public, oldDeployments[0].metadata, oldDeployments[0].metadata);
+            const twinDeployment = this.zdb.create(options.name, options.node_id, options.disk_size, options.mode, options.password, options.public, oldDeployments[0].metadata, oldDeployments[0].metadata);
             return yield this._add(options.deployment_name, options.node_id, oldDeployments, [twinDeployment]);
         });
     }

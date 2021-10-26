@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as PATH from "path";
+import { WorkloadTypes } from "../zos/workload";
 import { HighLevelBase } from "../high_level/base";
 import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { TwinDeployment, Operations } from "../high_level/models";
@@ -94,6 +95,62 @@ class BaseModule {
         for (const contract of contracts) {
             if (contract["contract_id"] === contractId) {
                 return contract["node_id"];
+            }
+        }
+    }
+    _getWorkloadsByType(deployments, type) {
+        let r = [];
+        for (const deployment of deployments) {
+            for (const workload of deployment.workloads) {
+                if (workload.type === type) {
+                    r.push(workload);
+                }
+            }
+        }
+        return r;
+    }
+    _getMachinePubIP(deployments, ipv4WorkloadName) {
+        const ipv4Workloads = this._getWorkloadsByType(deployments, WorkloadTypes.ipv4);
+        for (const workload of ipv4Workloads) {
+            if (workload.name === ipv4WorkloadName) {
+                return workload.result.data;
+            }
+        }
+        return null;
+    }
+    _getZmachineData(deployments, workload) {
+        const data = workload.data;
+        return {
+            version: workload.version,
+            name: workload.name,
+            created: workload.result.created,
+            status: workload.result.state,
+            message: workload.result.message,
+            flist: data.flist,
+            publicIP: this._getMachinePubIP(deployments, data.network.public_ip),
+            planetary: data.network.planetary,
+            yggIP: data.network.planetary ? workload.result.data.ygg_ip : "",
+            interfaces: data.network.interfaces.map(n => ({
+                network: n.network,
+                ip: n.ip,
+            })),
+            capacity: {
+                cpu: data.compute_capacity.cpu,
+                memory: data.compute_capacity.memory / (1024 * 1024), // MB
+            },
+            mounts: data.mounts.map(m => (Object.assign({ name: m.name, mountPoint: m.mountpoint }, this._getZMountData(deployments, m.name)))),
+            env: data.env,
+            entrypoint: data.entrypoint,
+            metadata: workload.metadata,
+            description: workload.description,
+        };
+    }
+    _getZMountData(deployments, name) {
+        for (const deployment of deployments) {
+            for (const workload of deployment.workloads) {
+                if (workload.type === WorkloadTypes.zmount && workload.name === name) {
+                    return { size: workload.data.size, state: workload.result.state, message: workload.result.message };
+                }
             }
         }
     }

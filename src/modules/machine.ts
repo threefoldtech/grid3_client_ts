@@ -1,6 +1,7 @@
 import { Addr } from "netaddr";
 
 import { WorkloadTypes, Workload } from "../zos/workload";
+import { Zmachine } from "../zos/zmachine";
 
 import { BaseModule } from "./base";
 import { MachinesModel, MachinesDeleteModel, MachinesGetModel, AddMachineModel, DeleteMachineModel } from "./models";
@@ -60,16 +61,6 @@ class MachineModule extends BaseModule {
         return [twinDeployments, network, wireguardConfig];
     }
 
-    _getMachineWorkload(deployments): Workload {
-        for (const deployment of deployments) {
-            for (const workload of deployment.workloads) {
-                if (workload.type === WorkloadTypes.zmachine) {
-                    return workload;
-                }
-            }
-        }
-    }
-
     async deploy(options: MachinesModel) {
         if (this.exists(options.name)) {
             throw Error(`Another machine deployment with the same name ${options.name} is already exist`);
@@ -83,6 +74,13 @@ class MachineModule extends BaseModule {
 
     list() {
         return this._list();
+    }
+
+    async getObj(deploymentName: string) {
+        const deployments = await this._get(deploymentName);
+        const workloads = this._getWorkloadsByType(deployments, WorkloadTypes.zmachine);
+        
+        return workloads.map(workload => this._getZmachineData(deployments, workload));
     }
 
     async get(options: MachinesGetModel) {
@@ -99,7 +97,7 @@ class MachineModule extends BaseModule {
         }
 
         const oldDeployments = await this._get(options.name);
-        const workload = this._getMachineWorkload(oldDeployments);
+        const workload = this._getWorkloadsByType(oldDeployments, WorkloadTypes.zmachine)[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
         if (networkName !== options.network.name || networkIpRange !== options.network.ip_range) {
@@ -115,7 +113,7 @@ class MachineModule extends BaseModule {
             throw Error(`There is no machines deployment with name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
-        const workload = this._getMachineWorkload(oldDeployments);
+        const workload = this._getWorkloadsByType(oldDeployments, WorkloadTypes.zmachine)[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
         const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);

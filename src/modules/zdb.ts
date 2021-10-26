@@ -1,9 +1,10 @@
 import { BaseModule } from "./base";
 import { ZDBSModel, DeleteZDBModel, AddZDBModel, ZDBGetModel, ZDBDeleteModel } from "./models";
+import { WorkloadTypes } from "../zos/workload";
+import { Zdb, ZdbResult } from "../zos/zdb";
 import { ZdbHL } from "../high_level/zdb";
 import { TwinDeployment } from "../high_level/models";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
-import { WorkloadTypes } from "../zos/workload";
 
 class ZdbsModule extends BaseModule {
     fileName = "zdbs.json";
@@ -51,6 +52,30 @@ class ZdbsModule extends BaseModule {
 
     list() {
         return this._list();
+    }
+
+    async getObj(deploymentName: string) {
+        const deployments = await this._get(deploymentName);
+        const workloads = this._getWorkloadsByType(deployments, WorkloadTypes.zdb);
+        let ret = [];
+        for (const workload of workloads) {
+            const data = workload.data as Zdb;
+            ret.push({
+                version: workload.version,
+                name: workload.name,
+                created: workload.result.created,
+                status: workload.result.state,
+                message: workload.result.message,
+                size: data.size , // GB
+                mode: data.mode,
+                public: data.public,
+                password: data.password,
+                metadata: workload.metadata,
+                description: workload.description,
+                resData: workload.result.data as ZdbResult ,
+            });
+        }
+        return ret;
     }
 
     async get(options: ZDBGetModel) {

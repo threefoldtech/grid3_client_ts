@@ -1,4 +1,4 @@
-import { WorkloadTypes, Workload } from "../zos/workload";
+import { WorkloadTypes } from "../zos/workload";
 import { BaseModule } from "./base";
 import { MachinesModel, MachinesDeleteModel, MachinesGetModel, AddMachineModel, DeleteMachineModel } from "./models";
 import { Network } from "../primitives/network";
@@ -16,7 +16,6 @@ declare class MachineModule extends BaseModule {
     vm: VMHL;
     constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string, projectName?: string);
     _createDeloyment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]>;
-    _getMachineWorkload(deployments: any): Workload;
     deploy(options: MachinesModel): Promise<{
         contracts: {
             created: any[];
@@ -26,6 +25,7 @@ declare class MachineModule extends BaseModule {
         wireguard_config: string;
     }>;
     list(): string[];
+    getObj(deploymentName: string): Promise<Record<string, unknown>[]>;
     get(options: MachinesGetModel): Promise<any[]>;
     delete(options: MachinesDeleteModel): Promise<{
         deleted: any[];

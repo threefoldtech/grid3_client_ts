@@ -1,6 +1,9 @@
 import * as PATH from "path";
 
 import { Deployment } from "../zos/deployment";
+import { PublicIPResult } from "../zos/ipv4";
+import { Zmachine, ZmachineResult } from "../zos/zmachine";
+import { Workload, WorkloadTypes } from "../zos/workload";
 
 import { HighLevelBase } from "../high_level/base";
 import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
@@ -28,7 +31,7 @@ class BaseModule {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName = "",
+        projectName: string = "",
     ) {
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
@@ -109,6 +112,70 @@ class BaseModule {
         for (const contract of contracts) {
             if (contract["contract_id"] === contractId) {
                 return contract["node_id"];
+            }
+        }
+    }
+
+    _getWorkloadsByType(deployments, type: WorkloadTypes): Workload[] {
+        let r = [];
+        for (const deployment of deployments) {
+            for (const workload of deployment.workloads) {
+                if (workload.type === type) {
+                    r.push(workload);
+                }
+            }
+        }
+        return r;
+    }
+
+    _getMachinePubIP(deployments, ipv4WorkloadName: string): PublicIPResult {
+        const ipv4Workloads = this._getWorkloadsByType(deployments, WorkloadTypes.ipv4);
+        for (const workload of ipv4Workloads){
+            if (workload.name === ipv4WorkloadName){
+                return workload.result.data as PublicIPResult
+            }
+        }
+        return null;
+    }
+
+    _getZmachineData(deployments, workload: Workload): Record<string, unknown> {
+        const data = workload.data as Zmachine;
+        return {
+            version: workload.version,
+            name: workload.name,
+            created: workload.result.created,
+            status: workload.result.state,
+            message: workload.result.message,
+            flist: data.flist,
+            publicIP: this._getMachinePubIP(deployments, data.network.public_ip),
+            planetary: data.network.planetary,
+            yggIP: data.network.planetary ? (workload.result.data as ZmachineResult).ygg_ip : "",
+            interfaces: data.network.interfaces.map(n => ({
+                network: n.network,
+                ip: n.ip,
+            })),
+            capacity: {
+                cpu: data.compute_capacity.cpu,
+                memory: data.compute_capacity.memory / (1024 * 1024), // MB
+            },
+            mounts: data.mounts.map(m => ({
+                name: m.name,
+                mountPoint: m.mountpoint,
+                ...this._getZMountData(deployments, m.name),
+            })),
+            env: data.env,
+            entrypoint: data.entrypoint,
+            metadata: workload.metadata,
+            description: workload.description,
+        };
+    }
+
+    _getZMountData(deployments, name) {
+        for (const deployment of deployments) {
+            for (const workload of deployment.workloads) {
+                if (workload.type === WorkloadTypes.zmount && workload.name === name) {
+                    return { size: workload.data.size, state: workload.result.state, message: workload.result.message };
+                }
             }
         }
     }

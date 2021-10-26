@@ -16,6 +16,7 @@ declare class K8sModule extends BaseModule {
     kubernetes: KubernetesHL;
     constructor(twin_id: number, url: string, mnemonic: string, rmbClient: MessageBusClientInterface, storePath: string, projectName?: string);
     _getMastersWorkload(deployments: any): Workload[];
+    _getWorkersWorkload(deployments: any): Workload[];
     _getMastersIp(deployments: any): string[];
     _createDeployment(options: K8SModel, masterIps?: string[]): Promise<[TwinDeployment[], Network, string]>;
     deploy(options: K8SModel): Promise<{
@@ -27,6 +28,10 @@ declare class K8sModule extends BaseModule {
         wireguard_config: string;
     }>;
     list(): string[];
+    getObj(deploymentName: string): Promise<{
+        masters: any[];
+        workers: any[];
+    }>;
     get(options: K8SGetModel): Promise<any[]>;
     delete(options: K8SDeleteModel): Promise<{
         deleted: any[];

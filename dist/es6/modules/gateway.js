@@ -44,5 +44,15 @@ class GWModule extends BaseModule {
             return { contracts: contracts };
         });
     }
+    getObj(deploymentName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const deployments = yield this._get(deploymentName);
+            const workloads = this._getWorkloadsByType(deployments, WorkloadTypes.gatewayfqdnproxy);
+            workloads.forEach(workload => {
+                const data = workload.data;
+                return Object.assign({ version: workload.version, name: workload.name, created: workload.result.created, status: workload.result.state, message: workload.result.message, fqdn: data.fqdn, tls_passthrough: data.tls_passthrough, backends: data.backends, metadata: workload.metadata, description: workload.description }, workload.result.data);
+            });
+        });
+    }
 }
 export { GWModule };

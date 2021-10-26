@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { BaseModule } from "./base";
-import { ZdbHL } from "../high_level/zdb";
 import { WorkloadTypes } from "../zos/workload";
+import { ZdbHL } from "../high_level/zdb";
 class ZdbsModule extends BaseModule {
     constructor(twin_id, url, mnemonic, rmbClient, storePath, projectName = "") {
         super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
@@ -43,6 +43,31 @@ class ZdbsModule extends BaseModule {
     }
     list() {
         return this._list();
+    }
+    getObj(deploymentName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const deployments = yield this._get(deploymentName);
+            const workloads = this._getWorkloadsByType(deployments, WorkloadTypes.zdb);
+            let ret = [];
+            for (const workload of workloads) {
+                const data = workload.data;
+                ret.push({
+                    version: workload.version,
+                    name: workload.name,
+                    created: workload.result.created,
+                    status: workload.result.state,
+                    message: workload.result.message,
+                    size: data.size,
+                    mode: data.mode,
+                    public: data.public,
+                    password: data.password,
+                    metadata: workload.metadata,
+                    description: workload.description,
+                    resData: workload.result.data,
+                });
+            }
+            return ret;
+        });
     }
     get(options) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -40,6 +40,21 @@ class K8sModule extends BaseModule {
         }
         return workloads;
     }
+    _getWorkersWorkload(deployments) {
+        const workloads = [];
+        for (const deployment of deployments) {
+            let d = deployment;
+            if (deployment instanceof TwinDeployment) {
+                d = deployment.deployment;
+            }
+            for (const workload of d.workloads) {
+                if (workload.type === WorkloadTypes.zmachine && workload.data["env"]["K3S_URL"] !== "") {
+                    workloads.push(workload);
+                }
+            }
+        }
+        return workloads;
+    }
     _getMastersIp(deployments) {
         const ips = [];
         const workloads = this._getMastersWorkload(deployments);
@@ -90,6 +105,21 @@ class K8sModule extends BaseModule {
     }
     list() {
         return this._list();
+    }
+    getObj(deploymentName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let k = { masters: [], workers: [] };
+            const deployments = yield this._get(deploymentName);
+            const masters = this._getMastersWorkload(deployments);
+            const workers = this._getWorkersWorkload(deployments);
+            masters.forEach(workload => {
+                k.masters.push(this._getZmachineData(deployments, workload));
+            });
+            workers.forEach(workload => {
+                k.workers.push(this._getZmachineData(deployments, workload));
+            });
+            return k;
+        });
     }
     get(options) {
         return __awaiter(this, void 0, void 0, function* () {

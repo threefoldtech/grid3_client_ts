@@ -1,4 +1,5 @@
 import { Workload, WorkloadTypes } from "../zos/workload";
+import { Zmachine } from "../zos/zmachine";
 import { Addr } from "netaddr";
 
 import { AddWorkerModel, DeleteWorkerModel, K8SModel, K8SDeleteModel, K8SGetModel } from "./models";
@@ -34,6 +35,22 @@ class K8sModule extends BaseModule {
             }
             for (const workload of d.workloads) {
                 if (workload.type === WorkloadTypes.zmachine && workload.data["env"]["K3S_URL"] === "") {
+                    workloads.push(workload);
+                }
+            }
+        }
+        return workloads;
+    }
+
+    _getWorkersWorkload(deployments): Workload[] {
+        const workloads = [];
+        for (const deployment of deployments) {
+            let d = deployment;
+            if (deployment instanceof TwinDeployment) {
+                d = deployment.deployment;
+            }
+            for (const workload of d.workloads) {
+                if (workload.type === WorkloadTypes.zmachine && workload.data["env"]["K3S_URL"] !== "") {
                     workloads.push(workload);
                 }
             }
@@ -133,6 +150,20 @@ class K8sModule extends BaseModule {
 
     list() {
         return this._list();
+    }
+
+    async getObj(deploymentName: string) {
+        let k = { masters: [], workers: [] };
+        const deployments = await this._get(deploymentName);
+        const masters = this._getMastersWorkload(deployments);
+        const workers = this._getWorkersWorkload(deployments);
+        masters.forEach(workload => {
+            k.masters.push(this._getZmachineData(deployments, workload));
+        });
+        workers.forEach(workload => {
+            k.workers.push(this._getZmachineData(deployments, workload));
+        });
+        return k;
     }
 
     async get(options: K8SGetModel) {

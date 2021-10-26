@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ZdbsModule = void 0;
 const base_1 = require("./base");
-const zdb_1 = require("../high_level/zdb");
 const workload_1 = require("../zos/workload");
+const zdb_1 = require("../high_level/zdb");
 class ZdbsModule extends base_1.BaseModule {
     twin_id;
     url;
@@ -41,6 +41,29 @@ class ZdbsModule extends base_1.BaseModule {
     }
     list() {
         return this._list();
+    }
+    async getObj(deploymentName) {
+        const deployments = await this._get(deploymentName);
+        const workloads = this._getWorkloadsByType(deployments, workload_1.WorkloadTypes.zdb);
+        let ret = [];
+        for (const workload of workloads) {
+            const data = workload.data;
+            ret.push({
+                version: workload.version,
+                name: workload.name,
+                created: workload.result.created,
+                status: workload.result.state,
+                message: workload.result.message,
+                size: data.size,
+                mode: data.mode,
+                public: data.public,
+                password: data.password,
+                metadata: workload.metadata,
+                description: workload.description,
+                resData: workload.result.data,
+            });
+        }
+        return ret;
     }
     async get(options) {
         return await this._get(options.name);

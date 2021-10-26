@@ -39,15 +39,6 @@ class MachineModule extends base_1.BaseModule {
         }
         return [twinDeployments, network, wireguardConfig];
     }
-    _getMachineWorkload(deployments) {
-        for (const deployment of deployments) {
-            for (const workload of deployment.workloads) {
-                if (workload.type === workload_1.WorkloadTypes.zmachine) {
-                    return workload;
-                }
-            }
-        }
-    }
     async deploy(options) {
         if (this.exists(options.name)) {
             throw Error(`Another machine deployment with the same name ${options.name} is already exist`);
@@ -60,6 +51,11 @@ class MachineModule extends base_1.BaseModule {
     list() {
         return this._list();
     }
+    async getObj(deploymentName) {
+        const deployments = await this._get(deploymentName);
+        const workloads = this._getWorkloadsByType(deployments, workload_1.WorkloadTypes.zmachine);
+        return workloads.map(workload => this._getZmachineData(deployments, workload));
+    }
     async get(options) {
         return await this._get(options.name);
     }
@@ -71,7 +67,7 @@ class MachineModule extends base_1.BaseModule {
             throw Error(`There is no machine with name: ${options.name}`);
         }
         const oldDeployments = await this._get(options.name);
-        const workload = this._getMachineWorkload(oldDeployments);
+        const workload = this._getWorkloadsByType(oldDeployments, workload_1.WorkloadTypes.zmachine)[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = (0, netaddr_1.Addr)(workload.data["network"].interfaces[0].ip).mask(16).toString();
         if (networkName !== options.network.name || networkIpRange !== options.network.ip_range) {
@@ -85,7 +81,7 @@ class MachineModule extends base_1.BaseModule {
             throw Error(`There is no machines deployment with name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
-        const workload = this._getMachineWorkload(oldDeployments);
+        const workload = this._getWorkloadsByType(oldDeployments, workload_1.WorkloadTypes.zmachine)[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = (0, netaddr_1.Addr)(workload.data["network"].interfaces[0].ip).mask(16).toString();
         const network = new network_1.Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);

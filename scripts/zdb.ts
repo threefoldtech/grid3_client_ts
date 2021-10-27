@@ -13,7 +13,7 @@ zdb.name = "hamada";
 zdb.node_id = 18;
 zdb.mode = ZdbModes.user;
 zdb.disk_size = 9;
-zdb.public = false;
+zdb.public_ipv6 = false;
 zdb.password = "testzdb";
 
 // create zdbs object

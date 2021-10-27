@@ -14,6 +14,9 @@ class QSFSDisk {
     name;
     prefix;
     encryption_key;
+    cache; // in GB
+    minimal_shards;
+    expected_shards;
     mountpoint;
 }
 exports.QSFSDisk = QSFSDisk;
@@ -106,7 +109,7 @@ class ZDBModel {
     node_id;
     mode;
     disk_size;
-    public;
+    public_ipv6;
     password;
 }
 exports.ZDBModel = ZDBModel;

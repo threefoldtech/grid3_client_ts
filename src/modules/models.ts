@@ -13,6 +13,9 @@ class QSFSDisk {
     name: string;
     prefix: string;
     encryption_key: string;
+    cache: number; // in GB
+    minimal_shards: number;
+    expected_shards: number;
     mountpoint: string;
 }
 
@@ -102,7 +105,7 @@ class ZDBModel {
     node_id: number;
     mode: ZdbModes;
     disk_size: number;
-    public: boolean;
+    public_ipv6: boolean;
     password: string;
 }
 

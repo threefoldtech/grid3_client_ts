@@ -25,7 +25,7 @@ class ZdbsModule extends base_1.BaseModule {
     _createDeployment(options) {
         const twinDeployments = [];
         for (const instance of options.zdbs) {
-            const twinDeployment = this.zdb.create(instance.name, instance.node_id, instance.disk_size, instance.mode, instance.password, instance.public, options.metadata, options.description);
+            const twinDeployment = this.zdb.create(instance.name, instance.node_id, instance.disk_size, instance.mode, instance.password, instance.public_ipv6, options.metadata, options.description);
             twinDeployments.push(twinDeployment);
         }
         return twinDeployments;
@@ -84,7 +84,7 @@ class ZdbsModule extends base_1.BaseModule {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
-        const twinDeployment = this.zdb.create(options.name, options.node_id, options.disk_size, options.mode, options.password, options.public, oldDeployments[0].metadata, oldDeployments[0].metadata);
+        const twinDeployment = this.zdb.create(options.name, options.node_id, options.disk_size, options.mode, options.password, options.public_ipv6, oldDeployments[0].metadata, oldDeployments[0].metadata);
         return await this._add(options.deployment_name, options.node_id, oldDeployments, [twinDeployment]);
     }
     async deleteZdb(options) {

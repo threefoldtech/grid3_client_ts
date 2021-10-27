@@ -16,9 +16,9 @@ class QSFSPrimitive {
         mount.mountpoint = mountpoint;
         return mount;
     }
-    create(name, minimalShards, expectedShards, metaPrefix, metaBackends, groups, encryptionKey, metaType = "zdb", cache = 1, // 1 GB for qsfs
+    create(name, minimalShards, expectedShards, metaPrefix, metaBackends, groups, encryptionKey, cache = 1, // 1 GB for qsfs
     maxZdbDataDirSize = 32, // in MB
-    redundantGroups = 0, redundantNodes = 0, encryptionAlgorithm = "AES", compressionAlgorithm = "snappy", metadata = "", description = "", version = 0) {
+    metaType = "zdb", redundantGroups = 0, redundantNodes = 0, encryptionAlgorithm = "AES", compressionAlgorithm = "snappy", metadata = "", description = "", version = 0) {
         const key = (0, md5_1.default)(encryptionKey).toString();
         const hexKey = buffer_1.Buffer.from(key).toString("hex");
         const encryption = new qsfs_1.Encryption();

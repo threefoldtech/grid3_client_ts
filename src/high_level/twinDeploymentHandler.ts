@@ -1,5 +1,5 @@
 import { Deployment } from "../zos/deployment";
-import { WorkloadTypes } from "../zos/workload";
+import { WorkloadTypes, Workload } from "../zos/workload";
 import { TFClient } from "../tf-grid/client";
 
 import { Operations, TwinDeployment } from "./models";
@@ -84,7 +84,7 @@ class TwinDeploymentHandler {
         return contract_id;
     }
 
-    async getDeployment(contract_id: number, node_twin_id) {
+    async getDeployment(contract_id: number, node_twin_id: number) {
         const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
         const payload = { contract_id: contract_id };
         const message = await this.rmbClient.send(msg, JSON.stringify(payload));
@@ -96,7 +96,7 @@ class TwinDeploymentHandler {
         return res;
     }
 
-    checkWorkload(workload, targetWorkload) {
+    checkWorkload(workload: Workload, targetWorkload: Workload): boolean {
         let state = false;
         if (workload.result.state === "error") {
             throw Error(

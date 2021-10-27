@@ -1,4 +1,5 @@
 import { Deployment } from "../zos/deployment";
+import { Workload } from "../zos/workload";
 import { TFClient } from "../tf-grid/client";
 import { TwinDeployment } from "./models";
 declare class TwinDeploymentHandler {
@@ -11,8 +12,8 @@ declare class TwinDeploymentHandler {
     deploy(deployment: Deployment, node_id: number, publicIps: number): Promise<any>;
     update(deployment: Deployment, publicIps: number): Promise<any>;
     delete(contract_id: number): Promise<number>;
-    getDeployment(contract_id: number, node_twin_id: any): Promise<any>;
-    checkWorkload(workload: any, targetWorkload: any): boolean;
+    getDeployment(contract_id: number, node_twin_id: number): Promise<any>;
+    checkWorkload(workload: Workload, targetWorkload: Workload): boolean;
     waitForDeployment(twinDeployment: TwinDeployment, timeout?: number): Promise<boolean>;
     waitForDeployments(twinDeployments: TwinDeployment[], timeout?: number): Promise<boolean>;
     deployMerge(twinDeployments: TwinDeployment[]): TwinDeployment[];

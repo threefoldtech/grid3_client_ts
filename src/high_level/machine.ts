@@ -87,7 +87,7 @@ class VMHL extends HighLevelBase {
                 qsfsZdbs.meta,
                 [groups],
                 d.encryption_key,
-                d.cache
+                d.cache,
             );
             workloads.push(qsfsWorkload);
             diskMounts.push(disk.createMount(d.name, d.mountpoint));

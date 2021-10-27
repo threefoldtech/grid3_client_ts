@@ -63,8 +63,20 @@ class VMHL extends HighLevelBase {
                     `Couldn't find a qsfs zdbs with name ${d.qsfs_zdbs_name}. Please create one with qsfs_zdbs module`,
                 );
             }
-            const minimalShards = Math.ceil((qsfsZdbs.groups.length * 3) / 5);
-            const expectedShards = qsfsZdbs.groups.length;
+            let minimalShards = Math.ceil((qsfsZdbs.groups.length * 3) / 5);
+            let expectedShards = qsfsZdbs.groups.length;
+            if (d.minimal_shards) {
+                minimalShards = d.minimal_shards;
+                if (minimalShards >= qsfsZdbs.groups.length) {
+                    throw Error("Minimal shards can't be more than the number of zdbs in qsfs_zdbs deployment");
+                }
+            }
+            if (d.expected_shards) {
+                expectedShards = d.expected_shards;
+                if (expectedShards >= qsfsZdbs.groups.length) {
+                    throw Error("Expected shards can't be more than the number of zdbs in qsfs_zdbs deployment");
+                }
+            }
             const groups = new ZdbGroup();
             groups.backends = qsfsZdbs.groups;
             const qsfsWorkload = qsfsPrimitive.create(
@@ -75,6 +87,7 @@ class VMHL extends HighLevelBase {
                 qsfsZdbs.meta,
                 [groups],
                 d.encryption_key,
+                d.cache
             );
             workloads.push(qsfsWorkload);
             diskMounts.push(disk.createMount(d.name, d.mountpoint));

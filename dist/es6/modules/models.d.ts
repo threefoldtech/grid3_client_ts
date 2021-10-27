@@ -10,6 +10,9 @@ declare class QSFSDisk {
     name: string;
     prefix: string;
     encryption_key: string;
+    cache: number;
+    minimal_shards: number;
+    expected_shards: number;
     mountpoint: string;
 }
 declare class NetworkModel {
@@ -88,7 +91,7 @@ declare class ZDBModel {
     node_id: number;
     mode: ZdbModes;
     disk_size: number;
-    public: boolean;
+    public_ipv6: boolean;
     password: string;
 }
 declare class ZDBSModel {

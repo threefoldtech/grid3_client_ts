@@ -31,7 +31,7 @@ class ZdbsModule extends BaseModule {
                 instance.disk_size,
                 instance.mode,
                 instance.password,
-                instance.public,
+                instance.public_ipv6,
                 options.metadata,
                 options.description,
             );
@@ -106,7 +106,7 @@ class ZdbsModule extends BaseModule {
             options.disk_size,
             options.mode,
             options.password,
-            options.public,
+            options.public_ipv6,
             oldDeployments[0].metadata,
             oldDeployments[0].metadata,
         );

@@ -29,9 +29,9 @@ class QSFSPrimitive {
         metaBackends: ZdbBackend[],
         groups: ZdbGroup[],
         encryptionKey: string,
-        metaType = "zdb",
         cache = 1, // 1 GB for qsfs
         maxZdbDataDirSize = 32, // in MB
+        metaType = "zdb",
         redundantGroups = 0,
         redundantNodes = 0,
         encryptionAlgorithm = "AES",

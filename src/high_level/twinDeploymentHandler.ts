@@ -84,11 +84,7 @@ class TwinDeploymentHandler {
         return contract_id;
     }
 
-    async getDeployment(contract_id: number) {
-        await this.tfclient.connect();
-        const contract = await this.tfclient.contracts.get(contract_id);
-        const nodes = new Nodes(this.url);
-        const node_twin_id = await nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
+    async getDeployment(contract_id: number, node_twin_id) {
         const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
         const payload = { contract_id: contract_id };
         const message = await this.rmbClient.send(msg, JSON.stringify(payload));
@@ -116,11 +112,17 @@ class TwinDeploymentHandler {
     }
 
     async waitForDeployment(twinDeployment: TwinDeployment, timeout = 5) {
+        const contract_id = twinDeployment.deployment.contract_id;
+        await this.tfclient.connect();
+        const contract = await this.tfclient.contracts.get(contract_id);
+        const nodes = new Nodes(this.url);
+        const node_twin_id = await nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
+
         const now = new Date().getTime();
         while (new Date().getTime() < now + timeout * 1000 * 60) {
-            const deployment = await this.getDeployment(twinDeployment.deployment.contract_id);
+            const deployment = await this.getDeployment(contract_id, node_twin_id);
             if (deployment.workloads.length !== twinDeployment.deployment.workloads.length) {
-                await new Promise(f => setTimeout(f, 1000));
+                await new Promise(f => setTimeout(f, 2000));
                 continue;
             }
             let readyWorkloads = 0;
@@ -132,8 +134,9 @@ class TwinDeploymentHandler {
             if (readyWorkloads === twinDeployment.deployment.workloads.length) {
                 return true;
             }
-            await new Promise(f => setTimeout(f, 1000));
+            await new Promise(f => setTimeout(f, 2000));
         }
+        throw Error(`Deployment with contract_id: ${contract_id} failed to be ready after ${timeout} minutes`);
     }
 
     async waitForDeployments(twinDeployments: TwinDeployment[], timeout = 5) {

@@ -44,7 +44,7 @@ class VMHL extends base_1.HighLevelBase {
             }
             if (d.expected_shards) {
                 expectedShards = d.expected_shards;
-                if (expectedShards >= qsfsZdbs.groups.length) {
+                if (expectedShards > qsfsZdbs.groups.length) {
                     throw Error("Expected shards can't be more than the number of zdbs in qsfs_zdbs deployment");
                 }
             }

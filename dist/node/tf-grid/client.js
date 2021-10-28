@@ -7,6 +7,7 @@ exports.TFClient = void 0;
 const tfgrid_api_client_1 = __importDefault(require("tfgrid-api-client"));
 const contracts_1 = require("./contracts");
 const twins_1 = require("./twins");
+const errors_1 = require("./errors");
 class TFClient {
     client;
     contracts;
@@ -40,8 +41,8 @@ class TFClient {
                     events.forEach(({ phase, event: { data, method, section } }) => {
                         console.log("section", section, "method", method);
                         if (section === "system" && method === "ExtrinsicFailed") {
-                            console.error(`Failed to apply ${func.name} with ${args} and result of ${resultName} `, data);
-                            reject(data);
+                            const errorType = errors_1.ErrorsMap[resultSecttion][data.toJSON()[0].module.error];
+                            reject(`Failed to apply ${func.name} in module ${resultSecttion} with ${args.slice(0, -1)} due to error: ${errorType}`);
                         }
                         else if (section === resultSecttion && method === resultName) {
                             resolve(data.toJSON()[0]);
@@ -60,3 +61,6 @@ class TFClient {
     }
 }
 exports.TFClient = TFClient;
+;
+;
+;

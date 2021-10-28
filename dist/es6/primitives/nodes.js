@@ -80,9 +80,9 @@ class Nodes {
     getNodeIdFromContractId(contractId, mnemonic) {
         return __awaiter(this, void 0, void 0, function* () {
             const tfclient = new TFClient(this.url, mnemonic);
-            yield tfclient.connect();
             let nodeId;
             try {
+                yield tfclient.connect();
                 const contract = yield tfclient.contracts.get(contractId);
                 nodeId = contract["contract_type"]["nodeContract"]["node_id"];
             }

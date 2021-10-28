@@ -21,17 +21,26 @@ class TwinDeploymentHandler {
         this.tfclient = new client_1.TFClient(url, mnemonic);
     }
     async deploy(deployment, node_id, publicIps) {
-        await this.tfclient.connect();
-        const contract = await this.tfclient.contracts.createNode(node_id, deployment.challenge_hash(), "", publicIps);
-        if (contract instanceof Error) {
-            throw Error(`Failed to create contract ${contract}`);
-        }
-        events_1.events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
-        deployment.contract_id = contract["contract_id"];
-        const payload = JSON.stringify(deployment);
-        const nodes = new index_1.Nodes(this.url);
-        const node_twin_id = await nodes.getNodeTwinId(node_id);
+        let contract;
         try {
+            await this.tfclient.connect();
+            contract = await this.tfclient.contracts.createNode(node_id, deployment.challenge_hash(), "", publicIps);
+            if (contract instanceof Error) {
+                throw Error(`Failed to create contract ${contract}`);
+            }
+            events_1.events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
+        }
+        catch (e) {
+            throw Error(e);
+        }
+        finally {
+            this.tfclient.disconnect();
+        }
+        try {
+            deployment.contract_id = contract["contract_id"];
+            const payload = JSON.stringify(deployment);
+            const nodes = new index_1.Nodes(this.url);
+            const node_twin_id = await nodes.getNodeTwinId(node_id);
             const msg = this.rmbClient.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
             const message = await this.rmbClient.send(msg, payload);
             const result = await this.rmbClient.read(message);
@@ -50,12 +59,21 @@ class TwinDeploymentHandler {
     }
     async update(deployment, publicIps) {
         // TODO: update the contract with public when it is available
-        await this.tfclient.connect();
-        const contract = await this.tfclient.contracts.updateNode(deployment.contract_id, "", deployment.challenge_hash());
-        if (contract instanceof Error) {
-            throw Error(`Failed to update contract ${contract}`);
+        let contract;
+        try {
+            await this.tfclient.connect();
+            contract = await this.tfclient.contracts.updateNode(deployment.contract_id, "", deployment.challenge_hash());
+            if (contract instanceof Error) {
+                throw Error(`Failed to update contract ${contract}`);
+            }
+            events_1.events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
         }
-        events_1.events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
+        catch (e) {
+            throw (e);
+        }
+        finally {
+            this.tfclient.disconnect();
+        }
         const payload = JSON.stringify(deployment);
         const nodes = new index_1.Nodes(this.url);
         const node_twin_id = await nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
@@ -76,8 +94,8 @@ class TwinDeploymentHandler {
         return contract;
     }
     async delete(contract_id) {
-        await this.tfclient.connect();
         try {
+            await this.tfclient.connect();
             await this.tfclient.contracts.cancel(contract_id);
         }
         catch (err) {
@@ -114,10 +132,9 @@ class TwinDeploymentHandler {
     }
     async waitForDeployment(twinDeployment, timeout = 5) {
         const contract_id = twinDeployment.deployment.contract_id;
-        await this.tfclient.connect();
-        const contract = await this.tfclient.contracts.get(contract_id);
         const nodes = new index_1.Nodes(this.url);
-        const node_twin_id = await nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
+        const node_id = await nodes.getNodeIdFromContractId(contract_id, this.mnemonic);
+        const node_twin_id = await nodes.getNodeTwinId(node_id);
         const now = new Date().getTime();
         while (new Date().getTime() < now + timeout * 1000 * 60) {
             const deployment = await this.getDeployment(contract_id, node_twin_id);
@@ -256,6 +273,9 @@ class TwinDeploymentHandler {
         for (const twinDeployment of twinDeployments) {
             await (0, validator_1.validateObject)(twinDeployment.deployment);
         }
+    }
+    async rollback(contracts) {
+        // cancel all created contracts leave the updated ones.
     }
     async handle(twinDeployments) {
         events_1.events.emit("logs", "Merging workloads");

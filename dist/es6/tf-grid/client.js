@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { default as Client } from "tfgrid-api-client";
 import { Contracts } from "./contracts";
 import { Twins } from "./twins";
+import { ErrorsMap } from "./errors";
 class TFClient {
     constructor(url, mnemonic) {
         this.client = new Client(url, mnemonic);
@@ -42,8 +43,8 @@ class TFClient {
                     events.forEach(({ phase, event: { data, method, section } }) => {
                         console.log("section", section, "method", method);
                         if (section === "system" && method === "ExtrinsicFailed") {
-                            console.error(`Failed to apply ${func.name} with ${args} and result of ${resultName} `, data);
-                            reject(data);
+                            const errorType = ErrorsMap[resultSecttion][data.toJSON()[0].module.error];
+                            reject(`Failed to apply ${func.name} in module ${resultSecttion} with ${args.slice(0, -1)} due to error: ${errorType}`);
                         }
                         else if (section === resultSecttion && method === resultName) {
                             resolve(data.toJSON()[0]);
@@ -62,3 +63,6 @@ class TFClient {
     }
 }
 export { TFClient };
+;
+;
+;

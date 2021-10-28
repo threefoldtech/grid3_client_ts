@@ -49,7 +49,7 @@ class GridClient {
         else if (this.url.includes("test")) {
             env = "testnet";
         }
-        const storePath = PATH.join(jsonfs_1.appPath, env);
+        const storePath = PATH.join(jsonfs_1.appPath, String(twin_id), env);
         this.machines = new machine_1.MachineModule(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.k8s = new k8s_1.K8sModule(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.zdbs = new zdb_1.ZdbsModule(twin_id, url, mnemonic, rmbClient, storePath, projectName);

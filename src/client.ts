@@ -29,7 +29,7 @@ class GridClient {
         } else if (this.url.includes("test")) {
             env = "testnet";
         }
-        const storePath = PATH.join(appPath, env);
+        const storePath = PATH.join(appPath, String(twin_id), env);
 
         this.machines = new MachineModule(twin_id, url, mnemonic, rmbClient, storePath, projectName);
         this.k8s = new K8sModule(twin_id, url, mnemonic, rmbClient, storePath, projectName);

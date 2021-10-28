@@ -21,6 +21,7 @@ declare class TwinDeploymentHandler {
     updateMerge(twinDeployments: TwinDeployment[]): TwinDeployment[];
     merge(twinDeployments: TwinDeployment[]): TwinDeployment[];
     validate(twinDeployments: TwinDeployment[]): Promise<void>;
+    rollback(contracts: any): Promise<void>;
     handle(twinDeployments: TwinDeployment[]): Promise<{
         created: any[];
         updated: any[];

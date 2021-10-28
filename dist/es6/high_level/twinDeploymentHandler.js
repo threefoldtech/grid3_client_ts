@@ -23,17 +23,26 @@ class TwinDeploymentHandler {
     }
     deploy(deployment, node_id, publicIps) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.tfclient.connect();
-            const contract = yield this.tfclient.contracts.createNode(node_id, deployment.challenge_hash(), "", publicIps);
-            if (contract instanceof Error) {
-                throw Error(`Failed to create contract ${contract}`);
-            }
-            events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
-            deployment.contract_id = contract["contract_id"];
-            const payload = JSON.stringify(deployment);
-            const nodes = new Nodes(this.url);
-            const node_twin_id = yield nodes.getNodeTwinId(node_id);
+            let contract;
             try {
+                yield this.tfclient.connect();
+                contract = yield this.tfclient.contracts.createNode(node_id, deployment.challenge_hash(), "", publicIps);
+                if (contract instanceof Error) {
+                    throw Error(`Failed to create contract ${contract}`);
+                }
+                events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
+            }
+            catch (e) {
+                throw Error(e);
+            }
+            finally {
+                this.tfclient.disconnect();
+            }
+            try {
+                deployment.contract_id = contract["contract_id"];
+                const payload = JSON.stringify(deployment);
+                const nodes = new Nodes(this.url);
+                const node_twin_id = yield nodes.getNodeTwinId(node_id);
                 const msg = this.rmbClient.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
                 const message = yield this.rmbClient.send(msg, payload);
                 const result = yield this.rmbClient.read(message);
@@ -54,12 +63,21 @@ class TwinDeploymentHandler {
     update(deployment, publicIps) {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: update the contract with public when it is available
-            yield this.tfclient.connect();
-            const contract = yield this.tfclient.contracts.updateNode(deployment.contract_id, "", deployment.challenge_hash());
-            if (contract instanceof Error) {
-                throw Error(`Failed to update contract ${contract}`);
+            let contract;
+            try {
+                yield this.tfclient.connect();
+                contract = yield this.tfclient.contracts.updateNode(deployment.contract_id, "", deployment.challenge_hash());
+                if (contract instanceof Error) {
+                    throw Error(`Failed to update contract ${contract}`);
+                }
+                events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
             }
-            events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
+            catch (e) {
+                throw (e);
+            }
+            finally {
+                this.tfclient.disconnect();
+            }
             const payload = JSON.stringify(deployment);
             const nodes = new Nodes(this.url);
             const node_twin_id = yield nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
@@ -82,8 +100,8 @@ class TwinDeploymentHandler {
     }
     delete(contract_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.tfclient.connect();
             try {
+                yield this.tfclient.connect();
                 yield this.tfclient.contracts.cancel(contract_id);
             }
             catch (err) {
@@ -124,10 +142,9 @@ class TwinDeploymentHandler {
     waitForDeployment(twinDeployment, timeout = 5) {
         return __awaiter(this, void 0, void 0, function* () {
             const contract_id = twinDeployment.deployment.contract_id;
-            yield this.tfclient.connect();
-            const contract = yield this.tfclient.contracts.get(contract_id);
             const nodes = new Nodes(this.url);
-            const node_twin_id = yield nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
+            const node_id = yield nodes.getNodeIdFromContractId(contract_id, this.mnemonic);
+            const node_twin_id = yield nodes.getNodeTwinId(node_id);
             const now = new Date().getTime();
             while (new Date().getTime() < now + timeout * 1000 * 60) {
                 const deployment = yield this.getDeployment(contract_id, node_twin_id);
@@ -270,6 +287,11 @@ class TwinDeploymentHandler {
             for (const twinDeployment of twinDeployments) {
                 yield validateObject(twinDeployment.deployment);
             }
+        });
+    }
+    rollback(contracts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // cancel all created contracts leave the updated ones.
         });
     }
     handle(twinDeployments) {

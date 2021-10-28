@@ -35,10 +35,24 @@ declare class BaseModule {
     _getWorkloadsByType(deployments: any, type: WorkloadTypes): Workload[];
     _getMachinePubIP(deployments: any, ipv4WorkloadName: string): PublicIPResult;
     _getZmachineData(deployments: any, workload: Workload): Record<string, unknown>;
-    _getZMountData(deployments: any, name: any): {
+    _getDiskData(deployments: any, name: any): {
         size: any;
         state: any;
         message: any;
+        cache?: undefined;
+        prefix?: undefined;
+        minimal_shards?: undefined;
+        expected_shards?: undefined;
+        qsfs_zdbs_name?: undefined;
+    } | {
+        cache: any;
+        prefix: any;
+        minimal_shards: any;
+        expected_shards: any;
+        qsfs_zdbs_name: any;
+        state: any;
+        message: any;
+        size?: undefined;
     };
     _get(name: string): Promise<any[]>;
     _update(module: KubernetesHL | ZdbHL | VMHL, name: string, oldDeployments: Deployment[], twinDeployments: TwinDeployment[], network?: Network): Promise<"Nothing found to update" | {

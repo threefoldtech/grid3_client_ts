@@ -23,12 +23,9 @@ class TwinDeploymentHandler {
                 throw Error(`Failed to create contract ${contract}`);
             }
             events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
-
         } catch (e) {
-            throw Error(e);
-        }
-        finally {
             this.tfclient.disconnect();
+            throw Error(e);
         }
         try {
             deployment.contract_id = contract["contract_id"];
@@ -65,11 +62,10 @@ class TwinDeploymentHandler {
             }
             events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
         } catch (e) {
-            throw (e);
-        }
-        finally {
             this.tfclient.disconnect();
+            throw e;
         }
+
         const payload = JSON.stringify(deployment);
         const nodes = new Nodes(this.url);
         const node_twin_id = await nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);

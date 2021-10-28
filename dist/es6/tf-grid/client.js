@@ -63,6 +63,3 @@ class TFClient {
     }
 }
 export { TFClient };
-;
-;
-;

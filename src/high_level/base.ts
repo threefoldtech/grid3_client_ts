@@ -20,7 +20,13 @@ class HighLevelBase {
     _filterWorkloads(
         deployment: Deployment,
         names: string[],
-        types: WorkloadTypes[] = [WorkloadTypes.ipv4, WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.zdb],
+        types: WorkloadTypes[] = [
+            WorkloadTypes.ipv4,
+            WorkloadTypes.zmachine,
+            WorkloadTypes.zmount,
+            WorkloadTypes.zdb,
+            WorkloadTypes.qsfs,
+        ],
     ): [Workload[], Workload[]] {
         let deletedMachineWorkloads = [];
         if (names.length === 0) {
@@ -136,7 +142,13 @@ class HighLevelBase {
     async _delete(
         deployment: Deployment,
         names: string[],
-        types: WorkloadTypes[] = [WorkloadTypes.ipv4, WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.zdb],
+        types: WorkloadTypes[] = [
+            WorkloadTypes.ipv4,
+            WorkloadTypes.zmachine,
+            WorkloadTypes.zmount,
+            WorkloadTypes.zdb,
+            WorkloadTypes.qsfs,
+        ],
     ): Promise<TwinDeployment[]> {
         if (types.includes(WorkloadTypes.network)) {
             throw Error("network can't be deleted");
@@ -163,7 +175,7 @@ class HighLevelBase {
         );
         twinDeployments = twinDeployments.concat(newTwinDeployments);
         remainingWorkloads = newRemainingWorkloads;
-
+        console.log(remainingWorkloads);
         if (remainingWorkloads.length !== 0 && remainingWorkloads.length < numberOfWorkloads) {
             let network = null;
             for (const workload of remainingWorkloads) {

@@ -37,7 +37,12 @@ class TFClient {
                         console.log("section", section, "method", method);
                         if (section === "system" && method === "ExtrinsicFailed") {
                             const errorType = ErrorsMap[resultSecttion][data.toJSON()[0].module.error];
-                            reject(`Failed to apply ${func.name} in module ${resultSecttion} with ${args.slice(0, -1)} due to error: ${errorType}`);
+                            reject(
+                                `Failed to apply ${func.name} in module ${resultSecttion} with ${args.slice(
+                                    0,
+                                    -1,
+                                )} due to error: ${errorType}`,
+                            );
                         } else if (section === resultSecttion && method === resultName) {
                             resolve(data.toJSON()[0]);
                         }
@@ -53,4 +58,4 @@ class TFClient {
         });
     }
 }
-export { TFClient };;;;
+export { TFClient };

@@ -161,7 +161,7 @@ class BaseModule {
             mounts: data.mounts.map(m => ({
                 name: m.name,
                 mountPoint: m.mountpoint,
-                ...this._getZMountData(deployments, m.name),
+                ...this._getDiskData(deployments, m.name),
             })),
             env: data.env,
             entrypoint: data.entrypoint,
@@ -169,11 +169,23 @@ class BaseModule {
             description: workload.description,
         };
     }
-    _getZMountData(deployments, name) {
+    _getDiskData(deployments, name) {
         for (const deployment of deployments) {
             for (const workload of deployment.workloads) {
                 if (workload.type === workload_1.WorkloadTypes.zmount && workload.name === name) {
                     return { size: workload.data.size, state: workload.result.state, message: workload.result.message };
+                }
+                else if (workload.type === workload_1.WorkloadTypes.qsfs && workload.name === name) {
+                    const metadata = JSON.parse(workload.metadata);
+                    return {
+                        cache: workload.data.cache,
+                        prefix: workload.data.config.meta.config.prefix,
+                        minimal_shards: workload.data.config.minimal_shards,
+                        expected_shards: workload.data.config.expected_shards,
+                        qsfs_zdbs_name: metadata.qsfs_zdbs_name,
+                        state: workload.result.state,
+                        message: workload.result.message,
+                    };
                 }
             }
         }

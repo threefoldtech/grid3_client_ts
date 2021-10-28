@@ -4,7 +4,7 @@ exports.ErrorsMap = void 0;
 exports.ErrorsMap = {
     // order same as:
     // https://github.com/threefoldtech/tfchain_pallets/blob/f0bb8747d7c70769c77cf814d8f02384b211c88d/pallet-smart-contract/src/lib.rs#L59
-    "smartContractModule": [
+    smartContractModule: [
         "TwinNotExists",
         "NodeNotExists",
         "FarmNotExists",
@@ -24,7 +24,7 @@ exports.ErrorsMap = {
     ],
     // order same as:
     // https://github.com/threefoldtech/tfchain_pallets/blob/f0bb8747d7c70769c77cf814d8f02384b211c88d/pallet-tfgrid/src/lib.rs#L129
-    "tfgridModule": [
+    tfgridModule: [
         "NoneValue",
         "StorageOverflow",
         "CannotCreateNode",

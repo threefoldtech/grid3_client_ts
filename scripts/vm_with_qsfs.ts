@@ -2,12 +2,10 @@ import "reflect-metadata";
 import { getClient } from "./clientLoader";
 
 const grid3 = getClient();
+const qsfs_name = "wed2710q1";
+const machines_name = "wed2710t1";
 
-async function main() {
-
-    const qsfs_name = "wed2710q1";
-    const machines_name = "wed2710t1";
-
+async function deploy() {
     // deploy qsfs backend zdbs first
     const qsfs_res = await grid3.qsfs_zdbs.deploy({
         name: qsfs_name,
@@ -66,16 +64,29 @@ async function main() {
     console.log(">>>>>>>>>>>>>>>VM has been created<<<<<<<<<<<<<<<");
     console.log(JSON.stringify(res));
 
+}
+
+async function get() {
     // get the deployment
     const l = await grid3.machines.getObj(machines_name);
     console.log(">>>>>>>>>>>>>>>Deployment result<<<<<<<<<<<<<<<");
     console.log(JSON.stringify(l));
+}
 
-    // // delete
-    // const d = await grid3.machines.delete({ name: vms.name });
-    // console.log(d);
-    // const r = await grid3.qsfs_zdbs.delete({ name: qsfs_name });
-    // console.log(r);
+async function cancel() {
+    // delete
+    const d = await grid3.machines.delete({ name: machines_name });
+    console.log(d);
+    const r = await grid3.qsfs_zdbs.delete({ name: qsfs_name });
+    console.log(r);
+}
+
+async function main() {
+    await deploy();
+
+    await get();
+
+    // await cancel();
 }
 
 main();

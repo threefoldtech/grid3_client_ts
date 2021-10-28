@@ -22,7 +22,13 @@ class HighLevelBase {
         this.rmbClient = rmbClient;
         this.storePath = storePath;
     }
-    _filterWorkloads(deployment, names, types = [WorkloadTypes.ipv4, WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.zdb]) {
+    _filterWorkloads(deployment, names, types = [
+        WorkloadTypes.ipv4,
+        WorkloadTypes.zmachine,
+        WorkloadTypes.zmount,
+        WorkloadTypes.zdb,
+        WorkloadTypes.qsfs,
+    ]) {
         let deletedMachineWorkloads = [];
         if (names.length === 0) {
             deletedMachineWorkloads = deployment.workloads.filter(item => item.type === WorkloadTypes.zmachine);
@@ -129,7 +135,13 @@ class HighLevelBase {
             return [twinDeployments, remainingWorkloads, deletedNodes, deletedIps];
         });
     }
-    _delete(deployment, names, types = [WorkloadTypes.ipv4, WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.zdb]) {
+    _delete(deployment, names, types = [
+        WorkloadTypes.ipv4,
+        WorkloadTypes.zmachine,
+        WorkloadTypes.zmount,
+        WorkloadTypes.zdb,
+        WorkloadTypes.qsfs,
+    ]) {
         return __awaiter(this, void 0, void 0, function* () {
             if (types.includes(WorkloadTypes.network)) {
                 throw Error("network can't be deleted");
@@ -149,6 +161,7 @@ class HighLevelBase {
             const [newTwinDeployments, newRemainingWorkloads, deletedNodes, deletedIps] = yield this._deleteMachineNetwork(deployment, remainingWorkloads, deletedMachineWorkloads, node_id);
             twinDeployments = twinDeployments.concat(newTwinDeployments);
             remainingWorkloads = newRemainingWorkloads;
+            console.log(remainingWorkloads);
             if (remainingWorkloads.length !== 0 && remainingWorkloads.length < numberOfWorkloads) {
                 let network = null;
                 for (const workload of remainingWorkloads) {

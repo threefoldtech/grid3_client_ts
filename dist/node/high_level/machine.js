@@ -50,7 +50,7 @@ class VMHL extends base_1.HighLevelBase {
             }
             const groups = new zos_1.ZdbGroup();
             groups.backends = qsfsZdbs.groups;
-            const qsfsWorkload = qsfsPrimitive.create(d.name, minimalShards, expectedShards, d.prefix, qsfsZdbs.meta, [groups], d.encryption_key, d.cache);
+            const qsfsWorkload = qsfsPrimitive.create(d.name, minimalShards, expectedShards, d.prefix, qsfsZdbs.meta, [groups], d.encryption_key, d.cache, 32, "zdb", 0, 0, "AES", "snappy", JSON.stringify({ qsfs_zdbs_name: d.qsfs_zdbs_name }));
             workloads.push(qsfsWorkload);
             diskMounts.push(disk.createMount(d.name, d.mountpoint));
         }
@@ -138,6 +138,7 @@ class VMHL extends base_1.HighLevelBase {
             workload_1.WorkloadTypes.ipv4,
             workload_1.WorkloadTypes.zmount,
             workload_1.WorkloadTypes.zmachine,
+            workload_1.WorkloadTypes.qsfs,
         ]);
     }
 }

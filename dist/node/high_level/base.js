@@ -21,7 +21,13 @@ class HighLevelBase {
         this.rmbClient = rmbClient;
         this.storePath = storePath;
     }
-    _filterWorkloads(deployment, names, types = [workload_1.WorkloadTypes.ipv4, workload_1.WorkloadTypes.zmachine, workload_1.WorkloadTypes.zmount, workload_1.WorkloadTypes.zdb]) {
+    _filterWorkloads(deployment, names, types = [
+        workload_1.WorkloadTypes.ipv4,
+        workload_1.WorkloadTypes.zmachine,
+        workload_1.WorkloadTypes.zmount,
+        workload_1.WorkloadTypes.zdb,
+        workload_1.WorkloadTypes.qsfs,
+    ]) {
         let deletedMachineWorkloads = [];
         if (names.length === 0) {
             deletedMachineWorkloads = deployment.workloads.filter(item => item.type === workload_1.WorkloadTypes.zmachine);
@@ -126,7 +132,13 @@ class HighLevelBase {
         }
         return [twinDeployments, remainingWorkloads, deletedNodes, deletedIps];
     }
-    async _delete(deployment, names, types = [workload_1.WorkloadTypes.ipv4, workload_1.WorkloadTypes.zmachine, workload_1.WorkloadTypes.zmount, workload_1.WorkloadTypes.zdb]) {
+    async _delete(deployment, names, types = [
+        workload_1.WorkloadTypes.ipv4,
+        workload_1.WorkloadTypes.zmachine,
+        workload_1.WorkloadTypes.zmount,
+        workload_1.WorkloadTypes.zdb,
+        workload_1.WorkloadTypes.qsfs,
+    ]) {
         if (types.includes(workload_1.WorkloadTypes.network)) {
             throw Error("network can't be deleted");
         }
@@ -145,6 +157,7 @@ class HighLevelBase {
         const [newTwinDeployments, newRemainingWorkloads, deletedNodes, deletedIps] = await this._deleteMachineNetwork(deployment, remainingWorkloads, deletedMachineWorkloads, node_id);
         twinDeployments = twinDeployments.concat(newTwinDeployments);
         remainingWorkloads = newRemainingWorkloads;
+        console.log(remainingWorkloads);
         if (remainingWorkloads.length !== 0 && remainingWorkloads.length < numberOfWorkloads) {
             let network = null;
             for (const workload of remainingWorkloads) {

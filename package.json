@@ -1,7 +1,12 @@
 {
     "name": "grid3_client",
     "author": "Ahmed Hanafy",
-    "version": "0.0.2",
+    "version": "0.0.4",
+    "homepage": "https://github.com/threefoldtech/grid3_client_ts/blob/development/README.md",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/threefoldtech/grid3_client_ts.git"
+    },
     "dependencies": {
         "appdata-path": "^1.0.0",
         "axios": "^0.22.0",
@@ -27,9 +32,9 @@
         "eslint-plugin-prettier": "^4.0.0",
         "npm-run-all": "^4.1.5",
         "prettier": "^2.4.1",
+        "ts-loader": "^9.2.6",
         "ts-rmb-http-client": "^0.1.9",
         "ts-rmb-redis-client": "^0.0.3",
-        "ts-loader": "^9.2.6",
         "tsconfig-paths-webpack-plugin": "^3.5.1",
         "webpack": "^5.57.1",
         "webpack-cli": "^4.8.0"

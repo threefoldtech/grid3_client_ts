@@ -1,1 +1,0 @@
-{"version":3,"file":"ipv4.d.ts","sourceRoot":"","sources":["../../../src/zos/ipv4.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,YAAY,EAAE,kBAAkB,EAAE,MAAM,iBAAiB,CAAC;AACnE,cAAM,QAAS,SAAQ,YAAY;IAC/B,SAAS,IAAI,MAAM;CAGtB;AAED,cAAM,cAAe,SAAQ,kBAAkB;IACjC,EAAE,EAAE,MAAM,CAAC;IACX,OAAO,EAAE,MAAM,CAAC;CAC7B;AAED,OAAO,EAAE,QAAQ,EAAE,cAAc,EAAE,CAAC"}

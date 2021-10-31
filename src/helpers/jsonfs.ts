@@ -7,7 +7,7 @@ const appPath = PATH.join(appsPath, "grid3_client");
 
 function loadFromFile(path: string) {
     if (!FS.existsSync(PATH.dirname(path))) {
-        FS.mkdirSync(PATH.dirname(path));
+        FS.mkdirSync(PATH.dirname(path), { recursive: true });
     }
     if (!FS.existsSync(path)) {
         dumpToFile(path, {});

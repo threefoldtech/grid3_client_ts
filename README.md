@@ -12,8 +12,13 @@ Github repo: [grid3_client_ts](https://github.com/threefoldtech/grid3_client_ts.
 ## Installation
 
 ```bash
-npm install typescript yarn -g
-yarn install
+npm install grid3_client
+```
+
+or
+
+```bash
+yarn add grid3_client
 ```
 
 ## Usage

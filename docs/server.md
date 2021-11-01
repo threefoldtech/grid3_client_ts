@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- [RMB server](https://github.com/threefoldtech/rmb) should be installed and running
+- [RMB server](https://github.com/threefoldtech/go-rmb) should be installed and running
 
 ## Configuration
 

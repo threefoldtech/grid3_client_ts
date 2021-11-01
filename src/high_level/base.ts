@@ -26,6 +26,8 @@ class HighLevelBase {
             WorkloadTypes.zmount,
             WorkloadTypes.zdb,
             WorkloadTypes.qsfs,
+            WorkloadTypes.gatewayfqdnproxy,
+            WorkloadTypes.gatewaynameproxy,
         ],
     ): [Workload[], Workload[]] {
         let deletedMachineWorkloads = [];
@@ -148,6 +150,8 @@ class HighLevelBase {
             WorkloadTypes.zmount,
             WorkloadTypes.zdb,
             WorkloadTypes.qsfs,
+            WorkloadTypes.gatewayfqdnproxy,
+            WorkloadTypes.gatewaynameproxy,
         ],
     ): Promise<TwinDeployment[]> {
         if (types.includes(WorkloadTypes.network)) {

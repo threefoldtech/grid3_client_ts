@@ -14,6 +14,45 @@ class TwinDeploymentHandler {
         this.tfclient = new TFClient(url, mnemonic);
     }
 
+    async createNameContract(name: string) {
+        await this.tfclient.connect();
+        try {
+            const c = await this.tfclient.contracts.getNameContract(name);
+            if (!c) {
+                const contract = await this.tfclient.contracts.createName(name);
+                if (contract instanceof Error) {
+                    throw Error(`Failed to create name contract ${contract}`);
+                }
+                events.emit("logs", `Name contract with id: ${contract["contract_id"]} has been created`);
+
+                contract.new = true;
+                return contract;
+            }
+            events.emit("logs", `Name contract found with id: ${c}`);
+            return c;
+        } catch (err) {
+            throw Error(err);
+        } finally {
+            await this.tfclient.disconnect();
+        }
+    }
+
+    async deleteNameContract(name: string): Promise<void> {
+        await this.tfclient.connect();
+        try {
+            const c = await this.tfclient.contracts.getNameContract(name);
+            if (!c) {
+                events.emit("logs", `Name contract with name ${name} not exist`);
+            }
+            events.emit("logs", `Name contract found with id: ${c}`);
+            await this.delete(c);
+        } catch (err) {
+            throw Error(err);
+        } finally {
+            await this.tfclient.disconnect();
+        }
+    }
+
     async deploy(deployment: Deployment, node_id: number, publicIps: number) {
         let contract;
         try {
@@ -306,6 +345,13 @@ class TwinDeploymentHandler {
             if (twinDeployment.operation === Operations.deploy) {
                 twinDeployment.deployment.sign(this.twin_id, this.mnemonic);
                 events.emit("logs", `Deploying on node_id: ${twinDeployment.nodeId}`);
+                for (const workload of twinDeployment.deployment.workloads) {
+                    // check if the deployment need name contract
+                    if (workload.type === WorkloadTypes.gatewaynameproxy) {
+                        events.emit("logs", `Check the name contract for workload with name: ${workload.name}`);
+                        await this.createNameContract(workload.name);
+                    }
+                }
                 const contract = await this.deploy(
                     twinDeployment.deployment,
                     twinDeployment.nodeId,
@@ -316,7 +362,9 @@ class TwinDeploymentHandler {
                 if (twinDeployment.network) {
                     twinDeployment.network.save(
                         contract["contract_id"],
-                        contract["contract_type"]["nodeContract"]["node_id"],
+                        contract["contract_type"]["nodeContract"]
+                            ? contract["contract_type"]["nodeContract"]["node_id"]
+                            : -1,
                     );
                 }
                 events.emit(
@@ -326,6 +374,13 @@ class TwinDeploymentHandler {
             } else if (twinDeployment.operation === Operations.update) {
                 twinDeployment.deployment.sign(this.twin_id, this.mnemonic);
                 events.emit("logs", `Updating deployment with contract_id: ${twinDeployment.deployment.contract_id}`);
+                for (const workload of twinDeployment.deployment.workloads) {
+                    // check if the deployment need name contract
+                    if (workload.type === WorkloadTypes.gatewaynameproxy) {
+                        events.emit("logs", `Check the name contract for workload with name: ${workload.name}`);
+                        await this.createNameContract(workload.name);
+                    }
+                }
                 const contract = await this.update(twinDeployment.deployment, twinDeployment.publicIps);
                 contracts.updated.push(contract);
                 if (twinDeployment.network) {
@@ -337,6 +392,13 @@ class TwinDeploymentHandler {
                 events.emit("logs", `Deployment has been updated with contract_id: ${contract["contract_id"]}`);
             } else if (twinDeployment.operation === Operations.delete) {
                 events.emit("logs", `Deleting deployment with contract_id: ${twinDeployment.deployment.contract_id}`);
+                for (const workload of twinDeployment.deployment.workloads) {
+                    // check if the deployment need to delete name contract
+                    if (workload.type === WorkloadTypes.gatewaynameproxy) {
+                        events.emit("logs", `Check the name contract for workload with name: ${workload.name}`);
+                        await this.deleteNameContract(workload.name);
+                    }
+                }
                 const contract = await this.delete(twinDeployment.deployment.contract_id);
                 contracts.deleted.push({ contract_id: contract });
                 if (twinDeployment.network) {

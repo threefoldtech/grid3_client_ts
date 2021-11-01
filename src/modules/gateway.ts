@@ -1,8 +1,15 @@
 import { BaseModule } from "./base";
-import { DeployGatewayFQDNModel, DeployGatewayNameModel } from "./models";
+import {
+    DeployGatewayFQDNModel,
+    DeployGatewayNameModel,
+    GatewayFQDNGetModel,
+    GatewayFQDNDeleteModel,
+    GatewayNameGetModel,
+    GatewayNameDeleteModel,
+} from "./models";
 import { GatewayHL } from "../high_level/gateway";
 import { WorkloadTypes } from "../zos/workload";
-import { GatewayFQDNProxy, GatewayNameProxy } from "../zos/gateway";
+import { GatewayFQDNProxy, GatewayNameProxy, GatewayResult } from "../zos/gateway";
 
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { expose } from "../helpers/expose";
@@ -57,10 +64,29 @@ class GWModule extends BaseModule {
         return { contracts: contracts };
     }
 
-    async getObj(deploymentName: string) {
+    async getFQDN(options: GatewayFQDNGetModel) {
+        return await this._get(options.name);
+    }
+
+    async deleteFQDN(options: GatewayFQDNDeleteModel) {
+        return await this._delete(options.name);
+    }
+
+    async getName(options: GatewayNameGetModel) {
+        return await this._get(options.name);
+    }
+
+    async deleteName(options: GatewayNameDeleteModel) {
+        return await this._delete(options.name);
+    }
+
+    async getObj(deploymentName: string): Promise<any> {
         const deployments = await this._get(deploymentName);
-        const workloads = this._getWorkloadsByType(deployments, WorkloadTypes.gatewayfqdnproxy);
-        workloads.forEach(workload => {
+        const workloads = this._getWorkloadsByTypes(deployments, [
+            WorkloadTypes.gatewayfqdnproxy,
+            WorkloadTypes.gatewaynameproxy,
+        ]);
+        return workloads.map(workload => {
             const data = workload.data as GatewayFQDNProxy;
             return {
                 version: workload.version,
@@ -68,12 +94,15 @@ class GWModule extends BaseModule {
                 created: workload.result.created,
                 status: workload.result.state,
                 message: workload.result.message,
-                fqdn: data.fqdn,
+                type: workload.type,
+                domain:
+                    workload.type === WorkloadTypes.gatewayfqdnproxy
+                        ? data.fqdn
+                        : (workload.result.data as GatewayResult).fqdn,
                 tls_passthrough: data.tls_passthrough,
                 backends: data.backends,
                 metadata: workload.metadata,
                 description: workload.description,
-                ...workload.result.data,
             };
         });
     }

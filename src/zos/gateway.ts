@@ -1,7 +1,7 @@
 import { IsFQDN, IsBoolean, IsString, IsUrl, IsNotEmpty, ArrayNotEmpty } from "class-validator";
 import { Expose } from "class-transformer";
 
-import { WorkloadData } from "./workload_base";
+import { WorkloadData, WorkloadDataResult } from "./workload_base";
 
 class GatewayFQDNProxy extends WorkloadData {
     @Expose() @IsFQDN() fqdn: string;
@@ -35,4 +35,9 @@ class GatewayNameProxy extends WorkloadData {
     }
 }
 
-export { GatewayFQDNProxy, GatewayNameProxy };
+class GatewayResult extends WorkloadDataResult {
+    fqdn: string;
+}
+
+
+export { GatewayFQDNProxy, GatewayNameProxy, GatewayResult };

@@ -18,7 +18,7 @@
         "private-ip": "^2.3.0",
         "reflect-metadata": "^0.1.13",
         "stellar-sdk": "^8.3.0",
-        "tfgrid-api-client": "^0.1.1",
+        "tfgrid-api-client": "^0.1.11",
         "ts-rmb-client-base": "^0.0.1",
         "ts-rmb-http-client": "^0.1.6",
         "ts-rmb-redis-client": "^0.0.3",

@@ -148,12 +148,20 @@ class DeployGatewayFQDNModel {
     backends: string[];
 }
 
+class GatewayFQDNGetModel extends BaseGetDeleteModel {}
+
+class GatewayFQDNDeleteModel extends BaseGetDeleteModel {}
+
 class DeployGatewayNameModel {
     name: string;
     node_id: number;
     tls_passthrough: boolean;
     backends: string[];
 }
+
+class GatewayNameGetModel extends BaseGetDeleteModel {}
+
+class GatewayNameDeleteModel extends BaseGetDeleteModel {}
 
 class ZOSModel extends Deployment {
     node_id: number;
@@ -264,4 +272,8 @@ export {
     WalletTransferModel,
     WalletDeleteModel,
     WalletGetModel,
+    GatewayFQDNGetModel,
+    GatewayFQDNDeleteModel,
+    GatewayNameGetModel,
+    GatewayNameDeleteModel,
 };

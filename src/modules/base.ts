@@ -116,11 +116,11 @@ class BaseModule {
         }
     }
 
-    _getWorkloadsByType(deployments, type: WorkloadTypes): Workload[] {
+    _getWorkloadsByTypes(deployments, types: WorkloadTypes[]): Workload[] {
         const r = [];
         for (const deployment of deployments) {
             for (const workload of deployment.workloads) {
-                if (workload.type === type) {
+                if (types.includes(workload.type)) {
                     r.push(workload);
                 }
             }
@@ -129,7 +129,7 @@ class BaseModule {
     }
 
     _getMachinePubIP(deployments, ipv4WorkloadName: string): PublicIPResult {
-        const ipv4Workloads = this._getWorkloadsByType(deployments, WorkloadTypes.ipv4);
+        const ipv4Workloads = this._getWorkloadsByTypes(deployments, [WorkloadTypes.ipv4]);
         for (const workload of ipv4Workloads) {
             if (workload.name === ipv4WorkloadName) {
                 return workload.result.data as PublicIPResult;

@@ -5,6 +5,7 @@ import { Zdb, ZdbResult } from "../zos/zdb";
 import { ZdbHL } from "../high_level/zdb";
 import { TwinDeployment } from "../high_level/models";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
+import { expose } from "../helpers/expose";
 
 class ZdbsModule extends BaseModule {
     fileName = "zdbs.json";
@@ -40,6 +41,7 @@ class ZdbsModule extends BaseModule {
         return twinDeployments;
     }
 
+    @expose
     async deploy(options: ZDBSModel) {
         if (this.exists(options.name)) {
             throw Error(`Another zdb deployment with the same name ${options.name} is already exist`);
@@ -50,6 +52,7 @@ class ZdbsModule extends BaseModule {
         return { contracts: contracts };
     }
 
+    @expose
     list() {
         return this._list();
     }
@@ -78,14 +81,17 @@ class ZdbsModule extends BaseModule {
         return ret;
     }
 
+    @expose
     async get(options: ZDBGetModel) {
         return await this._get(options.name);
     }
 
+    @expose
     async delete(options: ZDBDeleteModel) {
         return await this._delete(options.name);
     }
 
+    @expose
     async update(options: ZDBSModel) {
         if (!this.exists(options.name)) {
             throw Error(`There is no zdb deployment with name: ${options.name}`);
@@ -95,7 +101,8 @@ class ZdbsModule extends BaseModule {
         return await this._update(this.zdb, options.name, oldDeployments, twinDeployments);
     }
 
-    async addZdb(options: AddZDBModel) {
+    @expose
+    async add_zdb(options: AddZDBModel) {
         if (!this.exists(options.deployment_name)) {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
         }
@@ -114,7 +121,8 @@ class ZdbsModule extends BaseModule {
         return await this._add(options.deployment_name, options.node_id, oldDeployments, [twinDeployment]);
     }
 
-    async deleteZdb(options: DeleteZDBModel) {
+    @expose
+    async delete_zdb(options: DeleteZDBModel) {
         if (!this.exists(options.deployment_name)) {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
         }
@@ -122,4 +130,4 @@ class ZdbsModule extends BaseModule {
     }
 }
 
-export { ZdbsModule };
+export { ZdbsModule as zdb };

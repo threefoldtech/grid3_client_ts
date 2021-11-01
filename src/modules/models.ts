@@ -8,7 +8,7 @@ class DiskModel {
     mountpoint: string;
 }
 
-class QSFSDisk {
+class QSFSDiskModel {
     qsfs_zdbs_name: string;
     name: string;
     prefix: string;
@@ -32,7 +32,7 @@ class MachineModel {
     name: string;
     node_id: number;
     disks: DiskModel[];
-    qsfs_disks: QSFSDisk[];
+    qsfs_disks: QSFSDiskModel[];
     public_ip: boolean;
     planetary: boolean;
     cpu: number;
@@ -71,7 +71,7 @@ class KubernetesNodeModel {
     memory: number; // in MB
     rootfs_size: number; // in GB
     disk_size: number; // in GB
-    qsfs_disks: QSFSDisk[];
+    qsfs_disks: QSFSDiskModel[];
     public_ip: boolean;
     planetary: boolean;
 }
@@ -159,6 +159,69 @@ class ZOSModel extends Deployment {
     node_id: number;
 }
 
+class NodeContractCreateModel {
+    node_id: number;
+    hash: string;
+    data: string;
+    public_ip: number;
+}
+
+class NameContractCreateModel {
+    name: string;
+}
+class ContractGetModel {
+    id: number;
+}
+
+class NodeContractUpdateModel {
+    id: number;
+    hash: string;
+    data: string;
+}
+
+class ContractCancelModel {
+    id: number;
+}
+
+class TwinCreateModel {
+    ip: string;
+}
+
+class TwinGetModel {
+    id: number;
+}
+
+class TwinDeleteModel {
+    id: number;
+}
+
+class WalletImportModel {
+    name: string;
+    secret: string;
+}
+
+class WalletBalanceByNameModel {
+    name: string;
+}
+
+class WalletBalanceByAddressModel {
+    address: string;
+}
+
+class WalletTransferModel {
+    name: string;
+    target_address: string;
+    amount: number;
+    asset: string;
+    memo: string;
+}
+
+class WalletDeleteModel {
+    name: string;
+}
+
+class WalletGetModel extends WalletDeleteModel {}
+
 export {
     DiskModel,
     NetworkModel,
@@ -183,8 +246,22 @@ export {
     DeployGatewayFQDNModel,
     DeployGatewayNameModel,
     ZOSModel,
-    QSFSDisk,
+    QSFSDiskModel,
     QSFSZDBSModel,
     QSFSZDBGetModel,
     QSFSZDBDeleteModel,
+    NodeContractCreateModel,
+    NameContractCreateModel,
+    ContractGetModel,
+    NodeContractUpdateModel,
+    ContractCancelModel,
+    TwinCreateModel,
+    TwinGetModel,
+    TwinDeleteModel,
+    WalletImportModel,
+    WalletBalanceByNameModel,
+    WalletBalanceByAddressModel,
+    WalletTransferModel,
+    WalletDeleteModel,
+    WalletGetModel,
 };

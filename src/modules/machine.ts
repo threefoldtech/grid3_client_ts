@@ -9,6 +9,7 @@ import { Network } from "../primitives/network";
 import { VMHL } from "../high_level/machine";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { TwinDeployment } from "../high_level/models";
+import { expose } from "../helpers/expose";
 
 class MachineModule extends BaseModule {
     fileName = "machines.json";
@@ -61,6 +62,7 @@ class MachineModule extends BaseModule {
         return [twinDeployments, network, wireguardConfig];
     }
 
+    @expose
     async deploy(options: MachinesModel) {
         if (this.exists(options.name)) {
             throw Error(`Another machine deployment with the same name ${options.name} is already exist`);
@@ -72,6 +74,7 @@ class MachineModule extends BaseModule {
         return { contracts: contracts, wireguard_config: wireguardConfig };
     }
 
+    @expose
     list() {
         return this._list();
     }
@@ -83,14 +86,17 @@ class MachineModule extends BaseModule {
         return workloads.map(workload => this._getZmachineData(deployments, workload));
     }
 
+    @expose
     async get(options: MachinesGetModel) {
         return await this._get(options.name);
     }
 
+    @expose
     async delete(options: MachinesDeleteModel) {
         return await this._delete(options.name);
     }
 
+    @expose
     async update(options: MachinesModel) {
         if (!this.exists(options.name)) {
             throw Error(`There is no machine with name: ${options.name}`);
@@ -108,7 +114,8 @@ class MachineModule extends BaseModule {
         return await this._update(this.vm, options.name, oldDeployments, twinDeployments, network);
     }
 
-    async addMachine(options: AddMachineModel) {
+    @expose
+    async add_machine(options: AddMachineModel) {
         if (!this.exists(options.deployment_name)) {
             throw Error(`There is no machines deployment with name: ${options.deployment_name}`);
         }
@@ -140,7 +147,8 @@ class MachineModule extends BaseModule {
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }
 
-    async deleteMachine(options: DeleteMachineModel) {
+    @expose
+    async delete_machine(options: DeleteMachineModel) {
         if (!this.exists(options.deployment_name)) {
             throw Error(`There is no machines deployment with name: ${options.deployment_name}`);
         }
@@ -148,4 +156,4 @@ class MachineModule extends BaseModule {
     }
 }
 
-export { MachineModule };
+export { MachineModule as machines };

@@ -1,6 +1,6 @@
 import { Deployment } from "../zos/deployment";
 import { WorkloadTypes, Workload } from "../zos/workload";
-import { TFClient } from "../tf-grid/client";
+import { TFClient } from "../clients/tf-grid/client";
 
 import { Operations, TwinDeployment } from "./models";
 import { Nodes } from "../primitives/index";

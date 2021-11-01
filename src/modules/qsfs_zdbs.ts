@@ -6,6 +6,7 @@ import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { ZdbModes } from "../zos/zdb";
 import { WorkloadTypes } from "../zos/workload";
 import { ZdbBackend } from "../zos/qsfs";
+import { expose } from "../helpers/expose";
 
 class QSFSZdbsModule extends BaseModule {
     fileName = "qsfs_zdbs.json";
@@ -50,6 +51,7 @@ class QSFSZdbsModule extends BaseModule {
         return twinDeployments;
     }
 
+    @expose
     async deploy(options: QSFSZDBSModel) {
         if (this.exists(options.name)) {
             throw Error(`Another QSFS zdbs deployment with the same name ${options.name} is already exist`);
@@ -60,14 +62,17 @@ class QSFSZdbsModule extends BaseModule {
         return { contracts: contracts };
     }
 
+    @expose
     list() {
         return this._list();
     }
 
+    @expose
     async get(options: QSFSZDBGetModel) {
         return await this._get(options.name);
     }
 
+    @expose
     async delete(options: QSFSZDBDeleteModel) {
         return await this._delete(options.name);
     }
@@ -99,4 +104,4 @@ class QSFSZdbsModule extends BaseModule {
     }
 }
 
-export { QSFSZdbsModule };
+export { QSFSZdbsModule as qsfs_zdbs };

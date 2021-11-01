@@ -8,6 +8,7 @@ import { TwinDeployment } from "../high_level/models";
 import { KubernetesHL } from "../high_level/kubernetes";
 import { Network } from "../primitives/network";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
+import { expose } from "../helpers/expose";
 
 class K8sModule extends BaseModule {
     fileName = "kubernetes.json";
@@ -133,6 +134,7 @@ class K8sModule extends BaseModule {
         return [deployments, network, wireguardConfig];
     }
 
+    @expose
     async deploy(options: K8SModel) {
         if (options.masters.length > 1) {
             throw Error("Multi master is not supported");
@@ -148,6 +150,7 @@ class K8sModule extends BaseModule {
         return { contracts: contracts, wireguard_config: wireguardConfig };
     }
 
+    @expose
     list() {
         return this._list();
     }
@@ -166,14 +169,17 @@ class K8sModule extends BaseModule {
         return k;
     }
 
+    @expose
     async get(options: K8SGetModel) {
         return await this._get(options.name);
     }
 
+    @expose
     async delete(options: K8SDeleteModel) {
         return await this._delete(options.name);
     }
 
+    @expose
     async update(options: K8SModel) {
         if (!this.exists(options.name)) {
             throw Error(`There is no k8s deployment with name: ${options.name}`);
@@ -206,7 +212,8 @@ class K8sModule extends BaseModule {
         return await this._update(this.kubernetes, options.name, oldDeployments, twinDeployments, network);
     }
 
-    async addWorker(options: AddWorkerModel) {
+    @expose
+    async add_worker(options: AddWorkerModel) {
         if (!this.exists(options.deployment_name)) {
             throw Error(`There is no k8s deployment with name: ${options.deployment_name}`);
         }
@@ -242,7 +249,8 @@ class K8sModule extends BaseModule {
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }
 
-    async deleteWorker(options: DeleteWorkerModel) {
+    @expose
+    async delete_worker(options: DeleteWorkerModel) {
         if (!this.exists(options.deployment_name)) {
             throw Error(`There is no k8s deployment with name: ${options.deployment_name}`);
         }
@@ -250,4 +258,4 @@ class K8sModule extends BaseModule {
     }
 }
 
-export { K8sModule };
+export { K8sModule as k8s };

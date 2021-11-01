@@ -73,7 +73,7 @@ class Workload {
     @Expose() @IsInt() @Min(0) version: number;
     @Expose() @IsString() @IsNotEmpty() name: string;
     @Expose()
-    @Transform(({ value }) => WorkloadTypes[value.replace(/-/g, "")])
+    @Transform(({ value }) => WorkloadTypes[value.replace(/-/g, "")]) // remove the '-' from the Workloadtype's value to match the key in the reverse parsing from json to obj
     @IsEnum(WorkloadTypes)
     type: WorkloadTypes;
     @Expose()

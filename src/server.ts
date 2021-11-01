@@ -4,8 +4,9 @@ import { MessageBusServer } from "ts-rmb-redis-client";
 import { GridClient } from "./client";
 import { getRMBClient } from "./clients/rmb/client";
 import { isExposed } from "./helpers/expose";
-import { default as config } from "../config.json";
+import { loadFromFile } from "./helpers/jsonfs";
 
+const config = loadFromFile("../config.json");
 class Server {
     server: MessageBusServer;
     constructor(port = 6379) {

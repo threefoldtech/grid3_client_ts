@@ -12,7 +12,6 @@
         "declarationMap": true,
         "outDir": "./dist/node",
         "esModuleInterop": true,
-        "resolveJsonModule": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "baseUrl": "."

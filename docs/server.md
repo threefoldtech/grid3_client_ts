@@ -36,7 +36,9 @@ Put the following content in a file `test_twin.ts` in this repo home directory
 
 ```ts
 import { MessageBusClient } from "ts-rmb-redis-client"
-import { default as config } from "./config.json";
+import { loadFromFile } from "./src/helpers/jsonfs";
+
+const config = loadFromFile("./config.json");
 
 async function main() {
     const cmd = "twinserver.twins.get"

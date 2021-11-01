@@ -3,7 +3,9 @@ import { MessageBusClient } from "ts-rmb-redis-client";
 import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import { argv, env } from "process";
 
-import { default as config } from "../../../config.json";
+import { loadFromFile } from "../../helpers/jsonfs";
+
+const config = loadFromFile("../../../config.json");
 
 function getRmbProxy(): string {
     let rmb_proxy = "";

@@ -16,7 +16,7 @@ import { DeploymentFactory } from "../primitives/deployment";
 import { Network } from "../primitives/network";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { VMHL } from "../high_level/machine";
-import { TFClient } from "../tf-grid/client";
+import { TFClient } from "../clients/tf-grid/client";
 
 class BaseModule {
     projectName = "";

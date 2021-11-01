@@ -2,7 +2,7 @@ import { default as PrivateIp } from "private-ip";
 import { default as urlParser } from "url-parse";
 import { default as urlJoin } from "url-join";
 
-import { TFClient } from "../tf-grid/client";
+import { TFClient } from "../clients/tf-grid/client";
 
 import { send } from "../helpers/requests";
 

@@ -24,3 +24,4 @@ yarn add grid3_client
 ## Usage
 
 see [scripts](./scripts/README.md)
+see [server](./docs/server.md)

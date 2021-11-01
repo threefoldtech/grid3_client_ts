@@ -1,7 +1,7 @@
 {
     "name": "grid3_client",
     "author": "Ahmed Hanafy",
-    "version": "0.0.4",
+    "version": "0.0.7",
     "homepage": "https://github.com/threefoldtech/grid3_client_ts/blob/development/README.md",
     "repository": {
         "type": "git",
@@ -17,8 +17,11 @@
         "netaddr": "^1.1.0",
         "private-ip": "^2.3.0",
         "reflect-metadata": "^0.1.13",
+        "stellar-sdk": "^8.3.0",
         "tfgrid-api-client": "^0.1.1",
         "ts-rmb-client-base": "^0.0.1",
+        "ts-rmb-http-client": "^0.1.6",
+        "ts-rmb-redis-client": "^0.0.3",
         "tweetnacl": "^1.0.3",
         "typescript": "^4.3.5",
         "url-join": "^4.0.1",
@@ -33,8 +36,6 @@
         "npm-run-all": "^4.1.5",
         "prettier": "^2.4.1",
         "ts-loader": "^9.2.6",
-        "ts-rmb-http-client": "^0.1.9",
-        "ts-rmb-redis-client": "^0.0.3",
         "tsconfig-paths-webpack-plugin": "^3.5.1",
         "webpack": "^5.57.1",
         "webpack-cli": "^4.8.0"
@@ -50,6 +51,7 @@
     "scripts": {
         "build": "npm-run-all es6-build node-build",
         "node-build": "tsc --build tsconfig-node.json",
-        "es6-build": "tsc --build tsconfig-es6.json"
+        "es6-build": "tsc --build tsconfig-es6.json",
+        "server": "ts-node --project tsconfig-node.json src/server.ts"
     }
 }

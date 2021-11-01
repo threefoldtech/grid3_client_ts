@@ -8,10 +8,10 @@ import { TwinDeployment, Operations } from "./models";
 import { HighLevelBase } from "./base";
 import { DiskPrimitive, VMPrimitive, IPv4Primitive, DeploymentFactory, Network, Nodes } from "../primitives/index";
 import { randomChoice } from "../helpers/utils";
-import { DiskModel, QSFSDisk } from "../modules/models";
+import { DiskModel, QSFSDiskModel } from "../modules/models";
 import { events } from "../helpers/events";
 import { QSFSPrimitive } from "../primitives/qsfs";
-import { QSFSZdbsModule } from "../modules/qsfs_zdbs";
+import { qsfs_zdbs } from "../modules/qsfs_zdbs";
 import { ZdbGroup } from "../zos";
 
 class VMHL extends HighLevelBase {
@@ -30,7 +30,7 @@ class VMHL extends HighLevelBase {
         env: Record<string, unknown>,
         metadata = "",
         description = "",
-        qsfsDisks: QSFSDisk[] = [],
+        qsfsDisks: QSFSDiskModel[] = [],
         qsfsProjectName = "",
     ): Promise<[TwinDeployment[], string]> {
         const deployments = [];
@@ -47,13 +47,7 @@ class VMHL extends HighLevelBase {
         const qsfsPrimitive = new QSFSPrimitive();
         for (const d of qsfsDisks) {
             // the ratio that will be used for minimal_shards to expected_shards is 3/5
-            const qsfsZdbsModule = new QSFSZdbsModule(
-                this.twin_id,
-                this.url,
-                this.mnemonic,
-                this.rmbClient,
-                this.storePath,
-            );
+            const qsfsZdbsModule = new qsfs_zdbs(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
             if (qsfsProjectName) {
                 qsfsZdbsModule.projectName = qsfsProjectName;
             }

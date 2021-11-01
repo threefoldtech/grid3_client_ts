@@ -12,6 +12,7 @@
         "declarationMap": true,
         "outDir": "./dist/node",
         "esModuleInterop": true,
+        "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "baseUrl": "."
     },

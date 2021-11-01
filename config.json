@@ -1,0 +1,6 @@
+{
+    "url": "wss://tfchain.test.threefold.io/ws",
+    "mnemonic": "",
+    "twin_id": 0,
+    "rmb_proxy": "https://rmbproxy1.testnet.grid.tf"
+}

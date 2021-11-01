@@ -5,6 +5,7 @@ import { WorkloadTypes } from "../zos/workload";
 import { GatewayFQDNProxy, GatewayNameProxy } from "../zos/gateway";
 
 import { MessageBusClientInterface } from "ts-rmb-client-base";
+import { expose } from "../helpers/expose";
 
 class GWModule extends BaseModule {
     fileName = "gateway.json";
@@ -23,6 +24,7 @@ class GWModule extends BaseModule {
         this.gateway = new GatewayHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
 
+    @expose
     async deploy_fqdn(options: DeployGatewayFQDNModel) {
         if (this.exists(options.name)) {
             throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
@@ -39,6 +41,7 @@ class GWModule extends BaseModule {
         return { contracts: contracts };
     }
 
+    @expose
     async deploy_name(options: DeployGatewayNameModel) {
         if (this.exists(options.name)) {
             throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
@@ -76,4 +79,4 @@ class GWModule extends BaseModule {
     }
 }
 
-export { GWModule };
+export { GWModule as gateway };

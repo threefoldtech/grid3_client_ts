@@ -14,14 +14,12 @@ class TFClient {
         this.twins = new Twins(this);
     }
     async connect(): Promise<void> {
-        try {
-            await this.client.init();
-        } catch (err) {
-            console.error(err);
-        }
+        await this.client.init();
     }
     disconnect(): void {
-        this.client.api.disconnect();
+        if (this.client.api) {
+            this.client.api.disconnect();
+        }
     }
     applyExtrinsic(func, args, resultSecttion: string, resultName: string) {
         const context = this.client;
@@ -56,6 +54,21 @@ class TFClient {
                 reject(e);
             }
         });
+    }
+
+    async execute(context, method, args) {
+        let result;
+        try {
+            await this.connect();
+            console.log(`Executing method: ${method.name} with args: ${args}`);
+            result = await method.apply(context, args);
+        } catch (e) {
+            console.log(e);
+            throw Error(e);
+        } finally {
+            this.disconnect();
+        }
+        return result;
     }
 }
 export { TFClient };

@@ -68,10 +68,10 @@ Steps to deploy a test scenario using zos3, yggdrasil,polkadot.
 
 In case of using RMBProxy, no need for this step.
 
-- Clone the [RMB repo](https://github.com/threefoldtech/rmb)
+- Clone the [RMB repo](https://github.com/threefoldtech/go-rmb)
 
-- Run the [script to build a static binary for the rmb](https://github.com/threefoldtech/rmb/blob/master/build/alpine-static.sh) with the name `msgbusd`
+- Get the latest rmb binary from [go-rmb](https://github.com/threefoldtech/go-rmb/releases) with the name `msgbusd`
 
-- run RMB using
+- Run RMB using
 
         ./msgbusd --twin <TWIN_ID>

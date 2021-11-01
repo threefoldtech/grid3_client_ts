@@ -45,7 +45,7 @@ class Contracts {
     }
 
     async getNameContract(name: string) {
-        return this.tfclient.client.contractIDByNameRegistration(name)
+        return this.tfclient.client.contractIDByNameRegistration(name);
     }
 }
 export { Contracts };

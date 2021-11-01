@@ -349,7 +349,7 @@ class TwinDeploymentHandler {
                     // check if the deployment need name contract
                     if (workload.type === WorkloadTypes.gatewaynameproxy) {
                         events.emit("logs", `Check the name contract for workload with name: ${workload.name}`);
-                        await this.createNameContract(workload.name);
+                        await this.createNameContract(workload.data["name"]);
                     }
                 }
                 const contract = await this.deploy(
@@ -362,9 +362,7 @@ class TwinDeploymentHandler {
                 if (twinDeployment.network) {
                     twinDeployment.network.save(
                         contract["contract_id"],
-                        contract["contract_type"]["nodeContract"]
-                            ? contract["contract_type"]["nodeContract"]["node_id"]
-                            : -1,
+                        contract["contract_type"]["nodeContract"]["node_id"],
                     );
                 }
                 events.emit(
@@ -378,7 +376,7 @@ class TwinDeploymentHandler {
                     // check if the deployment need name contract
                     if (workload.type === WorkloadTypes.gatewaynameproxy) {
                         events.emit("logs", `Check the name contract for workload with name: ${workload.name}`);
-                        await this.createNameContract(workload.name);
+                        await this.createNameContract(workload.data["name"]);
                     }
                 }
                 const contract = await this.update(twinDeployment.deployment, twinDeployment.publicIps);
@@ -396,7 +394,7 @@ class TwinDeploymentHandler {
                     // check if the deployment need to delete name contract
                     if (workload.type === WorkloadTypes.gatewaynameproxy) {
                         events.emit("logs", `Check the name contract for workload with name: ${workload.name}`);
-                        await this.deleteNameContract(workload.name);
+                        await this.deleteNameContract(workload.data["name"]);
                     }
                 }
                 const contract = await this.delete(twinDeployment.deployment.contract_id);

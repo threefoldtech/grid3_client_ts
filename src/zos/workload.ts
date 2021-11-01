@@ -72,7 +72,10 @@ class DeploymentResult {
 class Workload {
     @Expose() @IsInt() @Min(0) version: number;
     @Expose() @IsString() @IsNotEmpty() name: string;
-    @Expose() @Transform(({ value }) => WorkloadTypes[value.replace(/-/g, "")]) @IsEnum(WorkloadTypes) type: WorkloadTypes;
+    @Expose()
+    @Transform(({ value }) => WorkloadTypes[value.replace(/-/g, "")])
+    @IsEnum(WorkloadTypes)
+    type: WorkloadTypes;
     @Expose()
     @ValidateNested()
     @Type(() => WorkloadData, {

@@ -1,17 +1,17 @@
 import "reflect-metadata";
 
-import { DeployGatewayFQDNModel, GatewayFQDNDeleteModel } from "../dist/node/modules/models";
+import { GatewayFQDNModel, GatewayFQDNDeleteModel } from "../src/modules/models";
 
-import { getClient } from "./clientLoader";
+import { getClient } from "./client_loader";
 
 const grid3 = getClient();
 
 // read more about the gateway types in this doc: https://github.com/threefoldtech/zos/tree/main/docs/gateway
 
-const gw = new DeployGatewayFQDNModel();
+const gw = new GatewayFQDNModel();
 gw.name = "applyFQDN";
-gw.node_id = 12;
-gw.fqdn = "test.ayoub.grid.tf";
+gw.node_id = 1;
+gw.fqdn = "test.hamada.grid.tf";
 gw.tls_passthrough = false;
 gw.backends = ["http://185.206.122.35:8000"];
 

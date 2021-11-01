@@ -39,5 +39,4 @@ class GatewayResult extends WorkloadDataResult {
     fqdn: string;
 }
 
-
 export { GatewayFQDNProxy, GatewayNameProxy, GatewayResult };

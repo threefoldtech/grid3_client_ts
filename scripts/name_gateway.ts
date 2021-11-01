@@ -1,14 +1,14 @@
 import "reflect-metadata";
 
-import { DeployGatewayNameModel, GatewayNameDeleteModel } from "../dist/node/modules/models";
+import { GatewayNameModel, GatewayNameDeleteModel } from "../src/modules/models";
 
-import { getClient } from "./clientLoader";
+import { getClient } from "./client_loader";
 
 const grid3 = getClient();
 
 // read more about the gateway types in this doc: https://github.com/threefoldtech/zos/tree/main/docs/gateway
 
-const gw = new DeployGatewayNameModel();
+const gw = new GatewayNameModel();
 gw.name = "ayoubtest";
 gw.node_id = 1;
 gw.tls_passthrough = false;

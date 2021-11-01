@@ -6,7 +6,7 @@ import { Zmount, ZmountResult } from "./zmount";
 import { Zmachine, ZmachineResult } from "./zmachine";
 import { Zdb, ZdbResult } from "./zdb";
 import { PublicIP } from "./ipv4";
-import { GatewayFQDNProxy, GatewayNameProxy } from "./gateway";
+import { GatewayFQDNProxy, GatewayNameProxy, GatewayResult } from "./gateway";
 import { QuantumSafeFS, QuantumSafeFSResult } from "./qsfs";
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
 import { PublicIPResult } from "./ipv4";
@@ -59,13 +59,23 @@ class DeploymentResult {
             ],
         },
     })
-    data: ZmountResult | ZmachineResult | ZdbResult | PublicIPResult | QuantumSafeFSResult | WorkloadDataResult;
+    data:
+        | ZmountResult
+        | ZmachineResult
+        | ZdbResult
+        | PublicIPResult
+        | QuantumSafeFSResult
+        | WorkloadDataResult
+        | GatewayResult;
 }
 
 class Workload {
     @Expose() @IsInt() @Min(0) version: number;
     @Expose() @IsString() @IsNotEmpty() name: string;
-    @Expose() @Transform(({ value }) => WorkloadTypes[value]) @IsEnum(WorkloadTypes) type: WorkloadTypes;
+    @Expose()
+    @Transform(({ value }) => WorkloadTypes[value.replace(/-/g, "")]) // remove the '-' from the Workloadtype's value to match the key in the reverse parsing from json to obj
+    @IsEnum(WorkloadTypes)
+    type: WorkloadTypes;
     @Expose()
     @ValidateNested()
     @Type(() => WorkloadData, {

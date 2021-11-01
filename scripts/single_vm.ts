@@ -1,25 +1,25 @@
 import "reflect-metadata";
 
-import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../dist/node/modules/models";
-import { getClient } from "./clientLoader";
+import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../src/modules/models";
+import { getClient } from "./client_loader";
 
 const grid3 = getClient();
 
 // create network Object
 const n = new NetworkModel();
-n.name = "montest";
-n.ip_range = "10.232.0.0/16";
+n.name = "wedtest";
+n.ip_range = "10.249.0.0/16";
 
 // create disk Object
 const disk = new DiskModel();
-disk.name = "newDisk";
-disk.size = 10;
-disk.mountpoint = "/newDisk";
+disk.name = "wedDisk";
+disk.size = 8;
+disk.mountpoint = "/testdisk";
 
 // create vm node Object
 const vm = new MachineModel();
 vm.name = "testvm";
-vm.node_id = 4;
+vm.node_id = 3;
 vm.disks = [disk];
 vm.public_ip = false;
 vm.planetary = true;
@@ -35,7 +35,7 @@ vm.env = {
 
 // create VMs Object
 const vms = new MachinesModel();
-vms.name = "monVMS";
+vms.name = "newVMS";
 vms.network = n;
 vms.machines = [vm];
 vms.metadata = "{'testVMs': true}";

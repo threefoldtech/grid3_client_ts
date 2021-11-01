@@ -1,8 +1,15 @@
 import { BaseModule } from "./base";
-import { DeployGatewayFQDNModel, DeployGatewayNameModel } from "./models";
+import {
+    GatewayFQDNModel,
+    GatewayNameModel,
+    GatewayFQDNGetModel,
+    GatewayFQDNDeleteModel,
+    GatewayNameGetModel,
+    GatewayNameDeleteModel,
+} from "./models";
 import { GatewayHL } from "../high_level/gateway";
 import { WorkloadTypes } from "../zos/workload";
-import { GatewayFQDNProxy, GatewayNameProxy } from "../zos/gateway";
+import { GatewayFQDNProxy, GatewayResult } from "../zos/gateway";
 
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { expose } from "../helpers/expose";
@@ -25,7 +32,7 @@ class GWModule extends BaseModule {
     }
 
     @expose
-    async deploy_fqdn(options: DeployGatewayFQDNModel) {
+    async deploy_fqdn(options: GatewayFQDNModel) {
         if (this.exists(options.name)) {
             throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
         }
@@ -42,7 +49,7 @@ class GWModule extends BaseModule {
     }
 
     @expose
-    async deploy_name(options: DeployGatewayNameModel) {
+    async deploy_name(options: GatewayNameModel) {
         if (this.exists(options.name)) {
             throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
         }
@@ -57,10 +64,33 @@ class GWModule extends BaseModule {
         return { contracts: contracts };
     }
 
-    async getObj(deploymentName: string) {
+    @expose
+    async get_fqdn(options: GatewayFQDNGetModel) {
+        return await this._get(options.name);
+    }
+
+    @expose
+    async delete_fqdn(options: GatewayFQDNDeleteModel) {
+        return await this._delete(options.name);
+    }
+
+    @expose
+    async get_name(options: GatewayNameGetModel) {
+        return await this._get(options.name);
+    }
+
+    @expose
+    async delete_name(options: GatewayNameDeleteModel) {
+        return await this._delete(options.name);
+    }
+
+    async getObj(deploymentName: string): Promise<any> {
         const deployments = await this._get(deploymentName);
-        const workloads = this._getWorkloadsByType(deployments, WorkloadTypes.gatewayfqdnproxy);
-        workloads.forEach(workload => {
+        const workloads = this._getWorkloadsByTypes(deployments, [
+            WorkloadTypes.gatewayfqdnproxy,
+            WorkloadTypes.gatewaynameproxy,
+        ]);
+        return workloads.map(workload => {
             const data = workload.data as GatewayFQDNProxy;
             return {
                 version: workload.version,
@@ -68,12 +98,15 @@ class GWModule extends BaseModule {
                 created: workload.result.created,
                 status: workload.result.state,
                 message: workload.result.message,
-                fqdn: data.fqdn,
+                type: workload.type,
+                domain:
+                    workload.type === WorkloadTypes.gatewayfqdnproxy
+                        ? data.fqdn
+                        : (workload.result.data as GatewayResult).fqdn,
                 tls_passthrough: data.tls_passthrough,
                 backends: data.backends,
                 metadata: workload.metadata,
                 description: workload.description,
-                ...workload.result.data,
             };
         });
     }

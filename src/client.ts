@@ -6,6 +6,15 @@ import { appPath } from "./helpers/jsonfs";
 import * as modules from "./modules/index";
 
 class GridClient {
+    machines: modules.machines;
+    zdb: modules.zdb;
+    zos: modules.zos;
+    qsfs_zdbs: modules.qsfs_zdbs;
+    k8s: modules.k8s;
+    contracts: modules.contracts;
+    twins: modules.twins;
+    gateway: modules.gateway;
+
     constructor(
         public twin_id: number,
         public url: string,

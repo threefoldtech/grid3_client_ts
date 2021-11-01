@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
-import { NetworkModel, K8SModel, KubernetesNodeModel, K8SDeleteModel } from "../dist/node/modules/models";
-import { getClient } from "./clientLoader";
+import { NetworkModel, K8SModel, KubernetesNodeModel, K8SDeleteModel } from "../src/modules/models";
+import { getClient } from "./client_loader";
 
 const grid3 = getClient();
 

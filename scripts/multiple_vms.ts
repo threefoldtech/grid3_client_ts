@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
-import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../dist/node/modules/models";
-import { getClient } from "./clientLoader";
+import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../src/modules/models";
+import { getClient } from "./client_loader";
 
 const grid3 = getClient();
 

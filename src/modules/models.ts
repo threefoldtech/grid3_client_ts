@@ -140,7 +140,7 @@ class QSFSZDBGetModel extends BaseGetDeleteModel {}
 
 class QSFSZDBDeleteModel extends BaseGetDeleteModel {}
 
-class DeployGatewayFQDNModel {
+class GatewayFQDNModel {
     name: string;
     node_id: number;
     fqdn: string;
@@ -148,12 +148,20 @@ class DeployGatewayFQDNModel {
     backends: string[];
 }
 
-class DeployGatewayNameModel {
+class GatewayFQDNGetModel extends BaseGetDeleteModel {}
+
+class GatewayFQDNDeleteModel extends BaseGetDeleteModel {}
+
+class GatewayNameModel {
     name: string;
     node_id: number;
     tls_passthrough: boolean;
     backends: string[];
 }
+
+class GatewayNameGetModel extends BaseGetDeleteModel {}
+
+class GatewayNameDeleteModel extends BaseGetDeleteModel {}
 
 class ZOSModel extends Deployment {
     node_id: number;
@@ -243,8 +251,8 @@ export {
     ZDBDeleteModel,
     AddZDBModel,
     DeleteZDBModel,
-    DeployGatewayFQDNModel,
-    DeployGatewayNameModel,
+    GatewayFQDNModel,
+    GatewayNameModel,
     ZOSModel,
     QSFSDiskModel,
     QSFSZDBSModel,
@@ -264,4 +272,8 @@ export {
     WalletTransferModel,
     WalletDeleteModel,
     WalletGetModel,
+    GatewayFQDNGetModel,
+    GatewayFQDNDeleteModel,
+    GatewayNameGetModel,
+    GatewayNameDeleteModel,
 };

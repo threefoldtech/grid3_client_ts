@@ -5,24 +5,15 @@ import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { appPath } from "./helpers/jsonfs";
 import * as modules from "./modules/index";
 
-import { machines } from "./modules/machine";
-import { zdb } from "./modules/zdb";
-import { zos } from "./modules/zos";
-import { qsfs_zdbs } from "./modules/qsfs_zdbs";
-import { k8s } from "./modules/k8s";
-import { contracts } from "./modules/contracts";
-import { twins } from "./modules/twins";
-import { gateway } from "./modules/gateway";
-
 class GridClient {
-    machines: machines;
-    zdb: zdb;
-    zos: zos;
-    qsfs_zdbs: qsfs_zdbs;
-    k8s: k8s;
-    contracts: contracts;
-    twins: twins;
-    gateway: gateway;
+    machines: modules.machines;
+    zdb: modules.zdb;
+    zos: modules.zos;
+    qsfs_zdbs: modules.qsfs_zdbs;
+    k8s: modules.k8s;
+    contracts: modules.contracts;
+    twins: modules.twins;
+    gateway: modules.gateway;
 
     constructor(
         public twin_id: number,

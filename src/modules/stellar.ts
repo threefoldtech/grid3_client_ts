@@ -2,7 +2,14 @@ import * as PATH from "path";
 
 import { default as StellarSdk } from "stellar-sdk";
 
-import { WalletImportModel, WalletBalanceByNameModel, WalletBalanceByAddressModel, WalletTransferModel, WalletGetModel, WalletDeleteModel } from ".";
+import {
+    WalletImportModel,
+    WalletBalanceByNameModel,
+    WalletBalanceByAddressModel,
+    WalletTransferModel,
+    WalletGetModel,
+    WalletDeleteModel,
+} from ".";
 import { expose } from "../helpers/expose";
 import { loadFromFile, updatejson, appPath } from "../helpers/jsonfs";
 

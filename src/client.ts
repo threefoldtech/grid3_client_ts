@@ -5,7 +5,6 @@ import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { appPath } from "./helpers/jsonfs";
 import * as modules from "./modules/index";
 
-
 class GridClient {
     constructor(
         public twin_id: number,

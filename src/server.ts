@@ -26,7 +26,9 @@ class Server {
     register() {
         const rmbClient = getRMBClient();
         const gridClient = new GridClient(config.twin_id, config.url, config.mnemonic, rmbClient);
-        for (const module of Object.getOwnPropertyNames(gridClient).filter(item => typeof gridClient[item] === "object")) {
+        for (const module of Object.getOwnPropertyNames(gridClient).filter(
+            item => typeof gridClient[item] === "object",
+        )) {
             const props = Object.getPrototypeOf(gridClient[module]);
             const methods = Object.getOwnPropertyNames(props);
             for (const method of methods) {

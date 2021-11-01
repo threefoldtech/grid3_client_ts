@@ -1,18 +1,26 @@
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 
 import { TFClient } from "../clients/tf-grid/client";
-import { NodeContractCreateModel, NameContractCreateModel, ContractGetModel, NodeContractUpdateModel, ContractCancelModel } from "./models";
+import {
+    NodeContractCreateModel,
+    NameContractCreateModel,
+    ContractGetModel,
+    NodeContractUpdateModel,
+    ContractCancelModel,
+} from "./models";
 import { expose } from "../helpers/expose";
 
 class Contracts {
     client: TFClient;
     context;
-    constructor(public twin_id: number,
+    constructor(
+        public twin_id: number,
         public url: string,
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName = "",) {
+        projectName = "",
+    ) {
         this.client = new TFClient(url, mnemonic);
         this.context = this.client.contracts;
     }

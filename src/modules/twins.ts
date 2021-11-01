@@ -4,16 +4,17 @@ import { TFClient } from "../clients/tf-grid/client";
 import { TwinCreateModel, TwinGetModel, TwinDeleteModel } from "./models";
 import { expose } from "../helpers/expose";
 
-
 class Twins {
     client: TFClient;
     context;
-    constructor(public twin_id: number,
+    constructor(
+        public twin_id: number,
         public url: string,
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName = "",) {
+        projectName = "",
+    ) {
         this.client = new TFClient(url, mnemonic);
         this.context = this.client.twins;
     }

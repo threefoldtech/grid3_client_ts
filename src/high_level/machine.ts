@@ -47,13 +47,7 @@ class VMHL extends HighLevelBase {
         const qsfsPrimitive = new QSFSPrimitive();
         for (const d of qsfsDisks) {
             // the ratio that will be used for minimal_shards to expected_shards is 3/5
-            const qsfsZdbsModule = new qsfs_zdbs(
-                this.twin_id,
-                this.url,
-                this.mnemonic,
-                this.rmbClient,
-                this.storePath,
-            );
+            const qsfsZdbsModule = new qsfs_zdbs(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
             if (qsfsProjectName) {
                 qsfsZdbsModule.projectName = qsfsProjectName;
             }

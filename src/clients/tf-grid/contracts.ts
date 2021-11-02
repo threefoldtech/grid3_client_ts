@@ -1,3 +1,8 @@
+enum ContractState {
+    Created = "Created",
+    Deleted = "Deleted",
+    OutOfFunds = "OutOfFunds",
+}
 class Contracts {
     tfclient;
 
@@ -44,8 +49,17 @@ class Contracts {
         return this.tfclient.client.getContractByID(id);
     }
 
+    async getContractIdByNodeIdAndHash(nodeId: number, hash: string) {
+        return this.tfclient.client.contractIDByNodeIDAndHash(nodeId, hash);
+    }
+
+    async getNodeContracts(nodeId: number, state: ContractState) {
+        return this.tfclient.client.nodeContracts(nodeId, state);
+    }
+
     async getNameContract(name: string) {
         return this.tfclient.client.contractIDByNameRegistration(name);
     }
 }
-export { Contracts };
+
+export { Contracts, ContractState };

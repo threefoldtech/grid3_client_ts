@@ -7,6 +7,9 @@ import {
     ContractGetModel,
     NodeContractUpdateModel,
     ContractCancelModel,
+    ContractGetByNodeIdAndHashModel,
+    NodeContractsGetModel,
+    NameContractGetModel,
 } from "./models";
 import { expose } from "../helpers/expose";
 
@@ -42,6 +45,27 @@ class Contracts {
     async get(options: ContractGetModel) {
         return await this.client.execute(this.context, this.client.contracts.get, [options.id]);
     }
+    @expose
+    async get_contract_id_by_node_id_and_hash(options: ContractGetByNodeIdAndHashModel) {
+        return await this.client.execute(this.context, this.client.contracts.getContractIdByNodeIdAndHash, [
+            options.node_id,
+            options.hash,
+        ]);
+    }
+
+    @expose
+    async get_node_contracts(options: NodeContractsGetModel) {
+        return await this.client.execute(this.context, this.client.contracts.getNodeContracts, [
+            options.node_id,
+            options.state,
+        ]);
+    }
+
+    @expose
+    async get_name_contract(options: NameContractGetModel) {
+        return await this.client.execute(this.context, this.client.contracts.getNameContract, [options.name]);
+    }
+
     @expose
     async update_node(options: NodeContractUpdateModel) {
         return await this.client.execute(this.context, this.client.contracts.updateNode, [

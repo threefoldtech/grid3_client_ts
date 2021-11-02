@@ -1,3 +1,4 @@
+import { ContractState } from "../clients/tf-grid/contracts";
 import { Deployment } from "../zos/deployment";
 import { ZdbModes } from "../zos/zdb";
 
@@ -181,6 +182,20 @@ class ContractGetModel {
     id: number;
 }
 
+class ContractGetByNodeIdAndHashModel {
+    node_id: number;
+    hash: string;
+}
+
+class NodeContractsGetModel {
+    node_id: number;
+    state: ContractState;
+}
+
+class NameContractGetModel {
+    name: string;
+}
+
 class NodeContractUpdateModel {
     id: number;
     hash: string;
@@ -265,6 +280,9 @@ export {
     NodeContractCreateModel,
     NameContractCreateModel,
     ContractGetModel,
+    ContractGetByNodeIdAndHashModel,
+    NodeContractsGetModel,
+    NameContractGetModel,
     NodeContractUpdateModel,
     ContractCancelModel,
     TwinCreateModel,

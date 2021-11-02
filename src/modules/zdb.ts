@@ -130,4 +130,4 @@ class ZdbsModule extends BaseModule {
     }
 }
 
-export { ZdbsModule as zdb };
+export { ZdbsModule as zdbs };

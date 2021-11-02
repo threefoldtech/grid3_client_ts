@@ -63,7 +63,6 @@ class TFClient {
             console.log(`Executing method: ${method.name} with args: ${args}`);
             result = await method.apply(context, args);
         } catch (e) {
-            console.log(e);
             throw Error(e);
         } finally {
             this.disconnect();

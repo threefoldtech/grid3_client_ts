@@ -1,3 +1,4 @@
+import path from "path";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { MessageBusClient } from "ts-rmb-redis-client";
 import { HTTPMessageBusClient } from "ts-rmb-http-client";
@@ -5,7 +6,7 @@ import { argv, env } from "process";
 
 import { loadFromFile } from "../../helpers/jsonfs";
 
-const config = loadFromFile("../../../config.json");
+const config = loadFromFile(path.join(__dirname, "../../../config.json"));
 
 function getRmbProxy(): string {
     let rmb_proxy = "";
@@ -36,7 +37,7 @@ function getRmbProxy(): string {
 function getRMBClient(): MessageBusClientInterface {
     const rmb_proxy = getRmbProxy();
     if (rmb_proxy) {
-        return new HTTPMessageBusClient(config.twin_id, rmb_proxy);
+        return new HTTPMessageBusClient(0, rmb_proxy);
     } else {
         return new MessageBusClient();
     }

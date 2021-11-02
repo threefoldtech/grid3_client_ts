@@ -4,8 +4,6 @@ import { GatewayNameModel, GatewayNameDeleteModel } from "../src/modules/models"
 
 import { getClient } from "./client_loader";
 
-const grid3 = getClient();
-
 // read more about the gateway types in this doc: https://github.com/threefoldtech/zos/tree/main/docs/gateway
 
 const gw = new GatewayNameModel();
@@ -15,6 +13,8 @@ gw.tls_passthrough = false;
 gw.backends = ["http://185.206.122.35:8000"];
 
 async function main() {
+    const grid3 = await getClient();
+
     // deploy
     const res = await grid3.gateway.deploy_name(gw);
     console.log(JSON.stringify(res));

@@ -13,6 +13,15 @@ class Twins {
         return this.tfclient.client.getTwinByID(id);
     }
 
+    async getMyTwinId(): Promise<number> {
+        const pubKey = this.tfclient.client.address;
+        return this.getTwinIdByAccountId(pubKey);
+    }
+
+    async getTwinIdByAccountId(publicKey: string): Promise<number> {
+        return this.tfclient.client.getTwinIdByAccountId(publicKey);
+    }
+
     async list() {
         return this.tfclient.client.listTwins();
     }

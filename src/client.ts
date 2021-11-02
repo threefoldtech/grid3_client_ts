@@ -1,40 +1,57 @@
 import * as PATH from "path";
 
 import { MessageBusClientInterface } from "ts-rmb-client-base";
+import { HTTPMessageBusClient } from "ts-rmb-http-client";
+import { TFClient } from "./clients/tf-grid/client";
 
 import { appPath } from "./helpers/jsonfs";
 import * as modules from "./modules/index";
 
 class GridClient {
     machines: modules.machines;
-    zdb: modules.zdb;
+    zdbs: modules.zdbs;
     zos: modules.zos;
     qsfs_zdbs: modules.qsfs_zdbs;
     k8s: modules.k8s;
     contracts: modules.contracts;
     twins: modules.twins;
     gateway: modules.gateway;
+    twinId: number;
 
     constructor(
-        public twin_id: number,
         public url: string,
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
-        projectName = "",
-    ) {
+        public projectName = "",
+    ) {}
+    async connect() {
+        const tfclient = new TFClient(this.url, this.mnemonic);
+        this.twinId = await tfclient.execute(tfclient.twins, tfclient.twins.getMyTwinId, []);
+        this._connect();
+    }
+    _connect() {
         let env = "mainnet";
         if (this.url.includes("dev")) {
             env = "devnet";
         } else if (this.url.includes("test")) {
             env = "testnet";
         }
-        const storePath = PATH.join(appPath, String(twin_id), env);
-
+        if (this.rmbClient instanceof HTTPMessageBusClient) {
+            this.rmbClient.twinId = this.twinId;
+        }
+        const storePath = PATH.join(appPath, env, String(this.twinId));
         for (const module of Object.getOwnPropertyNames(modules).filter(item => typeof modules[item] === "function")) {
             if (module.includes("Model")) {
                 continue;
             }
-            this[module] = new modules[module](twin_id, url, mnemonic, rmbClient, storePath, projectName);
+            this[module] = new modules[module](
+                this.twinId,
+                this.url,
+                this.mnemonic,
+                this.rmbClient,
+                storePath,
+                this.projectName,
+            );
         }
     }
 }

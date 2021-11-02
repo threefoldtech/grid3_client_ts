@@ -1,11 +1,9 @@
 import "reflect-metadata";
 
-import { ZDBModel, ZDBSModel, ZDBDeleteModel } from "../dist/node/modules/models";
-import { ZdbModes } from "../dist/node/zos/zdb";
+import { ZDBModel, ZDBSModel, ZDBDeleteModel } from "../src/modules/models";
+import { ZdbModes } from "../src/zos/zdb";
 
-import { getClient } from "./clientLoader";
-
-const grid3 = getClient();
+import { getClient } from "./client_loader";
 
 // create zdb object
 const zdb = new ZDBModel();
@@ -23,6 +21,8 @@ zdbs.zdbs = [zdb];
 zdbs.metadata = '{"test": "test"}';
 
 async function main() {
+    const grid3 = await getClient();
+
     const res = await grid3.zdbs.deploy(zdbs);
     console.log(JSON.stringify(res));
 

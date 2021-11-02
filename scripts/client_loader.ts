@@ -8,14 +8,16 @@ import { MessageBusClient } from "ts-rmb-redis-client";
 
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, "./testnet_config.json"), "utf-8"));
 
-function getClient(): GridClient {
+async function getClient(): Promise<GridClient> {
     let rmb: MessageBusClientInterface;
     if (config.proxy) {
-        rmb = new HTTPMessageBusClient(config.twin_id, config.proxy);
+        rmb = new HTTPMessageBusClient(0, config.proxy);
     } else {
         rmb = new MessageBusClient();
     }
-    return new GridClient(config.twin_id, config.url, config.mnemonic, rmb);
+    const gridClient = new GridClient(config.url, config.mnemonic, rmb);
+    await gridClient.connect();
+    return gridClient;
 }
 
 export { config, getClient };

@@ -1,7 +1,7 @@
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 
 import { TFClient } from "../clients/tf-grid/client";
-import { TwinCreateModel, TwinGetModel, TwinDeleteModel } from "./models";
+import { TwinCreateModel, TwinGetModel, TwinGetByAccountIdModel, TwinDeleteModel } from "./models";
 import { expose } from "../helpers/expose";
 
 class Twins {
@@ -26,6 +26,17 @@ class Twins {
     async get(options: TwinGetModel) {
         return await this.client.execute(this.context, this.client.twins.get, [options.id]);
     }
+
+    @expose
+    async get_my_twin_id() {
+        return await this.client.execute(this.context, this.client.twins.getMyTwinId, []);
+    }
+
+    @expose
+    async get_twin_id_by_account_id(options: TwinGetByAccountIdModel) {
+        return await this.client.execute(this.context, this.client.twins.getTwinIdByAccountId, [options.public_key]);
+    }
+
     @expose
     async list() {
         return await this.client.execute(this.context, this.client.twins.list, []);

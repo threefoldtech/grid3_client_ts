@@ -14,12 +14,12 @@ class Twins {
     }
 
     async getMyTwinId(): Promise<number> {
-        const pubKey = this.tfclient.client.key.address;
-        return await this.getTwinIdByAccountId(pubKey);
+        const pubKey = this.tfclient.client.address;
+        return this.getTwinIdByAccountId(pubKey);
     }
 
     async getTwinIdByAccountId(publicKey: string): Promise<number> {
-        return await this.tfclient.client.getTwinIdByAccountId(publicKey);
+        return this.tfclient.client.getTwinIdByAccountId(publicKey);
     }
 
     async list() {

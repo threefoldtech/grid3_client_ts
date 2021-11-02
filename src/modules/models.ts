@@ -199,6 +199,10 @@ class TwinGetModel {
     id: number;
 }
 
+class TwinGetByAccountIdModel {
+    public_key: string;
+}
+
 class TwinDeleteModel {
     id: number;
 }
@@ -265,6 +269,7 @@ export {
     ContractCancelModel,
     TwinCreateModel,
     TwinGetModel,
+    TwinGetByAccountIdModel,
     TwinDeleteModel,
     WalletImportModel,
     WalletBalanceByNameModel,

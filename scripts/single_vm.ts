@@ -3,8 +3,6 @@ import "reflect-metadata";
 import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../src/modules/models";
 import { getClient } from "./client_loader";
 
-const grid3 = getClient();
-
 // create network Object
 const n = new NetworkModel();
 n.name = "wedtest";
@@ -42,6 +40,8 @@ vms.metadata = "{'testVMs': true}";
 vms.description = "test deploying VMs via ts grid3 client";
 
 async function main() {
+    const grid3 = await getClient();
+
     // deploy vms
     const res = await grid3.machines.deploy(vms);
     console.log(JSON.stringify(res));

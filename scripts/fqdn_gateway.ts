@@ -4,8 +4,6 @@ import { GatewayFQDNModel, GatewayFQDNDeleteModel } from "../src/modules/models"
 
 import { getClient } from "./client_loader";
 
-const grid3 = getClient();
-
 // read more about the gateway types in this doc: https://github.com/threefoldtech/zos/tree/main/docs/gateway
 
 const gw = new GatewayFQDNModel();
@@ -17,6 +15,7 @@ gw.backends = ["http://185.206.122.35:8000"];
 
 async function main() {
     // deploy
+    const grid3 = await getClient();
     const res = await grid3.gateway.deploy_fqdn(gw);
     console.log(JSON.stringify(res));
 

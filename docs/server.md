@@ -12,7 +12,6 @@ Add substrate url and account's mnemonics in `config.json` in this repo home dir
 {
     "url": "<substrate url>",
     "mnemonic": "<your account mnemonics>",
-    "twin_id": "<your twin id created on substrate>",
     "rmb_proxy": "<RMB proxy url>" // in case http rmb proxy needs to be used
 }
 ```
@@ -36,15 +35,13 @@ Put the following content in a file `test_twin.ts` in this repo home directory
 
 ```ts
 import { MessageBusClient } from "ts-rmb-redis-client"
-import { loadFromFile } from "./src/helpers/jsonfs";
-
-const config = loadFromFile("./config.json");
 
 async function main() {
+    const myTwinId = 3
     const cmd = "twinserver.twins.get"
     const payload = JSON.stringify({ 'id': 1 })
     const rmb = new MessageBusClient();
-    const msg = rmb.prepare(cmd, [config.twin_id], 0, 2);
+    const msg = rmb.prepare(cmd, [myTwinId], 0, 2);
     const message = await rmb.send(msg, payload);
     const result = await rmb.read(message)
     console.log(result)

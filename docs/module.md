@@ -24,6 +24,18 @@ Module should be:
 
    payload: `'{"id": <twin id>}'`
 
+- **Get my twin id**
+
+   cmd: `twinserver.twins.get_my_twin_id`
+
+   payload: `""`
+
+- **Get twin id by account id**
+
+   cmd: `twinserver.twins.get_twin_id_by_account_id`
+
+   payload: `'{"public_key": <substrate account id>}'`
+
 - **List**
 
    cmd: `twinserver.twins.list`
@@ -55,6 +67,24 @@ Module should be:
    cmd: `twinserver.contracts.get`
 
    payload: `'{"id": <contract id>}'`
+
+- **Get contract id by node id and hash**
+
+   cmd: `twinserver.contracts.get_contract_id_by_node_id_and_hash`
+
+   payload: `'{"node_id": 1, "hash": <deployment challenge hash>}'`
+
+- **Get node contracts**
+
+   cmd: `twinserver.contracts.get_node_contracts`
+
+   payload: `'{"node_id": 1, "state": <contracts state should be "Created", "Deleted", or "OutOfFunds">}'`
+
+- **Get name contract**
+
+   cmd: `twinserver.contracts.get_name_contract`
+
+   payload: `'{"name": <contract name>}'`
 
 - **Update Node**
 

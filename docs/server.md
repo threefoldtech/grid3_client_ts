@@ -6,7 +6,7 @@
 
 ## Configuration
 
-Add substrate url and account's mnemonics in `config.json` in this repo home directory before running the server. [see](./test_setup.md#create-twin)
+Add substrate url and account's mnemonics in `config.json` in [server directory](../server/config.json) before running the server. [see](./test_setup.md#create-twin)
 
 ```json
 {
@@ -31,7 +31,7 @@ yarn run server
 ## Usage
 
 This is an example of getting a twin.
-Put the following content in a file `test_twin.ts` in this repo home directory
+Put the following content in a file `test_twin.ts`
 
 ```ts
 import { MessageBusClient } from "ts-rmb-redis-client"

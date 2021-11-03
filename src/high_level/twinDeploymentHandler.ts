@@ -360,7 +360,7 @@ class TwinDeploymentHandler {
                 twinDeployment.deployment.contract_id = contract["contract_id"];
                 contracts.created.push(contract);
                 if (twinDeployment.network) {
-                    twinDeployment.network.save(
+                    await twinDeployment.network.save(
                         contract["contract_id"],
                         contract["contract_type"]["nodeContract"]["node_id"],
                     );
@@ -382,7 +382,7 @@ class TwinDeploymentHandler {
                 const contract = await this.update(twinDeployment.deployment, twinDeployment.publicIps);
                 contracts.updated.push(contract);
                 if (twinDeployment.network) {
-                    twinDeployment.network.save(
+                    await twinDeployment.network.save(
                         contract["contract_id"],
                         contract["contract_type"]["nodeContract"]["node_id"],
                     );
@@ -400,7 +400,7 @@ class TwinDeploymentHandler {
                 const contract = await this.delete(twinDeployment.deployment.contract_id);
                 contracts.deleted.push({ contract_id: contract });
                 if (twinDeployment.network) {
-                    twinDeployment.network.save();
+                    await twinDeployment.network.save();
                 }
                 events.emit("logs", `Deployment has been deleted with contract_id: ${contract}`);
             }

@@ -5,6 +5,7 @@ import { ZOSModel } from "./models";
 import { expose } from "../helpers/expose";
 import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { DeploymentFactory } from "../primitives/deployment";
+import { BackendStorageType } from "../storage/backend";
 
 class Zos {
     constructor(
@@ -13,7 +14,8 @@ class Zos {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName = "",
+        public projectName = "",
+        public backendStorageType: BackendStorageType = BackendStorageType.default
     ) {}
 
     @expose

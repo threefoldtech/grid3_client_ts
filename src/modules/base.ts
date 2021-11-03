@@ -10,7 +10,7 @@ import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { TwinDeployment, Operations } from "../high_level/models";
 import { KubernetesHL } from "../high_level/kubernetes";
 import { ZdbHL } from "../high_level/zdb";
-import { loadFromFile, updatejson } from "../helpers/jsonfs";
+import { BackendStorage, BackendStorageType, StorageUpdateAction } from "../storage/backend";
 import { Nodes } from "../primitives/nodes";
 import { DeploymentFactory } from "../primitives/deployment";
 import { Network } from "../primitives/network";
@@ -19,11 +19,11 @@ import { VMHL } from "../high_level/machine";
 import { TFClient } from "../clients/tf-grid/client";
 
 class BaseModule {
-    projectName = "";
     fileName = "";
     workloadTypes = [];
     deploymentFactory: DeploymentFactory;
     twinDeploymentHandler: TwinDeploymentHandler;
+    backendStorage: BackendStorage;
 
     constructor(
         public twin_id: number,
@@ -31,20 +31,22 @@ class BaseModule {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName = "",
+        public projectName: string = "",
+        public backendStorageType: BackendStorageType = BackendStorageType.default
     ) {
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
-        this.projectName = projectName;
+        this.backendStorage = new BackendStorage(backendStorageType);
     }
 
-    _load() {
+    async _load() {
         const path = PATH.join(this.storePath, this.projectName, this.fileName);
-        return [path, loadFromFile(path)];
+
+        return [path, await this.backendStorage.load(path)];
     }
 
-    save(name: string, contracts: Record<string, unknown[]>, wgConfig = "") {
-        const [path, data] = this._load();
+    async save(name: string, contracts: Record<string, unknown[]>, wgConfig = "") {
+        const [path, data] = await this._load();
         let deploymentData = { contracts: [], wireguard_config: "" };
         if (Object.keys(data).includes(name)) {
             deploymentData = data[name];
@@ -65,50 +67,50 @@ class BaseModule {
             deploymentData["wireguard_config"] = wgConfig;
         }
         if (deploymentData.contracts.length !== 0) {
-            updatejson(path, name, deploymentData);
+            await this.backendStorage.update(path, name, deploymentData);
         } else {
-            updatejson(path, name, deploymentData, "delete");
+            await this.backendStorage.update(path, name, deploymentData, StorageUpdateAction.delete);
         }
 
         return deploymentData;
     }
 
-    _list(): string[] {
-        const [_, data] = this._load();
+    async _list(): Promise<string[]> {
+        const [_, data] = await this._load();
         return Object.keys(data);
     }
 
-    exists(name: string): boolean {
-        return this._list().includes(name);
+    async exists(name: string): Promise<boolean> {
+        return (await this._list()).includes(name);
     }
 
-    _getDeploymentNodeIds(name: string): number[] {
+    async _getDeploymentNodeIds(name: string): Promise<number[]> {
         const nodeIds = [];
-        const contracts = this._getContracts(name);
+        const contracts = await this._getContracts(name);
         for (const contract of contracts) {
             nodeIds.push(contract["node_id"]);
         }
         return nodeIds;
     }
 
-    _getContracts(name: string): string[] {
-        const [_, data] = this._load();
+    async _getContracts(name: string): Promise<string[]> {
+        const [_, data] = await this._load();
         if (!Object.keys(data).includes(name)) {
             return [];
         }
         return data[name]["contracts"];
     }
 
-    _getContractIdFromNodeId(name: string, nodeId: number): number {
-        const contracts = this._getContracts(name);
+    async _getContractIdFromNodeId(name: string, nodeId: number): Promise<number> {
+        const contracts = await this._getContracts(name);
         for (const contract of contracts) {
             if (contract["node_id"] === nodeId) {
                 return contract["contract_id"];
             }
         }
     }
-    _getNodeIdFromContractId(name: string, contractId: number): number {
-        const contracts = this._getContracts(name);
+    async _getNodeIdFromContractId(name: string, contractId: number): Promise<number> {
+        const contracts = await this._getContracts(name);
         for (const contract of contracts) {
             if (contract["contract_id"] === contractId) {
                 return contract["node_id"];
@@ -168,7 +170,7 @@ class BaseModule {
             metadata: workload.metadata,
             description: workload.description,
         };
-    }
+    };
 
     _getDiskData(deployments, name) {
         for (const deployment of deployments) {
@@ -192,7 +194,7 @@ class BaseModule {
     }
 
     async _get(name: string) {
-        const [_, data] = this._load();
+        const [_, data] = await this._load();
         if (!Object.keys(data).includes(name)) {
             return [];
         }
@@ -203,7 +205,7 @@ class BaseModule {
                 await tfClient.connect();
                 const c = await tfClient.contracts.get(contract["contract_id"]);
                 if (c.state !== "Created") {
-                    this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
+                    await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
                     continue;
                 }
             } finally {
@@ -230,7 +232,7 @@ class BaseModule {
             if (found) {
                 deployments.push(deployment);
             } else {
-                this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
+                await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
             }
         }
         return deployments;
@@ -246,14 +248,14 @@ class BaseModule {
         let finalTwinDeployments = [];
         finalTwinDeployments = twinDeployments.filter(d => d.operation === Operations.update);
         twinDeployments = this.twinDeploymentHandler.deployMerge(twinDeployments);
-        const deploymentNodeIds = this._getDeploymentNodeIds(name);
+        const deploymentNodeIds = await this._getDeploymentNodeIds(name);
         finalTwinDeployments = finalTwinDeployments.concat(
             twinDeployments.filter(d => !deploymentNodeIds.includes(d.nodeId)),
         );
 
         for (let oldDeployment of oldDeployments) {
             oldDeployment = await this.deploymentFactory.fromObj(oldDeployment);
-            const node_id = this._getNodeIdFromContractId(name, oldDeployment.contract_id);
+            const node_id = await this._getNodeIdFromContractId(name, oldDeployment.contract_id);
             let deploymentFound = false;
             for (const twinDeployment of twinDeployments) {
                 if (twinDeployment.nodeId !== node_id) {
@@ -280,7 +282,7 @@ class BaseModule {
         if (contracts.created.length === 0 && contracts.updated.length === 0 && contracts.deleted.length === 0) {
             return "Nothing found to update";
         }
-        this.save(name, contracts);
+        await this.save(name, contracts);
         return { contracts: contracts };
     }
 
@@ -293,7 +295,7 @@ class BaseModule {
     ) {
         const finalTwinDeployments = twinDeployments.filter(d => d.operation === Operations.update);
         const twinDeployment = twinDeployments.pop();
-        const contract_id = this._getContractIdFromNodeId(deployment_name, node_id);
+        const contract_id = await this._getContractIdFromNodeId(deployment_name, node_id);
         if (contract_id) {
             for (let oldDeployment of oldDeployments) {
                 oldDeployment = await this.deploymentFactory.fromObj(oldDeployment);
@@ -310,7 +312,7 @@ class BaseModule {
         }
         finalTwinDeployments.push(twinDeployment);
         const contracts = await this.twinDeploymentHandler.handle(finalTwinDeployments);
-        this.save(deployment_name, contracts);
+        await this.save(deployment_name, contracts);
         return { contracts: contracts };
     }
 
@@ -320,8 +322,8 @@ class BaseModule {
             const twinDeployments = await module.delete(deployment, [name]);
             const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
             if (contracts["deleted"].length > 0 || contracts["updated"].length > 0) {
-                this.save(deployment_name, contracts, "");
-                this._get(deployment_name);
+                await this.save(deployment_name, contracts, "");
+                await this._get(deployment_name);
                 return contracts;
             }
         }
@@ -329,7 +331,7 @@ class BaseModule {
     }
 
     async _delete(name: string) {
-        const [path, data] = this._load();
+        const [path, data] = await this._load();
         const contracts = { deleted: [], updated: [] };
         if (!Object.keys(data).includes(name)) {
             return contracts;
@@ -353,7 +355,7 @@ class BaseModule {
             }
         }
         contracts.updated = updatedContracts;
-        updatejson(path, name, "", "delete");
+        await this.backendStorage.update(path, name, "", StorageUpdateAction.delete);
         return contracts;
     }
 }

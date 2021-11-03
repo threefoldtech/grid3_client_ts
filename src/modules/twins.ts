@@ -3,6 +3,7 @@ import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { TFClient } from "../clients/tf-grid/client";
 import { TwinCreateModel, TwinGetModel, TwinGetByAccountIdModel, TwinDeleteModel } from "./models";
 import { expose } from "../helpers/expose";
+import { BackendStorageType } from "../storage/backend";
 
 class Twins {
     client: TFClient;
@@ -13,7 +14,8 @@ class Twins {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName = "",
+        public projectName = "",
+        public backendStorageType: BackendStorageType = BackendStorageType.default
     ) {
         this.client = new TFClient(url, mnemonic);
         this.context = this.client.twins;

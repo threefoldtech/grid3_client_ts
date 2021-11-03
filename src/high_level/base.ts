@@ -8,6 +8,7 @@ import { Nodes } from "../primitives/nodes";
 import { TwinDeployment, Operations } from "../high_level/models";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { events } from "../helpers/events";
+import { BackendStorageType } from "../storage/backend";
 class HighLevelBase {
     constructor(
         public twin_id: number,
@@ -15,6 +16,7 @@ class HighLevelBase {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
+        public backendStorageType: BackendStorageType = BackendStorageType.default
     ) {}
 
     _filterWorkloads(
@@ -79,7 +81,7 @@ class HighLevelBase {
         for (const workload of deletedMachineWorkloads) {
             const networkName = workload.data["network"].interfaces[0].network;
             const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
-            const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
+            const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url, this.backendStorageType);
             await network.load();
 
             const machineIp = workload.data["network"].interfaces[0].ip;
@@ -96,7 +98,7 @@ class HighLevelBase {
                 continue;
             }
 
-            const contract_id = network.deleteNode(node_id);
+            const contract_id = await network.deleteNode(node_id);
             if (contract_id === deployment.contract_id) {
                 if (remainingWorkloads.length === 1) {
                     twinDeployments.push(new TwinDeployment(deployment, Operations.delete, 0, 0, network));
@@ -123,7 +125,7 @@ class HighLevelBase {
             }
             // in case of the network got more accesspoints on different nodes this won't be valid
             if (network.nodes.length === 1 && network.getNodeReservedIps(network.nodes[0].node_id).length === 0) {
-                const contract_id = network.deleteNode(network.nodes[0].node_id);
+                const contract_id = await network.deleteNode(network.nodes[0].node_id);
                 for (let d of network.deployments) {
                     d = await deploymentFactory.fromObj(d);
                     if (d.contract_id !== contract_id) {
@@ -190,13 +192,14 @@ class HighLevelBase {
                         this.rmbClient,
                         this.storePath,
                         this.url,
+                        this.backendStorageType
                     );
                     await network.load();
                     break;
                 }
             }
             for (const deleteNode of deletedNodes) {
-                network.deleteNode(deleteNode);
+                await network.deleteNode(deleteNode);
             }
             for (const deleteIp of deletedIps) {
                 network.deleteReservedIp(node_id, deleteIp);

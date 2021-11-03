@@ -13,6 +13,7 @@ import { GatewayFQDNProxy, GatewayResult } from "../zos/gateway";
 
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { expose } from "../helpers/expose";
+import { BackendStorageType } from "../storage/backend";
 
 class GWModule extends BaseModule {
     fileName = "gateway.json";
@@ -25,15 +26,16 @@ class GWModule extends BaseModule {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName = "",
+        public projectName = "",
+        public backendStorageType: BackendStorageType = BackendStorageType.default
     ) {
-        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName, backendStorageType);
         this.gateway = new GatewayHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
 
     @expose
     async deploy_fqdn(options: GatewayFQDNModel) {
-        if (this.exists(options.name)) {
+        if (await this.exists(options.name)) {
             throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
         }
         const twinDeployments = await this.gateway.create(
@@ -44,13 +46,13 @@ class GWModule extends BaseModule {
             options.fqdn,
         );
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
-        this.save(options.name, contracts);
+        await this.save(options.name, contracts);
         return { contracts: contracts };
     }
 
     @expose
     async deploy_name(options: GatewayNameModel) {
-        if (this.exists(options.name)) {
+        if (await this.exists(options.name)) {
             throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
         }
         const twinDeployments = await this.gateway.create(
@@ -60,7 +62,7 @@ class GWModule extends BaseModule {
             options.backends,
         );
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
-        this.save(options.name, contracts);
+        await this.save(options.name, contracts);
         return { contracts: contracts };
     }
 

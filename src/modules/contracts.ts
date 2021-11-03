@@ -12,6 +12,7 @@ import {
     NameContractGetModel,
 } from "./models";
 import { expose } from "../helpers/expose";
+import { BackendStorageType } from "../storage/backend";
 
 class Contracts {
     client: TFClient;
@@ -22,7 +23,8 @@ class Contracts {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName = "",
+        public projectName = "",
+        publicbackendStorageType: BackendStorageType = BackendStorageType.default
     ) {
         this.client = new TFClient(url, mnemonic);
         this.context = this.client.contracts;

@@ -7,6 +7,7 @@ import { ZdbModes } from "../zos/zdb";
 import { WorkloadTypes } from "../zos/workload";
 import { ZdbBackend } from "../zos/qsfs";
 import { expose } from "../helpers/expose";
+import { BackendStorageType } from "../storage/backend";
 
 class QSFSZdbsModule extends BaseModule {
     fileName = "qsfs_zdbs.json";
@@ -18,9 +19,10 @@ class QSFSZdbsModule extends BaseModule {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        projectName = "",
+        public projectName = "",
+        public backendStorageType: BackendStorageType = BackendStorageType.default
     ) {
-        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
+        super(twin_id, url, mnemonic, rmbClient, storePath, projectName, backendStorageType);
         this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient, this.storePath);
     }
 
@@ -53,18 +55,18 @@ class QSFSZdbsModule extends BaseModule {
 
     @expose
     async deploy(options: QSFSZDBSModel) {
-        if (this.exists(options.name)) {
+        if (await this.exists(options.name)) {
             throw Error(`Another QSFS zdbs deployment with the same name ${options.name} is already exist`);
         }
         const twinDeployments = this._createDeployment(options);
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
-        this.save(options.name, contracts);
+        await this.save(options.name, contracts);
         return { contracts: contracts };
     }
 
     @expose
-    list() {
-        return this._list();
+    async list() {
+        return await this._list();
     }
 
     @expose

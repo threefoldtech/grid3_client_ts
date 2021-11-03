@@ -3,8 +3,9 @@ import * as PATH from "path";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { TFClient } from "./clients/tf-grid/client";
 
-import { appPath } from "./helpers/jsonfs";
+import { appPath } from "./storage/backend";
 import * as modules from "./modules/index";
+import { BackendStorageType } from "./storage/backend";
 
 class GridClient {
     machines: modules.machines;
@@ -23,6 +24,7 @@ class GridClient {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public projectName = "",
+        public storageBackendType = BackendStorageType.default
     ) {}
     async connect() {
         const tfclient = new TFClient(this.url, this.mnemonic);
@@ -50,6 +52,7 @@ class GridClient {
                 this.rmbClient,
                 storePath,
                 this.projectName,
+                this.storageBackendType
             );
         }
     }

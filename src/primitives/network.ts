@@ -9,7 +9,7 @@ import { default as PrivateIp } from "private-ip";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Znet, Peer } from "../zos/znet";
 import { Deployment } from "../zos/deployment";
-import { loadFromFile, dumpToFile, appPath } from "../helpers/jsonfs";
+import { BackendStorage, BackendStorageType, appPath } from "../storage/backend";
 import { getRandomNumber } from "../helpers/utils";
 import { Nodes } from "./nodes";
 import { events } from "../helpers/events";
@@ -37,6 +37,7 @@ class Network {
     reservedSubnets: string[] = [];
     networks: Znet[] = [];
     accessPoints: AccessPoint[] = [];
+    backendStorage: BackendStorage;
 
     constructor(
         public name: string,
@@ -44,6 +45,7 @@ class Network {
         public rmbClient,
         public storePath: string,
         public url: string,
+        public backendStorageType: BackendStorageType = BackendStorageType.default
     ) {
         if (Addr(ipRange).prefix !== 16) {
             throw Error("Network ip_range should be with prefix 16");
@@ -51,6 +53,7 @@ class Network {
         if (!this.isPrivateIP(ipRange)) {
             throw Error("Network ip_range should be private range");
         }
+        this.backendStorage = new BackendStorage(backendStorageType);
     }
 
     async addAccess(node_id: number, ipv4: boolean): Promise<string> {
@@ -124,8 +127,8 @@ class Network {
         return znet_workload;
     }
 
-    deleteNode(node_id: number): number {
-        if (!this.exists()) {
+    async deleteNode(node_id: number): Promise<number> {
+        if (!await this.exists()) {
             return 0;
         }
         events.emit("logs", `Deleting node ${node_id} from network ${this.name}`);
@@ -173,7 +176,7 @@ class Network {
     }
 
     async load(): Promise<void> {
-        const networks = this.getNetworks();
+        const networks = await this.getNetworks();
         if (!Object.keys(networks).includes(this.name)) {
             return;
         }
@@ -212,7 +215,7 @@ class Network {
             }
         }
         await this.getAccessPoints();
-        this.save();
+        await this.save();
     }
 
     _fromObj(net: Znet): Znet {
@@ -220,8 +223,8 @@ class Network {
         return znet;
     }
 
-    exists(): boolean {
-        return this.getNetworkNames().includes(this.name);
+    async exists(): Promise<boolean> {
+        return (await this.getNetworkNames()).includes(this.name);
     }
 
     nodeExists(node_id: number): boolean {
@@ -378,13 +381,13 @@ class Network {
         return this.accessPoints;
     }
 
-    getNetworks() {
+    async getNetworks() {
         const path = PATH.join(this.storePath, "network.json");
-        return loadFromFile(path);
+        return await this.backendStorage.load(path);
     }
 
-    getNetworkNames(): string[] {
-        const networks = this.getNetworks();
+    async getNetworkNames(): Promise<string[]> {
+        const networks = await this.getNetworks();
         return Object.keys(networks);
     }
 
@@ -462,10 +465,10 @@ AllowedIPs = ${this.ipRange}, ${networkIP}
 PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     }
 
-    save(contract_id = 0, node_id = 0) {
+    async save(contract_id = 0, node_id = 0) {
         let network;
-        if (this.exists()) {
-            network = this.getNetworks()[this.name];
+        if (await this.exists()) {
+            network = await this.getNetworks()[this.name];
         } else {
             network = {
                 ip_range: this.ipRange,
@@ -474,7 +477,7 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
         }
 
         if (this.nodes.length === 0) {
-            this.delete();
+            await this.delete();
             return;
         }
 
@@ -494,25 +497,25 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
         }
         network.nodes = nodes;
         if (nodes.length !== 0) {
-            this._save(network);
+            await this._save(network);
         } else {
-            this.delete();
+            await this.delete();
         }
     }
 
-    _save(network): void {
-        const networks = this.getNetworks();
+    async _save(network): Promise<void> {
+        const networks = await this.getNetworks();
         networks[this.name] = network;
         const path = PATH.join(this.storePath, "network.json");
-        dumpToFile(path, networks);
+        await this.backendStorage.dump(path, networks);
     }
 
-    delete(): void {
+    async delete(): Promise<void> {
         events.emit("logs", `Deleting network ${this.name}`);
-        const networks = this.getNetworks();
+        const networks = await this.getNetworks();
         delete networks[this.name];
         const path = PATH.join(this.storePath, "network.json");
-        dumpToFile(path, networks);
+        await this.backendStorage.dump(path, networks);
     }
 
     async generatePeers(): Promise<void> {

@@ -1,6 +1,7 @@
 import * as PATH from "path";
 
 import { default as StellarSdk } from "stellar-sdk";
+import { MessageBusClientInterface } from "ts-rmb-client-base";
 
 import {
     WalletImportModel,
@@ -11,25 +12,42 @@ import {
     WalletDeleteModel,
 } from ".";
 import { expose } from "../helpers/expose";
-import { loadFromFile, updatejson, appPath } from "../helpers/jsonfs";
+import { appPath, BackendStorage, BackendStorageType, StorageUpdateAction } from "../storage/backend";
 
 const server = new StellarSdk.Server("https://horizon.stellar.org");
 
 class Stellar {
     fileName = "stellar.json";
+    backendStorage: BackendStorage;
 
-    save(name: string, secret: string) {
+    constructor(
+        public twin_id: number,
+        public url: string,
+        public mnemonic: string,
+        public rmbClient: MessageBusClientInterface,
+        public storePath: string,
+        public projectName: string = "",
+        public backendStorageType: BackendStorageType = BackendStorageType.default
+    ) {
+        this.backendStorage = new BackendStorage(backendStorageType);
+    }
+
+    async _load() {
         const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+        const data = await this.backendStorage.load(path);
+        return [path, data];
+    }
+
+    async save(name: string, secret: string) {
+        const [path, data] = await this._load();
         if (data[name]) {
             throw Error(`A wallet with the same name ${name} already exists`);
         }
-        updatejson(path, name, secret);
+        await this.backendStorage.update(path, name, secret);
     }
 
-    getWalletSecret(name: string) {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+    async getWalletSecret(name: string) {
+        const [_, data] = await this._load();
         return data[name];
     }
 
@@ -38,26 +56,26 @@ class Stellar {
         const walletKeypair = StellarSdk.Keypair.fromSecret(options.secret);
         const walletPublicKey = walletKeypair.publicKey();
         await server.loadAccount(walletPublicKey);
-        this.save(options.name, options.secret);
+        await this.save(options.name, options.secret);
         return walletPublicKey;
-    }
+    };
 
     @expose
-    get(options: WalletGetModel) {
-        const secret = this.getWalletSecret(options.name);
+    async get(options: WalletGetModel) {
+        const secret = await this.getWalletSecret(options.name);
         const walletKeypair = StellarSdk.Keypair.fromSecret(secret);
         return walletKeypair.publicKey(); // TODO: return wallet secret after adding security context on the server calls
     }
 
     @expose
     async update(options: WalletImportModel) {
-        if (!this.exist(options)) {
+        if (!await this.exist(options)) {
             throw Error(`Couldn't find a wallet with name ${options.name} to update`);
         }
-        const secret = this.getWalletSecret(options.name);
+        const secret = await this.getWalletSecret(options.name);
         const deleteWallet = new WalletDeleteModel();
         deleteWallet.name = options.name;
-        this.delete(deleteWallet);
+        await this.delete(deleteWallet);
         try {
             return await this.import(options);
         } catch (e) {
@@ -69,20 +87,19 @@ class Stellar {
     }
 
     @expose
-    exist(options: WalletGetModel) {
-        return this.list().includes(options.name);
+    async exist(options: WalletGetModel) {
+        return (await this.list()).includes(options.name);
     }
 
     @expose
-    list() {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+    async list() {
+        const [_, data] = await this._load();
         return Object.keys(data);
     }
 
     @expose
     async balance_by_name(options: WalletBalanceByNameModel) {
-        const secret = this.getWalletSecret(options.name);
+        const secret = await this.getWalletSecret(options.name);
         if (!secret) {
             throw Error(`could not find a wallet with name ${options.name}`);
         }
@@ -108,7 +125,7 @@ class Stellar {
 
     @expose
     async transfer(options: WalletTransferModel) {
-        const secret = this.getWalletSecret(options.name);
+        const secret = await this.getWalletSecret(options.name);
         if (!secret) {
             throw Error(`could not find a wallet with name ${options.name}`);
         }
@@ -157,13 +174,12 @@ class Stellar {
     }
 
     @expose
-    delete(options: WalletDeleteModel) {
-        const path = PATH.join(appPath, this.fileName);
-        const data = loadFromFile(path);
+    async delete(options: WalletDeleteModel) {
+        const [path, data] = await this._load();
         if (!data[options.name]) {
             throw Error(`Couldn't find a wallet with name ${options.name}`);
         }
-        updatejson(path, options.name, "", "delete");
+        await this.backendStorage.update(path, options.name, "", StorageUpdateAction.delete);
         return "Deleted";
     }
 }

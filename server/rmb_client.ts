@@ -1,12 +1,12 @@
 import path from "path";
+import fs from "fs";
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { MessageBusClient } from "ts-rmb-redis-client";
 import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import { argv, env } from "process";
 
-import { loadFromFile } from "../src/helpers/jsonfs";
 
-const config = loadFromFile(path.join(__dirname, "../../../config.json"));
+const config = JSON.parse(fs.readFileSync(path.join(__dirname, "./config.json"), "utf-8"));
 
 function getRmbProxy(): string {
     let rmb_proxy = "";

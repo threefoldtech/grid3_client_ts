@@ -8,13 +8,14 @@ import * as modules from "./modules/index";
 
 class GridClient {
     machines: modules.machines;
-    zdbs: modules.zdbs;
-    zos: modules.zos;
-    qsfs_zdbs: modules.qsfs_zdbs;
     k8s: modules.k8s;
+    zdbs: modules.zdbs;
+    gateway: modules.gateway;
+    qsfs_zdbs: modules.qsfs_zdbs;
+    zos: modules.zos;
     contracts: modules.contracts;
     twins: modules.twins;
-    gateway: modules.gateway;
+    kvstore: modules.kvstore;
     twinId: number;
 
     constructor(

@@ -1,17 +1,20 @@
 import { default as Client } from "tfgrid-api-client";
 import { Contracts } from "./contracts";
 import { Twins } from "./twins";
+import { KVStore } from "./kvstore";
 import { ErrorsMap } from "./errors";
 
 class TFClient {
     client;
     contracts: Contracts;
     twins: Twins;
+    kvStore: KVStore;
 
     constructor(url: string, mnemonic: string) {
         this.client = new Client(url, mnemonic);
         this.contracts = new Contracts(this);
         this.twins = new Twins(this);
+        this.kvStore = new KVStore(this);
     }
     async connect(): Promise<void> {
         await this.client.init();

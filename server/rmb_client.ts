@@ -4,7 +4,7 @@ import { MessageBusClient } from "ts-rmb-redis-client";
 import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import { argv, env } from "process";
 
-import { loadFromFile } from "../../helpers/jsonfs";
+import { loadFromFile } from "../src/helpers/jsonfs";
 
 const config = loadFromFile(path.join(__dirname, "../../../config.json"));
 

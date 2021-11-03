@@ -1,7 +1,6 @@
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 
 import { WorkloadTypes } from "../zos/workload";
-import { getRMBClient } from "../clients/rmb";
 import { ZOSModel } from "./models";
 import { expose } from "../helpers/expose";
 import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
@@ -34,8 +33,7 @@ class Zos {
             }
         }
         console.log(`Deploying on node_id: ${node_id} with number of public IPs: ${publicIps}`);
-        const rmbClient = getRMBClient();
-        const twinDeploymentHandler = new TwinDeploymentHandler(rmbClient, this.twin_id, this.url, this.mnemonic);
+        const twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, this.twin_id, this.url, this.mnemonic);
         return await twinDeploymentHandler.deploy(deployment, node_id, publicIps);
     }
 }

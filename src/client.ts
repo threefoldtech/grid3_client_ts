@@ -1,7 +1,6 @@
 import * as PATH from "path";
 
 import { MessageBusClientInterface } from "ts-rmb-client-base";
-import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import { TFClient } from "./clients/tf-grid/client";
 
 import { appPath } from "./helpers/jsonfs";
@@ -36,9 +35,8 @@ class GridClient {
         } else if (this.url.includes("test")) {
             env = "testnet";
         }
-        if (this.rmbClient instanceof HTTPMessageBusClient) {
-            this.rmbClient.twinId = this.twinId;
-        }
+
+        this.rmbClient["twinId"] = this.twinId;
         const storePath = PATH.join(appPath, env, String(this.twinId));
         for (const module of Object.getOwnPropertyNames(modules).filter(item => typeof modules[item] === "function")) {
             if (module.includes("Model")) {

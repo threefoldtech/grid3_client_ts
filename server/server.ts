@@ -2,10 +2,10 @@ import "reflect-metadata";
 import path from "path";
 import { MessageBusServer } from "ts-rmb-redis-client";
 
-import { GridClient } from "./client";
-import { getRMBClient } from "./clients/rmb/client";
-import { isExposed } from "./helpers/expose";
-import { loadFromFile } from "./helpers/jsonfs";
+import { GridClient } from "../src/client";
+import { getRMBClient } from "./rmb_client";
+import { isExposed } from "../src/helpers/expose";
+import { loadFromFile } from "../src/helpers/jsonfs";
 
 const config = loadFromFile(path.join(__dirname, "../config.json"));
 class Server {

@@ -1,7 +1,5 @@
 import * as PATH from "path";
 import getAppDataPath from "appdata-path";
-import { FS } from "./filesystem";
-import { LocalStorage } from "./localstorage";
 import { TFKVStore } from "./tfkvstore";
 
 const appsPath = getAppDataPath();
@@ -9,30 +7,31 @@ const appPath = PATH.join(appsPath, "grid3_client");
 
 enum StorageUpdateAction {
     add = "add",
-    delete = "delete"
+    delete = "delete",
 }
 
 enum BackendStorageType {
     default = "default",
-    tfkvstore = "tfkvstore"
+    tfkvstore = "tfkvstore",
 }
 
 class BackendStorage {
     storage;
-    constructor(public type: BackendStorageType = BackendStorageType.default, url: string = "", mnemonic: string = "") {
+    constructor(public type: BackendStorageType = BackendStorageType.default, url = "", mnemonic = "") {
         if (type === BackendStorageType.default) {
-            if (this.isNode()) {
-                this.storage = new FS();
+            if (this.isEnvNode()) {
+                const storage = require("./filesystem");
+                this.storage = new storage.FS();
             } else {
-                this.storage = new LocalStorage();
+                const storage = require("./localstorage");
+                this.storage = new storage.LocalStorage();
             }
-        }
-        else if (type === BackendStorageType.tfkvstore) {
+        } else if (type === BackendStorageType.tfkvstore) {
             this.storage = new TFKVStore(url, mnemonic);
         }
     }
 
-    isNode(): boolean {
+    isEnvNode(): boolean {
         return (
             typeof process === "object" &&
             typeof process.versions === "object" &&

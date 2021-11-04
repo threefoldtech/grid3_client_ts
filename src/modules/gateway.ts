@@ -27,7 +27,7 @@ class GWModule extends BaseModule {
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
         public projectName = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default
+        public backendStorageType: BackendStorageType = BackendStorageType.default,
     ) {
         super(twin_id, url, mnemonic, rmbClient, storePath, projectName, backendStorageType);
         this.gateway = new GatewayHL(twin_id, url, mnemonic, rmbClient, this.storePath);

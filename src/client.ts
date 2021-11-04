@@ -24,7 +24,7 @@ class GridClient {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public projectName = "",
-        public storageBackendType = BackendStorageType.default
+        public storageBackendType = BackendStorageType.default,
     ) {}
     async connect() {
         const tfclient = new TFClient(this.url, this.mnemonic);
@@ -52,7 +52,7 @@ class GridClient {
                 this.rmbClient,
                 storePath,
                 this.projectName,
-                this.storageBackendType
+                this.storageBackendType,
             );
         }
     }

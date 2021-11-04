@@ -24,7 +24,7 @@ class Contracts {
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
         public projectName = "",
-        publicbackendStorageType: BackendStorageType = BackendStorageType.default
+        publicbackendStorageType: BackendStorageType = BackendStorageType.default,
     ) {
         this.client = new TFClient(url, mnemonic);
         this.context = this.client.contracts;

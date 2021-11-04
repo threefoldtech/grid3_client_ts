@@ -16,7 +16,7 @@ class HighLevelBase {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
-        public backendStorageType: BackendStorageType = BackendStorageType.default
+        public backendStorageType: BackendStorageType = BackendStorageType.default,
     ) {}
 
     _filterWorkloads(
@@ -81,7 +81,14 @@ class HighLevelBase {
         for (const workload of deletedMachineWorkloads) {
             const networkName = workload.data["network"].interfaces[0].network;
             const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
-            const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url, this.backendStorageType);
+            const network = new Network(
+                networkName,
+                networkIpRange,
+                this.rmbClient,
+                this.storePath,
+                this.url,
+                this.backendStorageType,
+            );
             await network.load();
 
             const machineIp = workload.data["network"].interfaces[0].ip;
@@ -192,7 +199,7 @@ class HighLevelBase {
                         this.rmbClient,
                         this.storePath,
                         this.url,
-                        this.backendStorageType
+                        this.backendStorageType,
                     );
                     await network.load();
                     break;

@@ -1,13 +1,13 @@
 import "reflect-metadata";
 import path from "path";
+import fs from "fs";
 import { MessageBusServer } from "ts-rmb-redis-client";
 
 import { GridClient } from "../src/client";
 import { getRMBClient } from "./rmb_client";
 import { isExposed } from "../src/helpers/expose";
-import { loadFromFile } from "../src/helpers/jsonfs";
 
-const config = loadFromFile(path.join(__dirname, "../config.json"));
+const config = JSON.parse(fs.readFileSync(path.join(__dirname, "./config.json"), "utf-8"));
 class Server {
     server: MessageBusServer;
     constructor(port = 6379) {

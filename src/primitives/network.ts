@@ -45,7 +45,7 @@ class Network {
         public rmbClient,
         public storePath: string,
         public url: string,
-        public backendStorageType: BackendStorageType = BackendStorageType.default
+        public backendStorageType: BackendStorageType = BackendStorageType.default,
     ) {
         if (Addr(ipRange).prefix !== 16) {
             throw Error("Network ip_range should be with prefix 16");
@@ -128,7 +128,7 @@ class Network {
     }
 
     async deleteNode(node_id: number): Promise<number> {
-        if (!await this.exists()) {
+        if (!(await this.exists())) {
             return 0;
         }
         events.emit("logs", `Deleting node ${node_id} from network ${this.name}`);

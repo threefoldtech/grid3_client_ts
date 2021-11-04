@@ -32,7 +32,7 @@ class BaseModule {
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
         public projectName: string = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default
+        public backendStorageType: BackendStorageType = BackendStorageType.default,
     ) {
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
@@ -170,7 +170,7 @@ class BaseModule {
             metadata: workload.metadata,
             description: workload.description,
         };
-    };
+    }
 
     _getDiskData(deployments, name) {
         for (const deployment of deployments) {

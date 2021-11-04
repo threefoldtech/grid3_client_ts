@@ -132,7 +132,7 @@ class VMHL extends HighLevelBase {
             wgConfig = await network.addAccess(access_node_id, true);
         }
         const znet_workload = await network.addNode(nodeId, metadata, description);
-        if (znet_workload && await network.exists()) {
+        if (znet_workload && (await network.exists())) {
             // update network
             for (const deployment of network.deployments) {
                 const d = await deploymentFactory.fromObj(deployment);

@@ -18,6 +18,7 @@
     "rules": {
         "no-console": "off",
         "no-async-promise-executor": "off",
-        "prettier/prettier": "error"
+        "prettier/prettier": "error",
+        "@typescript-eslint/no-var-requires": "off"
     }
 }

@@ -1,8 +1,7 @@
 class LocalStorage {
-
     async set(key: string, value: string) {
-        if (!value) {
-            this.remove(key);
+        if (!value || value === "{}") {
+            return await this.remove(key);
         }
         return localStorage.setItem(key, value);
     }
@@ -21,4 +20,3 @@ class LocalStorage {
 }
 
 export { LocalStorage };
-

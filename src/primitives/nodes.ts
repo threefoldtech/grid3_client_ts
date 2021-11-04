@@ -44,6 +44,9 @@ class Nodes {
             nodeConfigs[node.nodeId] = node.publicConfigId;
             configsIds += `"${node.publicConfigId}", `;
         }
+        if (!configsIds) {
+            throw Error("Couldn't find any node with public config");
+        }
         body = `{
         publicConfigs (where: {id_in: [${configsIds}]}) {
           id

@@ -20,7 +20,7 @@ class QSFSZdbsModule extends BaseModule {
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
         public projectName = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default
+        public backendStorageType: BackendStorageType = BackendStorageType.default,
     ) {
         super(twin_id, url, mnemonic, rmbClient, storePath, projectName, backendStorageType);
         this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient, this.storePath);

@@ -15,7 +15,7 @@ class Zos {
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
         public projectName = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default
+        public backendStorageType: BackendStorageType = BackendStorageType.default,
     ) {}
 
     @expose

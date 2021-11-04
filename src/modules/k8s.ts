@@ -23,7 +23,7 @@ class K8sModule extends BaseModule {
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
         public projectName = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default
+        public backendStorageType: BackendStorageType = BackendStorageType.default,
     ) {
         super(twin_id, url, mnemonic, rmbClient, storePath, projectName, backendStorageType);
         this.kubernetes = new KubernetesHL(twin_id, url, mnemonic, rmbClient, this.storePath, backendStorageType);
@@ -77,7 +77,7 @@ class K8sModule extends BaseModule {
             this.rmbClient,
             this.storePath,
             this.url,
-            this.backendStorageType
+            this.backendStorageType,
         );
         await network.load();
 
@@ -184,7 +184,7 @@ class K8sModule extends BaseModule {
 
     @expose
     async update(options: K8SModel) {
-        if (!await this.exists(options.name)) {
+        if (!(await this.exists(options.name))) {
             throw Error(`There is no k8s deployment with name: ${options.name}`);
         }
         if (options.masters.length > 1) {
@@ -217,7 +217,7 @@ class K8sModule extends BaseModule {
 
     @expose
     async add_worker(options: AddWorkerModel) {
-        if (!await this.exists(options.deployment_name)) {
+        if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no k8s deployment with name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
@@ -228,7 +228,14 @@ class K8sModule extends BaseModule {
         const masterWorkload = masterWorkloads[0];
         const networkName = masterWorkload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(masterWorkload.data["network"].interfaces[0].ip).mask(16).toString();
-        const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url, this.backendStorageType);
+        const network = new Network(
+            networkName,
+            networkIpRange,
+            this.rmbClient,
+            this.storePath,
+            this.url,
+            this.backendStorageType,
+        );
         await network.load();
         const [twinDeployments, _] = await this.kubernetes.add_worker(
             options.name,
@@ -254,7 +261,7 @@ class K8sModule extends BaseModule {
 
     @expose
     async delete_worker(options: DeleteWorkerModel) {
-        if (!await this.exists(options.deployment_name)) {
+        if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no k8s deployment with name: ${options.deployment_name}`);
         }
         return await this._deleteInstance(this.kubernetes, options.deployment_name, options.name);

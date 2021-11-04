@@ -15,7 +15,7 @@ class Twins {
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
         public projectName = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default
+        public backendStorageType: BackendStorageType = BackendStorageType.default,
     ) {
         this.client = new TFClient(url, mnemonic);
         this.context = this.client.twins;

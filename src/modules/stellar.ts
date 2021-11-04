@@ -27,7 +27,7 @@ class Stellar {
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
         public projectName: string = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default
+        public backendStorageType: BackendStorageType = BackendStorageType.default,
     ) {
         this.backendStorage = new BackendStorage(backendStorageType);
     }
@@ -58,7 +58,7 @@ class Stellar {
         await server.loadAccount(walletPublicKey);
         await this.save(options.name, options.secret);
         return walletPublicKey;
-    };
+    }
 
     @expose
     async get(options: WalletGetModel) {
@@ -69,7 +69,7 @@ class Stellar {
 
     @expose
     async update(options: WalletImportModel) {
-        if (!await this.exist(options)) {
+        if (!(await this.exist(options))) {
             throw Error(`Couldn't find a wallet with name ${options.name} to update`);
         }
         const secret = await this.getWalletSecret(options.name);

@@ -2,13 +2,12 @@ import fs from "fs";
 import PATH from "path";
 
 class FS {
-
     async set(key: string, value: string) {
         if (!fs.existsSync(PATH.dirname(key))) {
             fs.mkdirSync(PATH.dirname(key), { recursive: true });
         }
-        if (!value) {
-            this.remove(key);
+        if (!value || value === "{}") {
+            return await this.remove(key);
         }
         return fs.writeFileSync(key, value);
     }
@@ -21,7 +20,7 @@ class FS {
     }
 
     async remove(key: string) {
-        return fs.rmSync(key);
+        return fs.unlinkSync(key);
     }
 }
 

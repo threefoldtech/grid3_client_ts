@@ -19,7 +19,7 @@ class ZdbsModule extends BaseModule {
         public rmbClient: MessageBusClientInterface,
         public storePath: string,
         public projectName = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default
+        public backendStorageType: BackendStorageType = BackendStorageType.default,
     ) {
         super(twin_id, url, mnemonic, rmbClient, storePath, projectName, backendStorageType);
         this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient, this.storePath);
@@ -95,7 +95,7 @@ class ZdbsModule extends BaseModule {
 
     @expose
     async update(options: ZDBSModel) {
-        if (!await this.exists(options.name)) {
+        if (!(await this.exists(options.name))) {
             throw Error(`There is no zdb deployment with name: ${options.name}`);
         }
         const oldDeployments = await this._get(options.name);
@@ -105,7 +105,7 @@ class ZdbsModule extends BaseModule {
 
     @expose
     async add_zdb(options: AddZDBModel) {
-        if (!await this.exists(options.deployment_name)) {
+        if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
@@ -125,7 +125,7 @@ class ZdbsModule extends BaseModule {
 
     @expose
     async delete_zdb(options: DeleteZDBModel) {
-        if (!await this.exists(options.deployment_name)) {
+        if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
         }
         return await this._deleteInstance(this.zdb, options.deployment_name, options.name);

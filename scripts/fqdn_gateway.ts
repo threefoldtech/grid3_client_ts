@@ -26,8 +26,10 @@ async function main() {
     // // delete
     // const m = new GatewayFQDNDeleteModel();
     // m.name = gw.name;
-    // const d = await grid3.gateway.deleteFQDN(m);
+    // const d = await grid3.gateway.delete_fqdn(m);
     // console.log(d);
+
+    grid3.disconnect();
 }
 
 main();

@@ -5,7 +5,7 @@ import { TFClient } from "./clients/tf-grid/client";
 
 import { appPath } from "./storage/backend";
 import * as modules from "./modules/index";
-import { BackendStorageType } from "./storage/backend";
+import { BackendStorageType, BackendStorage } from "./storage/backend";
 
 class GridClient {
     machines: modules.machines;
@@ -28,8 +28,17 @@ class GridClient {
     ) {}
     async connect() {
         const tfclient = new TFClient(this.url, this.mnemonic);
-        this.twinId = await tfclient.execute(tfclient.twins, tfclient.twins.getMyTwinId, []);
+        await tfclient.connect();
+        this.twinId = await tfclient.twins.getMyTwinId();
         this._connect();
+        if (BackendStorage.isEnvNode) {
+            process.on('SIGINT', this.disconnect);
+            process.on('SIGUSR1', this.disconnect);
+            process.on('SIGUSR2', this.disconnect);
+            process.on('uncaughtException', this.disconnect);
+        }
+        else
+            window.onbeforeunload = this.disconnect;
     }
     _connect() {
         let env = "mainnet";
@@ -54,6 +63,13 @@ class GridClient {
                 this.projectName,
                 this.storageBackendType,
             );
+        }
+    }
+
+    disconnect() {
+        console.log("disconnecting");
+        for (const key of Object.keys(TFClient.clients)) {
+            TFClient.clients[key].disconnect();
         }
     }
 }

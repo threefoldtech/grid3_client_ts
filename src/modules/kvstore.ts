@@ -7,7 +7,6 @@ import { BackendStorageType } from "../storage/backend";
 
 class KVStore {
     client: TFClient;
-    context;
     constructor(
         public twin_id: number,
         public url: string,
@@ -18,24 +17,23 @@ class KVStore {
         public backendStorageType: BackendStorageType = BackendStorageType.default,
     ) {
         this.client = new TFClient(url, mnemonic);
-        this.context = this.client.kvStore;
     }
     @expose
     async set(options: KVStoreSetModel) {
-        return await this.client.execute(this.context, this.client.kvStore.set, [options.key, options.value]);
+        return await this.client.kvStore.set(options.key, options.value);
     }
     @expose
     async get(options: KVStoreGetModel) {
-        return await this.client.execute(this.context, this.client.kvStore.get, [options.key]);
+        return await this.client.kvStore.get(options.key);
     }
 
     @expose
     async list() {
-        return await this.client.execute(this.context, this.client.kvStore.list, []);
+        return await this.client.kvStore.list();
     }
     @expose
     async remove(options: KVStoreRemoveModel) {
-        return await this.client.execute(this.context, this.client.kvStore.remove, [options.key]);
+        return await this.client.kvStore.remove(options.key);
     }
 }
 

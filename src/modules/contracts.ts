@@ -16,7 +16,6 @@ import { BackendStorageType } from "../storage/backend";
 
 class Contracts {
     client: TFClient;
-    context;
     constructor(
         public twin_id: number,
         public url: string,
@@ -27,58 +26,57 @@ class Contracts {
         publicbackendStorageType: BackendStorageType = BackendStorageType.default,
     ) {
         this.client = new TFClient(url, mnemonic);
-        this.context = this.client.contracts;
     }
 
     @expose
     async create_node(options: NodeContractCreateModel) {
-        return await this.client.execute(this.context, this.client.contracts.createNode, [
+        return await this.client.contracts.createNode(
             options.node_id,
             options.hash,
             options.data,
             options.public_ip,
-        ]);
+        );
     }
     @expose
     async create_name(options: NameContractCreateModel) {
-        return await this.client.execute(this.context, this.client.contracts.createName, [options.name]);
+        return await this.client.contracts.createName(options.name);
     }
     @expose
     async get(options: ContractGetModel) {
-        return await this.client.execute(this.context, this.client.contracts.get, [options.id]);
+        return await this.client.contracts.get(options.id);
     }
     @expose
     async get_contract_id_by_node_id_and_hash(options: ContractGetByNodeIdAndHashModel) {
-        return await this.client.execute(this.context, this.client.contracts.getContractIdByNodeIdAndHash, [
+        return await this.client.contracts.getContractIdByNodeIdAndHash(
             options.node_id,
             options.hash,
-        ]);
+        );
     }
 
     @expose
     async get_node_contracts(options: NodeContractsGetModel) {
-        return await this.client.execute(this.context, this.client.contracts.getNodeContracts, [
+        return await this.client.contracts.getNodeContracts(
             options.node_id,
             options.state,
-        ]);
+        );
     }
 
     @expose
     async get_name_contract(options: NameContractGetModel) {
-        return await this.client.execute(this.context, this.client.contracts.getNameContract, [options.name]);
+        return await this.client.contracts.getNameContract(options.name);
     }
 
     @expose
     async update_node(options: NodeContractUpdateModel) {
-        return await this.client.execute(this.context, this.client.contracts.updateNode, [
+        return await this.client.contracts.updateNode(
             options.id,
             options.data,
             options.hash,
-        ]);
+        );
     }
     @expose
     async cancel(options: ContractCancelModel) {
-        return await this.client.execute(this.context, this.client.contracts.cancel, [options.id]);
+        return await this.client.contracts.cancel(options.id);
     }
 }
 

@@ -1,29 +1,31 @@
 import { TFClient } from "../clients/tf-grid/client";
-
+import { crop } from "./utils";
 class TFKVStore {
     client: TFClient;
-    context;
     constructor(url: string, mnemonic: string) {
         this.client = new TFClient(url, mnemonic);
-        this.context = this.client.kvStore;
     }
+
+    @crop
     async set(key: string, value: string) {
         if (!value || value === "{}") {
             return await this.remove(key);
         }
-        return await this.client.execute(this.context, this.client.kvStore.set, [key, value]);
+        return await this.client.kvStore.set(key, value);
     }
 
+    @crop
     async get(key: string) {
-        const value = await this.client.execute(this.context, this.client.kvStore.get, [key]);
+        const value = await this.client.kvStore.get(key);
         if (!value) {
             return "{}";
         }
         return value;
     }
 
+    @crop
     async remove(key: string) {
-        return await this.client.execute(this.context, this.client.kvStore.remove, [key]);
+        return await this.client.kvStore.remove(key);
     }
 }
 

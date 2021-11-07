@@ -201,15 +201,10 @@ class BaseModule {
         const deployments = [];
         for (const contract of data[name]["contracts"]) {
             const tfClient = new TFClient(this.url, this.mnemonic);
-            try {
-                await tfClient.connect();
-                const c = await tfClient.contracts.get(contract["contract_id"]);
-                if (c.state !== "Created") {
-                    await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
-                    continue;
-                }
-            } finally {
-                tfClient.disconnect();
+            const c = await tfClient.contracts.get(contract["contract_id"]);
+            if (c.state !== "Created") {
+                await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
+                continue;
             }
             const nodes = new Nodes(this.url);
             const node_twin_id = await nodes.getNodeTwinId(contract["node_id"]);

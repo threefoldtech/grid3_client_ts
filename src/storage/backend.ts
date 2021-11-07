@@ -19,7 +19,7 @@ class BackendStorage {
     storage;
     constructor(public type: BackendStorageType = BackendStorageType.default, url = "", mnemonic = "") {
         if (type === BackendStorageType.default) {
-            if (this.isEnvNode()) {
+            if (BackendStorage.isEnvNode) {
                 const storage = require("./filesystem");
                 this.storage = new storage.FS();
             } else {
@@ -31,7 +31,7 @@ class BackendStorage {
         }
     }
 
-    isEnvNode(): boolean {
+    static isEnvNode(): boolean {
         return (
             typeof process === "object" &&
             typeof process.versions === "object" &&

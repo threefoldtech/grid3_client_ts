@@ -35,6 +35,8 @@ async function main() {
     // m.name = zdbs.name;
     // const d = await grid3.zdbs.delete(m);
     // console.log(d);
+
+    grid3.disconnect();
 }
 
 main();

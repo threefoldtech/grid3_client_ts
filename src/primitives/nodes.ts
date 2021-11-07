@@ -78,15 +78,8 @@ class Nodes {
     async getNodeIdFromContractId(contractId: number, mnemonic: string): Promise<number> {
         const tfclient = new TFClient(this.url, mnemonic);
         let nodeId;
-        try {
-            await tfclient.connect();
-            const contract = await tfclient.contracts.get(contractId);
-            nodeId = contract["contract_type"]["nodeContract"]["node_id"];
-        } catch (err) {
-            throw Error(err);
-        } finally {
-            tfclient.disconnect();
-        }
+        const contract = await tfclient.contracts.get(contractId);
+        nodeId = contract["contract_type"]["nodeContract"]["node_id"];
         return nodeId;
     }
 }

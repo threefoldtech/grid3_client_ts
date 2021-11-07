@@ -5,16 +5,22 @@ import { KVStore } from "./kvstore";
 import { ErrorsMap } from "./errors";
 
 class TFClient {
+    static clients: Record<string, TFClient> = {};
     client;
     contracts: Contracts;
     twins: Twins;
     kvStore: KVStore;
 
     constructor(public url: string, public mnemonic: string) {
+        const key = `${url}:${mnemonic}`;
+        if (Object.keys(TFClient.clients).includes(key)) {
+            return TFClient.clients[key];
+        }
         this.client = new Client(url, mnemonic);
         this.contracts = new Contracts(this);
         this.twins = new Twins(this);
         this.kvStore = new KVStore(this);
+        TFClient.clients[key] = this;
     }
     async connect(): Promise<void> {
         await this.client.init();
@@ -57,20 +63,6 @@ class TFClient {
                 reject(e);
             }
         });
-    }
-
-    async execute(context, method, args) {
-        let result;
-        try {
-            await this.connect();
-            console.log(`Executing method: ${method.name} with args: ${args}`);
-            result = await method.apply(context, args);
-        } catch (e) {
-            throw Error(e);
-        } finally {
-            this.disconnect();
-        }
-        return result;
     }
 }
 export { TFClient };

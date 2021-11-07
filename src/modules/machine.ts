@@ -37,6 +37,7 @@ class MachineModule extends BaseModule {
             this.rmbClient,
             this.storePath,
             this.url,
+            this.mnemonic,
             this.backendStorageType,
         );
         await network.load();
@@ -138,6 +139,7 @@ class MachineModule extends BaseModule {
             this.rmbClient,
             this.storePath,
             this.url,
+            this.mnemonic,
             this.backendStorageType,
         );
         await network.load();

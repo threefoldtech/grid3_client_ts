@@ -10,7 +10,7 @@ class TFClient {
     twins: Twins;
     kvStore: KVStore;
 
-    constructor(url: string, mnemonic: string) {
+    constructor(public url: string, public mnemonic: string) {
         this.client = new Client(url, mnemonic);
         this.contracts = new Contracts(this);
         this.twins = new Twins(this);
@@ -24,7 +24,7 @@ class TFClient {
             this.client.api.disconnect();
         }
     }
-    applyExtrinsic(func, args, resultSecttion: string, resultName: string) {
+    applyExtrinsic(func, args, resultSecttion: string, resultNames: string[]) {
         const context = this.client;
         return new Promise(async (resolve, reject) => {
             function callback(res) {
@@ -44,7 +44,7 @@ class TFClient {
                                     -1,
                                 )} due to error: ${errorType}`,
                             );
-                        } else if (section === resultSecttion && method === resultName) {
+                        } else if (section === resultSecttion && resultNames.includes(method)) {
                             resolve(data.toJSON()[0]);
                         }
                     });

@@ -11,20 +11,19 @@ class TFKVStore {
         if (!value || value === "{}") {
             return await this.remove(key);
         }
-        return this.client.execute(this.context, this.client.kvStore.set, [key, value]);
+        return await this.client.execute(this.context, this.client.kvStore.set, [key, value]);
     }
 
     async get(key: string) {
-        const value = this.client.execute(this.context, this.client.kvStore.get, [key]);
-        if (value === null) {
-            //TODO: check what is the return value for getting non-exist key
+        const value = await this.client.execute(this.context, this.client.kvStore.get, [key]);
+        if (!value) {
             return "{}";
         }
         return value;
     }
 
     async remove(key: string) {
-        return this.client.execute(this.context, this.client.kvStore.remove, [key]);
+        return await this.client.execute(this.context, this.client.kvStore.remove, [key]);
     }
 }
 

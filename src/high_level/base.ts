@@ -87,6 +87,7 @@ class HighLevelBase {
                 this.rmbClient,
                 this.storePath,
                 this.url,
+                this.mnemonic,
                 this.backendStorageType,
             );
             await network.load();
@@ -188,7 +189,6 @@ class HighLevelBase {
         );
         twinDeployments = twinDeployments.concat(newTwinDeployments);
         remainingWorkloads = newRemainingWorkloads;
-        console.log(remainingWorkloads);
         if (remainingWorkloads.length !== 0 && remainingWorkloads.length < numberOfWorkloads) {
             let network = null;
             for (const workload of remainingWorkloads) {
@@ -199,6 +199,7 @@ class HighLevelBase {
                         this.rmbClient,
                         this.storePath,
                         this.url,
+                        this.mnemonic,
                         this.backendStorageType,
                     );
                     await network.load();

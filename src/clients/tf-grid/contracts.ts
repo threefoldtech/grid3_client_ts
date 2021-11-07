@@ -14,7 +14,7 @@ class Contracts {
             this.tfclient.client.createNodeContract,
             [nodeID, data, hash, publicIPs],
             "smartContractModule",
-            "ContractCreated",
+            ["ContractCreated"],
         );
     }
 
@@ -23,7 +23,7 @@ class Contracts {
             this.tfclient.client.createNameContract,
             [name],
             "smartContractModule",
-            "ContractCreated",
+            ["ContractCreated"],
         );
     }
 
@@ -32,7 +32,7 @@ class Contracts {
             this.tfclient.client.updateNodeContract,
             [id, data, hash],
             "smartContractModule",
-            "ContractUpdated",
+            ["ContractUpdated"],
         );
     }
 
@@ -41,7 +41,7 @@ class Contracts {
             this.tfclient.client.cancelContract,
             [id],
             "smartContractModule",
-            "ContractCanceled",
+            ["NodeContractCanceled", "NameContractCanceled", "ContractCanceled"],
         );
     }
 

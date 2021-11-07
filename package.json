@@ -23,6 +23,7 @@
         "ts-rmb-http-client": "^0.1.6",
         "ts-rmb-redis-client": "^0.0.3",
         "tweetnacl": "^1.0.3",
+        "tweetnacl-util": "^0.15.1",
         "typescript": "^4.3.5",
         "url-join": "^4.0.1",
         "url-parse": "^1.5.3",

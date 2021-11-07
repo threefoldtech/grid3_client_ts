@@ -29,7 +29,7 @@ class Stellar {
         public projectName: string = "",
         public backendStorageType: BackendStorageType = BackendStorageType.default,
     ) {
-        this.backendStorage = new BackendStorage(backendStorageType);
+        this.backendStorage = new BackendStorage(backendStorageType, url, mnemonic);
     }
 
     async _load() {

@@ -45,6 +45,7 @@ class Network {
         public rmbClient,
         public storePath: string,
         public url: string,
+        public mnemonic: string,
         public backendStorageType: BackendStorageType = BackendStorageType.default,
     ) {
         if (Addr(ipRange).prefix !== 16) {
@@ -53,7 +54,7 @@ class Network {
         if (!this.isPrivateIP(ipRange)) {
             throw Error("Network ip_range should be private range");
         }
-        this.backendStorage = new BackendStorage(backendStorageType);
+        this.backendStorage = new BackendStorage(backendStorageType, url, mnemonic);
     }
 
     async addAccess(node_id: number, ipv4: boolean): Promise<string> {

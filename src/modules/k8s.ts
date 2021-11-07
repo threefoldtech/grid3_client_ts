@@ -77,6 +77,7 @@ class K8sModule extends BaseModule {
             this.rmbClient,
             this.storePath,
             this.url,
+            this.mnemonic,
             this.backendStorageType,
         );
         await network.load();
@@ -234,6 +235,7 @@ class K8sModule extends BaseModule {
             this.rmbClient,
             this.storePath,
             this.url,
+            this.mnemonic,
             this.backendStorageType,
         );
         await network.load();

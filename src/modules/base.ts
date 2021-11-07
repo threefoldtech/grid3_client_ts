@@ -36,7 +36,7 @@ class BaseModule {
     ) {
         this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
         this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
-        this.backendStorage = new BackendStorage(backendStorageType);
+        this.backendStorage = new BackendStorage(backendStorageType, url, mnemonic);
     }
 
     async _load() {

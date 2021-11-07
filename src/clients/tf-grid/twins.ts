@@ -6,7 +6,7 @@ class Twins {
     }
 
     async create(ip: string) {
-        return this.tfclient.applyExtrinsic(this.tfclient.client.createTwin, [ip], "tfgridModule", "TwinStored");
+        return this.tfclient.applyExtrinsic(this.tfclient.client.createTwin, [ip], "tfgridModule", ["TwinStored"]);
     }
 
     async get(id: number) {
@@ -27,7 +27,7 @@ class Twins {
     }
 
     async delete(id: number) {
-        return this.tfclient.applyExtrinsic(this.tfclient.client.deleteTwin, [id], "tfgridModule", "TwinDeleted");
+        return this.tfclient.applyExtrinsic(this.tfclient.client.deleteTwin, [id], "tfgridModule", ["TwinDeleted"]);
     }
 }
 

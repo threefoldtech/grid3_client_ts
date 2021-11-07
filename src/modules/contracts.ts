@@ -30,12 +30,7 @@ class Contracts {
 
     @expose
     async create_node(options: NodeContractCreateModel) {
-        return await this.client.contracts.createNode(
-            options.node_id,
-            options.hash,
-            options.data,
-            options.public_ip,
-        );
+        return await this.client.contracts.createNode(options.node_id, options.hash, options.data, options.public_ip);
     }
     @expose
     async create_name(options: NameContractCreateModel) {
@@ -47,18 +42,12 @@ class Contracts {
     }
     @expose
     async get_contract_id_by_node_id_and_hash(options: ContractGetByNodeIdAndHashModel) {
-        return await this.client.contracts.getContractIdByNodeIdAndHash(
-            options.node_id,
-            options.hash,
-        );
+        return await this.client.contracts.getContractIdByNodeIdAndHash(options.node_id, options.hash);
     }
 
     @expose
     async get_node_contracts(options: NodeContractsGetModel) {
-        return await this.client.contracts.getNodeContracts(
-            options.node_id,
-            options.state,
-        );
+        return await this.client.contracts.getNodeContracts(options.node_id, options.state);
     }
 
     @expose
@@ -68,11 +57,7 @@ class Contracts {
 
     @expose
     async update_node(options: NodeContractUpdateModel) {
-        return await this.client.contracts.updateNode(
-            options.id,
-            options.data,
-            options.hash,
-        );
+        return await this.client.contracts.updateNode(options.id, options.data, options.hash);
     }
     @expose
     async cancel(options: ContractCancelModel) {

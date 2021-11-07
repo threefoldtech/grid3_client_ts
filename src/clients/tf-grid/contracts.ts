@@ -19,12 +19,9 @@ class Contracts {
     }
 
     async createName(name: string) {
-        return this.tfclient.applyExtrinsic(
-            this.tfclient.client.createNameContract,
-            [name],
-            "smartContractModule",
-            ["ContractCreated"],
-        );
+        return this.tfclient.applyExtrinsic(this.tfclient.client.createNameContract, [name], "smartContractModule", [
+            "ContractCreated",
+        ]);
     }
 
     async updateNode(id: number, data: string, hash: string) {
@@ -37,12 +34,11 @@ class Contracts {
     }
 
     async cancel(id: number) {
-        return this.tfclient.applyExtrinsic(
-            this.tfclient.client.cancelContract,
-            [id],
-            "smartContractModule",
-            ["NodeContractCanceled", "NameContractCanceled", "ContractCanceled"],
-        );
+        return this.tfclient.applyExtrinsic(this.tfclient.client.cancelContract, [id], "smartContractModule", [
+            "NodeContractCanceled",
+            "NameContractCanceled",
+            "ContractCanceled",
+        ]);
     }
 
     async get(id: number) {

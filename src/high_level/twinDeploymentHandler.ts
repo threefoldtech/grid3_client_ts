@@ -40,8 +40,7 @@ class TwinDeploymentHandler {
     }
 
     async deploy(deployment: Deployment, node_id: number, publicIps: number) {
-        let contract;
-        contract = await this.tfclient.contracts.createNode(node_id, deployment.challenge_hash(), "", publicIps);
+        const contract = await this.tfclient.contracts.createNode(node_id, deployment.challenge_hash(), "", publicIps);
         if (contract instanceof Error) {
             throw Error(`Failed to create contract ${contract}`);
         }
@@ -67,8 +66,7 @@ class TwinDeploymentHandler {
 
     async update(deployment: Deployment, publicIps: number) {
         // TODO: update the contract with public when it is available
-        let contract;
-        contract = await this.tfclient.contracts.updateNode(
+        const contract = await this.tfclient.contracts.updateNode(
             deployment.contract_id,
             "",
             deployment.challenge_hash(),
@@ -77,7 +75,6 @@ class TwinDeploymentHandler {
             throw Error(`Failed to update contract ${contract}`);
         }
         events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
-
 
         const payload = JSON.stringify(deployment);
         const nodes = new Nodes(this.url);

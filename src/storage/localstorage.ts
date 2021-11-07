@@ -1,7 +1,6 @@
 import { crop } from "./utils";
 
 class LocalStorage {
-
     @crop
     async set(key: string, value: string) {
         if (!value || value === "{}") {

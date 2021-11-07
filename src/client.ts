@@ -32,13 +32,11 @@ class GridClient {
         this.twinId = await tfclient.twins.getMyTwinId();
         this._connect();
         if (BackendStorage.isEnvNode) {
-            process.on('SIGINT', this.disconnect);
-            process.on('SIGUSR1', this.disconnect);
-            process.on('SIGUSR2', this.disconnect);
-            process.on('uncaughtException', this.disconnect);
-        }
-        else
-            window.onbeforeunload = this.disconnect;
+            process.on("SIGINT", this.disconnect);
+            process.on("SIGUSR1", this.disconnect);
+            process.on("SIGUSR2", this.disconnect);
+            process.on("uncaughtException", this.disconnect);
+        } else window.onbeforeunload = this.disconnect;
     }
     _connect() {
         let env = "mainnet";

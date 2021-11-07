@@ -14,7 +14,9 @@ class KVStore {
 
     async set(key: string, value: string) {
         const encryptedValue = this.encrypt(value);
-        return this.tfclient.applyExtrinsic(this.tfclient.client.tfStoreSet, [key, encryptedValue], "tfkvStore", ["EntrySet"]);
+        return this.tfclient.applyExtrinsic(this.tfclient.client.tfStoreSet, [key, encryptedValue], "tfkvStore", [
+            "EntrySet",
+        ]);
     }
 
     async get(key: string) {
@@ -22,8 +24,7 @@ class KVStore {
         if (encryptedValue) {
             try {
                 return this.decrypt(encryptedValue);
-            }
-            catch (e) {
+            } catch (e) {
                 throw Error(`Couldn't decrypt key: ${key}`);
             }
         }
@@ -41,12 +42,7 @@ class KVStore {
     encrypt(message) {
         const encodedMessage = utils.decodeUTF8(message);
         const nonce = nacl.randomBytes(nacl.box.nonceLength);
-        const encryptedMessage = nacl.box(
-            encodedMessage,
-            nonce,
-            this.keypair.publicKey,
-            this.keypair.secretKey
-        );
+        const encryptedMessage = nacl.box(encodedMessage, nonce, this.keypair.publicKey, this.keypair.secretKey);
         const fullMessage = Uint8Array.from([...encryptedMessage, ...nonce]);
         return utils.encodeBase64(fullMessage);
     }
@@ -55,15 +51,10 @@ class KVStore {
         const encodedMessage = utils.decodeBase64(message);
         const encryptedMessage = encodedMessage.slice(0, -24);
         const nonce = encodedMessage.slice(-24);
-        const decryptedMessage = nacl.box.open(
-            encryptedMessage,
-            nonce,
-            this.keypair.publicKey,
-            this.keypair.secretKey
-        );
+        const decryptedMessage = nacl.box.open(encryptedMessage, nonce, this.keypair.publicKey, this.keypair.secretKey);
 
         return utils.encodeUTF8(decryptedMessage);
     }
 }
 
-export { KVStore };;
+export { KVStore };

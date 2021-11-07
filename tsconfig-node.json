@@ -3,7 +3,8 @@
         "module": "commonjs",
         "target": "esnext",
         "lib": [
-            "ESNext"
+            "ESNext",
+            "DOM"
         ],
         "types": [
             "node"

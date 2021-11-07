@@ -469,7 +469,7 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     async save(contract_id = 0, node_id = 0) {
         let network;
         if (await this.exists()) {
-            network = await this.getNetworks()[this.name];
+            network = (await this.getNetworks())[this.name];
         } else {
             network = {
                 ip_range: this.ipRange,

@@ -6,7 +6,6 @@ import path from "path";
 import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import { GridClient } from "../src/client";
 import { BackendStorageType } from "../src/storage/backend";
-import { TFKVStore } from "../src/storage/tfkvstore";
 
 /*
 KVStore example usage:
@@ -27,6 +26,10 @@ async function main() {
     // set key
     const key = "my_config";
     await db.set({ key, value: JSON.stringify(config) });
+
+    // list all the keys
+    const keys = await db.list();
+    console.log(keys);
 
     // get the key
     const data = await db.get({ key });

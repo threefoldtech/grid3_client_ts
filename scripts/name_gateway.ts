@@ -7,9 +7,10 @@ import { getClient } from "./client_loader";
 // read more about the gateway types in this doc: https://github.com/threefoldtech/zos/tree/main/docs/gateway
 
 const gw = new GatewayNameModel();
-gw.name = "ayoubtest";
+gw.name = "test";
 gw.node_id = 1;
 gw.tls_passthrough = false;
+// the backends have to be in this format `http://ip:port` or `https://ip:port`, and the `ip` pingable from the node so using the ygg ip or public ip if available.
 gw.backends = ["http://185.206.122.35:8000"];
 
 async function main() {

@@ -4,6 +4,11 @@ import { Twins } from "./twins";
 import { KVStore } from "./kvstore";
 import { ErrorsMap } from "./errors";
 
+enum KeypairType {
+    sr25519 = "sr25519",
+    ed25519 = "ed25519"
+}
+
 class TFClient {
     static clients: Record<string, TFClient> = {};
     client;
@@ -11,12 +16,12 @@ class TFClient {
     twins: Twins;
     kvStore: KVStore;
 
-    constructor(public url: string, public mnemonic: string) {
+    constructor(public url: string, public mnemonic: string, public keypairType: KeypairType = KeypairType.sr25519) {
         const key = `${url}:${mnemonic}`;
         if (Object.keys(TFClient.clients).includes(key)) {
             return TFClient.clients[key];
         }
-        this.client = new Client(url, mnemonic);
+        this.client = new Client(url, mnemonic, keypairType);
         this.contracts = new Contracts(this);
         this.twins = new Twins(this);
         this.kvStore = new KVStore(this);
@@ -65,4 +70,4 @@ class TFClient {
         });
     }
 }
-export { TFClient };
+export { TFClient, KeypairType };

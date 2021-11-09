@@ -3,6 +3,7 @@ import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { WorkloadTypes } from "../zos/workload";
 import { ZOSModel } from "./models";
 import { expose } from "../helpers/expose";
+import { Operations, TwinDeployment } from "../high_level/models";
 import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { DeploymentFactory } from "../primitives/deployment";
 import { BackendStorageType } from "../storage/backend";
@@ -26,7 +27,6 @@ class Zos {
 
         const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
         const deployment = await deploymentFactory.fromObj(options);
-        deployment.sign(deployment.twin_id, this.mnemonic);
 
         let publicIps = 0;
         for (const workload of deployment.workloads) {
@@ -35,8 +35,9 @@ class Zos {
             }
         }
         console.log(`Deploying on node_id: ${node_id} with number of public IPs: ${publicIps}`);
+        const twinDeployment = new TwinDeployment(deployment, Operations.deploy, publicIps, node_id);
         const twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, this.twin_id, this.url, this.mnemonic);
-        return await twinDeploymentHandler.deploy(deployment, node_id, publicIps);
+        return await twinDeploymentHandler.handle([twinDeployment]);
     }
 }
 

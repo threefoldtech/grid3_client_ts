@@ -1,10 +1,10 @@
 import { IsString, IsNotEmpty, IsBoolean, IsDefined, IsInt, Min, ValidateNested } from "class-validator";
 import { Expose, Type } from "class-transformer";
-
-import { Workload } from "./workload";
-
 import { default as md5 } from "crypto-js/md5";
 import { Keyring } from "@polkadot/keyring";
+
+import { Workload } from "./workload";
+import { KeypairType } from "../clients//tf-grid/client";
 
 class SignatureRequest {
     @Expose() @IsInt() @Min(1) twin_id: number;
@@ -89,11 +89,11 @@ class Deployment {
         return encoded.join("");
     }
 
-    sign(twin_id: number, mnemonic: string, hash = ""): void {
+    sign(twin_id: number, mnemonic: string, keypairType: KeypairType, hash = ""): void {
         const message = hash || this.challenge_hash();
         const message_bytes = this.from_hex(message);
 
-        const keyr = new Keyring({ type: "ed25519" });
+        const keyr = new Keyring({ type: keypairType });
         const key = keyr.addFromMnemonic(mnemonic);
         const signed_msg = key.sign(message_bytes);
         const hex_signed_msg = this.to_hex(signed_msg);

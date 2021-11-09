@@ -305,7 +305,7 @@ class TwinDeploymentHandler {
                 }
             }
             if (twinDeployment.operation === Operations.deploy) {
-                twinDeployment.deployment.sign(this.twin_id, this.mnemonic);
+                twinDeployment.deployment.sign(this.twin_id, this.mnemonic, this.tfclient.keypairType);
                 events.emit("logs", `Deploying on node_id: ${twinDeployment.nodeId}`);
                 for (const workload of twinDeployment.deployment.workloads) {
                     // check if the deployment need name contract
@@ -332,7 +332,7 @@ class TwinDeploymentHandler {
                     `A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contract_type"]["nodeContract"]["node_id"]}`,
                 );
             } else if (twinDeployment.operation === Operations.update) {
-                twinDeployment.deployment.sign(this.twin_id, this.mnemonic);
+                twinDeployment.deployment.sign(this.twin_id, this.mnemonic, this.tfclient.keypairType);
                 events.emit("logs", `Updating deployment with contract_id: ${twinDeployment.deployment.contract_id}`);
                 for (const workload of twinDeployment.deployment.workloads) {
                     // check if the deployment need name contract

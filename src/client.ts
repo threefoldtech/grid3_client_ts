@@ -1,7 +1,7 @@
 import * as PATH from "path";
 
 import { MessageBusClientInterface } from "ts-rmb-client-base";
-import { TFClient } from "./clients/tf-grid/client";
+import { KeypairType, TFClient } from "./clients/tf-grid/client";
 
 import { appPath } from "./storage/backend";
 import * as modules from "./modules/index";
@@ -24,10 +24,12 @@ class GridClient {
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public projectName = "",
-        public storageBackendType = BackendStorageType.default,
+        public storageBackendType: BackendStorageType = BackendStorageType.default,
+        public keypairType:KeypairType = KeypairType.sr25519
+        
     ) {}
     async connect() {
-        const tfclient = new TFClient(this.url, this.mnemonic);
+        const tfclient = new TFClient(this.url, this.mnemonic, this.keypairType);
         await tfclient.connect();
         this.twinId = await tfclient.twins.getMyTwinId();
         this._connect();

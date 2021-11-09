@@ -1,7 +1,7 @@
 {
     "name": "grid3_client",
     "author": "Ahmed Hanafy",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "homepage": "https://github.com/threefoldtech/grid3_client_ts/blob/development/README.md",
     "repository": {
         "type": "git",
@@ -18,7 +18,7 @@
         "private-ip": "^2.3.0",
         "reflect-metadata": "^0.1.13",
         "stellar-sdk": "^8.3.0",
-        "tfgrid-api-client": "^0.1.12",
+        "tfgrid-api-client": "^1.0.0",
         "ts-rmb-client-base": "^0.0.1",
         "ts-rmb-http-client": "^0.1.6",
         "ts-rmb-redis-client": "^0.0.3",

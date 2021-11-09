@@ -7,7 +7,26 @@ import { appPath } from "./storage/backend";
 import * as modules from "./modules/index";
 import { BackendStorageType, BackendStorage } from "./storage/backend";
 
+enum NetworkEnv {
+    dev = "dev",
+    test = "test",
+}
+
+class GridClientConfig {
+    network: NetworkEnv;
+    mnemonic: string;
+    rmbClient: MessageBusClientInterface;
+    projectName: string;
+    storageBackendType: BackendStorageType;
+    keypairType: KeypairType;
+    storePath: string;
+    graphqlURL: string;
+    substrateURL: string;
+}
+
+
 class GridClient {
+    static config: GridClientConfig;
     machines: modules.machines;
     k8s: modules.k8s;
     zdbs: modules.zdbs;
@@ -20,7 +39,7 @@ class GridClient {
     twinId: number;
 
     constructor(
-        public url: string,
+        public network: NetworkEnv,
         public mnemonic: string,
         public rmbClient: MessageBusClientInterface,
         public projectName = "",
@@ -28,7 +47,8 @@ class GridClient {
         public keypairType: KeypairType = KeypairType.sr25519,
     ) {}
     async connect() {
-        const tfclient = new TFClient(this.url, this.mnemonic, this.keypairType);
+        const urls = this.getDefaultUrls(this.network);
+        const tfclient = new TFClient(urls.substrate, this.mnemonic, this.keypairType);
         await tfclient.connect();
         this.twinId = await tfclient.twins.getMyTwinId();
         this._connect();
@@ -40,22 +60,17 @@ class GridClient {
         } else window.onbeforeunload = this.disconnect;
     }
     _connect() {
-        let env = "mainnet";
-        if (this.url.includes("dev")) {
-            env = "devnet";
-        } else if (this.url.includes("test")) {
-            env = "testnet";
-        }
-
+        const urls = this.getDefaultUrls(this.network);
         this.rmbClient["twinId"] = this.twinId;
-        const storePath = PATH.join(appPath, env, String(this.twinId));
+        this.rmbClient["proxyURL"] = urls.rmbProxy;
+        const storePath = PATH.join(appPath, this.network, String(this.twinId));
         for (const module of Object.getOwnPropertyNames(modules).filter(item => typeof modules[item] === "function")) {
             if (module.includes("Model")) {
                 continue;
             }
             this[module] = new modules[module](
                 this.twinId,
-                this.url,
+                urls.substrate,
                 this.mnemonic,
                 this.rmbClient,
                 storePath,
@@ -63,6 +78,32 @@ class GridClient {
                 this.storageBackendType,
             );
         }
+        GridClient.config = {
+            network: this.network,
+            mnemonic: this.mnemonic,
+            rmbClient: this.rmbClient,
+            projectName: this.projectName,
+            storageBackendType: this.storageBackendType,
+            keypairType: this.keypairType,
+            storePath: storePath,
+            graphqlURL: urls.graphql,
+            substrateURL: urls.substrate,
+        };
+    }
+
+    getDefaultUrls(network: NetworkEnv) {
+        const urls = { rmbProxy: "", substrate: "", graphql: "" };
+        if (network === NetworkEnv.dev) {
+            urls.rmbProxy = "https://gridproxy.dev.grid.tf/";
+            urls.substrate = "wss://tfchain.dev.threefold.io/ws";
+            urls.graphql = "https://graphql.test.grid.tf/graphql";
+        }
+        else if (network === NetworkEnv.test) {
+            urls.rmbProxy = "https://gridproxy.test.grid.tf/";
+            urls.substrate = "wss://tfchain.test.threefold.io/ws";
+            urls.graphql = "https://graphql.test.grid.tf/graphql";
+        }
+        return urls;
     }
 
     disconnect() {

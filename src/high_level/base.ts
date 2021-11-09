@@ -167,7 +167,7 @@ class HighLevelBase {
         if (types.includes(WorkloadTypes.network)) {
             throw Error("network can't be deleted");
         }
-        const nodes = new Nodes(this.url);
+        const nodes = new Nodes();
         const node_id = await nodes.getNodeIdFromContractId(deployment.contract_id, this.mnemonic);
         let twinDeployments = [];
         const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);

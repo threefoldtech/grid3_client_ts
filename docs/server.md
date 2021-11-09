@@ -10,9 +10,9 @@ Add substrate url and account's mnemonics in `config.json` in [server directory]
 
 ```json
 {
-    "url": "<substrate url>",
+    "network": "<network environment dev or test>",
     "mnemonic": "<your account mnemonics>",
-    "rmb_proxy": "<RMB proxy url>" // in case http rmb proxy needs to be used
+    "rmb_proxy": false // in case http rmb proxy needs to be used
 }
 ```
 

@@ -16,7 +16,7 @@ class Server {
 
     async wrapFunc(message, payload) {
         const rmbClient = getRMBClient();
-        const gridClient = new GridClient(config.url, config.mnemonic, rmbClient);
+        const gridClient = new GridClient(config.network, config.mnemonic, rmbClient);
         await gridClient.connect();
         const parts = message.cmd.split(".");
         const module = parts[1];
@@ -28,7 +28,7 @@ class Server {
 
     register() {
         const rmbClient = getRMBClient();
-        const gridClient = new GridClient(config.url, config.mnemonic, rmbClient);
+        const gridClient = new GridClient(config.network, config.mnemonic, rmbClient);
         gridClient._connect();
         for (const module of Object.getOwnPropertyNames(gridClient).filter(
             item => typeof gridClient[item] === "object",
@@ -47,8 +47,8 @@ class Server {
     }
 }
 
-if (!(config.url && config.mnemonic)) {
-    throw new Error(`Invalid config. Please fill the config.json file with correct data in repo home`);
+if (!(config.network && config.mnemonic)) {
+    throw new Error(`Invalid config. Please fill the config.json file with correct data`);
 }
 
 const server = new Server();

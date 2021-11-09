@@ -49,7 +49,7 @@ class TwinDeploymentHandler {
         try {
             deployment.contract_id = contract["contract_id"];
             const payload = JSON.stringify(deployment);
-            const nodes = new Nodes(this.url);
+            const nodes = new Nodes();
             const node_twin_id = await nodes.getNodeTwinId(node_id);
             const msg = this.rmbClient.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
             const message = await this.rmbClient.send(msg, payload);
@@ -77,7 +77,7 @@ class TwinDeploymentHandler {
         events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
 
         const payload = JSON.stringify(deployment);
-        const nodes = new Nodes(this.url);
+        const nodes = new Nodes();
         const node_twin_id = await nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
         const msg = this.rmbClient.prepare("zos.deployment.update", [node_twin_id], 0, 2);
         const message = await this.rmbClient.send(msg, payload);
@@ -126,7 +126,7 @@ class TwinDeploymentHandler {
 
     async waitForDeployment(twinDeployment: TwinDeployment, timeout = 5) {
         const contract_id = twinDeployment.deployment.contract_id;
-        const nodes = new Nodes(this.url);
+        const nodes = new Nodes();
         const node_id = await nodes.getNodeIdFromContractId(contract_id, this.mnemonic);
         const node_twin_id = await nodes.getNodeTwinId(node_id);
 

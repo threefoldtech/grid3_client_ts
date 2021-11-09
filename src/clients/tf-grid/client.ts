@@ -6,7 +6,7 @@ import { ErrorsMap } from "./errors";
 
 enum KeypairType {
     sr25519 = "sr25519",
-    ed25519 = "ed25519"
+    ed25519 = "ed25519",
 }
 
 class TFClient {

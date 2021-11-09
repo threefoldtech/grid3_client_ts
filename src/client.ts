@@ -25,8 +25,7 @@ class GridClient {
         public rmbClient: MessageBusClientInterface,
         public projectName = "",
         public storageBackendType: BackendStorageType = BackendStorageType.default,
-        public keypairType:KeypairType = KeypairType.sr25519
-        
+        public keypairType: KeypairType = KeypairType.sr25519,
     ) {}
     async connect() {
         const tfclient = new TFClient(this.url, this.mnemonic, this.keypairType);

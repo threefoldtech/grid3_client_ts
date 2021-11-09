@@ -1,5 +1,5 @@
 {
     "network": "dev",
     "mnemonic": "",
-    "rmb_proxy": false
+    "rmb_proxy": true
 }

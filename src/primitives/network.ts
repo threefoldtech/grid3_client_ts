@@ -62,7 +62,7 @@ class Network {
             throw Error(`Node ${node_id} does not exist in the network. Please add it first`);
         }
         events.emit("logs", `Adding access to node ${node_id}`);
-        const nodes = new Nodes(this.url);
+        const nodes = new Nodes();
         const accessNodes = await nodes.getAccessNodes();
         if (Object.keys(accessNodes).includes(node_id.toString())) {
             if (ipv4 && !accessNodes[node_id]["ipv4"]) {
@@ -187,7 +187,7 @@ class Network {
             throw Error(`The same network name ${this.name} with different ip range is already exist`);
         }
         for (const node of network.nodes) {
-            const nodes = new Nodes(this.url);
+            const nodes = new Nodes();
             const node_twin_id = await nodes.getNodeTwinId(node.node_id);
             const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
             const message = await this.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
@@ -393,7 +393,7 @@ class Network {
     }
 
     async getFreePort(node_id: number): Promise<number> {
-        const nodes = new Nodes(this.url);
+        const nodes = new Nodes();
         const node_twin_id = await nodes.getNodeTwinId(node_id);
         const msg = this.rmbClient.prepare("zos.network.list_wg_ports", [node_twin_id], 0, 2);
         const message = await this.rmbClient.send(msg, "");
@@ -412,7 +412,7 @@ class Network {
     }
 
     async getNodeEndpoint(node_id: number): Promise<string> {
-        const nodes = new Nodes(this.url);
+        const nodes = new Nodes();
         const node_twin_id = await nodes.getNodeTwinId(node_id);
         let msg = this.rmbClient.prepare("zos.network.public_config_get", [node_twin_id], 0, 2);
         let message = await this.rmbClient.send(msg, "");

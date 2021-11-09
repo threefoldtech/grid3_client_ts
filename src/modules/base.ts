@@ -206,7 +206,7 @@ class BaseModule {
                 await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
                 continue;
             }
-            const nodes = new Nodes(this.url);
+            const nodes = new Nodes();
             const node_twin_id = await nodes.getNodeTwinId(contract["node_id"]);
             const payload = JSON.stringify({ contract_id: contract["contract_id"] });
 

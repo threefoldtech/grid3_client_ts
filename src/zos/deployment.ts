@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsBoolean, IsDefined, IsInt, Min, ValidateNested } from "class-validator";
+import { IsString, IsNotEmpty, IsBoolean, IsDefined, IsInt, Min, ValidateNested, IsEnum } from "class-validator";
 import { Expose, Type } from "class-transformer";
 import { default as md5 } from "crypto-js/md5";
 import { Keyring } from "@polkadot/keyring";
@@ -24,6 +24,7 @@ class SignatureRequest {
 class Signature {
     @Expose() @IsInt() @Min(1) twin_id: number;
     @Expose() @IsString() @IsNotEmpty() signature: string;
+    @Expose() @IsEnum(KeypairType) signature_type: KeypairType;
 }
 
 class SignatureRequirement {
@@ -101,11 +102,13 @@ class Deployment {
         for (let i = 0; i < this.signature_requirement.signatures.length; i++) {
             if (this.signature_requirement.signatures[i].twin_id === twin_id) {
                 this.signature_requirement.signatures[i].signature = hex_signed_msg;
+                this.signature_requirement.signatures[i].signature_type = keypairType;
             }
         }
         const signature = new Signature();
         signature.twin_id = twin_id;
         signature.signature = hex_signed_msg;
+        signature.signature_type = keypairType;
         this.signature_requirement.signatures.push(signature);
     }
 }

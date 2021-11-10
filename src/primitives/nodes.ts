@@ -37,14 +37,14 @@ class Nodes {
         const nodeResponse = await send("post", this.graphqlURL, JSON.stringify({ query: body }), headers);
         const nodes = nodeResponse["data"]["nodes"];
         const accessNodes = {};
-        for (const node of nodes) {
+        for (const node of nodes as Record<string, unknown>[]) {
             if (!node.publicConfig) {
                 continue;
             }
-            const ipv4 = node.publicConfig.ipv4;
-            const ipv6 = node.publicConfig.ipv4;
+            const ipv4 = node.publicConfig["ipv4"];
+            const ipv6 = node.publicConfig["ipv4"];
             if (PrivateIp(ipv4.split("/")[0]) === false || PrivateIp(ipv6.split("/")[0]) === false) {
-                accessNodes[node.nodeId] = { ipv4: ipv4, ipv6: ipv6 };
+                accessNodes[+node.nodeId] = { ipv4: ipv4, ipv6: ipv6 };
             }
         }
         if (accessNodes === {}) {

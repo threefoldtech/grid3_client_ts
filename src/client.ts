@@ -7,6 +7,7 @@ import { appPath } from "./storage/backend";
 import * as modules from "./modules/index";
 import { BackendStorageType, BackendStorage } from "./storage/backend";
 import { GridClientConfig, NetworkEnv } from "./config";
+import { Scheduler } from "./scheduler";
 
 class GridClient {
     static config: GridClientConfig;
@@ -20,6 +21,7 @@ class GridClient {
     twins: modules.twins;
     kvstore: modules.kvstore;
     twinId: number;
+    scheduler: Scheduler;
 
     constructor(
         public network: NetworkEnv,
@@ -33,6 +35,7 @@ class GridClient {
     async connect() {
         const urls = this.getDefaultUrls(this.network);
         const tfclient = new TFClient(urls.substrate, this.mnemonic, this.storeSecret, this.keypairType);
+        this.scheduler = new Scheduler(urls.rmbProxy);
         await tfclient.connect();
         this.twinId = await tfclient.twins.getMyTwinId();
         this._connect();

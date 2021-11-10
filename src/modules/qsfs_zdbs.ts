@@ -2,28 +2,19 @@ import { BaseModule } from "./base";
 import { QSFSZDBSModel, QSFSZDBGetModel, QSFSZDBDeleteModel } from "./models";
 import { ZdbHL } from "../high_level/zdb";
 import { TwinDeployment } from "../high_level/models";
-import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { ZdbModes } from "../zos/zdb";
 import { WorkloadTypes } from "../zos/workload";
 import { ZdbBackend } from "../zos/qsfs";
 import { expose } from "../helpers/expose";
-import { BackendStorageType } from "../storage/backend";
+import { GridClientConfig } from "../config";
 
 class QSFSZdbsModule extends BaseModule {
     fileName = "qsfs_zdbs.json";
     workloadTypes = [WorkloadTypes.zdb];
     zdb: ZdbHL;
-    constructor(
-        public twin_id: number,
-        public url: string,
-        public mnemonic: string,
-        public rmbClient: MessageBusClientInterface,
-        public storePath: string,
-        public projectName = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default,
-    ) {
-        super(twin_id, url, mnemonic, rmbClient, storePath, projectName, backendStorageType);
-        this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient, this.storePath);
+    constructor(config: GridClientConfig) {
+        super(config);
+        this.zdb = new ZdbHL(config);
     }
 
     _createDeployment(options: QSFSZDBSModel): TwinDeployment[] {

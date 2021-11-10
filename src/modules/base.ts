@@ -10,13 +10,13 @@ import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { TwinDeployment, Operations } from "../high_level/models";
 import { KubernetesHL } from "../high_level/kubernetes";
 import { ZdbHL } from "../high_level/zdb";
-import { BackendStorage, BackendStorageType, StorageUpdateAction } from "../storage/backend";
+import { BackendStorage, StorageUpdateAction } from "../storage/backend";
 import { Nodes } from "../primitives/nodes";
 import { DeploymentFactory } from "../primitives/deployment";
 import { Network } from "../primitives/network";
-import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { VMHL } from "../high_level/machine";
 import { TFClient } from "../clients/tf-grid/client";
+import { GridClientConfig } from "../config";
 
 class BaseModule {
     fileName = "";
@@ -25,22 +25,19 @@ class BaseModule {
     twinDeploymentHandler: TwinDeploymentHandler;
     backendStorage: BackendStorage;
 
-    constructor(
-        public twin_id: number,
-        public url: string,
-        public mnemonic: string,
-        public rmbClient: MessageBusClientInterface,
-        public storePath: string,
-        public projectName: string = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default,
-    ) {
-        this.deploymentFactory = new DeploymentFactory(twin_id, url, mnemonic);
-        this.twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, twin_id, url, mnemonic);
-        this.backendStorage = new BackendStorage(backendStorageType, url, mnemonic);
+    constructor(public config: GridClientConfig) {
+        this.deploymentFactory = new DeploymentFactory(config.twinId, config.substrateURL, config.mnemonic);
+        this.twinDeploymentHandler = new TwinDeploymentHandler(config);
+        this.backendStorage = new BackendStorage(
+            config.backendStorageType,
+            config.substrateURL,
+            config.mnemonic,
+            config.keypairType,
+        );
     }
 
     async _load() {
-        const path = PATH.join(this.storePath, this.projectName, this.fileName);
+        const path = PATH.join(this.config.storePath, this.config.projectName, this.fileName);
 
         return [path, await this.backendStorage.load(path)];
     }
@@ -200,7 +197,7 @@ class BaseModule {
         }
         const deployments = [];
         for (const contract of data[name]["contracts"]) {
-            const tfClient = new TFClient(this.url, this.mnemonic);
+            const tfClient = new TFClient(this.config.substrateURL, this.config.mnemonic, this.config.keypairType);
             const c = await tfClient.contracts.get(contract["contract_id"]);
             if (c.state !== "Created") {
                 await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
@@ -210,9 +207,9 @@ class BaseModule {
             const node_twin_id = await nodes.getNodeTwinId(contract["node_id"]);
             const payload = JSON.stringify({ contract_id: contract["contract_id"] });
 
-            const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
-            const messgae = await this.rmbClient.send(msg, payload);
-            const result = await this.rmbClient.read(messgae);
+            const msg = this.config.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
+            const messgae = await this.config.rmbClient.send(msg, payload);
+            const result = await this.config.rmbClient.read(messgae);
             if (result[0].err) {
                 throw Error(String(result[0].err));
             }
@@ -332,7 +329,7 @@ class BaseModule {
             return contracts;
         }
         const deployments = await this._get(name);
-        const highlvl = new HighLevelBase(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
+        const highlvl = new HighLevelBase(this.config);
         for (const deployment of deployments) {
             const twinDeployments = await highlvl._delete(deployment, []);
             const contract = await this.twinDeploymentHandler.handle(twinDeployments);

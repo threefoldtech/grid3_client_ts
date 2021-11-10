@@ -1,23 +1,13 @@
-import { MessageBusClientInterface } from "ts-rmb-client-base";
-
 import { WorkloadTypes } from "../zos/workload";
 import { ZOSModel } from "./models";
 import { expose } from "../helpers/expose";
 import { Operations, TwinDeployment } from "../high_level/models";
 import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { DeploymentFactory } from "../primitives/deployment";
-import { BackendStorageType } from "../storage/backend";
+import { GridClientConfig } from "../config";
 
 class Zos {
-    constructor(
-        public twin_id: number,
-        public url: string,
-        public mnemonic: string,
-        public rmbClient: MessageBusClientInterface,
-        public storePath: string,
-        public projectName = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default,
-    ) {}
+    constructor(public config: GridClientConfig) {}
 
     @expose
     async deploy(options: ZOSModel) {
@@ -25,7 +15,11 @@ class Zos {
         const node_id = options.node_id;
         delete options.node_id;
 
-        const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
+        const deploymentFactory = new DeploymentFactory(
+            this.config.twinId,
+            this.config.substrateURL,
+            this.config.mnemonic,
+        );
         const deployment = await deploymentFactory.fromObj(options);
 
         let publicIps = 0;
@@ -36,7 +30,7 @@ class Zos {
         }
         console.log(`Deploying on node_id: ${node_id} with number of public IPs: ${publicIps}`);
         const twinDeployment = new TwinDeployment(deployment, Operations.deploy, publicIps, node_id);
-        const twinDeploymentHandler = new TwinDeploymentHandler(this.rmbClient, this.twin_id, this.url, this.mnemonic);
+        const twinDeploymentHandler = new TwinDeploymentHandler(this.config);
         return await twinDeploymentHandler.handle([twinDeployment]);
     }
 }

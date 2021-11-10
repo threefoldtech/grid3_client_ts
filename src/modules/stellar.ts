@@ -1,7 +1,6 @@
 import * as PATH from "path";
 
 import { default as StellarSdk } from "stellar-sdk";
-import { MessageBusClientInterface } from "ts-rmb-client-base";
 
 import {
     WalletImportModel,
@@ -11,8 +10,9 @@ import {
     WalletGetModel,
     WalletDeleteModel,
 } from ".";
+import { GridClientConfig } from "../config";
 import { expose } from "../helpers/expose";
-import { appPath, BackendStorage, BackendStorageType, StorageUpdateAction } from "../storage/backend";
+import { appPath, BackendStorage, StorageUpdateAction } from "../storage/backend";
 
 const server = new StellarSdk.Server("https://horizon.stellar.org");
 
@@ -20,16 +20,13 @@ class Stellar {
     fileName = "stellar.json";
     backendStorage: BackendStorage;
 
-    constructor(
-        public twin_id: number,
-        public url: string,
-        public mnemonic: string,
-        public rmbClient: MessageBusClientInterface,
-        public storePath: string,
-        public projectName: string = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default,
-    ) {
-        this.backendStorage = new BackendStorage(backendStorageType, url, mnemonic);
+    constructor(config: GridClientConfig) {
+        this.backendStorage = new BackendStorage(
+            config.backendStorageType,
+            config.substrateURL,
+            config.mnemonic,
+            config.keypairType,
+        );
     }
 
     async _load() {

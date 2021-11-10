@@ -2,8 +2,8 @@ import { KeypairType, TFClient } from "../clients/tf-grid/client";
 import { crop } from "./utils";
 class TFKVStore {
     client: TFClient;
-    constructor(url: string, mnemonic: string, keypairType: KeypairType) {
-        this.client = new TFClient(url, mnemonic, keypairType);
+    constructor(url: string, mnemonic: string, storeSecret: string | Uint8Array, keypairType: KeypairType) {
+        this.client = new TFClient(url, mnemonic, storeSecret, keypairType);
     }
 
     @crop

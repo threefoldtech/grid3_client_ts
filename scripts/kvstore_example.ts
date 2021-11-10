@@ -6,6 +6,12 @@ import path from "path";
 import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import { GridClient } from "../src/client";
 import { BackendStorageType } from "../src/storage/backend";
+import { getClient } from "./client_loader";
+
+const exampleObj = {
+    key1: "value1",
+    key2: 2
+}
 
 /*
 KVStore example usage:
@@ -13,10 +19,7 @@ KVStore example usage:
 async function main() {
     //For creating grid3 client with KVStore, you need to specify the KVStore storage type in the pram:
 
-    const config = JSON.parse(fs.readFileSync(path.join(__dirname, "./devnet_config.json"), "utf-8"));
-    const rmb = new HTTPMessageBusClient(0, config.proxy);
-    const gridClient = new GridClient(config.url, config.mnemonic, rmb, "", BackendStorageType.tfkvstore);
-    await gridClient.connect();
+    const gridClient = await getClient()
 
     //then every module will use the KVStore to save its configuration and restore it.
 
@@ -25,7 +28,7 @@ async function main() {
 
     // set key
     const key = "my_config";
-    await db.set({ key, value: JSON.stringify(config) });
+    // await db.set({ key, value: JSON.stringify(exampleObj) });
 
     // list all the keys
     const keys = await db.list();

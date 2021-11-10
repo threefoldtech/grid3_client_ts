@@ -25,6 +25,7 @@ class Stellar {
             config.backendStorageType,
             config.substrateURL,
             config.mnemonic,
+            config.storeSecret,
             config.keypairType,
         );
     }

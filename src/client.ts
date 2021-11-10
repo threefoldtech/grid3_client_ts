@@ -24,14 +24,15 @@ class GridClient {
     constructor(
         public network: NetworkEnv,
         public mnemonic: string,
+        public storeSecret: string | Uint8Array,
         public rmbClient: MessageBusClientInterface,
         public projectName = "",
         public backendStorageType: BackendStorageType = BackendStorageType.auto,
         public keypairType: KeypairType = KeypairType.sr25519,
-    ) {}
+    ) { }
     async connect() {
         const urls = this.getDefaultUrls(this.network);
-        const tfclient = new TFClient(urls.substrate, this.mnemonic, this.keypairType);
+        const tfclient = new TFClient(urls.substrate, this.mnemonic, this.storeSecret, this.keypairType);
         await tfclient.connect();
         this.twinId = await tfclient.twins.getMyTwinId();
         this._connect();
@@ -50,6 +51,7 @@ class GridClient {
         GridClient.config = {
             network: this.network,
             mnemonic: this.mnemonic,
+            storeSecret: this.storeSecret,
             rmbClient: this.rmbClient,
             projectName: this.projectName,
             backendStorageType: this.backendStorageType,

@@ -10,6 +10,7 @@ enum NetworkEnv {
 class GridClientConfig {
     network: NetworkEnv;
     mnemonic: string;
+    storeSecret: string | Uint8Array;
     rmbClient: MessageBusClientInterface;
     projectName: string;
     backendStorageType: BackendStorageType;

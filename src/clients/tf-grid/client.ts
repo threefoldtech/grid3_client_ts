@@ -16,7 +16,7 @@ class TFClient {
     twins: Twins;
     kvStore: KVStore;
 
-    constructor(public url: string, public mnemonic: string, public keypairType: KeypairType = KeypairType.sr25519) {
+    constructor(public url: string, public mnemonic: string, public storeSecret: string | Uint8Array, public keypairType: KeypairType = KeypairType.sr25519) {
         const key = `${url}:${mnemonic}:${keypairType}`;
         if (Object.keys(TFClient.clients).includes(key)) {
             return TFClient.clients[key];

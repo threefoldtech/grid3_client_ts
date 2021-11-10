@@ -24,6 +24,7 @@ class BackendStorage {
         public type: BackendStorageType = BackendStorageType.auto,
         substrateURL = "",
         mnemonic = "",
+        storeSecret: string | Uint8Array,
         keypairType: KeypairType,
     ) {
         if (type === BackendStorageType.auto) {
@@ -35,7 +36,7 @@ class BackendStorage {
                 this.storage = new storage.LocalStorage();
             }
         } else if (type === BackendStorageType.tfkvstore) {
-            this.storage = new TFKVStore(substrateURL, mnemonic, keypairType);
+            this.storage = new TFKVStore(substrateURL, mnemonic, storeSecret, keypairType);
         } else if (type === BackendStorageType.fs) {
             const storage = require("./filesystem");
             this.storage = new storage.FS();

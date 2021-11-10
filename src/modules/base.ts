@@ -32,6 +32,7 @@ class BaseModule {
             config.backendStorageType,
             config.substrateURL,
             config.mnemonic,
+            config.storeSecret,
             config.keypairType,
         );
     }
@@ -197,7 +198,7 @@ class BaseModule {
         }
         const deployments = [];
         for (const contract of data[name]["contracts"]) {
-            const tfClient = new TFClient(this.config.substrateURL, this.config.mnemonic, this.config.keypairType);
+            const tfClient = new TFClient(this.config.substrateURL, this.config.mnemonic, this.config.storeSecret, this.config.keypairType);
             const c = await tfClient.contracts.get(contract["contract_id"]);
             if (c.state !== "Created") {
                 await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });

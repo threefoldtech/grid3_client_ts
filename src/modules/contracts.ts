@@ -17,7 +17,7 @@ import { GridClientConfig } from "../config";
 class Contracts {
     client: TFClient;
     constructor(config: GridClientConfig) {
-        this.client = new TFClient(config.substrateURL, config.mnemonic, config.keypairType);
+        this.client = new TFClient(config.substrateURL, config.mnemonic, config.storeSecret, config.keypairType);
     }
 
     @expose

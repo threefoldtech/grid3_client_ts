@@ -12,7 +12,7 @@ class TwinDeploymentHandler {
     tfclient: TFClient;
 
     constructor(public config: GridClientConfig) {
-        this.tfclient = new TFClient(config.substrateURL, config.mnemonic, config.keypairType);
+        this.tfclient = new TFClient(config.substrateURL, config.mnemonic, config.storeSecret, config.keypairType);
     }
 
     async createNameContract(name: string) {

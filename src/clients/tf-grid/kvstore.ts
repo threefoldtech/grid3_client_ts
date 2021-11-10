@@ -1,6 +1,7 @@
-import { mnemonicToMiniSecret } from "@polkadot/util-crypto";
 import nacl from "tweetnacl";
 import utils from "tweetnacl-util";
+import { randomNonce } from "../../helpers/utils";
+import Crypto from "crypto-js"
 
 class KVStore {
     tfclient;
@@ -8,8 +9,6 @@ class KVStore {
 
     constructor(client) {
         this.tfclient = client;
-        const secret = mnemonicToMiniSecret(client.mnemonic);
-        this.keypair = nacl.box.keyPair.fromSecretKey(secret);
     }
 
     async set(key: string, value: string) {
@@ -39,10 +38,19 @@ class KVStore {
         return this.tfclient.applyExtrinsic(this.tfclient.client.tfStoreRemove, [key], "tfkvStore", ["EntryTaken"]);
     }
 
+    getSecretAsBytes(): Uint8Array {
+        if (typeof (this.tfclient.storeSecret) === "string") {
+            const hashed = Crypto.SHA256(this.tfclient.storeSecret)
+            const asBase64 = Crypto.enc.Base64.stringify(hashed)
+            return utils.decodeBase64(asBase64)
+        }
+        return this.tfclient.storeSecret
+    }
+
     encrypt(message) {
         const encodedMessage = utils.decodeUTF8(message);
-        const nonce = nacl.randomBytes(nacl.box.nonceLength);
-        const encryptedMessage = nacl.box(encodedMessage, nonce, this.keypair.publicKey, this.keypair.secretKey);
+        const nonce = randomNonce();
+        const encryptedMessage = nacl.secretbox(encodedMessage, nonce, this.getSecretAsBytes());
         const fullMessage = Uint8Array.from([...encryptedMessage, ...nonce]);
         return utils.encodeBase64(fullMessage);
     }
@@ -51,7 +59,7 @@ class KVStore {
         const encodedMessage = utils.decodeBase64(message);
         const encryptedMessage = encodedMessage.slice(0, -24);
         const nonce = encodedMessage.slice(-24);
-        const decryptedMessage = nacl.box.open(encryptedMessage, nonce, this.keypair.publicKey, this.keypair.secretKey);
+        const decryptedMessage = nacl.secretbox.open(encryptedMessage, nonce, this.getSecretAsBytes());
 
         return utils.encodeUTF8(decryptedMessage);
     }

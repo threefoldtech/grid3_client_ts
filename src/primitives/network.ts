@@ -51,6 +51,7 @@ class Network {
             config.backendStorageType,
             config.substrateURL,
             config.mnemonic,
+            config.storeSecret,
             config.keypairType,
         );
     }

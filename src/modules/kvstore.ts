@@ -6,7 +6,7 @@ import { GridClientConfig } from "../config";
 class KVStore {
     client: TFClient;
     constructor(config: GridClientConfig) {
-        this.client = new TFClient(config.substrateURL, config.mnemonic, config.keypairType);
+        this.client = new TFClient(config.substrateURL, config.mnemonic, config.storeSecret, config.keypairType);
     }
     @expose
     async set(options: KVStoreSetModel) {

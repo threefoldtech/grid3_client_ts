@@ -21,15 +21,13 @@ async function main() {
     const server1_options: FilterOptions = {
         cru: 20,
         mru: 100, // GB
-        country: "US",
-        gateway:true
+        country: "BE"
     };
 
     // create vm node Object
     const vm = new MachineModel();
     vm.name = "testvm";
     vm.node_id = +(await grid3.scheduler.filterNodes(server1_options))[0].nodeId; // TODO: allow random choise
-    vm.node_options = server1_options;
     vm.disks = [disk];
     vm.public_ip = false;
     vm.planetary = true;

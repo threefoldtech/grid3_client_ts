@@ -2,7 +2,7 @@ import { send } from "../helpers/requests";
 import { events } from "../helpers/events";
 
 type FilterOptions = {
-    cru?: number; // GB
+    cru?: number;
     mru?: number; // GB
     sru?: number; // GB
     hru?: number; // GB

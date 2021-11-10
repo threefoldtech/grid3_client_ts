@@ -13,6 +13,7 @@ import { BackendStorage, BackendStorageType, appPath } from "../storage/backend"
 import { getRandomNumber } from "../helpers/utils";
 import { Nodes } from "./nodes";
 import { events } from "../helpers/events";
+import { GridClientConfig } from "../config";
 
 class WireGuardKeys {
     privateKey: string;
@@ -39,22 +40,19 @@ class Network {
     accessPoints: AccessPoint[] = [];
     backendStorage: BackendStorage;
 
-    constructor(
-        public name: string,
-        public ipRange: string,
-        public rmbClient,
-        public storePath: string,
-        public url: string,
-        public mnemonic: string,
-        public backendStorageType: BackendStorageType = BackendStorageType.default,
-    ) {
+    constructor(public name: string, public ipRange: string, public config: GridClientConfig) {
         if (Addr(ipRange).prefix !== 16) {
             throw Error("Network ip_range should be with prefix 16");
         }
         if (!this.isPrivateIP(ipRange)) {
             throw Error("Network ip_range should be private range");
         }
-        this.backendStorage = new BackendStorage(backendStorageType, url, mnemonic);
+        this.backendStorage = new BackendStorage(
+            config.backendStorageType,
+            config.substrateURL,
+            config.mnemonic,
+            config.keypairType,
+        );
     }
 
     async addAccess(node_id: number, ipv4: boolean): Promise<string> {
@@ -189,13 +187,13 @@ class Network {
         for (const node of network.nodes) {
             const nodes = new Nodes();
             const node_twin_id = await nodes.getNodeTwinId(node.node_id);
-            const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
-            const message = await this.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
-            const result = await this.rmbClient.read(message);
+            const msg = this.config.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
+            const message = await this.config.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
+            const result = await this.config.rmbClient.read(message);
             if (result[0].err) {
                 console.error(`Could not load network deployment ${node.contract_id} due to error: ${result[0].err} `);
             }
-            const res = JSON.parse(result[0].dat);
+            const res = JSON.parse(String(result[0].dat));
             res["node_id"] = node.node_id;
             for (const workload of res["workloads"]) {
                 if (
@@ -383,7 +381,7 @@ class Network {
     }
 
     async getNetworks() {
-        const path = PATH.join(this.storePath, "network.json");
+        const path = PATH.join(this.config.storePath, "network.json");
         return await this.backendStorage.load(path);
     }
 
@@ -395,13 +393,13 @@ class Network {
     async getFreePort(node_id: number): Promise<number> {
         const nodes = new Nodes();
         const node_twin_id = await nodes.getNodeTwinId(node_id);
-        const msg = this.rmbClient.prepare("zos.network.list_wg_ports", [node_twin_id], 0, 2);
-        const message = await this.rmbClient.send(msg, "");
-        const result = await this.rmbClient.read(message);
+        const msg = this.config.rmbClient.prepare("zos.network.list_wg_ports", [node_twin_id], 0, 2);
+        const message = await this.config.rmbClient.send(msg, "");
+        const result = await this.config.rmbClient.read(message);
         events.emit("logs", result);
 
         let port = 0;
-        while (!port || JSON.parse(result[0].dat).includes(port)) {
+        while (!port || JSON.parse(String(result[0].dat)).includes(port)) {
             port = getRandomNumber(2000, 8000);
         }
         return port;
@@ -414,13 +412,13 @@ class Network {
     async getNodeEndpoint(node_id: number): Promise<string> {
         const nodes = new Nodes();
         const node_twin_id = await nodes.getNodeTwinId(node_id);
-        let msg = this.rmbClient.prepare("zos.network.public_config_get", [node_twin_id], 0, 2);
-        let message = await this.rmbClient.send(msg, "");
-        let result = await this.rmbClient.read(message);
+        let msg = this.config.rmbClient.prepare("zos.network.public_config_get", [node_twin_id], 0, 2);
+        let message = await this.config.rmbClient.send(msg, "");
+        let result = await this.config.rmbClient.read(message);
         events.emit("logs", result);
 
         if (!result[0].err && result[0].dat) {
-            const data = JSON.parse(result[0].dat);
+            const data = JSON.parse(String(result[0].dat));
             const ipv4 = data.ipv4;
             if (!this.isPrivateIP(ipv4)) {
                 return ipv4.split("/")[0];
@@ -432,13 +430,13 @@ class Network {
         }
         events.emit("logs", `node ${node_id} has no public config`);
 
-        msg = this.rmbClient.prepare("zos.network.interfaces", [node_twin_id], 0, 2);
-        message = await this.rmbClient.send(msg, "");
-        result = await this.rmbClient.read(message);
+        msg = this.config.rmbClient.prepare("zos.network.interfaces", [node_twin_id], 0, 2);
+        message = await this.config.rmbClient.send(msg, "");
+        result = await this.config.rmbClient.read(message);
         events.emit("logs", result);
 
         if (!result[0].err && result[0].dat) {
-            const data = JSON.parse(result[0].dat);
+            const data = JSON.parse(String(result[0].dat));
             for (const iface of Object.keys(data)) {
                 if (iface !== "zos") {
                     continue;
@@ -507,7 +505,7 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     async _save(network): Promise<void> {
         const networks = await this.getNetworks();
         networks[this.name] = network;
-        const path = PATH.join(this.storePath, "network.json");
+        const path = PATH.join(this.config.storePath, "network.json");
         await this.backendStorage.dump(path, networks);
     }
 
@@ -515,7 +513,7 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
         events.emit("logs", `Deleting network ${this.name}`);
         const networks = await this.getNetworks();
         delete networks[this.name];
-        const path = PATH.join(this.storePath, "network.json");
+        const path = PATH.join(this.config.storePath, "network.json");
         await this.backendStorage.dump(path, networks);
     }
 

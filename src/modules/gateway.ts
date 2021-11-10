@@ -11,26 +11,17 @@ import { GatewayHL } from "../high_level/gateway";
 import { WorkloadTypes } from "../zos/workload";
 import { GatewayFQDNProxy, GatewayResult } from "../zos/gateway";
 
-import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { expose } from "../helpers/expose";
-import { BackendStorageType } from "../storage/backend";
+import { GridClientConfig } from "../config";
 
 class GWModule extends BaseModule {
     fileName = "gateway.json";
     workloadTypes = [WorkloadTypes.gatewayfqdnproxy, WorkloadTypes.gatewaynameproxy];
     gateway: GatewayHL;
 
-    constructor(
-        public twin_id: number,
-        public url: string,
-        public mnemonic: string,
-        public rmbClient: MessageBusClientInterface,
-        public storePath: string,
-        public projectName = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default,
-    ) {
-        super(twin_id, url, mnemonic, rmbClient, storePath, projectName, backendStorageType);
-        this.gateway = new GatewayHL(twin_id, url, mnemonic, rmbClient, this.storePath);
+    constructor(config: GridClientConfig) {
+        super(config);
+        this.gateway = new GatewayHL(config);
     }
 
     @expose

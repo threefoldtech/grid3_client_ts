@@ -20,7 +20,11 @@ class GatewayHL extends HighLevelBase {
         } else {
             workloads.push(gw.createName(name, tls_passthrough, backends, metadata, description));
         }
-        const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
+        const deploymentFactory = new DeploymentFactory(
+            this.config.twinId,
+            this.config.substrateURL,
+            this.config.mnemonic,
+        );
         const deployment = deploymentFactory.create(workloads, 1626394539, metadata, description);
         const twinDeployments = [];
         twinDeployments.push(new TwinDeployment(deployment, Operations.deploy, public_ips, node_id));

@@ -1,22 +1,12 @@
-import { MessageBusClientInterface } from "ts-rmb-client-base";
-
 import { TFClient } from "../clients/tf-grid/client";
 import { KVStoreSetModel, KVStoreGetModel, KVStoreRemoveModel } from "./models";
 import { expose } from "../helpers/expose";
-import { BackendStorageType } from "../storage/backend";
+import { GridClientConfig } from "../config";
 
 class KVStore {
     client: TFClient;
-    constructor(
-        public twin_id: number,
-        public url: string,
-        public mnemonic: string,
-        public rmbClient: MessageBusClientInterface,
-        public storePath: string,
-        public projectName = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default,
-    ) {
-        this.client = new TFClient(url, mnemonic);
+    constructor(config: GridClientConfig) {
+        this.client = new TFClient(config.substrateURL, config.mnemonic, config.keypairType);
     }
     @expose
     async set(options: KVStoreSetModel) {

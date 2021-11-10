@@ -1,5 +1,4 @@
 import { Workload, WorkloadTypes } from "../zos/workload";
-import { Zmachine } from "../zos/zmachine";
 import { Addr } from "netaddr";
 
 import { AddWorkerModel, DeleteWorkerModel, K8SModel, K8SDeleteModel, K8SGetModel } from "./models";
@@ -7,26 +6,17 @@ import { BaseModule } from "./base";
 import { TwinDeployment } from "../high_level/models";
 import { KubernetesHL } from "../high_level/kubernetes";
 import { Network } from "../primitives/network";
-import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { expose } from "../helpers/expose";
-import { BackendStorageType } from "../storage/backend";
+import { GridClientConfig } from "../config";
 
 class K8sModule extends BaseModule {
     fileName = "kubernetes.json";
     workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
     kubernetes: KubernetesHL;
 
-    constructor(
-        public twin_id: number,
-        public url: string,
-        public mnemonic: string,
-        public rmbClient: MessageBusClientInterface,
-        public storePath: string,
-        public projectName = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default,
-    ) {
-        super(twin_id, url, mnemonic, rmbClient, storePath, projectName, backendStorageType);
-        this.kubernetes = new KubernetesHL(twin_id, url, mnemonic, rmbClient, this.storePath, backendStorageType);
+    constructor(public config: GridClientConfig) {
+        super(config);
+        this.kubernetes = new KubernetesHL(config);
     }
 
     _getMastersWorkload(deployments): Workload[] {
@@ -71,15 +61,7 @@ class K8sModule extends BaseModule {
     }
 
     async _createDeployment(options: K8SModel, masterIps: string[] = []): Promise<[TwinDeployment[], Network, string]> {
-        const network = new Network(
-            options.network.name,
-            options.network.ip_range,
-            this.rmbClient,
-            this.storePath,
-            this.url,
-            this.mnemonic,
-            this.backendStorageType,
-        );
+        const network = new Network(options.network.name, options.network.ip_range, this.config);
         await network.load();
 
         let deployments = [];
@@ -100,7 +82,7 @@ class K8sModule extends BaseModule {
                 options.metadata,
                 options.description,
                 master.qsfs_disks,
-                this.projectName,
+                this.config.projectName,
             );
 
             deployments = deployments.concat(twinDeployments);
@@ -229,15 +211,7 @@ class K8sModule extends BaseModule {
         const masterWorkload = masterWorkloads[0];
         const networkName = masterWorkload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(masterWorkload.data["network"].interfaces[0].ip).mask(16).toString();
-        const network = new Network(
-            networkName,
-            networkIpRange,
-            this.rmbClient,
-            this.storePath,
-            this.url,
-            this.mnemonic,
-            this.backendStorageType,
-        );
+        const network = new Network(networkName, networkIpRange, this.config);
         await network.load();
         const [twinDeployments, _] = await this.kubernetes.add_worker(
             options.name,
@@ -255,7 +229,7 @@ class K8sModule extends BaseModule {
             masterWorkload.metadata,
             masterWorkload.description,
             options.qsfs_disks,
-            this.projectName,
+            this.config.projectName,
         );
 
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);

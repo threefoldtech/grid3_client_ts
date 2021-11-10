@@ -6,18 +6,10 @@ import { DeploymentFactory } from "../primitives/deployment";
 import { Network } from "../primitives/network";
 import { Nodes } from "../primitives/nodes";
 import { TwinDeployment, Operations } from "../high_level/models";
-import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { events } from "../helpers/events";
-import { BackendStorageType } from "../storage/backend";
+import { GridClientConfig } from "../config";
 class HighLevelBase {
-    constructor(
-        public twin_id: number,
-        public url: string,
-        public mnemonic: string,
-        public rmbClient: MessageBusClientInterface,
-        public storePath: string,
-        public backendStorageType: BackendStorageType = BackendStorageType.default,
-    ) {}
+    constructor(public config: GridClientConfig) {}
 
     _filterWorkloads(
         deployment: Deployment,
@@ -77,19 +69,15 @@ class HighLevelBase {
         const twinDeployments = [];
         const deletedNodes = [];
         const deletedIps = [];
-        const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
+        const deploymentFactory = new DeploymentFactory(
+            this.config.twinId,
+            this.config.substrateURL,
+            this.config.mnemonic,
+        );
         for (const workload of deletedMachineWorkloads) {
             const networkName = workload.data["network"].interfaces[0].network;
             const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
-            const network = new Network(
-                networkName,
-                networkIpRange,
-                this.rmbClient,
-                this.storePath,
-                this.url,
-                this.mnemonic,
-                this.backendStorageType,
-            );
+            const network = new Network(networkName, networkIpRange, this.config);
             await network.load();
 
             const machineIp = workload.data["network"].interfaces[0].ip;
@@ -168,9 +156,13 @@ class HighLevelBase {
             throw Error("network can't be deleted");
         }
         const nodes = new Nodes();
-        const node_id = await nodes.getNodeIdFromContractId(deployment.contract_id, this.mnemonic);
+        const node_id = await nodes.getNodeIdFromContractId(deployment.contract_id, this.config.mnemonic);
         let twinDeployments = [];
-        const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
+        const deploymentFactory = new DeploymentFactory(
+            this.config.twinId,
+            this.config.substrateURL,
+            this.config.mnemonic,
+        );
 
         const numberOfWorkloads = deployment.workloads.length;
         deployment = await deploymentFactory.fromObj(deployment);
@@ -193,15 +185,7 @@ class HighLevelBase {
             let network = null;
             for (const workload of remainingWorkloads) {
                 if (workload.type === WorkloadTypes.network) {
-                    network = new Network(
-                        workload.name,
-                        workload.data["ip_range"],
-                        this.rmbClient,
-                        this.storePath,
-                        this.url,
-                        this.mnemonic,
-                        this.backendStorageType,
-                    );
+                    network = new Network(workload.name, workload.data["ip_range"], this.config);
                     await network.load();
                     break;
                 }

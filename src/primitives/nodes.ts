@@ -24,7 +24,7 @@ class Nodes {
 
     async getAccessNodes(): Promise<Record<string, unknown>> {
         const headers = { "Content-Type": "application/json" };
-        let body = `{
+        const body = `{
         nodes {
           nodeId
           publicConfig{
@@ -36,7 +36,6 @@ class Nodes {
       }`;
         const nodeResponse = await send("post", this.graphqlURL, JSON.stringify({ query: body }), headers);
         const nodes = nodeResponse["data"]["nodes"];
-        console.log(nodes);
         const accessNodes = {};
         for (const node of nodes) {
             if (!node.publicConfig) {
@@ -56,9 +55,9 @@ class Nodes {
     }
 
     async getNodeIdFromContractId(contractId: number, mnemonic: string): Promise<number> {
-        const tfclient = new TFClient(GridClient.config.substrateURL, mnemonic);
+        const tfclient = new TFClient(GridClient.config.substrateURL, mnemonic, GridClient.config.keypairType);
         const contract = await tfclient.contracts.get(contractId);
         return contract["contract_type"]["nodeContract"]["node_id"];
-    };
+    }
 }
 export { Nodes };

@@ -1,45 +1,27 @@
 import { Addr } from "netaddr";
 
 import { WorkloadTypes, Workload } from "../zos/workload";
-import { Zmachine } from "../zos/zmachine";
 
 import { BaseModule } from "./base";
 import { MachinesModel, MachinesDeleteModel, MachinesGetModel, AddMachineModel, DeleteMachineModel } from "./models";
 import { Network } from "../primitives/network";
 import { VMHL } from "../high_level/machine";
-import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { TwinDeployment } from "../high_level/models";
 import { expose } from "../helpers/expose";
-import { BackendStorageType } from "../storage/backend";
+import { GridClientConfig } from "../config";
 
 class MachineModule extends BaseModule {
     fileName = "machines.json";
     workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
     vm: VMHL;
-    constructor(
-        public twin_id: number,
-        public url: string,
-        public mnemonic: string,
-        public rmbClient: MessageBusClientInterface,
-        public storePath: string,
-        public projectName = "",
-        public backendStorageType: BackendStorageType = BackendStorageType.default,
-    ) {
-        super(twin_id, url, mnemonic, rmbClient, storePath, projectName, backendStorageType);
-        this.vm = new VMHL(twin_id, url, mnemonic, rmbClient, storePath, backendStorageType);
+    constructor(public config: GridClientConfig) {
+        super(config);
+        this.vm = new VMHL(config);
     }
 
     async _createDeloyment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]> {
         const networkName = options.network.name;
-        const network = new Network(
-            networkName,
-            options.network.ip_range,
-            this.rmbClient,
-            this.storePath,
-            this.url,
-            this.mnemonic,
-            this.backendStorageType,
-        );
+        const network = new Network(networkName, options.network.ip_range, this.config);
         await network.load();
 
         let twinDeployments = [];
@@ -62,7 +44,7 @@ class MachineModule extends BaseModule {
                 options.metadata,
                 options.description,
                 machine.qsfs_disks,
-                this.projectName,
+                this.config.projectName,
             );
             twinDeployments = twinDeployments.concat(TDeployments);
             if (wgConfig) {
@@ -133,15 +115,7 @@ class MachineModule extends BaseModule {
         const workload = this._getWorkloadsByTypes(oldDeployments, [WorkloadTypes.zmachine])[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
-        const network = new Network(
-            networkName,
-            networkIpRange,
-            this.rmbClient,
-            this.storePath,
-            this.url,
-            this.mnemonic,
-            this.backendStorageType,
-        );
+        const network = new Network(networkName, networkIpRange, this.config);
         await network.load();
 
         const [twinDeployments, wgConfig] = await this.vm.create(
@@ -160,7 +134,7 @@ class MachineModule extends BaseModule {
             workload.metadata,
             workload.description,
             options.qsfs_disks,
-            this.projectName,
+            this.config.projectName,
         );
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }

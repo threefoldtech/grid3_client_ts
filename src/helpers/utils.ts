@@ -1,3 +1,6 @@
+import nacl, { randomBytes } from "tweetnacl";
+import utils from "tweetnacl-util";
+
 function generateString(length: number): string {
     let result = "";
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -17,4 +20,16 @@ function randomChoice(choices) {
     return choices[random];
 }
 
-export { generateString, getRandomNumber, randomChoice };
+function randomSecret() {
+    return randomBytes(nacl.box.secretKeyLength);
+}
+
+function randomSecretAsHex() {
+    return utils.encodeBase64(randomSecret());
+}
+
+function randomNonce() {
+    return randomBytes(nacl.box.nonceLength);
+}
+
+export { generateString, getRandomNumber, randomChoice, randomSecret, randomSecretAsHex, randomNonce };

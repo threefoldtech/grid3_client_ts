@@ -47,9 +47,9 @@ class VMHL extends HighLevelBase {
         const qsfsPrimitive = new QSFSPrimitive();
         for (const d of qsfsDisks) {
             // the ratio that will be used for minimal_shards to expected_shards is 3/5
-            const qsfsZdbsModule = new qsfs_zdbs(this.twin_id, this.url, this.mnemonic, this.rmbClient, this.storePath);
+            const qsfsZdbsModule = new qsfs_zdbs(this.config);
             if (qsfsProjectName) {
-                qsfsZdbsModule.projectName = qsfsProjectName;
+                qsfsZdbsModule.config.projectName = qsfsProjectName;
             }
             const qsfsZdbs = await qsfsZdbsModule.getZdbs(d.qsfs_zdbs_name);
             if (qsfsZdbs.groups.length === 0 || qsfsZdbs.meta.length === 0) {
@@ -105,8 +105,12 @@ class VMHL extends HighLevelBase {
         }
 
         // network
-        const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
-        const nodes = new Nodes(this.url);
+        const deploymentFactory = new DeploymentFactory(
+            this.config.twinId,
+            this.config.substrateURL,
+            this.config.mnemonic,
+        );
+        const nodes = new Nodes();
         const accessNodes = await nodes.getAccessNodes();
         let access_net_workload;
         let wgConfig = "";
@@ -132,7 +136,7 @@ class VMHL extends HighLevelBase {
             wgConfig = await network.addAccess(access_node_id, true);
         }
         const znet_workload = await network.addNode(nodeId, metadata, description);
-        if (znet_workload && network.exists()) {
+        if (znet_workload && (await network.exists())) {
             // update network
             for (const deployment of network.deployments) {
                 const d = await deploymentFactory.fromObj(deployment);

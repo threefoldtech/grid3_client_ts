@@ -1,35 +1,27 @@
 import { Addr } from "netaddr";
 
 import { WorkloadTypes, Workload } from "../zos/workload";
-import { Zmachine } from "../zos/zmachine";
 
 import { BaseModule } from "./base";
 import { MachinesModel, MachinesDeleteModel, MachinesGetModel, AddMachineModel, DeleteMachineModel } from "./models";
 import { Network } from "../primitives/network";
 import { VMHL } from "../high_level/machine";
-import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { TwinDeployment } from "../high_level/models";
 import { expose } from "../helpers/expose";
+import { GridClientConfig } from "../config";
 
 class MachineModule extends BaseModule {
     fileName = "machines.json";
     workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
     vm: VMHL;
-    constructor(
-        public twin_id: number,
-        public url: string,
-        public mnemonic: string,
-        public rmbClient: MessageBusClientInterface,
-        public storePath: string,
-        projectName = "",
-    ) {
-        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
-        this.vm = new VMHL(twin_id, url, mnemonic, rmbClient, this.storePath);
+    constructor(public config: GridClientConfig) {
+        super(config);
+        this.vm = new VMHL(config);
     }
 
     async _createDeloyment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]> {
         const networkName = options.network.name;
-        const network = new Network(networkName, options.network.ip_range, this.rmbClient, this.storePath, this.url);
+        const network = new Network(networkName, options.network.ip_range, this.config);
         await network.load();
 
         let twinDeployments = [];
@@ -52,7 +44,7 @@ class MachineModule extends BaseModule {
                 options.metadata,
                 options.description,
                 machine.qsfs_disks,
-                this.projectName,
+                this.config.projectName,
             );
             twinDeployments = twinDeployments.concat(TDeployments);
             if (wgConfig) {
@@ -64,19 +56,19 @@ class MachineModule extends BaseModule {
 
     @expose
     async deploy(options: MachinesModel) {
-        if (this.exists(options.name)) {
+        if (await this.exists(options.name)) {
             throw Error(`Another machine deployment with the same name ${options.name} is already exist`);
         }
 
         const [twinDeployments, _, wireguardConfig] = await this._createDeloyment(options);
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
-        this.save(options.name, contracts, wireguardConfig);
+        await this.save(options.name, contracts, wireguardConfig);
         return { contracts: contracts, wireguard_config: wireguardConfig };
     }
 
     @expose
-    list() {
-        return this._list();
+    async list() {
+        return await this._list();
     }
 
     async getObj(deploymentName: string) {
@@ -98,7 +90,7 @@ class MachineModule extends BaseModule {
 
     @expose
     async update(options: MachinesModel) {
-        if (!this.exists(options.name)) {
+        if (!(await this.exists(options.name))) {
             throw Error(`There is no machine with name: ${options.name}`);
         }
 
@@ -116,14 +108,14 @@ class MachineModule extends BaseModule {
 
     @expose
     async add_machine(options: AddMachineModel) {
-        if (!this.exists(options.deployment_name)) {
+        if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no machines deployment with name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
         const workload = this._getWorkloadsByTypes(oldDeployments, [WorkloadTypes.zmachine])[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
-        const network = new Network(networkName, networkIpRange, this.rmbClient, this.storePath, this.url);
+        const network = new Network(networkName, networkIpRange, this.config);
         await network.load();
 
         const [twinDeployments, wgConfig] = await this.vm.create(
@@ -142,14 +134,14 @@ class MachineModule extends BaseModule {
             workload.metadata,
             workload.description,
             options.qsfs_disks,
-            this.projectName,
+            this.config.projectName,
         );
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }
 
     @expose
     async delete_machine(options: DeleteMachineModel) {
-        if (!this.exists(options.deployment_name)) {
+        if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no machines deployment with name: ${options.deployment_name}`);
         }
         return await this._deleteInstance(this.vm, options.deployment_name, options.name);

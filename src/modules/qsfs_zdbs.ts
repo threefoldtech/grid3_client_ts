@@ -2,26 +2,19 @@ import { BaseModule } from "./base";
 import { QSFSZDBSModel, QSFSZDBGetModel, QSFSZDBDeleteModel } from "./models";
 import { ZdbHL } from "../high_level/zdb";
 import { TwinDeployment } from "../high_level/models";
-import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { ZdbModes } from "../zos/zdb";
 import { WorkloadTypes } from "../zos/workload";
 import { ZdbBackend } from "../zos/qsfs";
 import { expose } from "../helpers/expose";
+import { GridClientConfig } from "../config";
 
 class QSFSZdbsModule extends BaseModule {
     fileName = "qsfs_zdbs.json";
     workloadTypes = [WorkloadTypes.zdb];
     zdb: ZdbHL;
-    constructor(
-        public twin_id: number,
-        public url: string,
-        public mnemonic: string,
-        public rmbClient: MessageBusClientInterface,
-        public storePath: string,
-        projectName = "",
-    ) {
-        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
-        this.zdb = new ZdbHL(twin_id, url, mnemonic, rmbClient, this.storePath);
+    constructor(config: GridClientConfig) {
+        super(config);
+        this.zdb = new ZdbHL(config);
     }
 
     _createDeployment(options: QSFSZDBSModel): TwinDeployment[] {
@@ -53,18 +46,18 @@ class QSFSZdbsModule extends BaseModule {
 
     @expose
     async deploy(options: QSFSZDBSModel) {
-        if (this.exists(options.name)) {
+        if (await this.exists(options.name)) {
             throw Error(`Another QSFS zdbs deployment with the same name ${options.name} is already exist`);
         }
         const twinDeployments = this._createDeployment(options);
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
-        this.save(options.name, contracts);
+        await this.save(options.name, contracts);
         return { contracts: contracts };
     }
 
     @expose
-    list() {
-        return this._list();
+    async list() {
+        return await this._list();
     }
 
     @expose

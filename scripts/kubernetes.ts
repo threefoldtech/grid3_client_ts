@@ -57,6 +57,8 @@ async function main() {
     // m.name = k.name;
     // const d = await grid3.k8s.delete(m);
     // console.log(d);
+
+    grid3.disconnect();
 }
 
 main();

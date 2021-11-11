@@ -11,6 +11,7 @@ gw.name = "applyFQDN";
 gw.node_id = 1;
 gw.fqdn = "test.hamada.grid.tf";
 gw.tls_passthrough = false;
+// the backends have to be in this format `http://ip:port` or `https://ip:port`, and the `ip` pingable from the node so using the ygg ip or public ip if available.
 gw.backends = ["http://185.206.122.35:8000"];
 
 async function main() {
@@ -26,8 +27,10 @@ async function main() {
     // // delete
     // const m = new GatewayFQDNDeleteModel();
     // m.name = gw.name;
-    // const d = await grid3.gateway.deleteFQDN(m);
+    // const d = await grid3.gateway.delete_fqdn(m);
     // console.log(d);
+
+    grid3.disconnect();
 }
 
 main();

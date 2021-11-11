@@ -1,17 +1,14 @@
 import { default as PrivateIp } from "private-ip";
-import { default as urlParser } from "url-parse";
-import { default as urlJoin } from "url-join";
 
 import { TFClient } from "../clients/tf-grid/client";
-
 import { send } from "../helpers/requests";
+import { GridClient } from "../client";
 
 class Nodes {
     graphqlURL: string;
 
-    constructor(public url: string) {
-        const chainURLParsed = urlParser(url);
-        this.graphqlURL = urlJoin("https://", chainURLParsed.hostname, "graphql/graphql");
+    constructor() {
+        this.graphqlURL = GridClient.config.graphqlURL;
     }
 
     async getNodeTwinId(node_id: number): Promise<number> {
@@ -27,64 +24,45 @@ class Nodes {
 
     async getAccessNodes(): Promise<Record<string, unknown>> {
         const headers = { "Content-Type": "application/json" };
-        let body = `{
+        const body = `{
         nodes {
           nodeId
-          publicConfigId 
+          publicConfig{
+              ipv4
+              ipv6
+              domain
+          }
         }
       }`;
         const nodeResponse = await send("post", this.graphqlURL, JSON.stringify({ query: body }), headers);
         const nodes = nodeResponse["data"]["nodes"];
-        const nodeConfigs = {};
-        let configsIds = "";
+        const accessNodes = {};
         for (const node of nodes) {
-            if (!node.publicConfigId) {
+            if (!node.publicConfig) {
                 continue;
             }
-            nodeConfigs[node.nodeId] = node.publicConfigId;
-            configsIds += `"${node.publicConfigId}", `;
-        }
-        body = `{
-        publicConfigs (where: {id_in: [${configsIds}]}) {
-          id
-          ipv4
-          ipv6
-          domain
-        }
-      }`;
-        const pubConfigResponse = await send("post", this.graphqlURL, JSON.stringify({ query: body }), headers);
-        const configs = pubConfigResponse["data"]["publicConfigs"];
-
-        const accessNodes = {};
-        for (const nodeId of Object.keys(nodeConfigs)) {
-            const config = nodeConfigs[nodeId];
-            for (const conf of configs) {
-                if (config === conf["id"]) {
-                    const ipv4 = conf["ipv4"];
-                    const ipv6 = conf["ipv6"];
-                    if (PrivateIp(ipv4.split("/")[0]) === false || PrivateIp(ipv6.split("/")[0]) === false) {
-                        accessNodes[nodeId] = { ipv4: ipv4, ipv6: ipv6 };
-                    }
-                }
+            const ipv4 = node.publicConfig.ipv4;
+            const ipv6 = node.publicConfig.ipv4;
+            if (PrivateIp(ipv4.split("/")[0]) === false || PrivateIp(ipv6.split("/")[0]) === false) {
+                accessNodes[node.nodeId] = { ipv4: ipv4, ipv6: ipv6 };
             }
+        }
+        if (accessNodes === {}) {
+            throw Error("Couldn't find any node with public config");
         }
         console.log(accessNodes);
         return accessNodes;
     }
 
     async getNodeIdFromContractId(contractId: number, mnemonic: string): Promise<number> {
-        const tfclient = new TFClient(this.url, mnemonic);
-        let nodeId;
-        try {
-            await tfclient.connect();
-            const contract = await tfclient.contracts.get(contractId);
-            nodeId = contract["contract_type"]["nodeContract"]["node_id"];
-        } catch (err) {
-            throw Error(err);
-        } finally {
-            tfclient.disconnect();
-        }
-        return nodeId;
+        const tfclient = new TFClient(
+            GridClient.config.substrateURL,
+            mnemonic,
+            GridClient.config.storeSecret,
+            GridClient.config.keypairType,
+        );
+        const contract = await tfclient.contracts.get(contractId);
+        return contract["contract_type"]["nodeContract"]["node_id"];
     }
 }
 export { Nodes };

@@ -222,6 +222,17 @@ class TwinDeleteModel {
     id: number;
 }
 
+class KVStoreSetModel {
+    key: string;
+    value: string;
+}
+class KVStoreGetModel {
+    key: string;
+}
+class KVStoreRemoveModel {
+    key: string;
+}
+
 class WalletImportModel {
     name: string;
     secret: string;
@@ -289,6 +300,9 @@ export {
     TwinGetModel,
     TwinGetByAccountIdModel,
     TwinDeleteModel,
+    KVStoreSetModel,
+    KVStoreGetModel,
+    KVStoreRemoveModel,
     WalletImportModel,
     WalletBalanceByNameModel,
     WalletBalanceByAddressModel,

@@ -1,17 +1,36 @@
 import { default as Client } from "tfgrid-api-client";
 import { Contracts } from "./contracts";
 import { Twins } from "./twins";
+import { KVStore } from "./kvstore";
 import { ErrorsMap } from "./errors";
 
+enum KeypairType {
+    sr25519 = "sr25519",
+    ed25519 = "ed25519",
+}
+
 class TFClient {
+    static clients: Record<string, TFClient> = {};
     client;
     contracts: Contracts;
     twins: Twins;
+    kvStore: KVStore;
 
-    constructor(url: string, mnemonic: string) {
-        this.client = new Client(url, mnemonic);
+    constructor(
+        public url: string,
+        public mnemonic: string,
+        public storeSecret: string | Uint8Array,
+        public keypairType: KeypairType = KeypairType.sr25519,
+    ) {
+        const key = `${url}:${mnemonic}:${keypairType}`;
+        if (Object.keys(TFClient.clients).includes(key)) {
+            return TFClient.clients[key];
+        }
+        this.client = new Client(url, mnemonic, keypairType);
         this.contracts = new Contracts(this);
         this.twins = new Twins(this);
+        this.kvStore = new KVStore(this);
+        TFClient.clients[key] = this;
     }
     async connect(): Promise<void> {
         await this.client.init();
@@ -21,7 +40,7 @@ class TFClient {
             this.client.api.disconnect();
         }
     }
-    applyExtrinsic(func, args, resultSecttion: string, resultName: string) {
+    applyExtrinsic(func, args, resultSecttion: string, resultNames: string[]) {
         const context = this.client;
         return new Promise(async (resolve, reject) => {
             function callback(res) {
@@ -41,7 +60,7 @@ class TFClient {
                                     -1,
                                 )} due to error: ${errorType}`,
                             );
-                        } else if (section === resultSecttion && method === resultName) {
+                        } else if (section === resultSecttion && resultNames.includes(method)) {
                             resolve(data.toJSON()[0]);
                         }
                     });
@@ -55,19 +74,5 @@ class TFClient {
             }
         });
     }
-
-    async execute(context, method, args) {
-        let result;
-        try {
-            await this.connect();
-            console.log(`Executing method: ${method.name} with args: ${args}`);
-            result = await method.apply(context, args);
-        } catch (e) {
-            throw Error(e);
-        } finally {
-            this.disconnect();
-        }
-        return result;
-    }
 }
-export { TFClient };
+export { TFClient, KeypairType };

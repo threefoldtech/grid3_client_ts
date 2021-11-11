@@ -534,3 +534,29 @@ payload:
 cmd: `twinserver.stellar.delete`
 
 payload: `{"name": "<wallet name>"}`
+
+### KVSotre
+
+- **Set**
+
+   cmd: `twinserver.kvstore.set`
+
+   payload: `'{"key": "<your key>", "value": "<key's value>"}'`
+
+- **Get**
+
+   cmd: `twinserver.kvstore.get`
+
+   payload: `'{"key": "<your key>"}'`
+
+- **List**
+
+   cmd: `twinserver.kvstore.list`
+
+   payload: `""`
+
+- **Remove**
+
+   cmd: `twinserver.kvstore.remove`
+
+   payload: `'{"key": "<your key>"}'`

@@ -11,29 +11,22 @@ import { GatewayHL } from "../high_level/gateway";
 import { WorkloadTypes } from "../zos/workload";
 import { GatewayFQDNProxy, GatewayResult } from "../zos/gateway";
 
-import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { expose } from "../helpers/expose";
+import { GridClientConfig } from "../config";
 
 class GWModule extends BaseModule {
     fileName = "gateway.json";
     workloadTypes = [WorkloadTypes.gatewayfqdnproxy, WorkloadTypes.gatewaynameproxy];
     gateway: GatewayHL;
 
-    constructor(
-        public twin_id: number,
-        public url: string,
-        public mnemonic: string,
-        public rmbClient: MessageBusClientInterface,
-        public storePath: string,
-        projectName = "",
-    ) {
-        super(twin_id, url, mnemonic, rmbClient, storePath, projectName);
-        this.gateway = new GatewayHL(twin_id, url, mnemonic, rmbClient, this.storePath);
+    constructor(config: GridClientConfig) {
+        super(config);
+        this.gateway = new GatewayHL(config);
     }
 
     @expose
     async deploy_fqdn(options: GatewayFQDNModel) {
-        if (this.exists(options.name)) {
+        if (await this.exists(options.name)) {
             throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
         }
         const twinDeployments = await this.gateway.create(
@@ -44,13 +37,13 @@ class GWModule extends BaseModule {
             options.fqdn,
         );
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
-        this.save(options.name, contracts);
+        await this.save(options.name, contracts);
         return { contracts: contracts };
     }
 
     @expose
     async deploy_name(options: GatewayNameModel) {
-        if (this.exists(options.name)) {
+        if (await this.exists(options.name)) {
             throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
         }
         const twinDeployments = await this.gateway.create(
@@ -60,7 +53,7 @@ class GWModule extends BaseModule {
             options.backends,
         );
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
-        this.save(options.name, contracts);
+        await this.save(options.name, contracts);
         return { contracts: contracts };
     }
 

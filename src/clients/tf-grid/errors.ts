@@ -56,4 +56,7 @@ export const ErrorsMap = {
         "CertificationCodeExists",
         "FarmingPolicyAlreadyExists",
     ],
+    // order same as:
+    // https://github.com/threefoldtech/tfchain_pallets/blob/27e82b3e0ca030f40cf63adba6021cc4c359e5c0/pallet-kvstore/src/lib.rs#L43
+    tfkvStore: ["NoValueStored", "KeyIsTooLarge", "ValueIsTooLarge"],
 };

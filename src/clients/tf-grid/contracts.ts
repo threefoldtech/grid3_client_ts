@@ -14,17 +14,14 @@ class Contracts {
             this.tfclient.client.createNodeContract,
             [nodeID, data, hash, publicIPs],
             "smartContractModule",
-            "ContractCreated",
+            ["ContractCreated"],
         );
     }
 
     async createName(name: string) {
-        return this.tfclient.applyExtrinsic(
-            this.tfclient.client.createNameContract,
-            [name],
-            "smartContractModule",
+        return this.tfclient.applyExtrinsic(this.tfclient.client.createNameContract, [name], "smartContractModule", [
             "ContractCreated",
-        );
+        ]);
     }
 
     async updateNode(id: number, data: string, hash: string) {
@@ -32,17 +29,16 @@ class Contracts {
             this.tfclient.client.updateNodeContract,
             [id, data, hash],
             "smartContractModule",
-            "ContractUpdated",
+            ["ContractUpdated"],
         );
     }
 
     async cancel(id: number) {
-        return this.tfclient.applyExtrinsic(
-            this.tfclient.client.cancelContract,
-            [id],
-            "smartContractModule",
+        return this.tfclient.applyExtrinsic(this.tfclient.client.cancelContract, [id], "smartContractModule", [
+            "NodeContractCanceled",
+            "NameContractCanceled",
             "ContractCanceled",
-        );
+        ]);
     }
 
     async get(id: number) {

@@ -6,144 +6,107 @@ import { Operations, TwinDeployment } from "./models";
 import { Nodes } from "../primitives/index";
 import { events } from "../helpers/events";
 import { validateObject } from "../helpers/validator";
+import { GridClientConfig } from "../config";
 
 class TwinDeploymentHandler {
     tfclient: TFClient;
 
-    constructor(public rmbClient, public twin_id: number, public url: string, public mnemonic: string) {
-        this.tfclient = new TFClient(url, mnemonic);
+    constructor(public config: GridClientConfig) {
+        this.tfclient = new TFClient(config.substrateURL, config.mnemonic, config.storeSecret, config.keypairType);
     }
 
     async createNameContract(name: string) {
-        await this.tfclient.connect();
-        try {
-            const c = await this.tfclient.contracts.getNameContract(name);
-            if (!c) {
-                const contract = await this.tfclient.contracts.createName(name);
-                if (contract instanceof Error) {
-                    throw Error(`Failed to create name contract ${contract}`);
-                }
-                events.emit("logs", `Name contract with id: ${contract["contract_id"]} has been created`);
-
-                contract.new = true;
-                return contract;
+        const c = await this.tfclient.contracts.getNameContract(name);
+        if (!c) {
+            const contract = await this.tfclient.contracts.createName(name);
+            if (contract instanceof Error) {
+                throw Error(`Failed to create name contract ${contract}`);
             }
-            events.emit("logs", `Name contract found with id: ${c}`);
-            return c;
-        } catch (err) {
-            throw Error(err);
-        } finally {
-            await this.tfclient.disconnect();
+            events.emit("logs", `Name contract with id: ${contract["contract_id"]} has been created`);
+
+            contract.new = true;
+            return contract;
         }
+        events.emit("logs", `Name contract found with id: ${c}`);
+        return c;
     }
 
     async deleteNameContract(name: string): Promise<void> {
-        await this.tfclient.connect();
-        try {
-            const c = await this.tfclient.contracts.getNameContract(name);
-            if (!c) {
-                events.emit("logs", `Name contract with name ${name} not exist`);
-            }
-            events.emit("logs", `Name contract found with id: ${c}`);
-            await this.delete(c);
-        } catch (err) {
-            throw Error(err);
-        } finally {
-            await this.tfclient.disconnect();
+        const c = await this.tfclient.contracts.getNameContract(name);
+        if (!c) {
+            events.emit("logs", `Name contract with name ${name} not exist`);
         }
+        events.emit("logs", `Name contract found with id: ${c}`);
+        await this.delete(c);
     }
 
     async deploy(deployment: Deployment, node_id: number, publicIps: number) {
-        let contract;
-        try {
-            await this.tfclient.connect();
-            contract = await this.tfclient.contracts.createNode(node_id, deployment.challenge_hash(), "", publicIps);
-            if (contract instanceof Error) {
-                throw Error(`Failed to create contract ${contract}`);
-            }
-            events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
-        } catch (e) {
-            this.tfclient.disconnect();
-            throw Error(e);
+        const contract = await this.tfclient.contracts.createNode(node_id, deployment.challenge_hash(), "", publicIps);
+        if (contract instanceof Error) {
+            throw Error(`Failed to create contract ${contract}`);
         }
+        events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
+
         try {
             deployment.contract_id = contract["contract_id"];
             const payload = JSON.stringify(deployment);
-            const nodes = new Nodes(this.url);
+            const nodes = new Nodes();
             const node_twin_id = await nodes.getNodeTwinId(node_id);
-            const msg = this.rmbClient.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
-            const message = await this.rmbClient.send(msg, payload);
-            const result = await this.rmbClient.read(message);
+            const msg = this.config.rmbClient.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
+            const message = await this.config.rmbClient.send(msg, payload);
+            const result = await this.config.rmbClient.read(message);
             if (result[0].err) {
-                throw Error(result[0].err);
+                throw Error(String(result[0].err));
             }
         } catch (err) {
             await this.tfclient.contracts.cancel(contract["contract_id"]);
             throw Error(err);
-        } finally {
-            this.tfclient.disconnect();
         }
         return contract;
     }
 
     async update(deployment: Deployment, publicIps: number) {
         // TODO: update the contract with public when it is available
-        let contract;
-        try {
-            await this.tfclient.connect();
-            contract = await this.tfclient.contracts.updateNode(
-                deployment.contract_id,
-                "",
-                deployment.challenge_hash(),
-            );
-            if (contract instanceof Error) {
-                throw Error(`Failed to update contract ${contract}`);
-            }
-            events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
-        } catch (e) {
-            this.tfclient.disconnect();
-            throw e;
+        const contract = await this.tfclient.contracts.updateNode(
+            deployment.contract_id,
+            "",
+            deployment.challenge_hash(),
+        );
+        if (contract instanceof Error) {
+            throw Error(`Failed to update contract ${contract}`);
         }
+        events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
 
         const payload = JSON.stringify(deployment);
-        const nodes = new Nodes(this.url);
+        const nodes = new Nodes();
         const node_twin_id = await nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
-        try {
-            const msg = this.rmbClient.prepare("zos.deployment.update", [node_twin_id], 0, 2);
-            const message = await this.rmbClient.send(msg, payload);
-            const result = await this.rmbClient.read(message);
-            if (result[0].err) {
-                throw Error(result[0].err);
-            }
-        } catch (err) {
-            throw Error(err);
-        } finally {
-            this.tfclient.disconnect();
+        const msg = this.config.rmbClient.prepare("zos.deployment.update", [node_twin_id], 0, 2);
+        const message = await this.config.rmbClient.send(msg, payload);
+        const result = await this.config.rmbClient.read(message);
+        if (result[0].err) {
+            throw Error(String(result[0].err));
         }
         return contract;
     }
 
     async delete(contract_id: number): Promise<number> {
         try {
-            await this.tfclient.connect();
             await this.tfclient.contracts.cancel(contract_id);
         } catch (err) {
             throw Error(`Failed to cancel contract ${contract_id} due to: ${err}`);
-        } finally {
-            this.tfclient.disconnect();
         }
         return contract_id;
     }
 
     async getDeployment(contract_id: number, node_twin_id: number) {
-        const msg = this.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
+        const msg = this.config.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
         const payload = { contract_id: contract_id };
-        const message = await this.rmbClient.send(msg, JSON.stringify(payload));
-        const result = await this.rmbClient.read(message);
+        const message = await this.config.rmbClient.send(msg, JSON.stringify(payload));
+        const result = await this.config.rmbClient.read(message);
         if (result[0].err) {
             console.error(`Could not get deployment ${contract_id} due to error: ${result[0].err} `);
         }
-        const res = JSON.parse(result[0].dat);
+        const res = JSON.parse(String(result[0].dat));
         return res;
     }
 
@@ -164,8 +127,8 @@ class TwinDeploymentHandler {
 
     async waitForDeployment(twinDeployment: TwinDeployment, timeout = 5) {
         const contract_id = twinDeployment.deployment.contract_id;
-        const nodes = new Nodes(this.url);
-        const node_id = await nodes.getNodeIdFromContractId(contract_id, this.mnemonic);
+        const nodes = new Nodes();
+        const node_id = await nodes.getNodeIdFromContractId(contract_id, this.config.mnemonic);
         const node_twin_id = await nodes.getNodeTwinId(node_id);
 
         const now = new Date().getTime();
@@ -343,7 +306,7 @@ class TwinDeploymentHandler {
                 }
             }
             if (twinDeployment.operation === Operations.deploy) {
-                twinDeployment.deployment.sign(this.twin_id, this.mnemonic);
+                twinDeployment.deployment.sign(this.config.twinId, this.config.mnemonic, this.tfclient.keypairType);
                 events.emit("logs", `Deploying on node_id: ${twinDeployment.nodeId}`);
                 for (const workload of twinDeployment.deployment.workloads) {
                     // check if the deployment need name contract
@@ -360,7 +323,7 @@ class TwinDeploymentHandler {
                 twinDeployment.deployment.contract_id = contract["contract_id"];
                 contracts.created.push(contract);
                 if (twinDeployment.network) {
-                    twinDeployment.network.save(
+                    await twinDeployment.network.save(
                         contract["contract_id"],
                         contract["contract_type"]["nodeContract"]["node_id"],
                     );
@@ -370,7 +333,7 @@ class TwinDeploymentHandler {
                     `A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contract_type"]["nodeContract"]["node_id"]}`,
                 );
             } else if (twinDeployment.operation === Operations.update) {
-                twinDeployment.deployment.sign(this.twin_id, this.mnemonic);
+                twinDeployment.deployment.sign(this.config.twinId, this.config.mnemonic, this.tfclient.keypairType);
                 events.emit("logs", `Updating deployment with contract_id: ${twinDeployment.deployment.contract_id}`);
                 for (const workload of twinDeployment.deployment.workloads) {
                     // check if the deployment need name contract
@@ -382,7 +345,7 @@ class TwinDeploymentHandler {
                 const contract = await this.update(twinDeployment.deployment, twinDeployment.publicIps);
                 contracts.updated.push(contract);
                 if (twinDeployment.network) {
-                    twinDeployment.network.save(
+                    await twinDeployment.network.save(
                         contract["contract_id"],
                         contract["contract_type"]["nodeContract"]["node_id"],
                     );
@@ -400,7 +363,7 @@ class TwinDeploymentHandler {
                 const contract = await this.delete(twinDeployment.deployment.contract_id);
                 contracts.deleted.push({ contract_id: contract });
                 if (twinDeployment.network) {
-                    twinDeployment.network.save();
+                    await twinDeployment.network.save();
                 }
                 events.emit("logs", `Deployment has been deleted with contract_id: ${contract}`);
             }

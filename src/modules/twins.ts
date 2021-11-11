@@ -1,49 +1,39 @@
-import { MessageBusClientInterface } from "ts-rmb-client-base";
-
 import { TFClient } from "../clients/tf-grid/client";
 import { TwinCreateModel, TwinGetModel, TwinGetByAccountIdModel, TwinDeleteModel } from "./models";
 import { expose } from "../helpers/expose";
+import { GridClientConfig } from "../config";
 
 class Twins {
     client: TFClient;
-    context;
-    constructor(
-        public twin_id: number,
-        public url: string,
-        public mnemonic: string,
-        public rmbClient: MessageBusClientInterface,
-        public storePath: string,
-        projectName = "",
-    ) {
-        this.client = new TFClient(url, mnemonic);
-        this.context = this.client.twins;
+    constructor(config: GridClientConfig) {
+        this.client = new TFClient(config.substrateURL, config.mnemonic, config.storeSecret, config.keypairType);
     }
     @expose
     async create(options: TwinCreateModel) {
-        return await this.client.execute(this.context, this.client.twins.create, [options.ip]);
+        return await this.client.twins.create(options.ip);
     }
     @expose
     async get(options: TwinGetModel) {
-        return await this.client.execute(this.context, this.client.twins.get, [options.id]);
+        return await this.client.twins.get(options.id);
     }
 
     @expose
     async get_my_twin_id() {
-        return await this.client.execute(this.context, this.client.twins.getMyTwinId, []);
+        return await this.client.twins.getMyTwinId();
     }
 
     @expose
     async get_twin_id_by_account_id(options: TwinGetByAccountIdModel) {
-        return await this.client.execute(this.context, this.client.twins.getTwinIdByAccountId, [options.public_key]);
+        return await this.client.twins.getTwinIdByAccountId(options.public_key);
     }
 
     @expose
     async list() {
-        return await this.client.execute(this.context, this.client.twins.list, []);
+        return await this.client.twins.list();
     }
     @expose
     async delete(options: TwinDeleteModel) {
-        return await this.client.execute(this.context, this.client.twins.delete, [options.id]);
+        return await this.client.twins.delete(options.id);
     }
 }
 

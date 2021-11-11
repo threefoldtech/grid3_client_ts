@@ -20,7 +20,11 @@ class ZdbHL extends HighLevelBase {
         description = "",
     ) {
         events.emit("logs", `Creating a zdb on node: ${node_id}`);
-        const deploymentFactory = new DeploymentFactory(this.twin_id, this.url, this.mnemonic);
+        const deploymentFactory = new DeploymentFactory(
+            this.config.twinId,
+            this.config.substrateURL,
+            this.config.mnemonic,
+        );
         const zdbFactory = new ZdbPrimitive();
         const zdbWorkload = zdbFactory.create(name, disk_size, mode, password, publicIpv6, metadata, description);
         const deployment = deploymentFactory.create([zdbWorkload], 1626394539, metadata, description);

@@ -28,7 +28,7 @@ class BackendStorage {
         keypairType: KeypairType,
     ) {
         if (type === BackendStorageType.auto) {
-            if (BackendStorage.isEnvNode) {
+            if (BackendStorage.isEnvNode()) {
                 const storage = require("./filesystem");
                 this.storage = new storage.FS();
             } else {

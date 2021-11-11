@@ -36,7 +36,7 @@ class GridClient {
         await tfclient.connect();
         this.twinId = await tfclient.twins.getMyTwinId();
         this._connect();
-        if (BackendStorage.isEnvNode) {
+        if (BackendStorage.isEnvNode()) {
             process.on("SIGINT", this.disconnect);
             process.on("SIGUSR1", this.disconnect);
             process.on("SIGUSR2", this.disconnect);

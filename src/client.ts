@@ -29,7 +29,7 @@ class GridClient {
         public projectName = "",
         public backendStorageType: BackendStorageType = BackendStorageType.auto,
         public keypairType: KeypairType = KeypairType.sr25519,
-    ) { }
+    ) {}
     async connect() {
         const urls = this.getDefaultUrls(this.network);
         const tfclient = new TFClient(urls.substrate, this.mnemonic, this.storeSecret, this.keypairType);

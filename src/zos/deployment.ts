@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsBoolean, IsDefined, IsInt, Min, ValidateNested, IsEnum } from "class-validator";
-import { Expose, Type } from "class-transformer";
+import { Expose, Type, Transform } from "class-transformer";
 import { default as md5 } from "crypto-js/md5";
 import { Keyring } from "@polkadot/keyring";
 
@@ -24,7 +24,7 @@ class SignatureRequest {
 class Signature {
     @Expose() @IsInt() @Min(1) twin_id: number;
     @Expose() @IsString() @IsNotEmpty() signature: string;
-    @Expose() @IsEnum(KeypairType) signature_type: KeypairType;
+    @Expose() @Transform(({ value }) => KeypairType[value]) @IsEnum(KeypairType) signature_type: KeypairType;
 }
 
 class SignatureRequirement {

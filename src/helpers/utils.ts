@@ -21,15 +21,15 @@ function randomChoice(choices) {
 }
 
 function randomSecret() {
-    return randomBytes(nacl.box.secretKeyLength)
+    return randomBytes(nacl.box.secretKeyLength);
 }
 
 function randomSecretAsHex() {
-    return utils.encodeBase64(randomSecret())
+    return utils.encodeBase64(randomSecret());
 }
 
 function randomNonce() {
-    return randomBytes(nacl.box.nonceLength)
+    return randomBytes(nacl.box.nonceLength);
 }
 
 export { generateString, getRandomNumber, randomChoice, randomSecret, randomSecretAsHex, randomNonce };

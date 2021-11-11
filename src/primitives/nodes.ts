@@ -55,7 +55,12 @@ class Nodes {
     }
 
     async getNodeIdFromContractId(contractId: number, mnemonic: string): Promise<number> {
-        const tfclient = new TFClient(GridClient.config.substrateURL, mnemonic, GridClient.config.storeSecret, GridClient.config.keypairType);
+        const tfclient = new TFClient(
+            GridClient.config.substrateURL,
+            mnemonic,
+            GridClient.config.storeSecret,
+            GridClient.config.keypairType,
+        );
         const contract = await tfclient.contracts.get(contractId);
         return contract["contract_type"]["nodeContract"]["node_id"];
     }

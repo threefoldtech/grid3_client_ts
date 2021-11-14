@@ -15,14 +15,14 @@ class ZdbHL extends HighLevelBase {
         disk_size: number,
         mode: ZdbModes,
         password: string,
-        publicIpv6: boolean,
+        publicNamespace: boolean,
         metadata = "",
         description = "",
     ) {
         events.emit("logs", `Creating a zdb on node: ${node_id}`);
         const deploymentFactory = new DeploymentFactory(this.config);
         const zdbFactory = new ZdbPrimitive();
-        const zdbWorkload = zdbFactory.create(name, disk_size, mode, password, publicIpv6, metadata, description);
+        const zdbWorkload = zdbFactory.create(name, disk_size, mode, password, publicNamespace, metadata, description);
         const deployment = deploymentFactory.create([zdbWorkload], 1626394539, metadata, description);
         return new TwinDeployment(deployment, Operations.deploy, 0, node_id);
     }

@@ -34,14 +34,14 @@ class GridClient {
         const urls = this.getDefaultUrls(this.network);
         const tfclient = new TFClient(urls.substrate, this.mnemonic, this.storeSecret, this.keypairType);
         await tfclient.connect();
-        this.twinId = await tfclient.twins.getMyTwinId();
-        this._connect();
         if (BackendStorage.isEnvNode()) {
             process.on("SIGINT", this.disconnect);
             process.on("SIGUSR1", this.disconnect);
             process.on("SIGUSR2", this.disconnect);
             process.on("uncaughtException", this.disconnect);
         } else window.onbeforeunload = this.disconnect;
+        this.twinId = await tfclient.twins.getMyTwinId();
+        this._connect();
     }
     _connect() {
         const urls = this.getDefaultUrls(this.network);

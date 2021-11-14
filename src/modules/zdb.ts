@@ -25,7 +25,7 @@ class ZdbsModule extends BaseModule {
                 instance.disk_size,
                 instance.mode,
                 instance.password,
-                instance.public_ipv6,
+                instance.publicNamespace,
                 options.metadata,
                 options.description,
             );
@@ -64,7 +64,7 @@ class ZdbsModule extends BaseModule {
                 message: workload.result.message,
                 size: data.size, // GB
                 mode: data.mode,
-                public: data.public,
+                publicNamespace: data.public,
                 password: data.password,
                 metadata: workload.metadata,
                 description: workload.description,
@@ -106,7 +106,7 @@ class ZdbsModule extends BaseModule {
             options.disk_size,
             options.mode,
             options.password,
-            options.public_ipv6,
+            options.publicNamespace,
             oldDeployments[0].metadata,
             oldDeployments[0].metadata,
         );

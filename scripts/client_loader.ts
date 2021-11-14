@@ -17,7 +17,7 @@ async function getClient(): Promise<GridClient> {
     } else {
         rmb = new MessageBusClient();
     }
-    const gridClient = new GridClient(config.network, config.mnemonic, config.storeSecret, rmb, "", BackendStorageType.auto, KeypairType.ed25519);
+    const gridClient = new GridClient(config.network, config.mnemonic, config.storeSecret, rmb, "", BackendStorageType.auto, KeypairType.sr25519);
     await gridClient.connect();
     return gridClient;
 }

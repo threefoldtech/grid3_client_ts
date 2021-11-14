@@ -106,7 +106,7 @@ class ZDBModel {
     node_id: number;
     mode: ZdbModes;
     disk_size: number;
-    public_ipv6: boolean;
+    publicNamespace: boolean;
     password: string;
 }
 

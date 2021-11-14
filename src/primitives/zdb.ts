@@ -7,16 +7,16 @@ class ZdbPrimitive {
         size: number,
         mode: ZdbModes = ZdbModes.seq,
         password: string,
-        publicIpv6: boolean,
+        publicNamespace: boolean,
         metadata = "",
         description = "",
         version = 0,
     ): Workload {
         const zdb = new Zdb();
-        zdb.size = size;
+        zdb.size = size * 1024 * 1024 * 1024;
         zdb.mode = mode;
         zdb.password = password;
-        zdb.public = publicIpv6;
+        zdb.public = publicNamespace;
 
         const zdb_workload = new Workload();
         zdb_workload.version = version;
@@ -32,12 +32,12 @@ class ZdbPrimitive {
         size: number,
         mode: ZdbModes = ZdbModes.seq,
         password: string,
-        publicIpv6: boolean,
+        publicNamespace: boolean,
         metadata = "",
         description = "",
         version = 1,
     ): Workload {
-        return this.create(name, size, mode, password, publicIpv6, metadata, description, version);
+        return this.create(name, size, mode, password, publicNamespace, metadata, description, version);
     }
 }
 export { ZdbPrimitive };

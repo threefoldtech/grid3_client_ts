@@ -2,5 +2,6 @@
     "network": "dev",
     "mnemonic": "",
     "rmb_proxy": false,
-    "storeSecret": "secret"
+    "storeSecret": "secret",
+    "keypairType": "sr25519"
 }

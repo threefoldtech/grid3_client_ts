@@ -1,4 +1,5 @@
 import { Keyring } from "@polkadot/keyring";
+import { stringToHex } from "@polkadot/util";
 import { Expose, Transform, Type } from "class-transformer";
 import { IsBoolean, IsDefined, IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from "class-validator";
 import { default as md5 } from "crypto-js/md5";
@@ -90,15 +91,26 @@ class Deployment {
         return encoded.join("");
     }
 
-    sign(twin_id: number, mnemonic: string, keypairType: KeypairType, hash = ""): void {
+    async sign(twin_id: number, mnemonic: string, keypairType: KeypairType, hash = "", signer = null): Promise<void> {
         const message = hash || this.challenge_hash();
         const message_bytes = this.from_hex(message);
-
-        const keyr = new Keyring({ type: keypairType });
-        const key = keyr.addFromMnemonic(mnemonic);
-        const signed_msg = key.sign(message_bytes);
-        const hex_signed_msg = this.to_hex(signed_msg);
-
+        let hex_signed_msg;
+        if (signer) {
+            console.log("signing with the extension");
+            console.log("address:", signer.address);
+            console.log("signer:", signer.signer);
+            const signature = await signer.signer.signRaw({
+                address: signer.address,
+                data: stringToHex(message),
+                type: "bytes",
+            });
+            hex_signed_msg = signature.signature.slice(2);
+        } else {
+            const keyr = new Keyring({ type: keypairType });
+            const key = keyr.addFromMnemonic(mnemonic);
+            const signed_msg = key.sign(message_bytes);
+            hex_signed_msg = this.to_hex(signed_msg);
+        }
         for (let i = 0; i < this.signature_requirement.signatures.length; i++) {
             if (this.signature_requirement.signatures[i].twin_id === twin_id) {
                 this.signature_requirement.signatures[i].signature = hex_signed_msg;

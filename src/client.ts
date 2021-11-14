@@ -31,10 +31,11 @@ class GridClient {
         public projectName: string = "",
         public backendStorageType: BackendStorageType = BackendStorageType.auto,
         public keypairType: KeypairType = KeypairType.sr25519,
+        public signer = null,
     ) {}
     async connect(): Promise<void> {
         const urls = this.getDefaultUrls(this.network);
-        const tfclient = new TFClient(urls.substrate, this.mnemonic, this.storeSecret, this.keypairType);
+        const tfclient = new TFClient(urls.substrate, this.mnemonic, this.storeSecret, this.keypairType, this.signer);
         await tfclient.connect();
         if (BackendStorage.isEnvNode()) {
             process.on("SIGTERM", this.disconnectAndExit);
@@ -76,6 +77,7 @@ class GridClient {
             graphqlURL: urls.graphql,
             substrateURL: urls.substrate,
             twinId: this.twinId,
+            signer: this.signer,
         };
         for (const module of Object.getOwnPropertyNames(modules).filter(item => typeof modules[item] === "function")) {
             if (module.includes("Model")) {

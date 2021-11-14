@@ -5,11 +5,7 @@ import { send } from "../helpers/requests";
 import { GridClient } from "../client";
 
 class Nodes {
-    graphqlURL: string;
-
-    constructor() {
-        this.graphqlURL = GridClient.config.graphqlURL;
-    }
+    constructor(public graphqlURL: string, public proxyURL: string) {}
 
     async getNodeTwinId(node_id: number): Promise<number> {
         const headers = { "Content-Type": "application/json" };
@@ -55,7 +51,12 @@ class Nodes {
     }
 
     async getNodeIdFromContractId(contractId: number, mnemonic: string): Promise<number> {
-        const tfclient = new TFClient(GridClient.config.substrateURL, mnemonic, GridClient.config.storeSecret, GridClient.config.keypairType);
+        const tfclient = new TFClient(
+            GridClient.config.substrateURL,
+            mnemonic,
+            GridClient.config.storeSecret,
+            GridClient.config.keypairType,
+        );
         const contract = await tfclient.contracts.get(contractId);
         return contract["contract_type"]["nodeContract"]["node_id"];
     }

@@ -15,11 +15,7 @@ class Zos {
         const node_id = options.node_id;
         delete options.node_id;
 
-        const deploymentFactory = new DeploymentFactory(
-            this.config.twinId,
-            this.config.substrateURL,
-            this.config.mnemonic,
-        );
+        const deploymentFactory = new DeploymentFactory(this.config);
         const deployment = await deploymentFactory.fromObj(options);
 
         let publicIps = 0;

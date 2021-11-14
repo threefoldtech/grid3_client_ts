@@ -25,7 +25,7 @@ class Scheduler {
         return GB * 1024 * 1024 * 1024;
     }
 
-    async getFarms(url: string = "") {
+    async getFarms(url = "") {
         let r: string;
         if (url) r = url;
         else r = this.URL;
@@ -39,7 +39,7 @@ class Scheduler {
             });
     }
 
-    async getNodes(url: string = "") {
+    async getNodes(url = "") {
         let r: string;
         if (url) r = url;
         else r = this.URL;
@@ -49,7 +49,7 @@ class Scheduler {
         return ret as Record<string, unknown>[];
     }
 
-    async getNodesByFarmID(farmID, url: string = "") {
+    async getNodesByFarmID(farmID, url = "") {
         let r: string;
         if (url) r = url;
         else r = this.URL;
@@ -64,7 +64,7 @@ class Scheduler {
             });
     }
 
-    async freeCapacity(nodeID, url: string = ""): Promise<Record<string, unknown>> {
+    async freeCapacity(nodeID, url = ""): Promise<Record<string, unknown>> {
         let r: string;
         if (url) r = url;
         else r = this.URL;
@@ -72,7 +72,7 @@ class Scheduler {
         return send("get", `${r}/nodes/${nodeID}`, "", {})
             .then(res => {
                 const node = res;
-                let ret: Record<string, unknown> = {};
+                const ret: Record<string, unknown> = {};
 
                 ret.cru = node["capacity"]["total"]["cru"] - node["capacity"]["used"]["cru"];
                 ret.mru = +node["capacity"]["total"]["mru"] - +node["capacity"]["used"]["mru"];
@@ -89,7 +89,7 @@ class Scheduler {
     async checkNodeOptions(
         node: Record<string, unknown>,
         options: FilterOptions,
-        url: string = "",
+        url = "",
     ): Promise<Record<string, unknown>> {
         const hasDomain = node.publicConfig["domain"] ? true : false;
         const hasPublicIpv4 = node.publicConfig["ipv4"] ? true : false;
@@ -136,7 +136,7 @@ class Scheduler {
         };
     }
 
-    async filterNodes(options: FilterOptions, url: string = ""): Promise<Record<string, unknown>[]> {
+    async filterNodes(options: FilterOptions, url = ""): Promise<Record<string, unknown>[]> {
         return this.getNodes(url)
             .then(nodes => {
                 const promises = nodes.map(n => this.checkNodeOptions(n, options));

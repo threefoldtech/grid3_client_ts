@@ -26,7 +26,7 @@ class BaseModule {
     backendStorage: BackendStorage;
 
     constructor(public config: GridClientConfig) {
-        this.deploymentFactory = new DeploymentFactory(config.twinId, config.substrateURL, config.mnemonic);
+        this.deploymentFactory = new DeploymentFactory(config);
         this.twinDeploymentHandler = new TwinDeploymentHandler(config);
         this.backendStorage = new BackendStorage(
             config.backendStorageType,
@@ -198,13 +198,18 @@ class BaseModule {
         }
         const deployments = [];
         for (const contract of data[name]["contracts"]) {
-            const tfClient = new TFClient(this.config.substrateURL, this.config.mnemonic, this.config.storeSecret, this.config.keypairType);
+            const tfClient = new TFClient(
+                this.config.substrateURL,
+                this.config.mnemonic,
+                this.config.storeSecret,
+                this.config.keypairType,
+            );
             const c = await tfClient.contracts.get(contract["contract_id"]);
             if (c.state !== "Created") {
                 await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
                 continue;
             }
-            const nodes = new Nodes();
+            const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
             const node_twin_id = await nodes.getNodeTwinId(contract["node_id"]);
             const payload = JSON.stringify({ contract_id: contract["contract_id"] });
 

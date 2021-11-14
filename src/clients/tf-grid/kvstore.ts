@@ -1,7 +1,7 @@
 import nacl from "tweetnacl";
 import utils from "tweetnacl-util";
 import { randomNonce } from "../../helpers/utils";
-import Crypto from "crypto-js"
+import Crypto from "crypto-js";
 
 class KVStore {
     tfclient;
@@ -39,12 +39,12 @@ class KVStore {
     }
 
     getSecretAsBytes(): Uint8Array {
-        if (typeof (this.tfclient.storeSecret) === "string") {
-            const hashed = Crypto.SHA256(this.tfclient.storeSecret)
-            const asBase64 = Crypto.enc.Base64.stringify(hashed)
-            return utils.decodeBase64(asBase64)
+        if (typeof this.tfclient.storeSecret === "string") {
+            const hashed = Crypto.SHA256(this.tfclient.storeSecret);
+            const asBase64 = Crypto.enc.Base64.stringify(hashed);
+            return utils.decodeBase64(asBase64);
         }
-        return this.tfclient.storeSecret
+        return this.tfclient.storeSecret;
     }
 
     encrypt(message) {

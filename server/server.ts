@@ -6,6 +6,7 @@ import { MessageBusServer } from "ts-rmb-redis-client";
 import { GridClient } from "../src/client";
 import { getRMBClient } from "./rmb_client";
 import { isExposed } from "../src/helpers/expose";
+import { BackendStorageType } from "../src/storage/backend";
 
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, "./config.json"), "utf-8"));
 class Server {
@@ -16,7 +17,7 @@ class Server {
 
     async wrapFunc(message, payload) {
         const rmbClient = getRMBClient();
-        const gridClient = new GridClient(config.network, config.mnemonic, config.storeSecret, rmbClient);
+        const gridClient = new GridClient(config.network, config.mnemonic, config.storeSecret, rmbClient, "", BackendStorageType.auto, config.keypairType);
         await gridClient.connect();
         const parts = message.cmd.split(".");
         const module = parts[1];
@@ -28,7 +29,7 @@ class Server {
 
     register() {
         const rmbClient = getRMBClient();
-        const gridClient = new GridClient(config.network, config.mnemonic, config.storeSecret, rmbClient);
+        const gridClient = new GridClient(config.network, config.mnemonic, config.storeSecret, rmbClient, "", BackendStorageType.auto, config.keypairType);
         gridClient._connect();
         for (const module of Object.getOwnPropertyNames(gridClient).filter(
             item => typeof gridClient[item] === "object",

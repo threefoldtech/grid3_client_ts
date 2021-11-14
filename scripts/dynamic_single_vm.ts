@@ -1,11 +1,13 @@
 import "reflect-metadata";
+import { GridClient } from "../src/client";
 
 import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../src/modules/models";
-import { FilterOptions } from "../src/scheduler";
+import { Nodes, FilterOptions } from "../src/primitives";
 import { getClient } from "./client_loader";
 
 async function main() {
     const grid3 = await getClient();
+    const nodes = new Nodes(GridClient.config.graphqlURL, GridClient.config.rmbClient["proxyURL"]);
 
     // create network Object
     const n = new NetworkModel();
@@ -21,13 +23,13 @@ async function main() {
     const server1_options: FilterOptions = {
         cru: 20,
         mru: 100, // GB
-        country: "BE"
+        country: "BE",
     };
 
     // create vm node Object
     const vm = new MachineModel();
     vm.name = "testvm";
-    vm.node_id = +(await grid3.scheduler.filterNodes(server1_options))[0].nodeId; // TODO: allow random choise
+    vm.node_id = +(await nodes.filterNodes(server1_options))[0].nodeId; // TODO: allow random choise
     vm.disks = [disk];
     vm.public_ip = false;
     vm.planetary = true;

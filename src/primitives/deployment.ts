@@ -7,13 +7,14 @@ import { WorkloadTypes } from "../zos/workload";
 import { Nodes } from "./nodes";
 
 import { Network } from "./network";
+import { GridClientConfig } from "../config";
 
 class DeploymentFactory {
-    constructor(public twin_id: number, public url: string, public mnemonic: string) {}
+    constructor(public config: GridClientConfig) {}
 
     create(workloads: Workload[], expiration: number, metadata = "", description = "", version = 0): Deployment {
         const signature_request = new SignatureRequest();
-        signature_request.twin_id = this.twin_id;
+        signature_request.twin_id = this.config.twinId;
         signature_request.weight = 1;
         signature_request.required = false;
 
@@ -25,7 +26,7 @@ class DeploymentFactory {
         deployment.version = version;
         deployment.metadata = metadata;
         deployment.description = description;
-        deployment.twin_id = this.twin_id;
+        deployment.twin_id = this.config.twinId;
         deployment.expiration = expiration;
         deployment.workloads = workloads;
         deployment.signature_requirement = signature_requirement;
@@ -78,8 +79,11 @@ class DeploymentFactory {
                 workload.version = 0;
                 // Don't change the machine ip
                 if (w.type === WorkloadTypes.zmachine) {
-                    const nodes = new Nodes();
-                    const node_id = await nodes.getNodeIdFromContractId(oldDeployment.contract_id, this.mnemonic);
+                    const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
+                    const node_id = await nodes.getNodeIdFromContractId(
+                        oldDeployment.contract_id,
+                        this.config.mnemonic,
+                    );
                     const oldIp = workload.data["network"]["interfaces"][0]["ip"];
                     const newIp = w.data["network"]["interfaces"][0]["ip"];
                     if (newIp !== oldIp) {

@@ -69,11 +69,7 @@ class HighLevelBase {
         const twinDeployments = [];
         const deletedNodes = [];
         const deletedIps = [];
-        const deploymentFactory = new DeploymentFactory(
-            this.config.twinId,
-            this.config.substrateURL,
-            this.config.mnemonic,
-        );
+        const deploymentFactory = new DeploymentFactory(this.config);
         for (const workload of deletedMachineWorkloads) {
             const networkName = workload.data["network"].interfaces[0].network;
             const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
@@ -155,14 +151,10 @@ class HighLevelBase {
         if (types.includes(WorkloadTypes.network)) {
             throw Error("network can't be deleted");
         }
-        const nodes = new Nodes();
+        const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
         const node_id = await nodes.getNodeIdFromContractId(deployment.contract_id, this.config.mnemonic);
         let twinDeployments = [];
-        const deploymentFactory = new DeploymentFactory(
-            this.config.twinId,
-            this.config.substrateURL,
-            this.config.mnemonic,
-        );
+        const deploymentFactory = new DeploymentFactory(this.config);
 
         const numberOfWorkloads = deployment.workloads.length;
         deployment = await deploymentFactory.fromObj(deployment);

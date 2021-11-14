@@ -105,12 +105,8 @@ class VMHL extends HighLevelBase {
         }
 
         // network
-        const deploymentFactory = new DeploymentFactory(
-            this.config.twinId,
-            this.config.substrateURL,
-            this.config.mnemonic,
-        );
-        const nodes = new Nodes();
+        const deploymentFactory = new DeploymentFactory(this.config);
+        const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
         const accessNodes = await nodes.getAccessNodes();
         let access_net_workload;
         let wgConfig = "";

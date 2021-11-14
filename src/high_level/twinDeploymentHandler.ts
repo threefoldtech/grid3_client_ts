@@ -50,7 +50,7 @@ class TwinDeploymentHandler {
         try {
             deployment.contract_id = contract["contract_id"];
             const payload = JSON.stringify(deployment);
-            const nodes = new Nodes();
+            const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
             const node_twin_id = await nodes.getNodeTwinId(node_id);
             const msg = this.config.rmbClient.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
             const message = await this.config.rmbClient.send(msg, payload);
@@ -78,7 +78,7 @@ class TwinDeploymentHandler {
         events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
 
         const payload = JSON.stringify(deployment);
-        const nodes = new Nodes();
+        const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
         const node_twin_id = await nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
         const msg = this.config.rmbClient.prepare("zos.deployment.update", [node_twin_id], 0, 2);
         const message = await this.config.rmbClient.send(msg, payload);
@@ -127,7 +127,7 @@ class TwinDeploymentHandler {
 
     async waitForDeployment(twinDeployment: TwinDeployment, timeout = 5) {
         const contract_id = twinDeployment.deployment.contract_id;
-        const nodes = new Nodes();
+        const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
         const node_id = await nodes.getNodeIdFromContractId(contract_id, this.config.mnemonic);
         const node_twin_id = await nodes.getNodeTwinId(node_id);
 

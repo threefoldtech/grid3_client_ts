@@ -46,7 +46,7 @@ or
 yarn install
 ```
 
-## Get started
+## Getting started
 
 ### Client configuration
 
@@ -128,8 +128,12 @@ await gridClient.connect();
 gridClient.disconnect();
 ```
 
-## More usage examples
+## Usage examples
 
 see [scripts](./scripts/README.md)
 
 see [server](./docs/server.md)
+
+## API Docs
+
+https://threefoldtech.github.io/grid3_client_ts/api/

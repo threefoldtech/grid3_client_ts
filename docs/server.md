@@ -1,4 +1,6 @@
-# twin_server
+# Twin server
+
+Twin server is a [RMB](https://github.com/threefoldtech/go-rmb) server that supports the same functionality of the grid3 client over RMB.
 
 ## Prerequisites
 

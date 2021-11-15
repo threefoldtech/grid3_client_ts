@@ -14,6 +14,7 @@
         "class-transformer": "^0.4.0",
         "class-validator": "^0.13.1",
         "crypto-js": "^4.1.1",
+        "http-server": "^14.0.0",
         "netaddr": "^1.1.0",
         "private-ip": "^2.3.0",
         "reflect-metadata": "^0.1.13",
@@ -39,6 +40,7 @@
         "ts-loader": "^9.2.6",
         "ts-node": "^10.4.0",
         "tsconfig-paths-webpack-plugin": "^3.5.1",
+        "typedoc": "^0.22.9",
         "webpack": "^5.57.1",
         "webpack-cli": "^4.8.0"
     },
@@ -55,6 +57,8 @@
         "node-build": "tsc --build tsconfig-node.json",
         "es6-build": "tsc --build tsconfig-es6.json",
         "server": "ts-node --project tsconfig-node.json server/server.ts",
-        "lint": "eslint -c .eslintrc.json src/ --fix"
+        "lint": "eslint -c .eslintrc.json src/ --fix",
+        "generate-docs": "typedoc --tsconfig tsconfig-es6.json src/index.ts --out docs/api",
+        "serve-docs": "http-server docs/api"
     }
 }

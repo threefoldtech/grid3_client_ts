@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
-import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../src/modules/models";
-import { getClient } from "./client_loader";
+import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../../src/modules/models";
+import { getClient } from "../client_loader";
 
 // create network Object
 const n = new NetworkModel();
@@ -19,7 +19,7 @@ const vm = new MachineModel();
 vm.name = "fw_vm";
 vm.node_id = 7;
 vm.disks = [disk];
-vm.public_ip = true;
+vm.public_ip = false;
 vm.planetary = true;
 vm.cpu = 1;
 vm.memory = 1024 * 2;

@@ -1,13 +1,13 @@
 import "reflect-metadata";
 
-import { GatewayNameModel, GatewayNameDeleteModel } from "../src/modules/models";
-import { getClient } from "./client_loader";
+import { GatewayNameModel, GatewayNameDeleteModel } from "../../src/modules/models";
+import { getClient } from "../client_loader";
 
 const gw = new GatewayNameModel();
 gw.name = "funkwhale";
 gw.node_id = 7;
 gw.tls_passthrough = false;
-gw.backends = ["http://185.206.122.42:80"];
+gw.backends = ["http://[303:60c2:bb79:5147:93e9:6b8f:bdbf:77a5]/"];
 
 async function main() {
     const grid3 = await getClient();

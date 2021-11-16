@@ -80,8 +80,7 @@ async function main() {
 
     // // delete
     // const m = new K8SDeleteModel();
-    // m.name = k.name;
-    // const d = await grid3.k8s.delete(m);
+    // const d = await grid3.k8s.delete({ name: k.name })
     // console.log(d);
     // const r = await grid3.qsfs_zdbs.delete({ name: qsfs_name });
     // console.log(r);

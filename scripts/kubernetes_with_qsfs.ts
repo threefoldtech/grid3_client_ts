@@ -78,6 +78,14 @@ async function main() {
     const l = await grid3.k8s.getObj(k.name);
     console.log(l);
 
+    // // delete
+    // const m = new K8SDeleteModel();
+    // m.name = k.name;
+    // const d = await grid3.k8s.delete(m);
+    // console.log(d);
+    // const r = await grid3.qsfs_zdbs.delete({ name: qsfs_name });
+    // console.log(r);
+
     grid3.disconnect();
 }
 

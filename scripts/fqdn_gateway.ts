@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
+import { log } from "./utils";
 import { GatewayFQDNModel, GatewayFQDNDeleteModel } from "../src/modules/models";
-
 import { getClient } from "./client_loader";
 
 // read more about the gateway types in this doc: https://github.com/threefoldtech/zos/tree/main/docs/gateway
@@ -18,17 +18,15 @@ async function main() {
     // deploy
     const grid3 = await getClient();
     const res = await grid3.gateway.deploy_fqdn(gw);
-    console.log(JSON.stringify(res));
+    log(res);
 
     // get the deployment
     const l = await grid3.gateway.getObj(gw.name);
-    console.log(l);
+    log(l);
 
     // // delete
-    // const m = new GatewayFQDNDeleteModel();
-    // m.name = gw.name;
-    // const d = await grid3.gateway.delete_fqdn(m);
-    // console.log(d);
+    // const d = await grid3.gateway.delete_fqdn({ name: gw.name });
+    // log(d);
 
     grid3.disconnect();
 }

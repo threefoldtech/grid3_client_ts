@@ -136,4 +136,4 @@ see [server](./docs/server.md)
 
 ## API Docs
 
-https://threefoldtech.github.io/grid3_client_ts/api/
+<https://threefoldtech.github.io/grid3_client_ts/api/>

@@ -1,4 +1,6 @@
 import "reflect-metadata";
+
+import { log } from "./utils";
 import { getClient } from "./client_loader";
 
 const qsfs_name = "wed2710q1";
@@ -15,8 +17,8 @@ async function deploy(grid3) {
         description: "my qsfs test",
         metadata: "",
     });
-    console.log(">>>>>>>>>>>>>>>QSFS backend has been created<<<<<<<<<<<<<<<");
-    console.log(JSON.stringify(qsfs_res));
+    log(">>>>>>>>>>>>>>>QSFS backend has been created<<<<<<<<<<<<<<<");
+    log(qsfs_res);
 
     // deploy vms
     const res = await grid3.machines.deploy({
@@ -64,23 +66,23 @@ async function deploy(grid3) {
         metadata: "{'testVMs': true}",
         description: "test deploying VMs via ts grid3 client",
     });
-    console.log(">>>>>>>>>>>>>>>VM has been created<<<<<<<<<<<<<<<");
-    console.log(JSON.stringify(res));
+    log(">>>>>>>>>>>>>>>VM has been created<<<<<<<<<<<<<<<");
+    log(res);
 }
 
 async function get(grid3) {
     // get the deployment
     const l = await grid3.machines.getObj(machines_name);
-    console.log(">>>>>>>>>>>>>>>Deployment result<<<<<<<<<<<<<<<");
-    console.log(JSON.stringify(l));
+    log(">>>>>>>>>>>>>>>Deployment result<<<<<<<<<<<<<<<");
+    log(l);
 }
 
 async function cancel(grid3) {
     // delete
     const d = await grid3.machines.delete({ name: machines_name });
-    console.log(d);
+    log(d);
     const r = await grid3.qsfs_zdbs.delete({ name: qsfs_name });
-    console.log(r);
+    log(r);
 }
 
 async function main() {

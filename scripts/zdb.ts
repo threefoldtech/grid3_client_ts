@@ -1,8 +1,8 @@
 import "reflect-metadata";
 
+import { log } from "./utils";
 import { ZDBModel, ZDBSModel, ZDBDeleteModel } from "../src/modules/models";
 import { ZdbModes } from "../src/zos/zdb";
-
 import { getClient } from "./client_loader";
 
 // create zdb object
@@ -24,17 +24,15 @@ async function main() {
     const grid3 = await getClient();
 
     const res = await grid3.zdbs.deploy(zdbs);
-    console.log(JSON.stringify(res));
+    log(res);
 
     // get the deployment
     const l = await grid3.zdbs.getObj(zdbs.name);
-    console.log(l);
+    log(l);
 
     // // delete
-    // const m = new ZDBDeleteModel();
-    // m.name = zdbs.name;
-    // const d = await grid3.zdbs.delete(m);
-    // console.log(d);
+    // const d = await grid3.zdbs.delete({ name: zdbs.name });
+    // log(d);
 
     grid3.disconnect();
 }

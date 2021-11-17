@@ -1,5 +1,6 @@
 import "reflect-metadata";
 
+import { log } from "./utils";
 import { NetworkModel, K8SModel, KubernetesNodeModel, K8SDeleteModel } from "../src/modules/models";
 import { getClient } from "./client_loader";
 
@@ -31,7 +32,7 @@ master.qsfs_disks = [
         cache: 1,
         mountpoint: "/myqsfsdisk",
     },
-]
+];
 
 // create k8s node Object
 const worker = new KubernetesNodeModel();
@@ -72,18 +73,18 @@ async function main() {
 
     // deploy k8s
     const res = await grid3.k8s.deploy(k);
-    console.log(res);
+    log(res);
 
     // get the deployment
     const l = await grid3.k8s.getObj(k.name);
-    console.log(l);
+    log(l);
 
     // // delete
     // const m = new K8SDeleteModel();
     // const d = await grid3.k8s.delete({ name: k.name })
-    // console.log(d);
+    // log(d);
     // const r = await grid3.qsfs_zdbs.delete({ name: qsfs_name });
-    // console.log(r);
+    // log(r);
 
     grid3.disconnect();
 }

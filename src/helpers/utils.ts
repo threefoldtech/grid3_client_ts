@@ -32,4 +32,8 @@ function randomNonce() {
     return randomBytes(nacl.box.nonceLength);
 }
 
-export { generateString, getRandomNumber, randomChoice, randomSecret, randomSecretAsHex, randomNonce };
+function log(message) {
+    console.log(JSON.stringify(message, null, 2));
+}
+
+export { generateString, getRandomNumber, randomChoice, randomSecret, randomSecretAsHex, randomNonce, log };

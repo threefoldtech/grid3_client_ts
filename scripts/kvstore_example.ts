@@ -1,5 +1,6 @@
 import "reflect-metadata";
 
+import { log } from "./utils";
 import { getClient } from "./client_loader";
 
 const exampleObj = {
@@ -26,14 +27,14 @@ async function main() {
 
     // list all the keys
     const keys = await db.list();
-    console.log(keys);
+    log(keys);
 
     // get the key
     const data = await db.get({ key });
-    console.log(JSON.parse(data.toString()));
+    log(JSON.parse(data));
 
-    // // remove the key
-    // await db.remove({ key });
+    // remove the key
+    await db.remove({ key });
 
     // disconnect
     await gridClient.disconnect();

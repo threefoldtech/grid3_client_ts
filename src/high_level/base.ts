@@ -70,22 +70,34 @@ class HighLevelBase {
         const deletedNodes = [];
         const deletedIps = [];
         const deploymentFactory = new DeploymentFactory(this.config);
+        const loadedNetworks = {};
         for (const workload of deletedMachineWorkloads) {
             const networkName = workload.data["network"].interfaces[0].network;
             const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
-            const network = new Network(networkName, networkIpRange, this.config);
-            await network.load();
-
+            let network;
+            if (Object.keys(loadedNetworks).includes(networkName)) {
+                network = loadedNetworks[networkName];
+            } else {
+                network = new Network(networkName, networkIpRange, this.config);
+                await network.load();
+                loadedNetworks[networkName] = network;
+            }
             const machineIp = workload.data["network"].interfaces[0].ip;
             events.emit("logs", `Deleting ip: ${machineIp} from node: ${node_id}, network ${network.name}`);
             //TODO: Reproduce: Sometimes the network is free and it keeps getting wrong result here
             // so it doesn't delete the deployment, but it updates the deployment.
             const deletedIp = network.deleteReservedIp(node_id, machineIp);
-            if (network.getNodeReservedIps(node_id).length !== 0) {
+            const numberOfIps = network.getNodeReservedIps(node_id).length;
+            if (numberOfIps !== 0) {
+                console.log(`network ${network.name} still has ${numberOfIps} ip(s) reserved`);
                 deletedIps.push(deletedIp);
                 continue;
             }
-            if (network.hasAccessPoint(node_id) && network.nodes.length !== 1) {
+            const hasAccessPoint = network.hasAccessPoint(node_id);
+            if (hasAccessPoint && network.nodes.length !== 1) {
+                console.log(
+                    `network ${network.name} still has access point:${hasAccessPoint} and number of nodes ${network.nodes.length}`,
+                );
                 deletedIps.push(deletedIp);
                 continue;
             }

@@ -1,5 +1,6 @@
 import "reflect-metadata";
 
+import { log } from "./utils";
 import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../src/modules/models";
 import { getClient } from "./client_loader";
 
@@ -44,17 +45,15 @@ async function main() {
 
     // deploy vms
     const res = await grid3.machines.deploy(vms);
-    console.log(JSON.stringify(res));
+    log(JSON.stringify(res));
 
     // get the deployment
     const l = await grid3.machines.getObj(vms.name);
-    console.log(JSON.stringify(l));
+    log(JSON.stringify(l));
 
     // // delete
-    // const m = new MachinesDeleteModel();
-    // m.name = vms.name;
-    // const d = await grid3.machines.delete(m);
-    // console.log(d);
+    // const d = await grid3.machines.delete({ name: vms.name });
+    // log(d);
 
     grid3.disconnect();
 }

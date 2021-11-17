@@ -26,7 +26,7 @@ class GridClient {
         public mnemonic: string,
         public storeSecret: string | Uint8Array,
         public rmbClient: MessageBusClientInterface,
-        public projectName = "",
+        public projectName: string = "",
         public backendStorageType: BackendStorageType = BackendStorageType.auto,
         public keypairType: KeypairType = KeypairType.sr25519,
     ) {}

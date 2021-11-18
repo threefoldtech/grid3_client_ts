@@ -1,22 +1,25 @@
 import { default as PrivateIp } from "private-ip";
+import { IsBoolean, IsOptional, IsString, Min } from "class-validator";
+import { Expose, plainToClass } from "class-transformer";
 
+import { validateObject } from "../helpers/validator";
 import { events } from "../helpers/events";
 import { TFClient } from "../clients/tf-grid/client";
 import { send } from "../helpers/requests";
 import { GridClient } from "../client";
 
-type FilterOptions = {
-    cru?: number;
-    mru?: number; // GB
-    sru?: number; // GB
-    hru?: number; // GB
-    accessNodeV4?: boolean;
-    accessNodeV6?: boolean;
-    gateway?: boolean;
-    farm?: number;
-    country?: string;
-    city?: string;
-};
+class FilterOptions {
+    @Expose() @IsOptional() @Min(0) cru?: number;
+    @Expose() @IsOptional() @Min(0) mru?: number; // GB
+    @Expose() @IsOptional() @Min(0) sru?: number; // GB
+    @Expose() @IsOptional() @Min(0) hru?: number; // GB
+    @Expose() @IsOptional() @IsBoolean() accessNodeV4?: boolean;
+    @Expose() @IsOptional() @IsBoolean() accessNodeV6?: boolean;
+    @Expose() @IsOptional() @IsBoolean() gateway?: boolean;
+    @Expose() @IsOptional() @Min(1) farmId?: number;
+    @Expose() @IsOptional() @IsString() country?: string;
+    @Expose() @IsOptional() @IsString() city?: string;
+}
 
 class Nodes {
     constructor(public graphqlURL: string, public proxyURL: string) {}
@@ -140,7 +143,7 @@ class Nodes {
             });
     }
 
-    async checkNodeOptions(
+    private async checkNodeOptions(
         node: Record<string, unknown>,
         options: FilterOptions,
         url = "",
@@ -154,12 +157,11 @@ class Nodes {
             (options.accessNodeV4 && !hasPublicIpv4) ||
             (options.accessNodeV6 && !hasPublicIpv6) ||
             (options.gateway && !hasDomain) ||
-            (options.farm && options.farm !== node.farmId)
+            (options.farmId && options.farmId !== node.farmId)
         ) {
             return { valid: false };
         }
         if (node.state !== "up") {
-            // events.emit("logs", `Nodes: Node ${node.nodeId} is down`);
             return { valid: false };
         }
         let nodeCapacity;
@@ -191,6 +193,8 @@ class Nodes {
     }
 
     async filterNodes(options: FilterOptions, url = ""): Promise<Record<string, unknown>[]> {
+        options = plainToClass(FilterOptions, options, { excludeExtraneousValues: true });
+        await validateObject(options);
         return this.getNodes(url)
             .then(nodes => {
                 const promises = nodes.map(n => this.checkNodeOptions(n, options));
@@ -201,8 +205,7 @@ class Nodes {
                 if (ret.length > 0) {
                     return ret;
                 } else {
-                    events.emit("logs", `Nodes: Can not find valid node for these options`);
-                    throw new Error("Nodes: Can not find valid node for these options");
+                    throw new Error("Nodes: Can not find a valid node for these options");
                 }
             });
     }

@@ -45,11 +45,11 @@ async function main() {
 
     // deploy vms
     const res = await grid3.machines.deploy(vms);
-    log(JSON.stringify(res));
+    log(res);
 
     // get the deployment
     const l = await grid3.machines.getObj(vms.name);
-    log(JSON.stringify(l));
+    log(l);
 
     // // delete
     // const d = await grid3.machines.delete({ name: vms.name });

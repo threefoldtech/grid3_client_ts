@@ -10,14 +10,19 @@ import {
     ContractGetByNodeIdAndHashModel,
     NodeContractsGetModel,
     NameContractGetModel,
+    ContractsByTwinId,
+    ContractsByAddress,
 } from "./models";
 import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
+import { Nodes } from "../primitives/nodes";
 
 class Contracts {
     client: TFClient;
-    constructor(config: GridClientConfig) {
+    nodes: Nodes;
+    constructor(public config: GridClientConfig) {
         this.client = new TFClient(config.substrateURL, config.mnemonic, config.storeSecret, config.keypairType);
+        this.nodes = new Nodes(config.graphqlURL, config.rmbClient["proxyURL"]);
     }
 
     @expose
@@ -54,6 +59,29 @@ class Contracts {
     @expose
     async cancel(options: ContractCancelModel) {
         return await this.client.contracts.cancel(options.id);
+    }
+
+    @expose
+    async listMyContracts() {
+        return await this.client.contracts.listMyContracts(this.config.graphqlURL);
+    }
+
+    @expose
+    async listContractsByTwinId(options: ContractsByTwinId) {
+        return await this.client.contracts.listContractsByTwinId(this.config.graphqlURL, options.twinId);
+    }
+
+    @expose
+    async listContractsByAddress(options: ContractsByAddress) {
+        return await this.client.contracts.listContractsByAddress(this.config.graphqlURL, options.address);
+    }
+    /**
+     * WARNING: Please be careful when executing this method, it will delete all your contracts.
+     * @returns Promise
+     */
+    @expose
+    async cancelMyContracts(): Promise<Record<string, number>[]> {
+        return await this.client.contracts.cancelMyContracts(this.config.graphqlURL);
     }
 }
 

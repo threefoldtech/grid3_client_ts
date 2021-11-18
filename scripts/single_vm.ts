@@ -6,19 +6,19 @@ import { getClient } from "./client_loader";
 
 // create network Object
 const n = new NetworkModel();
-n.name = "testNightly1";
+n.name = "testNightly2";
 n.ip_range = "10.249.0.0/16";
 
 // create disk Object
 const disk = new DiskModel();
-disk.name = "wedDiskNightly1";
+disk.name = "wedDiskNightly2";
 disk.size = 8;
 disk.mountpoint = "/testdisk";
 
 // create vm node Object
 const vm = new MachineModel();
-vm.name = "testvmflistNightly1";
-vm.node_id = 12;
+vm.name = "testvmflistNightly2";
+vm.node_id = 17;
 vm.disks = [disk];
 vm.public_ip = false;
 vm.planetary = true;
@@ -34,7 +34,7 @@ vm.env = {
 
 // create VMs Object
 const vms = new MachinesModel();
-vms.name = "testflistNightly1";
+vms.name = "testflistNightly2";
 vms.network = n;
 vms.machines = [vm];
 vms.metadata = "{'testVMs': true}";

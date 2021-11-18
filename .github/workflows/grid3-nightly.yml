@@ -42,13 +42,15 @@ jobs:
         run: yarn
       - name: Build
         run: yarn build
-      - name: add-credentials
+      - name: set env variables
         run: |
-          echo ${{ secrets.CREDENTIALS_JSON }} > scripts/config.json
+          echo "NETWORK=dev" >> $GITHUB_ENV
+          echo "RMB_PROXY=true" >> $GITHUB_ENV
+          echo "STORE_SECRET=secret" >> $GITHUB_ENV
+          echo "MNEMONICS=${{ secrets.MNEMONICS }}" >> $GITHUB_ENV
       - name: Run test scripts 1
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/get_deployment.ts
       - name: Run test single vm
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/single_vm.ts
-

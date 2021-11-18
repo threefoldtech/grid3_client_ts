@@ -77,7 +77,7 @@ class GridClient {
             urls.graphql = "https://graphql.dev.grid.tf/graphql";
         } else if (network === NetworkEnv.test) {
             urls.rmbProxy = "https://gridproxy.test.grid.tf";
-            urls.substrate = "wss://tfchain.test.threefold.io/ws";
+            urls.substrate = "wss://tfchain.test.grid.tf/ws";
             urls.graphql = "https://graphql.test.grid.tf/graphql";
         }
         return urls;

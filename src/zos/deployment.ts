@@ -113,4 +113,4 @@ class Deployment {
     }
 }
 
-export { Deployment, SignatureRequirement, SignatureRequest };
+export { Deployment, SignatureRequirement, SignatureRequest, Signature };

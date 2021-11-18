@@ -565,4 +565,4 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     }
 }
 
-export { Network };
+export { Network, AccessPoint, WireGuardKeys, Node };

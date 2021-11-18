@@ -111,4 +111,4 @@ class Workload {
     }
 }
 
-export { Workload, WorkloadTypes };
+export { Workload, WorkloadTypes, DeploymentResult, ResultStates };

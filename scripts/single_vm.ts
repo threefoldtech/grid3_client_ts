@@ -6,35 +6,35 @@ import { getClient } from "./client_loader";
 
 // create network Object
 const n = new NetworkModel();
-n.name = "wedtest";
+n.name = "testNightly1";
 n.ip_range = "10.249.0.0/16";
 
 // create disk Object
 const disk = new DiskModel();
-disk.name = "wedDisk";
+disk.name = "wedDiskNightly1";
 disk.size = 8;
 disk.mountpoint = "/testdisk";
 
 // create vm node Object
 const vm = new MachineModel();
-vm.name = "testvm";
-vm.node_id = 3;
+vm.name = "testvmflistNightly1";
+vm.node_id = 12;
 vm.disks = [disk];
 vm.public_ip = false;
 vm.planetary = true;
 vm.cpu = 1;
 vm.memory = 1024 * 2;
 vm.rootfs_size = 1;
-vm.flist = "https://hub.grid.tf/tf-official-apps/base:latest.flist";
-vm.entrypoint = "/sbin/zinit init";
+vm.flist = "https://hub.grid.tf/posix.3bot/mhost-grid_monitor-latest.flist";
+vm.entrypoint = "/init.sh";
 vm.env = {
     SSH_KEY:
-        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDWlguBuvfQikkRJZXkLPei7Scvo/OULUEvjWVR4tCZ5V85P2F4SsSghxpRGixCNc7pNtgvdwJegK06Tn7SkV2jYJ9kBJh8PA06CPSz1mnpco4cgktiWx/R8xBvLGlyO0BwUuD3/WFjrc6fzH9E7Bpkel/xTnacx14w1bZAC1R35hz7BaHu1WrXsfxEd0VH7gpMPoQ4+l+H38ULPTiC+JcOKJOqVafgcc0sU7otXbgCa1Frr4QE5bwiMYhOlsRfRv/hf08jYsVo+RUO3wD12ylLWR7a7sJDkBBwgir8SwAvtRlT6k9ew9cDMQ7H8iWNCOg2xqoTLpVag6RN9kGzA5LGL+qHEcBr6gd2taFEy9+mt+TWuKp6reUeJfTu9RD1UgB0HpcdgTHtoUTISW7Mz4KNkouci2DJFngDWrLRxRoz81ZwfI2hjFY0PYDzF471K7Nwwt3qKYF1Js9a6VO38tMxSU4mTO83bt+dUFozgpw2Y0KKJGHDwU66i2MvTPg3EGs= ayoub@ayoub-Inspiron-3576",
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCt1LYcIga3sgbip5ejiC6R7CCa34omOwUilR66ZEvUh/u4RpbZ9VjRryVHVDyYcd/qbUzpWMzqzFlfFmtVhPQ0yoGhxiv/owFwStqddKO2iNI7T3U2ytYLJqtPm0JFLB5n07XLyFRplq0W2/TjNrYl51DedDQqBJDq34lz6vTkECNmMKg9Ld0HpxnpHBLH0PsXMY+JMZ8keH9hLBK61Mx9cnNxcLV9N6oA6xRCtwqOdLAH08MMaItYcJ0UF/PDs1PusJvWkvsH5/olgayeAReI6JFGv/x4Eqq5vRJRQjkj9m+Q275gzf9Y/7M/VX7KOH7P9HmDbxwRtOq1F0bRutKF",
 };
 
 // create VMs Object
 const vms = new MachinesModel();
-vms.name = "newVMS";
+vms.name = "testflistNightly1";
 vms.network = n;
 vms.machines = [vm];
 vms.metadata = "{'testVMs': true}";

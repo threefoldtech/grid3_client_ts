@@ -45,7 +45,7 @@ jobs:
       - name: Run test scripts 1
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/get_deployment.ts
-      - name: Run test script 2
+      - name: Run test single vm
         run: |
-          yarn run ts-node --project tsconfig-node.json scripts/get_deployment_copy.ts
+          yarn run ts-node --project tsconfig-node.json scripts/single_vm.ts
 

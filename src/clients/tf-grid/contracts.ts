@@ -82,6 +82,20 @@ class Contracts {
         const twinId = await this.tfclient.twins.getMyTwinId();
         return await this.listContractsByTwinId(graphqlURL, twinId);
     }
+
+    /**
+     * WARNING: Please be careful when executing this method, it will delete all your contracts.
+     * @param  {string} graphqlURL
+     * @returns Promise
+     */
+    async cancelMyContracts(graphqlURL: string): Promise<Record<string, number>[]> {
+        const allContracts = await this.listMyContracts(graphqlURL);
+        const contracts = [...allContracts["nameContracts"], ...allContracts["nodeContracts"]];
+        for (const contract of contracts) {
+            await this.cancel(contract["contractId"]);
+        }
+        return contracts;
+    }
 }
 
 export { Contracts, ContractState };

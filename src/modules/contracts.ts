@@ -75,6 +75,14 @@ class Contracts {
     async listContractsByAddress(options: ContractsByAddress) {
         return await this.client.contracts.listContractsByAddress(this.config.graphqlURL, options.address);
     }
+    /**
+     * WARNING: Please be careful when executing this method, it will delete all your contracts.
+     * @returns Promise
+     */
+    @expose
+    async cancelMyContracts(): Promise<Record<string, number>[]> {
+        return await this.client.contracts.cancelMyContracts(this.config.graphqlURL);
+    }
 }
 
 export { Contracts as contracts };

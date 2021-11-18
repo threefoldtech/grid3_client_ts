@@ -1,3 +1,5 @@
+import { send } from "../../helpers/requests";
+
 enum ContractState {
     Created = "Created",
     Deleted = "Deleted",
@@ -55,6 +57,30 @@ class Contracts {
 
     async getNameContract(name: string) {
         return this.tfclient.client.contractIDByNameRegistration(name);
+    }
+
+    async listContractsByTwinId(graphqlURL, twinId) {
+        const headers = { "Content-Type": "application/json" };
+        const body = `{
+            nameContracts(where: {twinId_eq: ${twinId}, state_in: [OutOfFunds, Created]}) {
+              contractId
+            }
+            nodeContracts(where: {twinId_eq: ${twinId}, state_in: [OutOfFunds, Created]}) {
+              contractId
+            }
+          }`;
+        const response = await send("post", graphqlURL, JSON.stringify({ query: body }), headers);
+        return response["data"];
+    }
+
+    async listContractsByAddress(graphqlURL, address) {
+        const twinId = await this.tfclient.twins.getTwinIdByAccountId(address);
+        return await this.listContractsByTwinId(graphqlURL, twinId);
+    }
+
+    async listMyContracts(graphqlURL) {
+        const twinId = await this.tfclient.twins.getMyTwinId();
+        return await this.listContractsByTwinId(graphqlURL, twinId);
     }
 }
 

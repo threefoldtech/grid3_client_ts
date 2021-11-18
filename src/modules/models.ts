@@ -206,6 +206,14 @@ class ContractCancelModel {
     id: number;
 }
 
+class ContractsByTwinId {
+    twinId: number;
+}
+
+class ContractsByAddress {
+    address: string;
+}
+
 class TwinCreateModel {
     ip: string;
 }
@@ -296,6 +304,8 @@ export {
     NameContractGetModel,
     NodeContractUpdateModel,
     ContractCancelModel,
+    ContractsByTwinId,
+    ContractsByAddress,
     TwinCreateModel,
     TwinGetModel,
     TwinGetByAccountIdModel,

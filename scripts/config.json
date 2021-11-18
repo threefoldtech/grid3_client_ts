@@ -1,6 +1,6 @@
 {
-    "network": "dev",
-    "mnemonic": "",
+    "network": "test",
+    "mnemonic": "magnet wage miracle spirit oval sport input boat glide basic grass spike",
     "rmb_proxy": true,
     "storeSecret": "secret"
 }

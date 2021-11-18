@@ -42,11 +42,9 @@ jobs:
         run: yarn
       - name: Build
         run: yarn build
-      
       - name: add-credentials
         run: |
-        echo ${{ secrets.CREDENTIALS_JSON }} > scripts.ts/config.json
-
+          echo ${{ secrets.CREDENTIALS_JSON }} > scripts.ts/config.json
       - name: Run test scripts 1
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/get_deployment.ts

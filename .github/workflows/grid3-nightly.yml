@@ -48,9 +48,12 @@ jobs:
           echo "RMB_PROXY=true" >> $GITHUB_ENV
           echo "STORE_SECRET=secret" >> $GITHUB_ENV
           echo "MNEMONIC=${{ secrets.MNEMONIC }}" >> $GITHUB_ENV
-      - name: Run test scripts 1
-        run: |
-          yarn run ts-node --project tsconfig-node.json scripts/get_deployment.ts
+      # - name: Run test scripts 1
+      #   run: |
+      #     yarn run ts-node --project tsconfig-node.json scripts/get_deployment.ts
       - name: Run test single vm
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/single_vm.ts
+      - name: Cleanup - Delete all contracts
+        run: |
+          yarn run ts-node --project tsconfig-node.json scripts/delete_all_contracts.ts

@@ -52,15 +52,19 @@ async function main() {
                     log(res_l);
                 })
                 .catch(err => {
-                    throw err;
+                    setTimeout(function () {
+                        throw err;
+                    });
                 })
                 .finally(() => {
                     grid3.disconnect();
                 })
         })
         .catch(err => {
-            grid3.disconnect();
-            throw err;
+            setTimeout(function () {
+                grid3.disconnect();
+                throw err;
+            });
         });
 
     // // delete

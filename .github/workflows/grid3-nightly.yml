@@ -42,15 +42,17 @@ jobs:
         id: multiplevm
         continue-on-error: true
         run: |
-          exit 1
+          yarn run ts-node --project tsconfig-node.json scripts/multiple_vms.ts
       - name: Run test kubernetes
         id: kubernetes
         continue-on-error: true
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/kubernetes.ts
-      # - name: Run test vm with qsfs
-      #   run: |
-      #     yarn run ts-node --project tsconfig-node.json scripts/vm_with_qsfs.ts
+      - name: Run test vm with qsfs
+        id: vmqsfs
+        continue-on-error: true
+        run: |
+          yarn run ts-node --project tsconfig-node.json scripts/vm_with_qsfs.ts
       # - name: Run test kubernetes with qsfs
       #   run: |
       #     yarn run ts-node --project tsconfig-node.json scripts/kubernetes_with_kqfs.ts
@@ -70,5 +72,5 @@ jobs:
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/delete_all_contracts.ts
       - name: Check test script status
-        if: steps.singlevm.outcome != 'success' || steps.multiplevm.outcome != 'success' || steps.kubernetes.outcome != 'success'
-        run: exit "Test scripts failed, Please check 'Run test single vm' step."
+        if: steps.singlevm.outcome != 'success' || steps.multiplevm.outcome != 'success' || steps.kubernetes.outcome != 'success' || steps.vmqsfs.outcome != 'success'
+        run: exit "Test scripts failed, Please check 'Run failed step/s."

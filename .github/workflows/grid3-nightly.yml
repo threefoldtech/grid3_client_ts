@@ -42,7 +42,7 @@ jobs:
         id: multiplevm
         continue-on-error: true
         run: |
-          yarn run ts-node --project tsconfig-node.json scripts/multiple_vms.ts
+          exit 1
       - name: Run test kubernetes
         id: kubernetes
         continue-on-error: true

@@ -53,14 +53,16 @@ async function main() {
                 })
                 .catch(err => {
                     throw err;
-                });
+                })
+                .finally(() => {
+                    grid3.disconnect();
+                })
         })
         .catch(err => {
-            throw err;
-        })
-        .finally(() => {
             grid3.disconnect();
+            throw err;
         });
+
 };
 
 

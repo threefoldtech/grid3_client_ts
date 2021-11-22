@@ -52,7 +52,7 @@ async function main() {
                     log(res_l);
                 })
                 .catch(err => {
-                    console.log(err);
+                    throw err;
                 });
         })
         .catch(err => {

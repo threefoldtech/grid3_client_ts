@@ -14,13 +14,24 @@ class FS {
 
     async get(key: string) {
         if (!fs.existsSync(key)) {
-            return "{}";
+            return "";
         }
         return fs.readFileSync(key);
     }
 
     async remove(key: string) {
-        return fs.unlinkSync(key);
+        fs.unlinkSync(key);
+        while (fs.readdirSync(PATH.dirname(key)).length === 0) {
+            key = PATH.dirname(key);
+            fs.rmdirSync(key);
+        }
+    }
+
+    async list(key: string) {
+        if (!fs.existsSync(key)) {
+            return [];
+        }
+        return fs.readdirSync(key);
     }
 }
 

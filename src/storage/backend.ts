@@ -61,6 +61,10 @@ class BackendStorage {
         return JSON.parse(data.toString());
     }
 
+    async list(key: string) {
+        return await this.storage.list(key);
+    }
+
     async dump(key: string, value) {
         return await this.storage.set(key, JSON.stringify(value));
     }

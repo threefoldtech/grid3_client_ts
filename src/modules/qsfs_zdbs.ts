@@ -9,7 +9,7 @@ import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
 
 class QSFSZdbsModule extends BaseModule {
-    fileName = "qsfs_zdbs.json";
+    moduleName = "qsfs_zdbs";
     workloadTypes = [WorkloadTypes.zdb];
     zdb: ZdbHL;
     constructor(config: GridClientConfig) {

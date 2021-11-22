@@ -176,16 +176,15 @@ class Network {
     }
 
     async load(): Promise<void> {
-        const networks = await this.getNetworks();
-        if (!Object.keys(networks).includes(this.name)) {
+        if (!await this.exists()) {
             return;
         }
         events.emit("logs", `Loading network ${this.name}`);
-        const network = networks[this.name];
-        if (network.ip_range !== this.ipRange) {
+        const network = await this.getNetwork();
+        if (network["ip_range"] !== this.ipRange) {
             throw Error(`The same network name ${this.name} with different ip range is already exist`);
         }
-        for (const node of network.nodes) {
+        for (const node of network["nodes"]) {
             const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
             const node_twin_id = await nodes.getNodeTwinId(node.node_id);
             const msg = this.config.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
@@ -381,14 +380,18 @@ class Network {
         return this.accessPoints;
     }
 
-    async getNetworks() {
-        const path = PATH.join(this.config.storePath, "network.json");
-        return await this.backendStorage.load(path);
+    getNetworksPath() {
+        return PATH.join(this.config.storePath, "networks");
+    }
+
+    async getNetwork() {
+        const path = this.getNetworksPath();
+        return await this.backendStorage.load(PATH.join(path, this.name, "info.json"));
     }
 
     async getNetworkNames(): Promise<string[]> {
-        const networks = await this.getNetworks();
-        return Object.keys(networks);
+        const path = this.getNetworksPath();
+        return await this.backendStorage.list(path);
     }
 
     async getFreePort(node_id: number): Promise<number> {
@@ -468,7 +471,7 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     async save(contract_id = 0, node_id = 0) {
         let network;
         if (await this.exists()) {
-            network = (await this.getNetworks())[this.name];
+            network = await this.getNetwork();
         } else {
             network = {
                 ip_range: this.ipRange,
@@ -504,18 +507,14 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
     }
 
     async _save(network): Promise<void> {
-        const networks = await this.getNetworks();
-        networks[this.name] = network;
-        const path = PATH.join(this.config.storePath, "network.json");
-        await this.backendStorage.dump(path, networks);
+        const path = PATH.join(this.getNetworksPath(), this.name, "info.json");
+        await this.backendStorage.dump(path, network);
     }
 
     async delete(): Promise<void> {
         events.emit("logs", `Deleting network ${this.name}`);
-        const networks = await this.getNetworks();
-        delete networks[this.name];
-        const path = PATH.join(this.config.storePath, "network.json");
-        await this.backendStorage.dump(path, networks);
+        const path = PATH.join(this.getNetworksPath(), this.name);
+        await this.backendStorage.dump(path, null);
     }
 
     async generatePeers(): Promise<void> {

@@ -18,7 +18,7 @@ jobs:
       matrix:
         os: [ubuntu-18.04]
         node-version: [14.x]
-        experimental: [false]
+        experimental: [true]
         include:
           - os: ubuntu-20.04
             node-version: 14
@@ -48,12 +48,15 @@ jobs:
           echo "RMB_PROXY=true" >> $GITHUB_ENV
           echo "STORE_SECRET=secret" >> $GITHUB_ENV
           echo "MNEMONIC=${{ secrets.MNEMONIC }}" >> $GITHUB_ENV
-      # - name: Run test scripts 1
-      #   run: |
-      #     yarn run ts-node --project tsconfig-node.json scripts/get_deployment.ts
       - name: Run test single vm
+        id: single_vm
+        continue-on-error: true
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/single_vm.ts
       - name: Cleanup - Delete all contracts
+        continue-on-error: false
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/delete_all_contracts.ts
+      - name: Check test script status
+        if: steps.single_vm.outcome != 'success'
+        run: exit "Test scripts failed, Please check 'Run test single vm' step."

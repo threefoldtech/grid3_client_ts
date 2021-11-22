@@ -78,8 +78,8 @@ class QuantumCompression {
 }
 
 class QuantumSafeFSConfig {
-    @Expose() @IsInt() @Min(2) minimal_shards: number;
-    @Expose() @IsInt() @Min(1) expected_shards: number;
+    @Expose() @IsInt() @Min(1) minimal_shards: number;
+    @Expose() @IsInt() @Min(2) expected_shards: number;
     @Expose() @IsInt() @Min(0) redundant_groups: number;
     @Expose() @IsInt() @Min(0) redundant_nodes: number;
     @Expose() @IsInt() @Min(1) max_zdb_data_dir_size: number;

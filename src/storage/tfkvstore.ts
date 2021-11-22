@@ -15,7 +15,6 @@ class TFKVStore {
             return await this.remove(key);
         }
         const splits = this.split(key, value);
-        console.log(splits);
         for (const k of Object.keys(splits)) {
             await this.client.kvStore.set(k, splits[k]);
         }
@@ -56,7 +55,7 @@ class TFKVStore {
                 continue;
             }
             const splits = k.split(key)[1].split("/");
-            const split = splits === "" ? splits[1] : splits[0];
+            const split = splits[0] === "" ? splits[1] : splits[0];
             filteredKeys.add(split);
         }
         return [...filteredKeys];

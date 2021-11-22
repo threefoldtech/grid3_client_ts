@@ -3,7 +3,7 @@ import PATH from "path";
 
 class FS {
     async set(key: string, value: string) {
-        if (!fs.existsSync(PATH.dirname(key))) {
+        if (value && value !== '""' && !fs.existsSync(PATH.dirname(key))) {
             fs.mkdirSync(PATH.dirname(key), { recursive: true });
         }
         if (!value || value === '""') {

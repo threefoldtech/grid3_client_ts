@@ -35,7 +35,7 @@ class LocalStorage {
                 continue;
             }
             const splits = k.split(key)[1].split("/");
-            const split = splits === "" ? splits[1] : splits[0];
+            const split = splits[0] === "" ? splits[1] : splits[0];
             filteredKeys.add(split);
         }
         return [...filteredKeys];

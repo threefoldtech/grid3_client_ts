@@ -9,7 +9,7 @@ const machines_name = "testQsfst1";
 const qsfs = {
     name: qsfs_name,
     count: 8,
-    node_ids: [2, 3],
+    node_ids: [16, 17],
     password: "mypassword",
     disk_size: 10,
     description: "my qsfs test",
@@ -25,7 +25,7 @@ const vms = {
     machines: [
         {
             name: "testQsfsv1",
-            node_id: 7,
+            node_id: 17,
             disks: [
                 {
                     name: "testQsfsd1",

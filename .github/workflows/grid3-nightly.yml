@@ -11,23 +11,10 @@ on:
 
 jobs:
   deployment-scripts:
-    runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-18.04]
-        node-version: [14.x]
-        experimental: [true]
-        include:
-          - os: ubuntu-20.04
-            node-version: 14
-            experimental: true
-            name: Experimental build - latest Ubuntu
-          - os: ubuntu-20.04
-            python-version: 14
-            experimental: true
-            name: Experimental build - latest Node
+    runs-on: ubuntu-20.04
+    node-version: 14
+    experimental: true
+    
     steps:
       - uses: actions/checkout@v2
       - name: Set up node ${{ matrix.node-version }}
@@ -49,14 +36,38 @@ jobs:
           echo "STORE_SECRET=secret" >> $GITHUB_ENV
           echo "MNEMONIC=${{ secrets.MNEMONIC }}" >> $GITHUB_ENV
       - name: Run test single vm
-        id: single_vm
+        id: singlevm
         continue-on-error: true
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/single_vm.ts
+
+      # - name: Run test multiple vms
+      #   run: |
+      #     yarn run ts-node --project tsconfig-node.json scripts/multiple_vms.ts
+      # - name: Run test kubernetes
+      #   run: |
+      #     yarn run ts-node --project tsconfig-node.json scripts/kubernetes.ts
+      # - name: Run test vm with qsfs
+      #   run: |
+      #     yarn run ts-node --project tsconfig-node.json scripts/vm_with_qsfs.ts
+      # - name: Run test kubernetes with qsfs
+      #   run: |
+      #     yarn run ts-node --project tsconfig-node.json scripts/kubernetes_with_kqfs.ts
+      # - name: Run test dynamic single vm
+      #   run: |
+      #     yarn run ts-node --project tsconfig-node.json scripts/dynamic_single_vm.ts
+      # - name: Run test kvstore 
+      #   run: |
+      #     yarn run ts-node --project tsconfig-node.json scripts/kvstore_example.ts
+      # - name: Run test name gateway
+      #   run: |
+      #     yarn run ts-node --project tsconfig-node.json scripts/name_gateway.ts
+      # - name: Run test zdb
+      #   run: |
+      #     yarn run ts-node --project tsconfig-node.json scripts/zdb.ts
       - name: Cleanup - Delete all contracts
-        continue-on-error: false
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/delete_all_contracts.ts
       - name: Check test script status
-        if: steps.single_vm.outcome != 'success'
+        if: steps.singlevm.outcome != 'success'
         run: exit "Test scripts failed, Please check 'Run test single vm' step."

@@ -43,7 +43,7 @@ class BaseModule {
 
     async getDeploymentContracts(name: string) {
         const path = PATH.join(this.getDeploymentPath(name), "contracts.json");
-        let contracts = await this.backendStorage.load(path);
+        const contracts = await this.backendStorage.load(path);
         if (!contracts) {
             return [];
         }
@@ -63,9 +63,7 @@ class BaseModule {
             });
         }
         for (const contract of contracts["deleted"]) {
-            StoreContracts = StoreContracts.filter(
-                c => c["contract_id"] !== contract["contract_id"],
-            );
+            StoreContracts = StoreContracts.filter(c => c["contract_id"] !== contract["contract_id"]);
         }
         if (wgConfig) {
             this.backendStorage.dump(wireguardPath, wgConfig);
@@ -73,8 +71,8 @@ class BaseModule {
         if (StoreContracts.length !== 0) {
             await this.backendStorage.dump(contractsPath, StoreContracts);
         } else {
-            await this.backendStorage.dump(contractsPath, null);
-            await this.backendStorage.dump(wireguardPath, null);
+            await this.backendStorage.dump(contractsPath, "");
+            await this.backendStorage.dump(wireguardPath, "");
         }
     }
 
@@ -325,7 +323,7 @@ class BaseModule {
     }
 
     async _delete(name: string) {
-        const contracts = { deleted: [], updated: [] };
+        const contracts = { created: [], deleted: [], updated: [] };
         if (!(await this._list()).includes(name)) {
             return contracts;
         }

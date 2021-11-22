@@ -6,7 +6,7 @@ class FS {
         if (!fs.existsSync(PATH.dirname(key))) {
             fs.mkdirSync(PATH.dirname(key), { recursive: true });
         }
-        if (!value || value === "{}") {
+        if (!value || value === '""') {
             return await this.remove(key);
         }
         return fs.writeFileSync(key, value);
@@ -14,12 +14,15 @@ class FS {
 
     async get(key: string) {
         if (!fs.existsSync(key)) {
-            return "";
+            return '""';
         }
         return fs.readFileSync(key);
     }
 
     async remove(key: string) {
+        if (!fs.existsSync(key)) {
+            return;
+        }
         fs.unlinkSync(key);
         while (fs.readdirSync(PATH.dirname(key)).length === 0) {
             key = PATH.dirname(key);

@@ -176,7 +176,7 @@ class Network {
     }
 
     async load(): Promise<void> {
-        if (!await this.exists()) {
+        if (!(await this.exists())) {
             return;
         }
         events.emit("logs", `Loading network ${this.name}`);
@@ -486,7 +486,7 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
 
         const nodes = [];
         for (const node of this.nodes) {
-            if (node.node_id === node_id) {
+            if (!node.contract_id && node.node_id === node_id) {
                 node.contract_id = contract_id;
             }
             if (!node.contract_id) {
@@ -513,8 +513,8 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
 
     async delete(): Promise<void> {
         events.emit("logs", `Deleting network ${this.name}`);
-        const path = PATH.join(this.getNetworksPath(), this.name);
-        await this.backendStorage.dump(path, null);
+        const path = PATH.join(this.getNetworksPath(), this.name, "info.json");
+        await this.backendStorage.dump(path, "");
     }
 
     async generatePeers(): Promise<void> {

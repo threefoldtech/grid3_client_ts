@@ -11,7 +11,7 @@ class TFKVStore {
 
     @crop
     async set(key: string, value: string) {
-        if (!value || value === "{}") {
+        if (!value || value === '""') {
             return await this.remove(key);
         }
         const splits = this.split(key, value);
@@ -25,7 +25,7 @@ class TFKVStore {
     async get(key: string) {
         let value = await this.client.kvStore.get(key);
         if (!value) {
-            return "";
+            return '""';
         }
         let i = 0;
         let val = value;
@@ -40,6 +40,10 @@ class TFKVStore {
 
     @crop
     async remove(key: string) {
+        const value = await this.client.kvStore.get(key);
+        if (!value) {
+            return;
+        }
         return await this.client.kvStore.remove(key);
     }
 

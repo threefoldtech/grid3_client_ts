@@ -84,9 +84,10 @@ class HighLevelBase {
             }
             const machineIp = workload.data["network"].interfaces[0].ip;
             events.emit("logs", `Deleting ip: ${machineIp} from node: ${node_id}, network ${network.name}`);
-            //TODO: Reproduce: Sometimes the network is free and it keeps getting wrong result here
-            // so it doesn't delete the deployment, but it updates the deployment.
             const deletedIp = network.deleteReservedIp(node_id, machineIp);
+            if (remainingWorkloads.length === 0) {
+                twinDeployments.push(new TwinDeployment(deployment, Operations.delete, 0, 0, network));
+            }
             const numberOfIps = network.getNodeReservedIps(node_id).length;
             if (numberOfIps !== 0) {
                 console.log(`network ${network.name} still has ${numberOfIps} ip(s) reserved`);
@@ -174,7 +175,7 @@ class HighLevelBase {
         let remainingWorkloads = filteredWorkloads[0];
         const deletedMachineWorkloads = filteredWorkloads[1];
 
-        if (remainingWorkloads.length === 0) {
+        if (remainingWorkloads.length === 0 && deletedMachineWorkloads.length === 0) {
             twinDeployments.push(new TwinDeployment(deployment, Operations.delete, 0, 0));
         }
         const [newTwinDeployments, newRemainingWorkloads, deletedNodes, deletedIps] = await this._deleteMachineNetwork(

@@ -12,7 +12,6 @@ on:
 jobs:
   deployment-scripts:
     runs-on: ubuntu-20.04
-    experimental: true
     
     steps:
       - uses: actions/checkout@v2

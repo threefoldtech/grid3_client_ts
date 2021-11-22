@@ -63,6 +63,10 @@ async function main() {
             throw err;
         });
 
+    // // delete
+    // const d = await grid3.machines.delete({ name: vms.name });
+    // log(d);
+
 };
 
 

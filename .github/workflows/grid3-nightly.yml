@@ -38,10 +38,11 @@ jobs:
         continue-on-error: true
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/single_vm.ts
-
-      # - name: Run test multiple vms
-      #   run: |
-      #     yarn run ts-node --project tsconfig-node.json scripts/multiple_vms.ts
+      - name: Run test multiple vms
+        id: multiplevm
+        continue-on-error: true
+        run: |
+          yarn run ts-node --project tsconfig-node.json scripts/multiple_vms.ts
       # - name: Run test kubernetes
       #   run: |
       #     yarn run ts-node --project tsconfig-node.json scripts/kubernetes.ts
@@ -67,5 +68,5 @@ jobs:
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/delete_all_contracts.ts
       - name: Check test script status
-        if: steps.singlevm.outcome != 'success'
+        if: steps.singlevm.outcome != 'success' || steps.multiplevm.outcome != 'success'
         run: exit "Test scripts failed, Please check 'Run test single vm' step."

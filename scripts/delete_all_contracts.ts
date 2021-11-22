@@ -6,10 +6,17 @@ import { getClient } from "./client_loader";
 async function main() {
     const grid3 = await getClient();
 
-    const cancellation_res = await grid3.contracts.cancelMyContracts();
+    grid3.contracts.cancelMyContracts()
+        .then(cancellation_res => {
+            log(cancellation_res);
+        })
+        .catch(err => {
+            throw err;
+        })
+        .finally(() => {
+            grid3.disconnect();
+        });
 
-    log(cancellation_res);
-    grid3.disconnect();
-}
+};
 
 main();

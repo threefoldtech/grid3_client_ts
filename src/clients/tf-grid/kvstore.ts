@@ -38,6 +38,14 @@ class KVStore {
         return this.tfclient.applyExtrinsic(this.tfclient.client.tfStoreRemove, [key], "tfkvStore", ["EntryTaken"]);
     }
 
+    async removeAll() {
+        const keys = await this.list();
+        for (const k of keys) {
+            await this.remove(k);
+        }
+        return keys;
+    }
+
     getSecretAsBytes(): Uint8Array {
         if (typeof this.tfclient.storeSecret === "string") {
             const hashed = Crypto.SHA256(this.tfclient.storeSecret);

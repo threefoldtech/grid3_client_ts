@@ -82,12 +82,6 @@ async function main() {
                     grid3.disconnect();
                 })
         })
-        // .catch(function (err) {
-        //     setTimeout(function () {
-        //         grid3.disconnect();
-        //         throw err;
-        //     });
-        // });
         .catch(err => {
             grid3.disconnect();
             console.log(err);

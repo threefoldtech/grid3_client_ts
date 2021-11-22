@@ -55,19 +55,17 @@ async function main() {
                     log(res_l);
                 })
                 .catch(err => {
-                    setTimeout(function () {
-                        throw err;
-                    });
+                    console.log(err);
+                    process.exit(1);
                 })
                 .finally(() => {
                     grid3.disconnect();
                 })
         })
         .catch(err => {
-            setTimeout(function () {
-                grid3.disconnect();
-                throw err;
-            });
+            grid3.disconnect();
+            console.log(err);
+            process.exit(1);
         });
 
     // // delete

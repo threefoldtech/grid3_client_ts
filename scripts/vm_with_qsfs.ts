@@ -89,27 +89,24 @@ async function main() {
                             log(">>>>>>>>>>>>>>>Deployment result<<<<<<<<<<<<<<<");
                             log(res_l);
                         })
-                        .catch(function (err) {
-                            setTimeout(function () {
-                                throw err;
-                            });
+                        .catch(err => {
+                            console.log(err);
+                            process.exit(1);
                         })
                         .finally(() => {
                             grid3.disconnect();
                         })
                 })
-                .catch(function (err) {
-                    setTimeout(function () {
-                        grid3.disconnect();
-                        throw err;
-                    });
+                .catch(err => {
+                    grid3.disconnect();
+                    console.log(err);
+                    process.exit(1);
                 });
         })
         .catch(err => {
-            setTimeout(function () {
-                grid3.disconnect();
-                throw err;
-            });
+            grid3.disconnect();
+            console.log(err);
+            process.exit(1);
         });
 
 

@@ -1,47 +1,51 @@
 import { ContractState } from "../clients/tf-grid/contracts";
 import { Deployment } from "../zos/deployment";
 import { ZdbModes } from "../zos/zdb";
+import { IsAlphanumeric, IsBoolean, IsDefined, IsInt, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength, Min, ValidateNested } from "class-validator";
+import { Expose, Transform, Type } from "class-transformer";
+
+const NameLength = 10;
 
 //TODO: find a way to validate all fields are passed while casting data to any of these classes.
 class DiskModel {
-    name: string;
-    size: number; // in GB
-    mountpoint: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @Min(0.25) size: number; // in GB
+    @Expose() @IsString() @IsNotEmpty() mountpoint: string;
 }
 
 class QSFSDiskModel {
-    qsfs_zdbs_name: string;
-    name: string;
-    prefix: string;
-    encryption_key: string;
-    cache: number; // in GB
-    minimal_shards: number;
-    expected_shards: number;
-    mountpoint: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) qsfs_zdbs_name: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @IsString() @IsNotEmpty() prefix: string;
+    @Expose() @IsString() @IsNotEmpty() encryption_key: string;
+    @Expose() @Min(0.25) @IsOptional() cache?: number; // in GB
+    @Expose() @IsInt() @Min(1) @IsOptional() minimal_shards?: number;
+    @Expose() @IsInt() @Min(2) @IsOptional() expected_shards?: number;
+    @Expose() @IsString() @IsNotEmpty() mountpoint: string;
 }
 
 class NetworkModel {
-    name: string;
-    ip_range: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @IsString() @IsNotEmpty() ip_range: string;
 }
 
 class BaseGetDeleteModel {
-    name: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
 }
 
 class MachineModel {
-    name: string;
-    node_id: number;
-    disks: DiskModel[];
-    qsfs_disks: QSFSDiskModel[];
-    public_ip: boolean;
-    planetary: boolean;
-    cpu: number;
-    memory: number; // in MB
-    rootfs_size: number; // in GB
-    flist: string;
-    entrypoint: string;
-    env: Record<string, unknown>;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @Min(1) node_id: number;
+    @Expose() @IsOptional() @Type(() => DiskModel) @ValidateNested({ each: true }) disks?: DiskModel[];
+    @Expose() @IsOptional() @Type(() => QSFSDiskModel) @ValidateNested({ each: true }) qsfs_disks?: QSFSDiskModel[];
+    @Expose() @IsBoolean() public_ip: boolean;
+    @Expose() @IsBoolean() planetary: boolean;
+    @Expose() @IsInt() @Min(1) cpu: number;
+    @Expose() @Min(0.25) memory: number; // in MB
+    @Expose() @Min(0.25) rootfs_size: number; // in GB
+    @Expose() @IsUrl() @IsNotEmpty() flist: string;
+    @Expose() @IsString() @IsDefined() entrypoint: string;
+    @Expose() env: Record<string, unknown>;
 }
 
 class MachinesModel {

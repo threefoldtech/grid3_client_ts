@@ -22,8 +22,8 @@ async function main() {
     disk.mountpoint = "/testdisk";
 
     const server1_options: FilterOptions = {
-        cru: 20,
-        mru: 100, // GB
+        cru: 1,
+        mru: 2, // GB
         country: "BE",
     };
 

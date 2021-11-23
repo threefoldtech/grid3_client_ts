@@ -121,7 +121,8 @@ class K8sModule extends BaseModule {
         return [deployments, network, wireguardConfig];
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async deploy(options: K8SModel) {
         if (options.masters.length > 1) {
             throw Error("Multi master is not supported");
@@ -137,7 +138,8 @@ class K8sModule extends BaseModule {
         return { contracts: contracts, wireguard_config: wireguardConfig };
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async list() {
         return await this._list();
     }
@@ -156,17 +158,20 @@ class K8sModule extends BaseModule {
         return k;
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async get(options: K8SGetModel) {
         return await this._get(options.name);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async delete(options: K8SDeleteModel) {
         return await this._delete(options.name);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async update(options: K8SModel) {
         if (!(await this.exists(options.name))) {
             throw Error(`There is no k8s deployment with name: ${options.name}`);
@@ -199,7 +204,8 @@ class K8sModule extends BaseModule {
         return await this._update(this.kubernetes, options.name, oldDeployments, twinDeployments, network);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async add_worker(options: AddWorkerModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no k8s deployment with name: ${options.deployment_name}`);
@@ -236,7 +242,8 @@ class K8sModule extends BaseModule {
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async delete_worker(options: DeleteWorkerModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no k8s deployment with name: ${options.deployment_name}`);

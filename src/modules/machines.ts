@@ -55,7 +55,8 @@ class MachineModule extends BaseModule {
         return [twinDeployments, network, wireguardConfig];
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async deploy(options: MachinesModel) {
         if (await this.exists(options.name)) {
             throw Error(`Another machine deployment with the same name ${options.name} is already exist`);
@@ -67,7 +68,8 @@ class MachineModule extends BaseModule {
         return { contracts: contracts, wireguard_config: wireguardConfig };
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async list() {
         return await this._list();
     }
@@ -79,17 +81,20 @@ class MachineModule extends BaseModule {
         return workloads.map(workload => this._getZmachineData(deployments, workload));
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async get(options: MachinesGetModel) {
         return await this._get(options.name);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async delete(options: MachinesDeleteModel) {
         return await this._delete(options.name);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async update(options: MachinesModel) {
         if (!(await this.exists(options.name))) {
             throw Error(`There is no machine with name: ${options.name}`);
@@ -107,7 +112,8 @@ class MachineModule extends BaseModule {
         return await this._update(this.vm, options.name, oldDeployments, twinDeployments, network);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async add_machine(options: AddMachineModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no machines deployment with name: ${options.deployment_name}`);
@@ -140,7 +146,8 @@ class MachineModule extends BaseModule {
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async delete_machine(options: DeleteMachineModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no machines deployment with name: ${options.deployment_name}`);

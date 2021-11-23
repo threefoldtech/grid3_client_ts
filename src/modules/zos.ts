@@ -10,7 +10,8 @@ import { validateInput } from "../helpers/validator";
 class Zos {
     constructor(public config: GridClientConfig) {}
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async deploy(options: ZOSModel) {
         // get node_id from the deployment
         const node_id = options.node_id;

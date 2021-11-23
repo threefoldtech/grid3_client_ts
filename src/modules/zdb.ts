@@ -35,7 +35,8 @@ class ZdbsModule extends BaseModule {
         return twinDeployments;
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async deploy(options: ZDBSModel) {
         if (await this.exists(options.name)) {
             throw Error(`Another zdb deployment with the same name ${options.name} is already exist`);
@@ -46,7 +47,8 @@ class ZdbsModule extends BaseModule {
         return { contracts: contracts };
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async list() {
         return await this._list();
     }
@@ -75,17 +77,20 @@ class ZdbsModule extends BaseModule {
         return ret;
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async get(options: ZDBGetModel) {
         return await this._get(options.name);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async delete(options: ZDBDeleteModel) {
         return await this._delete(options.name);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async update(options: ZDBSModel) {
         if (!(await this.exists(options.name))) {
             throw Error(`There is no zdb deployment with name: ${options.name}`);
@@ -95,7 +100,8 @@ class ZdbsModule extends BaseModule {
         return await this._update(this.zdb, options.name, oldDeployments, twinDeployments);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async add_zdb(options: AddZDBModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
@@ -115,7 +121,8 @@ class ZdbsModule extends BaseModule {
         return await this._add(options.deployment_name, options.node_id, oldDeployments, [twinDeployment]);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async delete_zdb(options: DeleteZDBModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);

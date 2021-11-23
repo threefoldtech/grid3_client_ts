@@ -26,53 +26,64 @@ class Contracts {
         this.nodes = new Nodes(config.graphqlURL, config.rmbClient["proxyURL"]);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async create_node(options: NodeContractCreateModel) {
         return await this.client.contracts.createNode(options.node_id, options.hash, options.data, options.public_ip);
     }
-    @expose @validateInput
+    @expose
+    @validateInput
     async create_name(options: NameContractCreateModel) {
         return await this.client.contracts.createName(options.name);
     }
-    @expose @validateInput
+    @expose
+    @validateInput
     async get(options: ContractGetModel) {
         return await this.client.contracts.get(options.id);
     }
-    @expose @validateInput
+    @expose
+    @validateInput
     async get_contract_id_by_node_id_and_hash(options: ContractGetByNodeIdAndHashModel) {
         return await this.client.contracts.getContractIdByNodeIdAndHash(options.node_id, options.hash);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async get_node_contracts(options: NodeContractsGetModel) {
         return await this.client.contracts.getNodeContracts(options.node_id, options.state);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async get_name_contract(options: NameContractGetModel) {
         return await this.client.contracts.getNameContract(options.name);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async update_node(options: NodeContractUpdateModel) {
         return await this.client.contracts.updateNode(options.id, options.data, options.hash);
     }
-    @expose @validateInput
+    @expose
+    @validateInput
     async cancel(options: ContractCancelModel) {
         return await this.client.contracts.cancel(options.id);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async listMyContracts() {
         return await this.client.contracts.listMyContracts(this.config.graphqlURL);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async listContractsByTwinId(options: ContractsByTwinId) {
         return await this.client.contracts.listContractsByTwinId(this.config.graphqlURL, options.twinId);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async listContractsByAddress(options: ContractsByAddress) {
         return await this.client.contracts.listContractsByAddress(this.config.graphqlURL, options.address);
     }
@@ -80,7 +91,8 @@ class Contracts {
      * WARNING: Please be careful when executing this method, it will delete all your contracts.
      * @returns Promise
      */
-    @expose @validateInput
+    @expose
+    @validateInput
     async cancelMyContracts(): Promise<Record<string, number>[]> {
         return await this.client.contracts.cancelMyContracts(this.config.graphqlURL);
     }

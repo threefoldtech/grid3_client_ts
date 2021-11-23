@@ -45,7 +45,8 @@ class QSFSZdbsModule extends BaseModule {
         return twinDeployments;
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async deploy(options: QSFSZDBSModel) {
         if (await this.exists(options.name)) {
             throw Error(`Another QSFS zdbs deployment with the same name ${options.name} is already exist`);
@@ -56,17 +57,20 @@ class QSFSZdbsModule extends BaseModule {
         return { contracts: contracts };
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async list() {
         return await this._list();
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async get(options: QSFSZDBGetModel) {
         return await this._get(options.name);
     }
 
-    @expose @validateInput
+    @expose
+    @validateInput
     async delete(options: QSFSZDBDeleteModel) {
         return await this._delete(options.name);
     }

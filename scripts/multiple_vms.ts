@@ -41,7 +41,7 @@ disk2.mountpoint = "/newDisk";
 // create another vm node Object
 const vm2 = new MachineModel();
 vm2.name = "testvm";
-vm2.node_id = 17;
+vm2.node_id = 7;
 vm2.disks = [disk2];
 vm2.public_ip = false;
 vm2.planetary = true;

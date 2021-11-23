@@ -53,18 +53,32 @@ async function main() {
     vms.description = "test deploying VMs via ts grid3 client";
 
     // deploy vms
-    const res = await grid3.machines.deploy(vms);
-    log(res);
-
-    // get the deployment
-    const l = await grid3.machines.getObj(vms.name);
-    log(l);
+    grid3.machines.deploy(vms)
+        .then(res => {
+            log(res);
+            // get the deployment
+            grid3.machines.getObj(vms.name)
+                .then(res_l => {
+                    log(res_l);
+                })
+                .catch(err => {
+                    console.log(err);
+                    process.exit(1);
+                })
+                .finally(() => {
+                    grid3.disconnect();
+                })
+        })
+        .catch(err => {
+            grid3.disconnect();
+            console.log(err);
+            process.exit(1);
+        })
 
     // // delete
     // const d = await grid3.machines.delete({ name: vms.name });
     // log(d);
 
-    grid3.disconnect();
 }
 
 main();

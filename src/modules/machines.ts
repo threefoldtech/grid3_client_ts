@@ -9,6 +9,7 @@ import { VMHL } from "../high_level/machine";
 import { TwinDeployment } from "../high_level/models";
 import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
+import { validateInput } from "../helpers/validator";
 
 class MachineModule extends BaseModule {
     moduleName = "machines";
@@ -54,7 +55,7 @@ class MachineModule extends BaseModule {
         return [twinDeployments, network, wireguardConfig];
     }
 
-    @expose
+    @expose @validateInput
     async deploy(options: MachinesModel) {
         if (await this.exists(options.name)) {
             throw Error(`Another machine deployment with the same name ${options.name} is already exist`);
@@ -66,7 +67,7 @@ class MachineModule extends BaseModule {
         return { contracts: contracts, wireguard_config: wireguardConfig };
     }
 
-    @expose
+    @expose @validateInput
     async list() {
         return await this._list();
     }
@@ -78,17 +79,17 @@ class MachineModule extends BaseModule {
         return workloads.map(workload => this._getZmachineData(deployments, workload));
     }
 
-    @expose
+    @expose @validateInput
     async get(options: MachinesGetModel) {
         return await this._get(options.name);
     }
 
-    @expose
+    @expose @validateInput
     async delete(options: MachinesDeleteModel) {
         return await this._delete(options.name);
     }
 
-    @expose
+    @expose @validateInput
     async update(options: MachinesModel) {
         if (!(await this.exists(options.name))) {
             throw Error(`There is no machine with name: ${options.name}`);
@@ -106,7 +107,7 @@ class MachineModule extends BaseModule {
         return await this._update(this.vm, options.name, oldDeployments, twinDeployments, network);
     }
 
-    @expose
+    @expose @validateInput
     async add_machine(options: AddMachineModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no machines deployment with name: ${options.deployment_name}`);
@@ -139,7 +140,7 @@ class MachineModule extends BaseModule {
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }
 
-    @expose
+    @expose @validateInput
     async delete_machine(options: DeleteMachineModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no machines deployment with name: ${options.deployment_name}`);

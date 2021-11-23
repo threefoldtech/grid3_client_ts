@@ -1,10 +1,10 @@
 import { ContractState } from "../clients/tf-grid/contracts";
 import { Deployment } from "../zos/deployment";
 import { ZdbModes } from "../zos/zdb";
-import { IsAlphanumeric, IsBoolean, IsDefined, IsInt, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength, Min, ValidateNested } from "class-validator";
+import { ArrayNotEmpty, IsAlphanumeric, IsBoolean, IsDefined, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength, Min, ValidateNested } from "class-validator";
 import { Expose, Transform, Type } from "class-transformer";
 
-const NameLength = 10;
+const NameLength = 15;
 
 //TODO: find a way to validate all fields are passed while casting data to any of these classes.
 class DiskModel {
@@ -35,13 +35,13 @@ class BaseGetDeleteModel {
 
 class MachineModel {
     @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
-    @Expose() @Min(1) node_id: number;
+    @Expose() @IsInt() @Min(1) node_id: number;
     @Expose() @IsOptional() @Type(() => DiskModel) @ValidateNested({ each: true }) disks?: DiskModel[];
     @Expose() @IsOptional() @Type(() => QSFSDiskModel) @ValidateNested({ each: true }) qsfs_disks?: QSFSDiskModel[];
     @Expose() @IsBoolean() public_ip: boolean;
     @Expose() @IsBoolean() planetary: boolean;
     @Expose() @IsInt() @Min(1) cpu: number;
-    @Expose() @Min(0.25) memory: number; // in MB
+    @Expose() @Min(250) memory: number; // in MB
     @Expose() @Min(0.25) rootfs_size: number; // in GB
     @Expose() @IsUrl() @IsNotEmpty() flist: string;
     @Expose() @IsString() @IsDefined() entrypoint: string;
@@ -49,20 +49,20 @@ class MachineModel {
 }
 
 class MachinesModel {
-    name: string;
-    network: NetworkModel;
-    machines: MachineModel[];
-    metadata: string;
-    description: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @Type(() => NetworkModel) @ValidateNested() network: NetworkModel;
+    @Expose() @Type(() => MachineModel) @ValidateNested({ each: true }) machines: MachineModel[];
+    @Expose() @IsString() @IsOptional() metadata?: string;
+    @Expose() @IsString() @IsOptional() description?: string;
 }
 
 class AddMachineModel extends MachineModel {
-    deployment_name: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) deployment_name: string;
 }
 
 class DeleteMachineModel {
-    name: string;
-    deployment_name: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) deployment_name: string;
 }
 
 class MachinesGetModel extends BaseGetDeleteModel {}
@@ -70,26 +70,26 @@ class MachinesGetModel extends BaseGetDeleteModel {}
 class MachinesDeleteModel extends BaseGetDeleteModel {}
 
 class KubernetesNodeModel {
-    name: string;
-    node_id: number;
-    cpu: number;
-    memory: number; // in MB
-    rootfs_size: number; // in GB
-    disk_size: number; // in GB
-    qsfs_disks: QSFSDiskModel[];
-    public_ip: boolean;
-    planetary: boolean;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @IsInt() @Min(1) node_id: number;
+    @Expose() @IsInt() @Min(1) cpu: number;
+    @Expose() @Min(250) memory: number; // in MB
+    @Expose() @Min(0.25) rootfs_size: number; // in GB
+    @Expose() @Min(0.25) disk_size: number; // in GB
+    @Expose() @IsOptional() @Type(() => QSFSDiskModel) @ValidateNested({ each: true }) qsfs_disks?: QSFSDiskModel[];
+    @Expose() @IsBoolean() public_ip: boolean;
+    @Expose() @IsBoolean() planetary: boolean;
 }
 
 class K8SModel {
-    name: string;
-    secret: string;
-    network: NetworkModel;
-    masters: KubernetesNodeModel[];
-    workers: KubernetesNodeModel[];
-    metadata: string;
-    description: string;
-    ssh_key: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @IsString() @IsNotEmpty() secret: string;
+    @Expose() @Type(() => NetworkModel) @ValidateNested() network: NetworkModel;
+    @Expose() @Type(() => KubernetesNodeModel) @ValidateNested({ each: true }) masters: KubernetesNodeModel[];
+    @Expose() @Type(() => KubernetesNodeModel) @ValidateNested({ each: true }) workers?: KubernetesNodeModel[];
+    @Expose() @IsString() @IsOptional() metadata?: string;
+    @Expose() @IsString() @IsOptional() description?: string;
+    @Expose() @IsString() @IsNotEmpty() ssh_key: string; // is not optional as if the user forget it, he will not be able to use the cluster.
 }
 
 class K8SGetModel extends BaseGetDeleteModel {}
@@ -97,28 +97,28 @@ class K8SGetModel extends BaseGetDeleteModel {}
 class K8SDeleteModel extends BaseGetDeleteModel {}
 
 class AddWorkerModel extends KubernetesNodeModel {
-    deployment_name: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) deployment_name: string;
 }
 
 class DeleteWorkerModel {
-    deployment_name: string;
-    name: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) deployment_name: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
 }
 
 class ZDBModel {
-    name: string;
-    node_id: number;
-    mode: ZdbModes;
-    disk_size: number;
-    publicNamespace: boolean;
-    password: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @IsInt() @Min(1) node_id: number;
+    @Expose() @Transform(({ value }) => ZdbModes[value]) @IsEnum(ZdbModes) mode: ZdbModes;
+    @Expose() @Min(0.25) disk_size: number; // in GB
+    @Expose() @IsBoolean() publicNamespace: boolean;
+    @Expose() @IsString() @IsNotEmpty() password: string;
 }
 
 class ZDBSModel {
-    name: string;
-    zdbs: ZDBModel[];
-    metadata: string;
-    description: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @Type(() => ZDBModel) @ValidateNested({ each: true }) zdbs: ZDBModel[];
+    @Expose() @IsString() @IsOptional() metadata?: string;
+    @Expose() @IsString() @IsOptional() description?: string;
 }
 
 class ZDBGetModel extends BaseGetDeleteModel {}
@@ -126,19 +126,19 @@ class ZDBGetModel extends BaseGetDeleteModel {}
 class ZDBDeleteModel extends BaseGetDeleteModel {}
 
 class AddZDBModel extends ZDBModel {
-    deployment_name: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) deployment_name: string;
 }
 
 class DeleteZDBModel extends DeleteWorkerModel {}
 
 class QSFSZDBSModel {
-    name: string;
-    count: number;
-    node_ids: number[];
-    disk_size: number;
-    password: string;
-    metadata: string;
-    description: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @Min(3) count: number;
+    @Expose() @ArrayNotEmpty() @IsInt({ each: true }) @Min(1, { each: true }) node_ids: number[];
+    @Expose() @Min(0.25) disk_size: number;
+    @Expose() @IsString() @IsNotEmpty() password: string;
+    @Expose() @IsString() @IsOptional() metadata?: string;
+    @Expose() @IsString() @IsOptional() description?: string;
 }
 
 class QSFSZDBGetModel extends BaseGetDeleteModel {}
@@ -146,11 +146,11 @@ class QSFSZDBGetModel extends BaseGetDeleteModel {}
 class QSFSZDBDeleteModel extends BaseGetDeleteModel {}
 
 class GatewayFQDNModel {
-    name: string;
-    node_id: number;
-    fqdn: string;
-    tls_passthrough: boolean;
-    backends: string[];
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @IsInt() @Min(1) node_id: number;
+    @Expose() @IsString() @IsNotEmpty() fqdn: string;
+    @Expose() @IsBoolean() tls_passthrough: boolean;
+    @Expose() @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
 }
 
 class GatewayFQDNGetModel extends BaseGetDeleteModel {}
@@ -158,10 +158,10 @@ class GatewayFQDNGetModel extends BaseGetDeleteModel {}
 class GatewayFQDNDeleteModel extends BaseGetDeleteModel {}
 
 class GatewayNameModel {
-    name: string;
-    node_id: number;
-    tls_passthrough: boolean;
-    backends: string[];
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @IsInt() @Min(1) node_id: number;
+    @Expose() @IsBoolean() tls_passthrough: boolean;
+    @Expose() @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
 }
 
 class GatewayNameGetModel extends BaseGetDeleteModel {}
@@ -169,105 +169,105 @@ class GatewayNameGetModel extends BaseGetDeleteModel {}
 class GatewayNameDeleteModel extends BaseGetDeleteModel {}
 
 class ZOSModel extends Deployment {
-    node_id: number;
+    @Expose() @IsInt() @Min(1) node_id: number;
 }
 
 class NodeContractCreateModel {
-    node_id: number;
-    hash: string;
-    data: string;
-    public_ip: number;
+    @Expose() @IsInt() @Min(1) node_id: number;
+    @Expose() @IsString() @IsNotEmpty() hash: string;
+    @Expose() @IsString() @IsDefined() data: string;
+    @Expose() @IsInt() @Min(0) public_ip: number;
 }
 
 class NameContractCreateModel {
-    name: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
 }
 class ContractGetModel {
-    id: number;
+    @Expose() @IsInt() @Min(1) id: number;
 }
 
 class ContractGetByNodeIdAndHashModel {
-    node_id: number;
-    hash: string;
+    @Expose() @IsInt() @Min(1) node_id: number;
+    @Expose() @IsString() @IsNotEmpty() hash: string;
 }
 
 class NodeContractsGetModel {
-    node_id: number;
-    state: ContractState;
+    @Expose() @IsInt() @Min(1) node_id: number;
+    @Expose() @Transform(({ value }) => ContractState[value]) @IsEnum(ContractState) state: ContractState;
 }
 
 class NameContractGetModel {
-    name: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
 }
 
 class NodeContractUpdateModel {
-    id: number;
-    hash: string;
-    data: string;
+    @Expose() @IsInt() @Min(1) id: number;
+    @Expose() @IsString() @IsNotEmpty() hash: string;
+    @Expose() @IsString() @IsDefined() data: string;
 }
 
 class ContractCancelModel {
-    id: number;
+    @Expose() @IsInt() @Min(1) id: number;
 }
 
 class ContractsByTwinId {
-    twinId: number;
+    @Expose() @IsInt() @Min(1) twinId: number;
 }
 
 class ContractsByAddress {
-    address: string;
+    @Expose() @IsString() @IsNotEmpty() address: string;
 }
 
 class TwinCreateModel {
-    ip: string;
+    @Expose() @IsString() @IsNotEmpty() ip: string;
 }
 
 class TwinGetModel {
-    id: number;
+    @Expose() @IsInt() @Min(1) id: number;
 }
 
 class TwinGetByAccountIdModel {
-    public_key: string;
+    @Expose() @IsString() @IsNotEmpty() public_key: string;
 }
 
 class TwinDeleteModel {
-    id: number;
+    @Expose() @IsInt() @Min(1) id: number;
 }
 
 class KVStoreSetModel {
-    key: string;
-    value: string;
+    @Expose() @IsString() @IsNotEmpty() key: string;
+    @Expose() @IsString() @IsNotEmpty() value: string;
 }
 class KVStoreGetModel {
-    key: string;
+    @Expose() @IsString() @IsNotEmpty() key: string;
 }
 class KVStoreRemoveModel {
-    key: string;
+    @Expose() @IsString() @IsNotEmpty() key: string;
 }
 
 class WalletImportModel {
-    name: string;
-    secret: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @IsString() @IsNotEmpty() secret: string;
 }
 
 class WalletBalanceByNameModel {
-    name: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
 }
 
 class WalletBalanceByAddressModel {
-    address: string;
+    @Expose() @IsString() @IsNotEmpty() address: string;
 }
 
 class WalletTransferModel {
-    name: string;
-    target_address: string;
-    amount: number;
-    asset: string;
-    memo: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+    @Expose() @IsString() @IsNotEmpty() target_address: string;
+    @Expose() @Min(0.0000001) amount: number;
+    @Expose() @IsString() @IsNotEmpty() asset: string;
+    @Expose() @IsString() @IsOptional() memo?: string;
 }
 
 class WalletDeleteModel {
-    name: string;
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
 }
 
 class WalletGetModel extends WalletDeleteModel {}

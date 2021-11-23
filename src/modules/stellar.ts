@@ -13,6 +13,7 @@ import {
 import { GridClientConfig } from "../config";
 import { expose } from "../helpers/expose";
 import { appPath, BackendStorage, StorageUpdateAction } from "../storage/backend";
+import { validateInput } from "../helpers/validator";
 
 const server = new StellarSdk.Server("https://horizon.stellar.org");
 
@@ -49,7 +50,7 @@ class Stellar {
         return data[name];
     }
 
-    @expose
+    @expose @validateInput
     async import(options: WalletImportModel) {
         const walletKeypair = StellarSdk.Keypair.fromSecret(options.secret);
         const walletPublicKey = walletKeypair.publicKey();
@@ -58,14 +59,14 @@ class Stellar {
         return walletPublicKey;
     }
 
-    @expose
+    @expose @validateInput
     async get(options: WalletGetModel) {
         const secret = await this.getWalletSecret(options.name);
         const walletKeypair = StellarSdk.Keypair.fromSecret(secret);
         return walletKeypair.publicKey(); // TODO: return wallet secret after adding security context on the server calls
     }
 
-    @expose
+    @expose @validateInput
     async update(options: WalletImportModel) {
         if (!(await this.exist(options))) {
             throw Error(`Couldn't find a wallet with name ${options.name} to update`);
@@ -84,18 +85,18 @@ class Stellar {
         }
     }
 
-    @expose
+    @expose @validateInput
     async exist(options: WalletGetModel) {
         return (await this.list()).includes(options.name);
     }
 
-    @expose
+    @expose @validateInput
     async list() {
         const [_, data] = await this._load();
         return Object.keys(data);
     }
 
-    @expose
+    @expose @validateInput
     async balance_by_name(options: WalletBalanceByNameModel) {
         const secret = await this.getWalletSecret(options.name);
         if (!secret) {
@@ -108,7 +109,7 @@ class Stellar {
         return await this.balance_by_address(walletAddress);
     }
 
-    @expose
+    @expose @validateInput
     async balance_by_address(options: WalletBalanceByAddressModel) {
         const account = await server.loadAccount(options.address);
         const balances = [];
@@ -121,7 +122,7 @@ class Stellar {
         return balances;
     }
 
-    @expose
+    @expose @validateInput
     async transfer(options: WalletTransferModel) {
         const secret = await this.getWalletSecret(options.name);
         if (!secret) {
@@ -171,7 +172,7 @@ class Stellar {
         }
     }
 
-    @expose
+    @expose @validateInput
     async delete(options: WalletDeleteModel) {
         const [path, data] = await this._load();
         if (!data[options.name]) {

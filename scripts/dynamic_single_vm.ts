@@ -23,7 +23,7 @@ async function main() {
 
     const server1_options: FilterOptions = {
         cru: 1,
-        mru: 2, // GB
+        mru: 1, // GB
         country: "BE",
     };
 

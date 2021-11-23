@@ -10,7 +10,7 @@ import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { TwinDeployment, Operations } from "../high_level/models";
 import { KubernetesHL } from "../high_level/kubernetes";
 import { ZdbHL } from "../high_level/zdb";
-import { BackendStorage, StorageUpdateAction } from "../storage/backend";
+import { BackendStorage } from "../storage/backend";
 import { Nodes } from "../primitives/nodes";
 import { DeploymentFactory } from "../primitives/deployment";
 import { Network } from "../primitives/network";
@@ -19,7 +19,7 @@ import { TFClient } from "../clients/tf-grid/client";
 import { GridClientConfig } from "../config";
 
 class BaseModule {
-    fileName = "";
+    moduleName = "";
     workloadTypes = [];
     deploymentFactory: DeploymentFactory;
     twinDeploymentHandler: TwinDeploymentHandler;
@@ -37,45 +37,47 @@ class BaseModule {
         );
     }
 
-    async _load() {
-        const path = PATH.join(this.config.storePath, this.config.projectName, this.fileName);
+    getDeploymentPath(name: string): string {
+        return PATH.join(this.config.storePath, this.config.projectName, this.moduleName, name);
+    }
 
-        return [path, await this.backendStorage.load(path)];
+    async getDeploymentContracts(name: string) {
+        const path = PATH.join(this.getDeploymentPath(name), "contracts.json");
+        const contracts = await this.backendStorage.load(path);
+        if (!contracts) {
+            return [];
+        }
+        return contracts;
     }
 
     async save(name: string, contracts: Record<string, unknown[]>, wgConfig = "") {
-        const [path, data] = await this._load();
-        let deploymentData = { contracts: [], wireguard_config: "" };
-        if (Object.keys(data).includes(name)) {
-            deploymentData = data[name];
-        }
+        const contractsPath = PATH.join(this.getDeploymentPath(name), "contracts.json");
+        const wireguardPath = PATH.join(this.getDeploymentPath(name), `${name}.conf`);
+        const oldContracts = await this.getDeploymentContracts(name);
+        let StoreContracts = oldContracts;
 
         for (const contract of contracts["created"]) {
-            deploymentData.contracts.push({
+            StoreContracts.push({
                 contract_id: contract["contract_id"],
                 node_id: contract["contract_type"]["nodeContract"]["node_id"],
             });
         }
         for (const contract of contracts["deleted"]) {
-            deploymentData.contracts = deploymentData.contracts.filter(
-                c => c["contract_id"] !== contract["contract_id"],
-            );
+            StoreContracts = StoreContracts.filter(c => c["contract_id"] !== contract["contract_id"]);
         }
         if (wgConfig) {
-            deploymentData["wireguard_config"] = wgConfig;
+            this.backendStorage.dump(wireguardPath, wgConfig);
         }
-        if (deploymentData.contracts.length !== 0) {
-            await this.backendStorage.update(path, name, deploymentData);
+        if (StoreContracts.length !== 0) {
+            await this.backendStorage.dump(contractsPath, StoreContracts);
         } else {
-            await this.backendStorage.update(path, name, deploymentData, StorageUpdateAction.delete);
+            await this.backendStorage.dump(contractsPath, "");
+            await this.backendStorage.dump(wireguardPath, "");
         }
-
-        return deploymentData;
     }
 
     async _list(): Promise<string[]> {
-        const [_, data] = await this._load();
-        return Object.keys(data);
+        return await this.backendStorage.list(this.getDeploymentPath(""));
     }
 
     async exists(name: string): Promise<boolean> {
@@ -84,23 +86,15 @@ class BaseModule {
 
     async _getDeploymentNodeIds(name: string): Promise<number[]> {
         const nodeIds = [];
-        const contracts = await this._getContracts(name);
+        const contracts = await this.getDeploymentContracts(name);
         for (const contract of contracts) {
             nodeIds.push(contract["node_id"]);
         }
         return nodeIds;
     }
 
-    async _getContracts(name: string): Promise<string[]> {
-        const [_, data] = await this._load();
-        if (!Object.keys(data).includes(name)) {
-            return [];
-        }
-        return data[name]["contracts"];
-    }
-
     async _getContractIdFromNodeId(name: string, nodeId: number): Promise<number> {
-        const contracts = await this._getContracts(name);
+        const contracts = await this.getDeploymentContracts(name);
         for (const contract of contracts) {
             if (contract["node_id"] === nodeId) {
                 return contract["contract_id"];
@@ -108,7 +102,7 @@ class BaseModule {
         }
     }
     async _getNodeIdFromContractId(name: string, contractId: number): Promise<number> {
-        const contracts = await this._getContracts(name);
+        const contracts = await this.getDeploymentContracts(name);
         for (const contract of contracts) {
             if (contract["contract_id"] === contractId) {
                 return contract["node_id"];
@@ -192,12 +186,12 @@ class BaseModule {
     }
 
     async _get(name: string) {
-        const [_, data] = await this._load();
-        if (!Object.keys(data).includes(name)) {
+        if (!(await this._list()).includes(name)) {
             return [];
         }
         const deployments = [];
-        for (const contract of data[name]["contracts"]) {
+        const contracts = await this.getDeploymentContracts(name);
+        for (const contract of contracts) {
             const tfClient = new TFClient(
                 this.config.substrateURL,
                 this.config.mnemonic,
@@ -329,9 +323,8 @@ class BaseModule {
     }
 
     async _delete(name: string) {
-        const [path, data] = await this._load();
-        const contracts = { deleted: [], updated: [] };
-        if (!Object.keys(data).includes(name)) {
+        const contracts = { created: [], deleted: [], updated: [] };
+        if (!(await this._list()).includes(name)) {
             return contracts;
         }
         const deployments = await this._get(name);
@@ -353,7 +346,7 @@ class BaseModule {
             }
         }
         contracts.updated = updatedContracts;
-        await this.backendStorage.update(path, name, "", StorageUpdateAction.delete);
+        await this.save(name, contracts);
         return contracts;
     }
 }

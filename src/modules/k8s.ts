@@ -10,7 +10,7 @@ import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
 
 class K8sModule extends BaseModule {
-    fileName = "kubernetes.json";
+    moduleName = "kubernetes";
     workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
     kubernetes: KubernetesHL;
 

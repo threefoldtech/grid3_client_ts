@@ -21,9 +21,15 @@ class KVStore {
     async list() {
         return await this.client.kvStore.list();
     }
+
     @expose
     async remove(options: KVStoreRemoveModel) {
         return await this.client.kvStore.remove(options.key);
+    }
+
+    @expose
+    async removeAll() {
+        return await this.client.kvStore.removeAll();
     }
 }
 

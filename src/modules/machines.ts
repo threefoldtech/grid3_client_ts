@@ -11,7 +11,7 @@ import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
 
 class MachineModule extends BaseModule {
-    fileName = "machines.json";
+    moduleName = "machines";
     workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
     vm: VMHL;
     constructor(public config: GridClientConfig) {

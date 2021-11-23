@@ -15,7 +15,7 @@ import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
 
 class GWModule extends BaseModule {
-    fileName = "gateway.json";
+    moduleName = "gateways";
     workloadTypes = [WorkloadTypes.gatewayfqdnproxy, WorkloadTypes.gatewaynameproxy];
     gateway: GatewayHL;
 

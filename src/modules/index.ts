@@ -1,5 +1,5 @@
 export * from "./k8s";
-export * from "./machine";
+export * from "./machines";
 export * from "./models";
 export * from "./zdb";
 export * from "./gateway";

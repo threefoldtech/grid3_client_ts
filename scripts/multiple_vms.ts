@@ -75,7 +75,8 @@ async function main() {
                     log(res_l);
                 })
                 .catch(err => {
-                    throw err;
+                    console.log(err);
+                    process.exit(1);
                 })
                 .finally(() => {
                     grid3.disconnect();
@@ -83,7 +84,8 @@ async function main() {
         })
         .catch(err => {
             grid3.disconnect();
-            throw err;
+            console.log(err);
+            process.exit(1);
         });
 
 

@@ -38,10 +38,6 @@ async function main() {
                             console.log(err_get);
                             process.exit(1);
                         })
-                        .finally(() => {
-                            gridClient.disconnect();
-                        });
-
                 })
                 .catch(err_list => {
                     console.log(err_list);

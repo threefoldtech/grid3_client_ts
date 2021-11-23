@@ -11,7 +11,7 @@ const qsfs = {
     name: qsfs_name,
     count: 8,
     node_ids: [16, 17],
-    password: "mypassword",
+    password: "mypassword1",
     disk_size: 10,
     description: "my qsfs test",
     metadata: "",
@@ -24,12 +24,12 @@ n.ip_range = "10.238.0.0/16";
 
 // create k8s node Object
 const master = new KubernetesNodeModel();
-master.name = "master1";
+master.name = "master";
 master.node_id = 17;
 master.cpu = 1;
 master.memory = 1024 * 2;
 master.rootfs_size = 1;
-master.disk_size = 8;
+master.disk_size = 9;
 master.public_ip = false;
 master.planetary = true;
 master.qsfs_disks = [
@@ -47,18 +47,18 @@ master.qsfs_disks = [
 
 // create k8s node Object
 const worker = new KubernetesNodeModel();
-worker.name = "worker1";
+worker.name = "worker";
 worker.node_id = 17;
 worker.cpu = 2;
 worker.memory = 1024 * 4;
 worker.rootfs_size = 1;
-worker.disk_size = 8;
+worker.disk_size = 9;
 worker.public_ip = false;
 worker.planetary = true;
 
 // create k8s Object
 const k = new K8SModel();
-k.name = "testk8sqsfs";
+k.name = "testk8s";
 k.secret = "secret";
 k.network = n;
 k.masters = [master];

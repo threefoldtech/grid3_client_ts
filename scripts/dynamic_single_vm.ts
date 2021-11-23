@@ -23,8 +23,8 @@ async function main() {
 
     const server1_options: FilterOptions = {
         cru: 1,
-        mru: 1, // GB
-        country: "BE",
+        mru: 2, // GB
+        country: "Belgium",
     };
 
     // create vm node Object

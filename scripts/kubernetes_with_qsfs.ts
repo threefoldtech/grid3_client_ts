@@ -24,7 +24,7 @@ n.ip_range = "10.238.0.0/16";
 
 // create k8s node Object
 const master = new KubernetesNodeModel();
-master.name = "master";
+master.name = "master1";
 master.node_id = 17;
 master.cpu = 1;
 master.memory = 1024 * 2;
@@ -47,7 +47,7 @@ master.qsfs_disks = [
 
 // create k8s node Object
 const worker = new KubernetesNodeModel();
-worker.name = "worker";
+worker.name = "worker1";
 worker.node_id = 17;
 worker.cpu = 2;
 worker.memory = 1024 * 4;
@@ -58,7 +58,7 @@ worker.planetary = true;
 
 // create k8s Object
 const k = new K8SModel();
-k.name = "testk8s";
+k.name = "testk8sqsfs";
 k.secret = "secret";
 k.network = n;
 k.masters = [master];

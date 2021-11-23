@@ -30,7 +30,13 @@ async function main() {
     // create vm node Object
     const vm = new MachineModel();
     vm.name = "testvm";
-    vm.node_id = +(await nodes.filterNodes(server1_options))[0].nodeId; // TODO: allow random choise
+    try {
+        vm.node_id = +(await nodes.filterNodes(server1_options))[0].nodeId; // TODO: allow random choise
+
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
     vm.disks = [disk];
     vm.public_ip = false;
     vm.planetary = true;

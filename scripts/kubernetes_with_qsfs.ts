@@ -6,6 +6,17 @@ import { getClient } from "./client_loader";
 
 const qsfs_name = "testQsfsK8sq1";
 
+//create qsfs object
+const qsfs = {
+    name: qsfs_name,
+    count: 8,
+    node_ids: [2, 3],
+    password: "mypassword",
+    disk_size: 10,
+    description: "my qsfs test",
+    metadata: "",
+}
+
 // create network Object
 const n = new NetworkModel();
 n.name = "tuesNetwork";
@@ -60,24 +71,37 @@ k.ssh_key =
 async function main() {
     const grid3 = await getClient();
     // deploy qsfs
-
-    const qsfs_res = await grid3.qsfs_zdbs.deploy({
-        name: qsfs_name,
-        count: 8,
-        node_ids: [2, 3],
-        password: "mypassword",
-        disk_size: 10,
-        description: "my qsfs test",
-        metadata: "",
-    });
-
-    // deploy k8s
-    const res = await grid3.k8s.deploy(k);
-    log(res);
-
-    // get the deployment
-    const l = await grid3.k8s.getObj(k.name);
-    log(l);
+    grid3.qsfs_zdbs.deploy(qsfs)
+        .then(qsfs_res => {
+            log(">>>>>>>>>>>>>>>QSFS backend has been created<<<<<<<<<<<<<<<");
+            log(qsfs_res);
+            // deploy kubernetes 
+            grid3.k8s.deploy(k)
+                .then(k_res => {
+                    log(">>>>>>>>>>>>>>>kubernetes cluster has been created<<<<<<<<<<<<<<<");
+                    log(k_res);
+                    // get deployment object
+                    grid3.k8s.getObj(k.name)
+                        .then(res_l => {
+                            log(">>>>>>>>>>>>>>>Deployment result<<<<<<<<<<<<<<<");
+                            log(res_l);
+                        })
+                        .catch(err => {
+                            throw err;
+                        })
+                        .finally(() => {
+                            grid3.disconnect();
+                        })
+                })
+                .catch(err => {
+                    grid3.disconnect();
+                    throw err;
+                });
+        })
+        .catch(err => {
+            grid3.disconnect();
+            throw err;
+        });
 
     // // delete
     // const m = new K8SDeleteModel();
@@ -85,8 +109,6 @@ async function main() {
     // log(d);
     // const r = await grid3.qsfs_zdbs.delete({ name: qsfs_name });
     // log(r);
-
-    grid3.disconnect();
 }
 
 main();

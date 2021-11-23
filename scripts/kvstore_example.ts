@@ -23,21 +23,52 @@ async function main() {
 
     // set key
     const key = "hamada";
-    await db.set({ key, value: JSON.stringify(exampleObj) });
+    db.set({ key, value: JSON.stringify(exampleObj) })
+        .then(() => {
+            // list all the keys
+            db.list()
+                .then(keys => {
+                    log(keys);
+                    // get the key
+                    db.get({ key })
+                        .then(data => {
+                            log(JSON.parse(data));
+                        })
+                        .catch(err_get => {
+                            console.log(err_get);
+                            process.exit(1);
+                        })
+                        .finally(() => {
+                            gridClient.disconnect();
+                        });
 
-    // list all the keys
-    const keys = await db.list();
-    log(keys);
+                })
+                .catch(err_list => {
+                    console.log(err_list);
+                    process.exit(1);
+                })
+                .finally(() => {
+                    // remove the key
+                    db.remove({ key })
+                        .then(() => {
+                            console.log("removed key")
+                        })
+                        .catch(err_remove => {
+                            console.log(err_remove);
+                            process.exit(1);
+                        })
+                        .finally(() => {
+                            // disconnect
+                            gridClient.disconnect();
+                        });
+                });
+        })
+        .catch(err => {
+            gridClient.disconnect();
+            console.log(err);
+            process.exit(1);
+        });
 
-    // get the key
-    const data = await db.get({ key });
-    log(JSON.parse(data));
-
-    // remove the key
-    await db.remove({ key });
-
-    // disconnect
-    await gridClient.disconnect();
 }
 
 main();

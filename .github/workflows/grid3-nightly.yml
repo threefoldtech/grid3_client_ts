@@ -28,8 +28,6 @@ jobs:
           sudo apt-get install -y git libtool tmux redis net-tools
       - name: Install
         run: yarn
-      - name: Build
-        run: yarn build
       - name: Run test single vm
         id: singlevm
         continue-on-error: true

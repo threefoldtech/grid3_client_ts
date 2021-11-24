@@ -12,12 +12,12 @@ async function main() {
 
     // create network Object
     const n = new NetworkModel();
-    n.name = "wedtest";
+    n.name = "dynamictest";
     n.ip_range = "10.249.0.0/16";
 
     // create disk Object
     const disk = new DiskModel();
-    disk.name = "wedDisk";
+    disk.name = "dynamicDisk";
     disk.size = 8;
     disk.mountpoint = "/testdisk";
 
@@ -52,7 +52,7 @@ async function main() {
 
     // create VMs Object
     const vms = new MachinesModel();
-    vms.name = "newVMS";
+    vms.name = "dynamicVMS";
     vms.network = n;
     vms.machines = [vm];
     vms.metadata = "{'testVMs': true}";

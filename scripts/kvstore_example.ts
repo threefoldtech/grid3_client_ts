@@ -23,21 +23,30 @@ async function main() {
 
     // set key
     const key = "hamada";
-    await db.set({ key, value: JSON.stringify(exampleObj) });
 
-    // list all the keys
-    const keys = await db.list();
-    log(keys);
+    try {
+        // set key
+        await db.set({ key, value: JSON.stringify(exampleObj) });
 
-    // get the key
-    const data = await db.get({ key });
-    log(JSON.parse(data));
+        // list all the keys
+        const keys = await db.list();
+        log(keys);
 
-    // remove the key
-    await db.remove({ key });
+        // get the key
+        const data = await db.get({ key });
+        log(JSON.parse(data));
 
-    // disconnect
-    await gridClient.disconnect();
+        // remove the key
+        await db.remove({ key });
+    }
+    catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+    finally {
+        gridClient.disconnect();
+    }
+
 }
 
 main();

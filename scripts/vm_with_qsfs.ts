@@ -74,42 +74,29 @@ async function cancel(grid3) {
 async function main() {
     const grid3 = await getClient();
     //deploy qsfs
-    grid3.qsfs_zdbs.deploy(qsfs)
-        .then(qsfs_res => {
-            log(">>>>>>>>>>>>>>>QSFS backend has been created<<<<<<<<<<<<<<<");
-            log(qsfs_res);
-            // deploy vm 
-            grid3.machines.deploy(vms)
-                .then(vm_res => {
-                    log(">>>>>>>>>>>>>>>VM has been created<<<<<<<<<<<<<<<");
-                    log(vm_res);
-                    // get deployment object
-                    grid3.machines.getObj(vms.name)
-                        .then(res_l => {
-                            log(">>>>>>>>>>>>>>>Deployment result<<<<<<<<<<<<<<<");
-                            log(res_l);
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            process.exit(1);
-                        })
-                        .finally(() => {
-                            grid3.disconnect();
-                        })
-                })
-                .catch(err => {
-                    grid3.disconnect();
-                    console.log(err);
-                    process.exit(1);
-                });
-        })
-        .catch(err => {
-            grid3.disconnect();
-            console.log(err);
-            process.exit(1);
-        });
+    try {
+        const res = await grid3.qsfs_zdbs.deploy(qsfs);
+        log(">>>>>>>>>>>>>>>QSFS backend has been created<<<<<<<<<<<<<<<");
+        log(res);
 
-    // await cancel(grid3);
+        const vm_res = await grid3.machines.deploy(vms);
+        log(">>>>>>>>>>>>>>>vm has been created<<<<<<<<<<<<<<<");
+        log(vm_res);
+
+        // get the deployment
+        const l = await grid3.machines.getObj(vms.name);
+        log(">>>>>>>>>>>>>>>Deployment result<<<<<<<<<<<<<<<");
+        log(l);
+
+        // await cancel(grid3);
+    }
+    catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+    finally {
+        grid3.disconnect();
+    }
 
 }
 

@@ -45,28 +45,6 @@ k.ssh_key =
 
 async function main() {
     const grid3 = await getClient();
-    // deploy k8s
-    // grid3.k8s.deploy(k)
-    //     .then(res => {
-    //         log(res);
-    //         // get the deployment
-    //         grid3.k8s.getObj(k.name)
-    //             .then(res_l => {
-    //                 log(res_l);
-    //             })
-    //             .catch(err => {
-    //                 console.log(err);
-    //                 process.exit(1);
-    //             })
-    //             .finally(() => {
-    //                 grid3.disconnect();
-    //             })
-    //     })
-    //     .catch(err => {
-    //         grid3.disconnect();
-    //         console.log(err);
-    //         process.exit(1);
-    //     });
     try {
         const res = await grid3.k8s.deploy(k);
         log(res);
@@ -74,6 +52,9 @@ async function main() {
         // get the deployment
         const l = await grid3.k8s.getObj(k.name);
         log(l);
+        // // delete
+        // const d = await grid3.k8s.delete({ name: k.name });
+        // log(d);
     }
     catch (err) {
         console.log(err);
@@ -83,9 +64,6 @@ async function main() {
         grid3.disconnect();
     }
 
-    // // delete
-    // const d = await grid3.k8s.delete({ name: k.name });
-    // log(d);
 
 }
 

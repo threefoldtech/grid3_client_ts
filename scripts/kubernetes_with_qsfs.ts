@@ -71,47 +71,35 @@ k.ssh_key =
 async function main() {
     const grid3 = await getClient();
     // deploy qsfs
-    grid3.qsfs_zdbs.deploy(qsfs)
-        .then(qsfs_res => {
-            log(">>>>>>>>>>>>>>>QSFS backend has been created<<<<<<<<<<<<<<<");
-            log(qsfs_res);
-            // deploy kubernetes 
-            grid3.k8s.deploy(k)
-                .then(k_res => {
-                    log(">>>>>>>>>>>>>>>kubernetes cluster has been created<<<<<<<<<<<<<<<");
-                    log(k_res);
-                    // get deployment object
-                    grid3.k8s.getObj(k.name)
-                        .then(res_l => {
-                            log(">>>>>>>>>>>>>>>Deployment result<<<<<<<<<<<<<<<");
-                            log(res_l);
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            process.exit(1);
-                        })
-                        .finally(() => {
-                            grid3.disconnect();
-                        })
-                })
-                .catch(err => {
-                    grid3.disconnect();
-                    console.log(err);
-                    process.exit(1);
-                });
-        })
-        .catch(err => {
-            grid3.disconnect();
-            console.log(err);
-            process.exit(1);
-        });
+    try {
+        const res = await grid3.qsfs_zdbs.deploy(qsfs);
+        log(">>>>>>>>>>>>>>>QSFS backend has been created<<<<<<<<<<<<<<<");
+        log(res);
 
-    // // delete
-    // const m = new K8SDeleteModel();
-    // const d = await grid3.k8s.delete({ name: k.name })
-    // log(d);
-    // const r = await grid3.qsfs_zdbs.delete({ name: qsfs_name });
-    // log(r);
+        const kubernetes = await grid3.k8s.deploy(k);
+        log(">>>>>>>>>>>>>>>kubernetes has been created<<<<<<<<<<<<<<<");
+        log(kubernetes);
+
+        // get the deployment
+        const l = await grid3.k8s.getObj(k.name);
+        log(">>>>>>>>>>>>>>>Deployment result<<<<<<<<<<<<<<<");
+        log(l);
+
+        // // delete
+        // const m = new K8SDeleteModel();
+        // const d = await grid3.k8s.delete({ name: k.name })
+        // log(d);
+        // const r = await grid3.qsfs_zdbs.delete({ name: qsfs_name });
+        // log(r);
+    }
+    catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+    finally {
+        grid3.disconnect();
+    }
+
 }
 
 main();

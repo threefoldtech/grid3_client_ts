@@ -76,5 +76,13 @@ jobs:
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/delete_all_contracts.ts
       - name: Check test script status
-        if: steps.singlevm.outcome != 'success' || steps.multiplevm.outcome != 'success' || steps.kubernetes.outcome != 'success' || steps.vmqsfs.outcome != 'success' || steps.kubernetesqsfs.outcome != 'success' || steps.dynamicsinglevm.outcome != 'success' || steps.kvstore.outcome != 'success' || steps.zdb.outcome != 'success'
+        if: |
+          steps.singlevm.outcome != 'success' ||
+          steps.multiplevm.outcome != 'success' ||
+          steps.kubernetes.outcome != 'success' ||
+          steps.vmqsfs.outcome != 'success' ||
+          steps.kubernetesqsfs.outcome != 'success' ||
+          steps.dynamicsinglevm.outcome != 'success' ||
+          steps.kvstore.outcome != 'success' ||
+          steps.zdb.outcome != 'success'
         run: exit "Test scripts failed, Please check the failed step/s."

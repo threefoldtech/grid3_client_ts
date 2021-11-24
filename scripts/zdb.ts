@@ -7,7 +7,7 @@ import { getClient } from "./client_loader";
 
 // create zdb object
 const zdb = new ZDBModel();
-zdb.name = "hamada";
+zdb.name = "zdbtest1";
 zdb.node_id = 18;
 zdb.mode = ZdbModes.user;
 zdb.disk_size = 9;
@@ -22,19 +22,32 @@ zdbs.metadata = '{"test": "test"}';
 
 async function main() {
     const grid3 = await getClient();
-
-    const res = await grid3.zdbs.deploy(zdbs);
-    log(res);
-
-    // get the deployment
-    const l = await grid3.zdbs.getObj(zdbs.name);
-    log(l);
+    // deploy zdb
+    grid3.zdbs.deploy(zdbs)
+        .then(res => {
+            log(res);
+            // get the deployment
+            grid3.zdbs.getObj(zdbs.name)
+                .then(res_l => {
+                    log(res_l);
+                })
+                .catch(err => {
+                    console.log(err);
+                    process.exit(1);
+                })
+                .finally(() => {
+                    grid3.disconnect();
+                })
+        })
+        .catch(err => {
+            grid3.disconnect();
+            console.log(err);
+            process.exit(1);
+        })
 
     // // delete
     // const d = await grid3.zdbs.delete({ name: zdbs.name });
     // log(d);
-
-    grid3.disconnect();
 }
 
 main();

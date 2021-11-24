@@ -17,6 +17,7 @@ class FilterOptions {
     @Expose() @IsOptional() @IsBoolean() accessNodeV6?: boolean;
     @Expose() @IsOptional() @IsBoolean() gateway?: boolean;
     @Expose() @IsOptional() @Min(1) farmId?: number;
+    @Expose() @IsOptional() @IsString() farmName?: string;
     @Expose() @IsOptional() @IsString() country?: string;
     @Expose() @IsOptional() @IsString() city?: string;
 }
@@ -32,6 +33,9 @@ class Nodes {
             }
         }`;
         const response = await send("post", this.graphqlURL, JSON.stringify({ query: body }), headers);
+        if (response["data"]["nodes"]["length"] === 0) {
+            throw Error(`Couldn't find a node with id: ${node_id}`);
+        }
         return response["data"]["nodes"][0]["twinId"];
     }
 
@@ -157,7 +161,8 @@ class Nodes {
             (options.accessNodeV4 && !hasPublicIpv4) ||
             (options.accessNodeV6 && !hasPublicIpv6) ||
             (options.gateway && !hasDomain) ||
-            (options.farmId && options.farmId !== node.farmId)
+            (options.farmId && options.farmId !== node.farmId) ||
+            (options.farmName && (await this.getFarmIdFromFarmName(options.farmName)) !== node.farmId)
         ) {
             return { valid: false };
         }
@@ -209,5 +214,26 @@ class Nodes {
                 }
             });
     }
+
+    /**
+     * Get farm id from farm name.
+     * It returns 0 in case the farm name is not found.
+     * @param  {string} name
+     * @returns Promise<number>
+     */
+    async getFarmIdFromFarmName(name: string): Promise<number> {
+        const headers = { "Content-Type": "application/json" };
+        const body = `{
+            farms(where: {name_eq: "${name}"}) {
+              farmId
+            }
+          }`;
+        const response = await send("post", this.graphqlURL, JSON.stringify({ query: body }), headers);
+        if (response["data"]["farms"]["length"] === 0) {
+            return 0;
+        }
+        return response["data"]["farms"][0]["farmId"];
+    }
 }
+
 export { Nodes, FilterOptions };

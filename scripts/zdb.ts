@@ -7,7 +7,7 @@ import { getClient } from "./client_loader";
 
 // create zdb object
 const zdb = new ZDBModel();
-zdb.name = "zdbtest";
+zdb.name = "hamada";
 zdb.node_id = 16;
 zdb.mode = ZdbModes.user;
 zdb.disk_size = 9;

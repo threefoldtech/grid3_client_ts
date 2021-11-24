@@ -3,8 +3,8 @@ import "reflect-metadata";
 import { log } from "./utils";
 import { getClient } from "./client_loader";
 
-const qsfs_name = "testQsfsq1";
-const machines_name = "testQsfst1";
+const qsfs_name = "wed2710q1";
+const machines_name = "wed2710t1";
 
 const qsfs = {
     name: qsfs_name,
@@ -19,16 +19,16 @@ const qsfs = {
 const vms = {
     name: machines_name,
     network: {
-        name: "testQsfsn1",
+        name: "wed2710n1",
         ip_range: "10.201.0.0/16",
     },
     machines: [
         {
-            name: "testQsfsv1",
+            name: "wed2710v1",
             node_id: 17,
             disks: [
                 {
-                    name: "testQsfsd1",
+                    name: "wed2710d1",
                     size: 10,
                     mountpoint: "/mydisk",
                 },
@@ -36,7 +36,7 @@ const vms = {
             qsfs_disks: [
                 {
                     qsfs_zdbs_name: qsfs_name,
-                    name: "testQsfsd2",
+                    name: "wed2710d2",
                     minimal_shards: 2,
                     expected_shards: 4,
                     encryption_key: "hamada",

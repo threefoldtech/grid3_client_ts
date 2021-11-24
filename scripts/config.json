@@ -1,5 +1,5 @@
 {
-    "network": "test",
+    "network": "dev",
     "mnemonic": "",
     "rmb_proxy": true,
     "storeSecret": "secret"

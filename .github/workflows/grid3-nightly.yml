@@ -12,6 +12,11 @@ on:
 jobs:
   deployment-scripts:
     runs-on: ubuntu-20.04
+    env:
+      NETWORK: dev
+      RMB_PROXY: true
+      STORE_SECRET: secret
+      MNEMONIC: ${{ secrets.MNEMONIC }}
     
     steps:
       - uses: actions/checkout@v2
@@ -27,12 +32,6 @@ jobs:
         run: yarn
       - name: Build
         run: yarn build
-      - name: set env variables
-        run: |
-          echo "NETWORK=dev" >> $GITHUB_ENV
-          echo "RMB_PROXY=true" >> $GITHUB_ENV
-          echo "STORE_SECRET=secret" >> $GITHUB_ENV
-          echo "MNEMONIC=${{ secrets.MNEMONIC }}" >> $GITHUB_ENV
       - name: Run test single vm
         id: singlevm
         continue-on-error: true

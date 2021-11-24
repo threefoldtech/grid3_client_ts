@@ -73,11 +73,6 @@ jobs:
         continue-on-error: true
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/zdb.ts
-      # - name: Run test name gateway
-      #   id: namegateway
-      #   continue-on-error: true
-      #   run: |
-      #     yarn run ts-node --project tsconfig-node.json scripts/name_gateway.ts
       - name: Cleanup - Delete all contracts
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/delete_all_contracts.ts

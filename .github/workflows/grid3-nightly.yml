@@ -4,8 +4,6 @@
 name: grid3-nightly
 
 on:
-  push:
-    branches: [ development_nightly ]
   schedule:
     - cron: "0 6 * * *"
   workflow_dispatch:

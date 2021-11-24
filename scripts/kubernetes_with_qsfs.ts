@@ -19,7 +19,7 @@ const qsfs = {
 
 // create network Object
 const n = new NetworkModel();
-n.name = "tuesNetwork";
+n.name = "k8sqsfsNetwork";
 n.ip_range = "10.238.0.0/16";
 
 // create k8s node Object
@@ -58,7 +58,7 @@ worker.planetary = true;
 
 // create k8s Object
 const k = new K8SModel();
-k.name = "testk8s";
+k.name = "testk8sqsfs";
 k.secret = "secret";
 k.network = n;
 k.masters = [master];

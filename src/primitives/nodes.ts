@@ -24,7 +24,7 @@ class FilterOptions {
 }
 
 class Nodes {
-    public farms: any;
+    public farmsWithPublicIPs: any;
     constructor(public graphqlURL: string, public proxyURL: string) {}
 
     async getNodeTwinId(node_id: number): Promise<number> {
@@ -95,7 +95,7 @@ class Nodes {
 
         return send("get", `${r}/farms`, "", {})
             .then(res => {
-                this.farms = res["data"]["farms"];
+                this.farmsWithPublicIPs = res["data"]["farms"];
                 return res["data"]["farms"];
             })
             .catch(err => {
@@ -103,12 +103,12 @@ class Nodes {
             });
     }
 
-    async farmsHasPublicIPs(url = "") {
-        if (!this.farms){
+    async farmsHavePublicIPs(url = "") {
+        if (!this.farmsWithPublicIPs){
             const f = await this.getFarms(url);
         }
 
-        const farms = JSON.parse(JSON.stringify(this.farms));
+        const farms = JSON.parse(JSON.stringify(this.farmsWithPublicIPs));
         return farms
             .filter(farm => {
                 return farm.publicIPs.length > 0;
@@ -181,7 +181,7 @@ class Nodes {
             (options.gateway && !hasDomain) ||
             (options.farmId && options.farmId !== node.farmId) ||
             (options.farmName && (await this.getFarmIdFromFarmName(options.farmName)) !== node.farmId) ||
-            (options.publicIPs && !(await this.farmsHasPublicIPs()).includes(node.farmId))
+            (options.publicIPs && !(await this.farmsHavePublicIPs()).includes(node.farmId))
         ) {
             return { valid: false };
         }
@@ -230,7 +230,7 @@ class Nodes {
                 if (ret.length > 0) {
                     return ret;
                 } else {
-                    throw new Error("Nodes: Can not find a valid node for these options");
+                    throw new Error(`Nodes: Can not find a valid node for these options ${JSON.stringify(options)}`);
                 }
             });
     }

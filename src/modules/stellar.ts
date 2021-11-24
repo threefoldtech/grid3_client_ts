@@ -13,6 +13,7 @@ import {
 import { GridClientConfig } from "../config";
 import { expose } from "../helpers/expose";
 import { appPath, BackendStorage, StorageUpdateAction } from "../storage/backend";
+import { validateInput } from "../helpers/validator";
 
 const server = new StellarSdk.Server("https://horizon.stellar.org");
 
@@ -50,6 +51,7 @@ class Stellar {
     }
 
     @expose
+    @validateInput
     async import(options: WalletImportModel) {
         const walletKeypair = StellarSdk.Keypair.fromSecret(options.secret);
         const walletPublicKey = walletKeypair.publicKey();
@@ -59,6 +61,7 @@ class Stellar {
     }
 
     @expose
+    @validateInput
     async get(options: WalletGetModel) {
         const secret = await this.getWalletSecret(options.name);
         const walletKeypair = StellarSdk.Keypair.fromSecret(secret);
@@ -66,6 +69,7 @@ class Stellar {
     }
 
     @expose
+    @validateInput
     async update(options: WalletImportModel) {
         if (!(await this.exist(options))) {
             throw Error(`Couldn't find a wallet with name ${options.name} to update`);
@@ -85,17 +89,20 @@ class Stellar {
     }
 
     @expose
+    @validateInput
     async exist(options: WalletGetModel) {
         return (await this.list()).includes(options.name);
     }
 
     @expose
+    @validateInput
     async list() {
         const [_, data] = await this._load();
         return Object.keys(data);
     }
 
     @expose
+    @validateInput
     async balance_by_name(options: WalletBalanceByNameModel) {
         const secret = await this.getWalletSecret(options.name);
         if (!secret) {
@@ -109,6 +116,7 @@ class Stellar {
     }
 
     @expose
+    @validateInput
     async balance_by_address(options: WalletBalanceByAddressModel) {
         const account = await server.loadAccount(options.address);
         const balances = [];
@@ -122,6 +130,7 @@ class Stellar {
     }
 
     @expose
+    @validateInput
     async transfer(options: WalletTransferModel) {
         const secret = await this.getWalletSecret(options.name);
         if (!secret) {
@@ -172,6 +181,7 @@ class Stellar {
     }
 
     @expose
+    @validateInput
     async delete(options: WalletDeleteModel) {
         const [path, data] = await this._load();
         if (!data[options.name]) {

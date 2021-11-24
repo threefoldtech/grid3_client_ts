@@ -7,6 +7,7 @@ import { WorkloadTypes } from "../zos/workload";
 import { ZdbBackend } from "../zos/qsfs";
 import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
+import { validateInput } from "../helpers/validator";
 
 class QSFSZdbsModule extends BaseModule {
     moduleName = "qsfs_zdbs";
@@ -45,6 +46,7 @@ class QSFSZdbsModule extends BaseModule {
     }
 
     @expose
+    @validateInput
     async deploy(options: QSFSZDBSModel) {
         if (await this.exists(options.name)) {
             throw Error(`Another QSFS zdbs deployment with the same name ${options.name} is already exist`);
@@ -56,16 +58,19 @@ class QSFSZdbsModule extends BaseModule {
     }
 
     @expose
+    @validateInput
     async list() {
         return await this._list();
     }
 
     @expose
+    @validateInput
     async get(options: QSFSZDBGetModel) {
         return await this._get(options.name);
     }
 
     @expose
+    @validateInput
     async delete(options: QSFSZDBDeleteModel) {
         return await this._delete(options.name);
     }

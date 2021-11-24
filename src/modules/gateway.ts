@@ -13,6 +13,7 @@ import { GatewayFQDNProxy, GatewayResult } from "../zos/gateway";
 
 import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
+import { validateInput } from "../helpers/validator";
 
 class GWModule extends BaseModule {
     moduleName = "gateways";
@@ -25,6 +26,7 @@ class GWModule extends BaseModule {
     }
 
     @expose
+    @validateInput
     async deploy_fqdn(options: GatewayFQDNModel) {
         if (await this.exists(options.name)) {
             throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
@@ -42,6 +44,7 @@ class GWModule extends BaseModule {
     }
 
     @expose
+    @validateInput
     async deploy_name(options: GatewayNameModel) {
         if (await this.exists(options.name)) {
             throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
@@ -58,21 +61,25 @@ class GWModule extends BaseModule {
     }
 
     @expose
+    @validateInput
     async get_fqdn(options: GatewayFQDNGetModel) {
         return await this._get(options.name);
     }
 
     @expose
+    @validateInput
     async delete_fqdn(options: GatewayFQDNDeleteModel) {
         return await this._delete(options.name);
     }
 
     @expose
+    @validateInput
     async get_name(options: GatewayNameGetModel) {
         return await this._get(options.name);
     }
 
     @expose
+    @validateInput
     async delete_name(options: GatewayNameDeleteModel) {
         return await this._delete(options.name);
     }

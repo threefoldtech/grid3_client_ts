@@ -1,5 +1,5 @@
 import { default as PrivateIp } from "private-ip";
-import { IsBoolean, IsOptional, IsString, Min } from "class-validator";
+import { IsBoolean, IsInt, IsOptional, IsString, Min } from "class-validator";
 import { Expose, plainToClass } from "class-transformer";
 
 import { validateObject } from "../helpers/validator";
@@ -17,7 +17,7 @@ class FilterOptions {
     @Expose() @IsOptional() @IsBoolean() accessNodeV4?: boolean;
     @Expose() @IsOptional() @IsBoolean() accessNodeV6?: boolean;
     @Expose() @IsOptional() @IsBoolean() gateway?: boolean;
-    @Expose() @IsOptional() @Min(1) farmId?: number;
+    @Expose() @IsOptional() @IsInt() @Min(1) farmId?: number;
     @Expose() @IsOptional() @IsString() farmName?: string;
     @Expose() @IsOptional() @IsString() country?: string;
     @Expose() @IsOptional() @IsString() city?: string;

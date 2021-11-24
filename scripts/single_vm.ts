@@ -44,26 +44,43 @@ async function main() {
     const grid3 = await getClient();
 
     // deploy vms
-    grid3.machines.deploy(vms)
-        .then(res => {
-            log(res);
-            grid3.machines.getObj(vms.name)
-                .then(res_l => {
-                    log(res_l);
-                })
-                .catch(err => {
-                    console.log(err);
-                    process.exit(1);
-                })
-                .finally(() => {
-                    grid3.disconnect();
-                })
-        })
-        .catch(err => {
-            grid3.disconnect();
-            console.log(err);
-            process.exit(1);
-        })
+    // grid3.machines.deploy(vms)
+    //     .then(res => {
+    //         log(res);
+    //         grid3.machines.getObj(vms.name)
+    //             .then(res_l => {
+    //                 log(res_l);
+    //             })
+    //             .catch(err => {
+    //                 console.log(err);
+    //                 process.exit(1);
+    //             })
+    //             .finally(() => {
+    //                 grid3.disconnect();
+    //             })
+    //     })
+    //     .catch(err => {
+    //         grid3.disconnect();
+    //         console.log(err);
+    //         process.exit(1);
+    //     })
+
+    // deploy vms
+    try {
+        const res = await grid3.machines.deploy(vms);
+        log(res);
+
+        // get the deployment
+        const l = await grid3.machines.getObj(vms.name + "x");
+        log(l);
+    }
+    catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+    finally {
+        grid3.disconnect();
+    }
 
     // // delete
     // const d = await grid3.machines.delete({ name: vms.name });

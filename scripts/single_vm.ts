@@ -71,7 +71,7 @@ async function main() {
         log(res);
 
         // get the deployment
-        const l = await grid3.machines.getObj(vms.name + "x");
+        const l = await grid3.machines.getObj("x");
         log(l);
     }
     catch (err) {

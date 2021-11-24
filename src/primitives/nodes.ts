@@ -24,7 +24,6 @@ class FilterOptions {
 }
 
 class Nodes {
-    public farmsWithPublicIPs: any;
     constructor(public graphqlURL: string, public proxyURL: string) {}
 
     async getNodeTwinId(node_id: number): Promise<number> {
@@ -95,7 +94,6 @@ class Nodes {
 
         return send("get", `${r}/farms`, "", {})
             .then(res => {
-                this.farmsWithPublicIPs = res["data"]["farms"];
                 return res["data"]["farms"];
             })
             .catch(err => {
@@ -103,12 +101,9 @@ class Nodes {
             });
     }
 
-    async farmsHavePublicIPs(url = "") {
-        if (!this.farmsWithPublicIPs) {
-            const f = await this.getFarms(url);
-        }
-
-        const farms = JSON.parse(JSON.stringify(this.farmsWithPublicIPs));
+    async getFarmsWithPublicIPs(url = "") {
+        const f = await this.getFarms(url);
+        const farms = JSON.parse(JSON.stringify(f));
         return farms
             .filter(farm => {
                 return farm.publicIPs.length > 0;
@@ -168,6 +163,7 @@ class Nodes {
     private async checkNodeOptions(
         node: Record<string, unknown>,
         options: FilterOptions,
+        farmsHavePublicIPs: number[] = [],
         url = "",
     ): Promise<Record<string, unknown>> {
         const hasDomain = node.publicConfig["domain"] ? true : false;
@@ -181,7 +177,7 @@ class Nodes {
             (options.gateway && !hasDomain) ||
             (options.farmId && options.farmId !== node.farmId) ||
             (options.farmName && (await this.getFarmIdFromFarmName(options.farmName)) !== node.farmId) ||
-            (options.publicIPs && !(await this.farmsHavePublicIPs()).includes(node.farmId))
+            (options.publicIPs && !farmsHavePublicIPs.includes(+node.farmId))
         ) {
             return { valid: false };
         }
@@ -219,10 +215,10 @@ class Nodes {
     async filterNodes(options: FilterOptions, url = ""): Promise<Record<string, unknown>[]> {
         options = plainToClass(FilterOptions, options, { excludeExtraneousValues: true });
         await validateObject(options);
-        await this.getFarms();
+        const farmsHavepublicIPs = await this.getFarmsWithPublicIPs(url);
         return await this.getNodes(url)
             .then(nodes => {
-                const promises = nodes.map(n => this.checkNodeOptions(n, options));
+                const promises = nodes.map(n => this.checkNodeOptions(n, options, farmsHavepublicIPs));
                 return Promise.all(promises);
             })
             .then(nodes => {

@@ -3,9 +3,7 @@
 
 name: grid3-nightly
 
-on:  
-  push:
-    branches: [ development_nightly ]
+on:
   schedule:
     - cron: "0 6 * * *"
 

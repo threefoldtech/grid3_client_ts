@@ -20,6 +20,7 @@ if (network === undefined || mnemonic === undefined || rmb_proxy === undefined |
     config = JSON.parse(fs.readFileSync(path.join(__dirname, "./config.json"), "utf-8"));
 }
 else {
+    console.log("Credentials loaded from env variables...")
     config = {
         "network": network,
         "mnemonic": mnemonic,

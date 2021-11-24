@@ -7,8 +7,27 @@ import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import { MessageBusClient } from "ts-rmb-redis-client";
 import { BackendStorageType } from "../src/storage/backend";
 import { KeypairType } from "../src/clients/tf-grid/client";
+import { env } from 'process';
 
-const config = JSON.parse(fs.readFileSync(path.join(__dirname, "./config.json"), "utf-8"));
+let network = env.NETWORK
+let mnemonic = env.MNEMONIC
+let rmb_proxy = env.RMB_PROXY
+let storeSecret = env.STORE_SECRET
+let config;
+
+if (network === undefined || mnemonic === undefined || rmb_proxy === undefined || storeSecret === undefined) {
+    console.log("Credentials not all found in env variables. Loading all credentials from default config.json...")
+    config = JSON.parse(fs.readFileSync(path.join(__dirname, "./config.json"), "utf-8"));
+}
+else {
+    console.log("Credentials loaded from env variables...")
+    config = {
+        "network": network,
+        "mnemonic": mnemonic,
+        "rmb_proxy": rmb_proxy,
+        "storeSecret": storeSecret
+    }
+}
 
 async function getClient(): Promise<GridClient> {
     let rmb: MessageBusClientInterface;

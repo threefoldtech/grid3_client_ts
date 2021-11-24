@@ -28,7 +28,8 @@ async function main() {
 
         log("filterNodes");
         const x = await nodes.filterNodes({
-            country: "BE",
+            country: "Belgium",
+            publicIPs: true,
             cru: 20,
             sru: 50,
         });

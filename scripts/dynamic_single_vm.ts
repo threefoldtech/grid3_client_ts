@@ -12,25 +12,31 @@ async function main() {
 
     // create network Object
     const n = new NetworkModel();
-    n.name = "wedtest";
+    n.name = "dynamictest";
     n.ip_range = "10.249.0.0/16";
 
     // create disk Object
     const disk = new DiskModel();
-    disk.name = "wedDisk";
+    disk.name = "dynamicDisk";
     disk.size = 8;
     disk.mountpoint = "/testdisk";
 
     const server1_options: FilterOptions = {
-        cru: 20,
-        mru: 100, // GB
-        country: "BE",
+        cru: 1,
+        mru: 2, // GB
+        country: "Belgium",
     };
 
     // create vm node Object
     const vm = new MachineModel();
     vm.name = "testvm";
-    vm.node_id = +(await nodes.filterNodes(server1_options))[0].nodeId; // TODO: allow random choise
+    try {
+        vm.node_id = +(await nodes.filterNodes(server1_options))[0].nodeId; // TODO: allow random choise
+
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
     vm.disks = [disk];
     vm.public_ip = false;
     vm.planetary = true;
@@ -46,25 +52,33 @@ async function main() {
 
     // create VMs Object
     const vms = new MachinesModel();
-    vms.name = "newVMS";
+    vms.name = "dynamicVMS";
     vms.network = n;
     vms.machines = [vm];
     vms.metadata = "{'testVMs': true}";
     vms.description = "test deploying VMs via ts grid3 client";
 
     // deploy vms
-    const res = await grid3.machines.deploy(vms);
-    log(res);
+    try {
+        const res = await grid3.machines.deploy(vms);
+        log(res);
 
-    // get the deployment
-    const l = await grid3.machines.getObj(vms.name);
-    log(l);
+        // get the deployment
+        const l = await grid3.machines.getObj(vms.name);
+        log(l);
 
-    // // delete
-    // const d = await grid3.machines.delete({ name: vms.name });
-    // log(d);
+        // // delete
+        // const d = await grid3.machines.delete({ name: vms.name });
+        // log(d);
+    }
+    catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+    finally {
+        grid3.disconnect();
+    }
 
-    grid3.disconnect();
 }
 
 main();

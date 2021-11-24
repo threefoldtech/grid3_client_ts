@@ -104,7 +104,7 @@ class Nodes {
     }
 
     async farmsHavePublicIPs(url = "") {
-        if (!this.farmsWithPublicIPs){
+        if (!this.farmsWithPublicIPs) {
             const f = await this.getFarms(url);
         }
 

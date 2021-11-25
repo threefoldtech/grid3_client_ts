@@ -319,7 +319,7 @@ class BaseModule {
                 return contracts;
             }
         }
-        throw Error(`instance with name ${name} is not found`);
+        throw Error(`Instance with name ${name} is not found`);
     }
 
     async _delete(name: string) {

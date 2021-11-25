@@ -84,7 +84,7 @@ class Stellar {
             const oldSecret = options.secret;
             options.secret = secret;
             await this.import(options);
-            throw Error(`Couldn't import wallet with secret ${oldSecret} due to: ${e}`);
+            throw Error(`Couldn't import wallet with the secret ${oldSecret} due to: ${e}`);
         }
     }
 
@@ -106,7 +106,7 @@ class Stellar {
     async balance_by_name(options: WalletBalanceByNameModel) {
         const secret = await this.getWalletSecret(options.name);
         if (!secret) {
-            throw Error(`could not find a wallet with name ${options.name}`);
+            throw Error(`Couldn't find a wallet with name ${options.name}`);
         }
         const walletKeypair = StellarSdk.Keypair.fromSecret(secret);
         const walletPublicKey = walletKeypair.publicKey();
@@ -134,7 +134,7 @@ class Stellar {
     async transfer(options: WalletTransferModel) {
         const secret = await this.getWalletSecret(options.name);
         if (!secret) {
-            throw Error(`could not find a wallet with name ${options.name}`);
+            throw Error(`Couldn't find a wallet with name ${options.name}`);
         }
         const sourceKeypair = StellarSdk.Keypair.fromSecret(secret);
         const sourcePublicKey = sourceKeypair.publicKey();

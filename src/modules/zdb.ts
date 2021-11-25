@@ -39,7 +39,7 @@ class ZdbsModule extends BaseModule {
     @validateInput
     async deploy(options: ZDBSModel) {
         if (await this.exists(options.name)) {
-            throw Error(`Another zdb deployment with the same name ${options.name} is already exist`);
+            throw Error(`Another zdb deployment with the same name ${options.name} already exists`);
         }
         const twinDeployments = this._createDeployment(options);
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);

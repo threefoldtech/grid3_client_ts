@@ -34,7 +34,7 @@ class TwinDeploymentHandler {
     async deleteNameContract(name: string): Promise<void> {
         const c = await this.tfclient.contracts.getNameContract(name);
         if (!c) {
-            events.emit("logs", `Couldn't find a name contract with name ${name} to delete it`);
+            events.emit("logs", `Couldn't find a name contract with name ${name} to delete`);
         }
         events.emit("logs", `Deleting name contract with name: ${name} and id: ${c}`);
         await this.delete(c);
@@ -332,7 +332,7 @@ class TwinDeploymentHandler {
                     for (const workload of twinDeployment.deployment.workloads) {
                         // check if the deployment need name contract
                         if (workload.type === WorkloadTypes.gatewaynameproxy) {
-                            events.emit("logs", `Check the name contract for workload with name: ${workload.name}`);
+                            events.emit("logs", `Check the name contract for the workload with name: ${workload.name}`);
                             await this.createNameContract(workload.data["name"]);
                         }
                     }
@@ -362,7 +362,7 @@ class TwinDeploymentHandler {
                     for (const workload of twinDeployment.deployment.workloads) {
                         // check if the deployment need name contract
                         if (workload.type === WorkloadTypes.gatewaynameproxy) {
-                            events.emit("logs", `Check the name contract for workload with name: ${workload.name}`);
+                            events.emit("logs", `Check the name contract for the workload with name: ${workload.name}`);
                             await this.createNameContract(workload.data["name"]);
                         }
                     }
@@ -383,7 +383,7 @@ class TwinDeploymentHandler {
                     for (const workload of twinDeployment.deployment.workloads) {
                         // check if the deployment needs to delete a name contract
                         if (workload.type === WorkloadTypes.gatewaynameproxy) {
-                            events.emit("logs", `Check the name contract for workload with name: ${workload.name}`);
+                            events.emit("logs", `Check the name contract for the workload with name: ${workload.name}`);
                             await this.deleteNameContract(workload.data["name"]);
                         }
                     }

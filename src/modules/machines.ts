@@ -59,7 +59,7 @@ class MachineModule extends BaseModule {
     @validateInput
     async deploy(options: MachinesModel) {
         if (await this.exists(options.name)) {
-            throw Error(`Another machine deployment with the same name ${options.name} is already exist`);
+            throw Error(`Another machine deployment with the same name ${options.name} already exists`);
         }
 
         const [twinDeployments, _, wireguardConfig] = await this._createDeloyment(options);
@@ -97,7 +97,7 @@ class MachineModule extends BaseModule {
     @validateInput
     async update(options: MachinesModel) {
         if (!(await this.exists(options.name))) {
-            throw Error(`There is no machine with name: ${options.name}`);
+            throw Error(`There is no machine with the name: ${options.name}`);
         }
 
         const oldDeployments = await this._get(options.name);
@@ -116,7 +116,7 @@ class MachineModule extends BaseModule {
     @validateInput
     async add_machine(options: AddMachineModel) {
         if (!(await this.exists(options.deployment_name))) {
-            throw Error(`There is no machines deployment with name: ${options.deployment_name}`);
+            throw Error(`There are no machine deployments with the name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
         const workload = this._getWorkloadsByTypes(oldDeployments, [WorkloadTypes.zmachine])[0];
@@ -150,7 +150,7 @@ class MachineModule extends BaseModule {
     @validateInput
     async delete_machine(options: DeleteMachineModel) {
         if (!(await this.exists(options.deployment_name))) {
-            throw Error(`There is no machines deployment with name: ${options.deployment_name}`);
+            throw Error(`There are no machine deployments with the name: ${options.deployment_name}`);
         }
         return await this._deleteInstance(this.vm, options.deployment_name, options.name);
     }

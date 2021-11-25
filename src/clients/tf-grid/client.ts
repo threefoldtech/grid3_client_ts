@@ -23,7 +23,7 @@ class TFClient {
         public keypairType: KeypairType = KeypairType.sr25519,
     ) {
         if (!storeSecret) {
-            throw new Error("Can not create TFClient without store secret");
+            throw new Error("Couldn't create TFClient without store secret");
         }
         const key = `${url}:${mnemonic}:${keypairType}`;
         if (Object.keys(TFClient.clients).includes(key)) {

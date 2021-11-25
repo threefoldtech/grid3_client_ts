@@ -42,10 +42,10 @@ class Network {
 
     constructor(public name: string, public ipRange: string, public config: GridClientConfig) {
         if (Addr(ipRange).prefix !== 16) {
-            throw Error("Network ip_range should be with prefix 16");
+            throw Error("Network ip_range should have a prefix 16");
         }
         if (!this.isPrivateIP(ipRange)) {
-            throw Error("Network ip_range should be private range");
+            throw Error("Network ip_range should be a private range");
         }
         this.backendStorage = new BackendStorage(
             config.backendStorageType,
@@ -78,7 +78,7 @@ class Network {
         } else if (accessNodes[node_id]["ipv6"]) {
             endpoint = `[${accessNodes[node_id]["ipv6"].split("/")[0]}]:${nodeWGListeningPort}`;
         } else {
-            throw Error(`Couldn't find ipv4 or ipv6 in the node ${node_id} public config`);
+            throw Error(`Couldn't find ipv4 or ipv6 in the public config of node ${node_id} `);
         }
 
         const nodesWGPubkey = await this.getNodeWGPublicKey(node_id);
@@ -182,7 +182,7 @@ class Network {
         events.emit("logs", `Loading network ${this.name}`);
         const network = await this.getNetwork();
         if (network["ip_range"] !== this.ipRange) {
-            throw Error(`The same network name ${this.name} with different ip range is already exist`);
+            throw Error(`The same network name ${this.name} with a different ip range already exists`);
         }
         for (const node of network["nodes"]) {
             const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);

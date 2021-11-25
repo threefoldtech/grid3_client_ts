@@ -24,7 +24,7 @@ class FilterOptions {
 }
 
 class Nodes {
-    constructor(public graphqlURL: string, public proxyURL: string) {}
+    constructor(public graphqlURL: string, public proxyURL: string) { }
 
     async getNodeTwinId(node_id: number): Promise<number> {
         const headers = { "Content-Type": "application/json" };
@@ -131,7 +131,7 @@ class Nodes {
         return send("get", `${r}/nodes?farm_id=${farmID}`, "", {})
             .then(res => {
                 if (res) return res;
-                else throw new Error(`The farm with id ${farmID}: have not any nodes`);
+                else throw new Error(`The farm with id ${farmID}: doesn't have any nodes`);
             })
             .catch(err => {
                 throw err;
@@ -193,7 +193,7 @@ class Nodes {
                 (options.sru && this._g2b(options.sru) > nodeCapacity.mru) ||
                 (options.hru && this._g2b(options.hru) > nodeCapacity.hru)
             ) {
-                events.emit("logs", `Nodes: Node ${node.nodeId} has not enough capacity`);
+                events.emit("logs", `Nodes: Node ${node.nodeId} doesn't have enough capacity`);
                 return { valid: false };
             }
         }
@@ -226,7 +226,7 @@ class Nodes {
                 if (ret.length > 0) {
                     return ret;
                 } else {
-                    throw new Error(`Nodes: Can not find a valid node for these options ${JSON.stringify(options)}`);
+                    throw new Error(`Nodes: Couldn't find a valid node for these options ${JSON.stringify(options)}`);
                 }
             });
     }

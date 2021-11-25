@@ -125,11 +125,11 @@ class K8sModule extends BaseModule {
     @validateInput
     async deploy(options: K8SModel) {
         if (options.masters.length > 1) {
-            throw Error("Multi master is not supported");
+            throw Error("Multiple masters are not supported");
         }
 
         if (await this.exists(options.name)) {
-            throw Error(`Another k8s deployment with the same name ${options.name} is already exist`);
+            throw Error(`Another k8s deployment with the same name ${options.name} already exists`);
         }
 
         const [deployments, _, wireguardConfig] = await this._createDeployment(options);
@@ -174,10 +174,10 @@ class K8sModule extends BaseModule {
     @validateInput
     async update(options: K8SModel) {
         if (!(await this.exists(options.name))) {
-            throw Error(`There is no k8s deployment with name: ${options.name}`);
+            throw Error(`There is no k8s deployment with the name: ${options.name}`);
         }
         if (options.masters.length > 1) {
-            throw Error("Multi master is not supported");
+            throw Error("Multiple masters are not supported");
         }
         const oldDeployments = await this._get(options.name);
         for (const oldDeployment of oldDeployments) {
@@ -208,7 +208,7 @@ class K8sModule extends BaseModule {
     @validateInput
     async add_worker(options: AddWorkerModel) {
         if (!(await this.exists(options.deployment_name))) {
-            throw Error(`There is no k8s deployment with name: ${options.deployment_name}`);
+            throw Error(`There is no k8s deployment with the name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
         const masterWorkloads = this._getMastersWorkload(oldDeployments);
@@ -246,7 +246,7 @@ class K8sModule extends BaseModule {
     @validateInput
     async delete_worker(options: DeleteWorkerModel) {
         if (!(await this.exists(options.deployment_name))) {
-            throw Error(`There is no k8s deployment with name: ${options.deployment_name}`);
+            throw Error(`There is no k8s deployment with the name: ${options.deployment_name}`);
         }
         return await this._deleteInstance(this.kubernetes, options.deployment_name, options.name);
     }

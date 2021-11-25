@@ -29,7 +29,7 @@ class GWModule extends BaseModule {
     @validateInput
     async deploy_fqdn(options: GatewayFQDNModel) {
         if (await this.exists(options.name)) {
-            throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
+            throw Error(`Another gateway deployment with the same name ${options.name} already exists`);
         }
         const twinDeployments = await this.gateway.create(
             options.name,
@@ -47,7 +47,7 @@ class GWModule extends BaseModule {
     @validateInput
     async deploy_name(options: GatewayNameModel) {
         if (await this.exists(options.name)) {
-            throw Error(`Another gateway deployment with the same name ${options.name} is already exist`);
+            throw Error(`Another gateway deployment with the same name ${options.name} already exists`);
         }
         const twinDeployments = await this.gateway.create(
             options.name,

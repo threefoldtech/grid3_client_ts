@@ -49,7 +49,7 @@ class QSFSZdbsModule extends BaseModule {
     @validateInput
     async deploy(options: QSFSZDBSModel) {
         if (await this.exists(options.name)) {
-            throw Error(`Another QSFS zdbs deployment with the same name ${options.name} is already exist`);
+            throw Error(`Another QSFS zdbs deployment with the same name ${options.name} already exists`);
         }
         const twinDeployments = this._createDeployment(options);
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);

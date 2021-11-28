@@ -24,16 +24,21 @@ class FilterOptions {
 }
 
 class Nodes {
-    constructor(public graphqlURL: string, public proxyURL: string) { }
+    constructor(public graphqlURL: string, public proxyURL: string) {}
 
     async getNodeTwinId(node_id: number): Promise<number> {
         const headers = { "Content-Type": "application/json" };
-        const body = `{
-            nodes(where: { nodeId_eq: ${node_id} }) {
+        const body = `query getNodeTwinId($nodeId: Int!){
+            nodes(where: { nodeId_eq: $nodeId }) {
             twinId
             }
         }`;
-        const response = await send("post", this.graphqlURL, JSON.stringify({ query: body }), headers);
+        const response = await send(
+            "post",
+            this.graphqlURL,
+            JSON.stringify({ query: body, variables: { nodeId: node_id } }),
+            headers,
+        );
         if (response["data"]["nodes"]["length"] === 0) {
             throw Error(`Couldn't find a node with id: ${node_id}`);
         }
@@ -42,8 +47,11 @@ class Nodes {
 
     async getAccessNodes(): Promise<Record<string, unknown>> {
         const headers = { "Content-Type": "application/json" };
-        const body = `{
-        nodes {
+        const countBody = `query { nodes: nodesConnection { count: totalCount } }`;
+        const countResponse = await send("post", this.graphqlURL, JSON.stringify({ query: countBody }), headers);
+        const nodesCount = countResponse["data"]["nodes"]["count"];
+        const body = `query getNodes($count: Int!) {
+            nodes(limit: $count) {
           nodeId
           publicConfig{
               ipv4
@@ -52,7 +60,12 @@ class Nodes {
           }
         }
       }`;
-        const nodeResponse = await send("post", this.graphqlURL, JSON.stringify({ query: body }), headers);
+        const nodeResponse = await send(
+            "post",
+            this.graphqlURL,
+            JSON.stringify({ query: body, variables: { count: nodesCount } }),
+            headers,
+        );
         const nodes = nodeResponse["data"]["nodes"];
         const accessNodes = {};
         for (const node of nodes as Record<string, unknown>[]) {
@@ -65,7 +78,7 @@ class Nodes {
                 accessNodes[+node.nodeId] = { ipv4: ipv4, ipv6: ipv6 };
             }
         }
-        if (accessNodes === {}) {
+        if (Object.keys(accessNodes).length === 0) {
             throw Error("Couldn't find any node with public config");
         }
         console.log(accessNodes);
@@ -101,16 +114,18 @@ class Nodes {
             });
     }
 
-    async getFarmsWithPublicIPs(url = "") {
-        const f = await this.getFarms(url);
-        const farms = JSON.parse(JSON.stringify(f));
+    async CheckFarmHasPublicIPs(farmId: number, farms: Record<string, unknown>[] = null, url = ""): Promise<boolean> {
+        if (!farms) {
+            farms = await this.getFarms(url);
+        }
         return farms
             .filter(farm => {
-                return farm.publicIPs.length > 0;
+                return farm["publicIPs"]["length"] > 0;
             })
             .map(farm => {
                 return farm.farmId;
-            });
+            })
+            .includes(farmId);
     }
 
     async getNodes(url = "") {
@@ -163,8 +178,7 @@ class Nodes {
     private async checkNodeOptions(
         node: Record<string, unknown>,
         options: FilterOptions,
-        farmsHavePublicIPs: number[] = [],
-        url = "",
+        farms: Record<string, unknown>[],
     ): Promise<Record<string, unknown>> {
         const hasDomain = node.publicConfig["domain"] ? true : false;
         const hasPublicIpv4 = node.publicConfig["ipv4"] ? true : false;
@@ -176,8 +190,8 @@ class Nodes {
             (options.accessNodeV6 && !hasPublicIpv6) ||
             (options.gateway && !hasDomain) ||
             (options.farmId && options.farmId !== node.farmId) ||
-            (options.farmName && (await this.getFarmIdFromFarmName(options.farmName)) !== node.farmId) ||
-            (options.publicIPs && !farmsHavePublicIPs.includes(+node.farmId))
+            (options.farmName && (await this.getFarmIdFromFarmName(options.farmName, farms)) !== +node.farmId) ||
+            (options.publicIPs && !(await this.CheckFarmHasPublicIPs(+node.farmId, farms)))
         ) {
             return { valid: false };
         }
@@ -215,10 +229,10 @@ class Nodes {
     async filterNodes(options: FilterOptions, url = ""): Promise<Record<string, unknown>[]> {
         options = plainToClass(FilterOptions, options, { excludeExtraneousValues: true });
         await validateObject(options);
-        const farmsHavepublicIPs = await this.getFarmsWithPublicIPs(url);
+        const farms = await this.getFarms(url);
         return await this.getNodes(url)
             .then(nodes => {
-                const promises = nodes.map(n => this.checkNodeOptions(n, options, farmsHavepublicIPs));
+                const promises = nodes.map(n => this.checkNodeOptions(n, options, farms));
                 return Promise.all(promises);
             })
             .then(nodes => {
@@ -237,18 +251,15 @@ class Nodes {
      * @param  {string} name
      * @returns Promise<number>
      */
-    async getFarmIdFromFarmName(name: string): Promise<number> {
-        const headers = { "Content-Type": "application/json" };
-        const body = `{
-            farms(where: {name_eq: "${name}"}) {
-              farmId
-            }
-          }`;
-        const response = await send("post", this.graphqlURL, JSON.stringify({ query: body }), headers);
-        if (response["data"]["farms"]["length"] === 0) {
-            return 0;
+    async getFarmIdFromFarmName(name: string, farms: Record<string, unknown>[] = null, url = ""): Promise<number> {
+        if (!farms) {
+            farms = await this.getFarms(url);
         }
-        return response["data"]["farms"][0]["farmId"];
+        const filteredFarms = farms.filter(f => String(f.name).toLowerCase() === name.toLowerCase());
+        if (filteredFarms.length === 0) {
+            return 0; // not found
+        }
+        return filteredFarms[0]["farmId"] as number;
     }
 }
 

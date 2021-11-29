@@ -17,6 +17,7 @@
         "outDir": "./dist/es6",
         "esModuleInterop": true,
         "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "baseUrl": "."
     },

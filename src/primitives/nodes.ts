@@ -74,8 +74,9 @@ class Nodes {
             }
             const ipv4 = node.publicConfig["ipv4"];
             const ipv6 = node.publicConfig["ipv4"];
+            const domain = node.publicConfig["domain"];
             if (PrivateIp(ipv4.split("/")[0]) === false || PrivateIp(ipv6.split("/")[0]) === false) {
-                accessNodes[+node.nodeId] = { ipv4: ipv4, ipv6: ipv6 };
+                accessNodes[+node.nodeId] = { ipv4: ipv4, ipv6: ipv6, domain: domain };
             }
         }
         if (Object.keys(accessNodes).length === 0) {

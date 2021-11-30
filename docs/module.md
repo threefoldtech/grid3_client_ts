@@ -560,3 +560,23 @@ payload: `{"name": "<wallet name>"}`
    cmd: `twinserver.kvstore.remove`
 
    payload: `'{"key": "<your key>"}'`
+
+### Balance
+
+- **Get My Balance**
+
+   cmd: `twinserver.balance.getMyBalance`
+
+   payload: `""`
+
+- **Get**
+
+   cmd: `twinserver.balance.get`
+
+   payload: `'{"address": "<Substrate account address>"}'`
+
+- **Transfer**
+
+   cmd: `twinserver.balance.transfer`
+
+   payload: `'{"address": "<Substrate account address>", "amount": 1}'`

@@ -7,5 +7,6 @@ export * from "./qsfs_zdbs";
 export * from "./contracts";
 export * from "./twins";
 export * from "./kvstore";
+export * from "./balance";
 export * from "./stellar";
 export * from "./zos";

@@ -2,6 +2,7 @@ import { default as Client } from "tfgrid-api-client";
 import { Contracts } from "./contracts";
 import { Twins } from "./twins";
 import { KVStore } from "./kvstore";
+import { Balance } from "./balance";
 import { ErrorsMap } from "./errors";
 
 enum KeypairType {
@@ -15,6 +16,7 @@ class TFClient {
     contracts: Contracts;
     twins: Twins;
     kvStore: KVStore;
+    balance: Balance;
 
     constructor(
         public url: string,
@@ -33,6 +35,7 @@ class TFClient {
         this.contracts = new Contracts(this);
         this.twins = new Twins(this);
         this.kvStore = new KVStore(this);
+        this.balance = new Balance(this);
         TFClient.clients[key] = this;
     }
     async connect(): Promise<void> {

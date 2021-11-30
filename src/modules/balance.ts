@@ -3,6 +3,7 @@ import { BalanceGetModel, BalanceTransferModel } from "./models";
 import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
 import { validateInput } from "../helpers/validator";
+import { checkBalance } from "./utils";
 
 class Balance {
     client: TFClient;
@@ -16,6 +17,7 @@ class Balance {
     }
     @expose
     @validateInput
+    @checkBalance
     async transfer(options: BalanceTransferModel) {
         return await this.client.balance.transfer(options.address, options.amount);
     }

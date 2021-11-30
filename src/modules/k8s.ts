@@ -9,6 +9,7 @@ import { Network } from "../primitives/network";
 import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
 import { validateInput } from "../helpers/validator";
+import { checkBalance } from "./utils";
 
 class K8sModule extends BaseModule {
     moduleName = "kubernetes";
@@ -123,6 +124,7 @@ class K8sModule extends BaseModule {
 
     @expose
     @validateInput
+    @checkBalance
     async deploy(options: K8SModel) {
         if (options.masters.length > 1) {
             throw Error("Multiple masters are not supported");
@@ -166,12 +168,14 @@ class K8sModule extends BaseModule {
 
     @expose
     @validateInput
+    @checkBalance
     async delete(options: K8SDeleteModel) {
         return await this._delete(options.name);
     }
 
     @expose
     @validateInput
+    @checkBalance
     async update(options: K8SModel) {
         if (!(await this.exists(options.name))) {
             throw Error(`There is no k8s deployment with the name: ${options.name}`);
@@ -206,6 +210,7 @@ class K8sModule extends BaseModule {
 
     @expose
     @validateInput
+    @checkBalance
     async add_worker(options: AddWorkerModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no k8s deployment with the name: ${options.deployment_name}`);
@@ -244,6 +249,7 @@ class K8sModule extends BaseModule {
 
     @expose
     @validateInput
+    @checkBalance
     async delete_worker(options: DeleteWorkerModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no k8s deployment with the name: ${options.deployment_name}`);

@@ -17,6 +17,7 @@ import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
 import { Nodes } from "../primitives/nodes";
 import { validateInput } from "../helpers/validator";
+import { checkBalance } from "./utils";
 
 class Contracts {
     client: TFClient;
@@ -28,11 +29,13 @@ class Contracts {
 
     @expose
     @validateInput
+    @checkBalance
     async create_node(options: NodeContractCreateModel) {
         return await this.client.contracts.createNode(options.node_id, options.hash, options.data, options.public_ip);
     }
     @expose
     @validateInput
+    @checkBalance
     async create_name(options: NameContractCreateModel) {
         return await this.client.contracts.createName(options.name);
     }
@@ -61,11 +64,13 @@ class Contracts {
 
     @expose
     @validateInput
+    @checkBalance
     async update_node(options: NodeContractUpdateModel) {
         return await this.client.contracts.updateNode(options.id, options.data, options.hash);
     }
     @expose
     @validateInput
+    @checkBalance
     async cancel(options: ContractCancelModel) {
         return await this.client.contracts.cancel(options.id);
     }
@@ -93,6 +98,7 @@ class Contracts {
      */
     @expose
     @validateInput
+    @checkBalance
     async cancelMyContracts(): Promise<Record<string, number>[]> {
         return await this.client.contracts.cancelMyContracts(this.config.graphqlURL);
     }

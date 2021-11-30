@@ -259,6 +259,15 @@ class KVStoreRemoveModel {
     @Expose() @IsString() @IsNotEmpty() key: string;
 }
 
+class BalanceGetModel {
+    @Expose() @IsString() @IsNotEmpty() address: string;
+}
+
+class BalanceTransferModel {
+    @Expose() @IsString() @IsNotEmpty() address: string;
+    @Expose() @Min(0.0000001) amount: number;
+}
+
 class WalletImportModel {
     @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
     @Expose() @IsString() @IsNotEmpty() secret: string;
@@ -331,6 +340,8 @@ export {
     KVStoreSetModel,
     KVStoreGetModel,
     KVStoreRemoveModel,
+    BalanceGetModel,
+    BalanceTransferModel,
     WalletImportModel,
     WalletBalanceByNameModel,
     WalletBalanceByAddressModel,

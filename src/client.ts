@@ -19,6 +19,7 @@ class GridClient {
     contracts: modules.contracts;
     twins: modules.twins;
     kvstore: modules.kvstore;
+    balance: modules.balance;
     twinId: number;
 
     constructor(

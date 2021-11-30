@@ -1,0 +1,30 @@
+import { TFClient } from "../clients/tf-grid/client";
+import { BalanceGetModel, BalanceTransferModel } from "./models";
+import { expose } from "../helpers/expose";
+import { GridClientConfig } from "../config";
+import { validateInput } from "../helpers/validator";
+
+class Balance {
+    client: TFClient;
+    constructor(config: GridClientConfig) {
+        this.client = new TFClient(config.substrateURL, config.mnemonic, config.storeSecret, config.keypairType);
+    }
+    @expose
+    @validateInput
+    async get(options: BalanceGetModel) {
+        return await this.client.balance.get(options.address);
+    }
+    @expose
+    @validateInput
+    async transfer(options: BalanceTransferModel) {
+        return await this.client.balance.transfer(options.address, options.amount);
+    }
+
+    @expose
+    @validateInput
+    async getMyBalance() {
+        return await this.client.balance.getMyBalance();
+    }
+}
+
+export { Balance as balance };

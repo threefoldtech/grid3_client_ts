@@ -196,7 +196,7 @@ class Nodes {
         ) {
             return { valid: false };
         }
-        if (node.state !== "up") {
+        if (node.status !== "up") {
             return { valid: false };
         }
         let nodeCapacity;
@@ -219,7 +219,7 @@ class Nodes {
             hasDomain: hasDomain,
             hasPublicIpv4: hasPublicIpv4,
             hasPublicIpv6: hasPublicIpv6,
-            state: node.state,
+            status: node.status,
             capacity: {
                 ...nodeCapacity,
             },

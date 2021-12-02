@@ -38,14 +38,26 @@ class TFClient {
         this.balance = new Balance(this);
         TFClient.clients[key] = this;
     }
+
     async connect(): Promise<void> {
-        await this.client.init();
+        if (!this.isConnected()) {
+            await this.client.init();
+        }
     }
+
     disconnect(): void {
-        if (this.client.api) {
+        if (this.isConnected()) {
             this.client.api.disconnect();
         }
     }
+
+    isConnected(): boolean {
+        if (this.client.api) {
+            return this.client.api.isConnected;
+        }
+        return false;
+    }
+
     applyExtrinsic(func, args, resultSecttion: string, resultNames: string[]) {
         const context = this.client;
         return new Promise(async (resolve, reject) => {

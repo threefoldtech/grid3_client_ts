@@ -6,12 +6,14 @@ import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { DeploymentFactory } from "../primitives/deployment";
 import { GridClientConfig } from "../config";
 import { validateInput } from "../helpers/validator";
+import { checkBalance } from "./utils";
 
 class Zos {
     constructor(public config: GridClientConfig) {}
 
     @expose
     @validateInput
+    @checkBalance
     async deploy(options: ZOSModel) {
         // get node_id from the deployment
         const node_id = options.node_id;

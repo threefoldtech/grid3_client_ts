@@ -7,6 +7,7 @@ import { TwinDeployment } from "../high_level/models";
 import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
 import { validateInput } from "../helpers/validator";
+import { checkBalance } from "./utils";
 
 class ZdbsModule extends BaseModule {
     fileName = "zdbs.json";
@@ -37,6 +38,7 @@ class ZdbsModule extends BaseModule {
 
     @expose
     @validateInput
+    @checkBalance
     async deploy(options: ZDBSModel) {
         if (await this.exists(options.name)) {
             throw Error(`Another zdb deployment with the same name ${options.name} already exists`);
@@ -85,12 +87,14 @@ class ZdbsModule extends BaseModule {
 
     @expose
     @validateInput
+    @checkBalance
     async delete(options: ZDBDeleteModel) {
         return await this._delete(options.name);
     }
 
     @expose
     @validateInput
+    @checkBalance
     async update(options: ZDBSModel) {
         if (!(await this.exists(options.name))) {
             throw Error(`There is no zdb deployment with name: ${options.name}`);
@@ -102,6 +106,7 @@ class ZdbsModule extends BaseModule {
 
     @expose
     @validateInput
+    @checkBalance
     async add_zdb(options: AddZDBModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
@@ -123,6 +128,7 @@ class ZdbsModule extends BaseModule {
 
     @expose
     @validateInput
+    @checkBalance
     async delete_zdb(options: DeleteZDBModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);

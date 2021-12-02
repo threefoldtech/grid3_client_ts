@@ -10,6 +10,7 @@ import { TwinDeployment } from "../high_level/models";
 import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
 import { validateInput } from "../helpers/validator";
+import { checkBalance } from "./utils";
 
 class MachineModule extends BaseModule {
     moduleName = "machines";
@@ -57,6 +58,7 @@ class MachineModule extends BaseModule {
 
     @expose
     @validateInput
+    @checkBalance
     async deploy(options: MachinesModel) {
         if (await this.exists(options.name)) {
             throw Error(`Another machine deployment with the same name ${options.name} already exists`);
@@ -89,12 +91,14 @@ class MachineModule extends BaseModule {
 
     @expose
     @validateInput
+    @checkBalance
     async delete(options: MachinesDeleteModel) {
         return await this._delete(options.name);
     }
 
     @expose
     @validateInput
+    @checkBalance
     async update(options: MachinesModel) {
         if (!(await this.exists(options.name))) {
             throw Error(`There is no machine with the name: ${options.name}`);
@@ -114,6 +118,7 @@ class MachineModule extends BaseModule {
 
     @expose
     @validateInput
+    @checkBalance
     async add_machine(options: AddMachineModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There are no machine deployments with the name: ${options.deployment_name}`);
@@ -148,6 +153,7 @@ class MachineModule extends BaseModule {
 
     @expose
     @validateInput
+    @checkBalance
     async delete_machine(options: DeleteMachineModel) {
         if (!(await this.exists(options.deployment_name))) {
             throw Error(`There are no machine deployments with the name: ${options.deployment_name}`);

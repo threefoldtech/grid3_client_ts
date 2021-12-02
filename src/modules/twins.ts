@@ -3,6 +3,7 @@ import { TwinCreateModel, TwinGetModel, TwinGetByAccountIdModel, TwinDeleteModel
 import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
 import { validateInput } from "../helpers/validator";
+import { checkBalance } from "./utils";
 
 class Twins {
     client: TFClient;
@@ -11,6 +12,7 @@ class Twins {
     }
     @expose
     @validateInput
+    @checkBalance
     async create(options: TwinCreateModel) {
         return await this.client.twins.create(options.ip);
     }
@@ -39,6 +41,7 @@ class Twins {
     }
     @expose
     @validateInput
+    @checkBalance
     async delete(options: TwinDeleteModel) {
         return await this.client.twins.delete(options.id);
     }

@@ -3,6 +3,7 @@ import { KVStoreSetModel, KVStoreGetModel, KVStoreRemoveModel } from "./models";
 import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
 import { validateInput } from "../helpers/validator";
+import { checkBalance } from "./utils";
 
 class KVStore {
     client: TFClient;
@@ -11,6 +12,7 @@ class KVStore {
     }
     @expose
     @validateInput
+    @checkBalance
     async set(options: KVStoreSetModel) {
         return await this.client.kvStore.set(options.key, options.value);
     }
@@ -28,12 +30,14 @@ class KVStore {
 
     @expose
     @validateInput
+    @checkBalance
     async remove(options: KVStoreRemoveModel) {
         return await this.client.kvStore.remove(options.key);
     }
 
     @expose
     @validateInput
+    @checkBalance
     async removeAll() {
         return await this.client.kvStore.removeAll();
     }

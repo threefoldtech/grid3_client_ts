@@ -41,7 +41,7 @@ interface NodeInfo {
     mru: string;
     sru: string;
     hru: string;
-    publicConfig;
+    publicConfig: PublicConfig;
     status: string;
 }
 interface PublicConfig {

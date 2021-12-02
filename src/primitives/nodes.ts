@@ -41,8 +41,8 @@ interface NodeInfo {
     mru: string;
     sru: string;
     hru: string;
-    publicConfig;
-    state: string;
+    publicConfig: PublicConfig;
+    status: string;
 }
 interface PublicConfig {
     domain: string;
@@ -246,7 +246,7 @@ class Nodes {
             node["valid"] = false;
             return node;
         }
-        if (node.state !== "up") {
+        if (node.status !== "up") {
             node["valid"] = false;
             return node;
         }

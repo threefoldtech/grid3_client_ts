@@ -12,16 +12,14 @@ class KVStore {
     }
 
     async set(key: string, value: string) {
-        await this.tfclient.connect();
         const encryptedValue = this.encrypt(value);
-        return this.tfclient.applyExtrinsic(this.tfclient.client.tfStoreSet, [key, encryptedValue], "tfkvStore", [
+        return await this.tfclient.applyExtrinsic(this.tfclient.client.tfStoreSet, [key, encryptedValue], "tfkvStore", [
             "EntrySet",
         ]);
     }
 
     async get(key: string) {
-        await this.tfclient.connect();
-        const encryptedValue = await this.tfclient.client.tfStoreGet(key);
+        const encryptedValue = await this.tfclient.queryChain(this.tfclient.client.tfStoreGet, [key]);
         if (encryptedValue) {
             try {
                 return this.decrypt(encryptedValue);
@@ -33,12 +31,10 @@ class KVStore {
     }
 
     async list() {
-        await this.tfclient.connect();
-        return this.tfclient.client.tfStoreList();
+        return await this.tfclient.queryChain(this.tfclient.client.tfStoreList, []);
     }
 
     async remove(key: string) {
-        await this.tfclient.connect();
         return this.tfclient.applyExtrinsic(this.tfclient.client.tfStoreRemove, [key], "tfkvStore", ["EntryTaken"]);
     }
 

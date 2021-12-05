@@ -12,8 +12,7 @@ class Contracts {
         this.tfclient = client;
     }
     async createNode(nodeID: number, hash: string, data: string, publicIPs: number) {
-        await this.tfclient.connect();
-        return this.tfclient.applyExtrinsic(
+        return await this.tfclient.applyExtrinsic(
             this.tfclient.client.createNodeContract,
             [nodeID, data, hash, publicIPs],
             "smartContractModule",
@@ -22,15 +21,16 @@ class Contracts {
     }
 
     async createName(name: string) {
-        await this.tfclient.connect();
-        return this.tfclient.applyExtrinsic(this.tfclient.client.createNameContract, [name], "smartContractModule", [
-            "ContractCreated",
-        ]);
+        return await this.tfclient.applyExtrinsic(
+            this.tfclient.client.createNameContract,
+            [name],
+            "smartContractModule",
+            ["ContractCreated"],
+        );
     }
 
     async updateNode(id: number, data: string, hash: string) {
-        await this.tfclient.connect();
-        return this.tfclient.applyExtrinsic(
+        return await this.tfclient.applyExtrinsic(
             this.tfclient.client.updateNodeContract,
             [id, data, hash],
             "smartContractModule",
@@ -39,8 +39,7 @@ class Contracts {
     }
 
     async cancel(id: number) {
-        await this.tfclient.connect();
-        return this.tfclient.applyExtrinsic(this.tfclient.client.cancelContract, [id], "smartContractModule", [
+        return await this.tfclient.applyExtrinsic(this.tfclient.client.cancelContract, [id], "smartContractModule", [
             "NodeContractCanceled",
             "NameContractCanceled",
             "ContractCanceled",
@@ -48,23 +47,19 @@ class Contracts {
     }
 
     async get(id: number) {
-        await this.tfclient.connect();
-        return this.tfclient.client.getContractByID(id);
+        return await this.tfclient.queryChain(this.tfclient.client.getContractByID, [id]);
     }
 
     async getContractIdByNodeIdAndHash(nodeId: number, hash: string) {
-        await this.tfclient.connect();
-        return this.tfclient.client.contractIDByNodeIDAndHash(nodeId, hash);
+        return await this.tfclient.queryChain(this.tfclient.client.contractIDByNodeIDAndHash, [nodeId, hash]);
     }
 
     async getNodeContracts(nodeId: number, state: ContractState) {
-        await this.tfclient.connect();
-        return this.tfclient.client.nodeContracts(nodeId, state);
+        return await this.tfclient.queryChain(this.tfclient.client.nodeContracts, [nodeId, state]);
     }
 
     async getNameContract(name: string) {
-        await this.tfclient.connect();
-        return this.tfclient.client.contractIDByNameRegistration(name);
+        return await this.tfclient.queryChain(this.tfclient.client.contractIDByNameRegistration, [name]);
     }
 
     async listContractsByTwinId(graphqlURL, twinId) {

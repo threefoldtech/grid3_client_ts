@@ -1,13 +1,14 @@
 import { Decimal } from "decimal.js";
+import { TFClient } from "./client";
 
 class Balance {
-    tfclient;
+    tfclient: TFClient;
 
-    constructor(client) {
+    constructor(client: TFClient) {
         this.tfclient = client;
     }
 
-    async get(address: string) {
+    async get(address: string): Promise<Record<string, number>> {
         const balances = await this.tfclient.queryChain(this.tfclient.client.getBalanceOf, [address]);
         for (const b of Object.keys(balances)) {
             const balance = new Decimal(balances[b]);
@@ -16,19 +17,16 @@ class Balance {
         return balances;
     }
 
-    async getMyBalance() {
+    async getMyBalance(): Promise<Record<string, number>> {
         return await this.get(this.tfclient.client.address);
     }
 
-    async transfer(address: string, amount: number) {
+    async transfer(address: string, amount: number): Promise<void> {
         const decimalAmount = new Decimal(amount);
         const decimalAmountInTFT = decimalAmount.mul(10 ** 7).toNumber();
-        return await this.tfclient.applyExtrinsic(
-            this.tfclient.client.transfer,
-            [address, decimalAmountInTFT],
-            "balances",
-            ["Transfer"],
-        );
+        await this.tfclient.applyExtrinsic(this.tfclient.client.transfer, [address, decimalAmountInTFT], "balances", [
+            "Transfer",
+        ]);
     }
 }
 

@@ -1,3 +1,4 @@
+import { TFClient } from "./client";
 import { send } from "../../helpers/requests";
 
 enum ContractState {
@@ -6,9 +7,9 @@ enum ContractState {
     OutOfFunds = "OutOfFunds",
 }
 class Contracts {
-    tfclient;
+    tfclient: TFClient;
 
-    constructor(client) {
+    constructor(client: TFClient) {
         this.tfclient = client;
     }
     async createNode(nodeID: number, hash: string, data: string, publicIPs: number) {

@@ -23,8 +23,6 @@ class TwinDeploymentHandler {
                 throw Error(`Failed to create name contract ${contract}`);
             }
             events.emit("logs", `Name contract with id: ${contract["contract_id"]} has been created`);
-
-            contract.new = true;
             return contract;
         }
         events.emit("logs", `Name contract found with id: ${c}`);

@@ -2,12 +2,12 @@ import nacl from "tweetnacl";
 import utils from "tweetnacl-util";
 import { randomNonce } from "../../helpers/utils";
 import Crypto from "crypto-js";
+import { TFClient } from "./client";
 
 class KVStore {
-    tfclient;
-    keypair;
+    tfclient: TFClient;
 
-    constructor(client) {
+    constructor(client: TFClient) {
         this.tfclient = client;
     }
 

@@ -1,7 +1,9 @@
-class Twins {
-    tfclient;
+import { TFClient } from "./client";
 
-    constructor(client) {
+class Twins {
+    tfclient: TFClient;
+
+    constructor(client: TFClient) {
         this.tfclient = client;
     }
 

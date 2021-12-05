@@ -58,14 +58,19 @@ class TFClient {
         return false;
     }
 
-    async queryChain(method, args) {
+    async queryChain(func: (args: unknown[]) => unknown, args: unknown[]) {
         const context = this.client;
         await this.connect();
-        console.log(`Executing method: ${method.name} with args: ${args}`);
-        return await method.apply(context, args);
+        console.log(`Executing method: ${func.name} with args: ${args}`);
+        return await func.apply(context, args);
     }
 
-    async applyExtrinsic(func, args, resultSecttion: string, resultNames: string[]) {
+    async applyExtrinsic(
+        func: (args: unknown[]) => unknown,
+        args: unknown[],
+        resultSecttion: string,
+        resultNames: string[],
+    ) {
         const context = this.client;
         await this.connect();
         return new Promise(async (resolve, reject) => {

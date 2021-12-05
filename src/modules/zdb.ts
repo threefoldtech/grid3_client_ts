@@ -63,6 +63,7 @@ class ZdbsModule extends BaseModule {
             const data = workload.data as Zdb;
             ret.push({
                 version: workload.version,
+                contractId: workload["contractId"],
                 name: workload.name,
                 created: workload.result.created,
                 status: workload.result.state,

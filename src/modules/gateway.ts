@@ -99,6 +99,7 @@ class GWModule extends BaseModule {
             const data = workload.data as GatewayFQDNProxy;
             return {
                 version: workload.version,
+                contractId: workload["contractId"],
                 name: workload.name,
                 created: workload.result.created,
                 status: workload.result.state,

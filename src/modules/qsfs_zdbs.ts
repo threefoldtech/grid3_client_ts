@@ -86,6 +86,7 @@ class QSFSZdbsModule extends BaseModule {
                 if (workload.type !== WorkloadTypes.zdb) {
                     continue;
                 }
+                workload["contractId"] = deployment.contract_id;
                 zdbs.push(workload);
             }
         }
@@ -95,6 +96,7 @@ class QSFSZdbsModule extends BaseModule {
             zdbBackend.namespace = zdb.result.data.Namespace;
             zdbBackend.password = zdb.data.password;
             zdbBackend.address = `[${zdb.result.data.IPs[1]}]:${zdb.result.data.Port}`;
+            zdbBackend["contractId"] = zdb["contractId"];
             if (zdb.data.mode === ZdbModes.user) {
                 qsfsZdbs.meta.push(zdbBackend);
             } else {

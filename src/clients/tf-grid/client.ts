@@ -38,16 +38,41 @@ class TFClient {
         this.balance = new Balance(this);
         TFClient.clients[key] = this;
     }
+
     async connect(): Promise<void> {
-        await this.client.init();
+        if (!this.isConnected()) {
+            await this.client.init();
+        }
     }
+
     disconnect(): void {
-        if (this.client.api) {
+        if (this.isConnected()) {
             this.client.api.disconnect();
         }
     }
-    applyExtrinsic(func, args, resultSecttion: string, resultNames: string[]) {
+
+    isConnected(): boolean {
+        if (this.client.api) {
+            return this.client.api.isConnected;
+        }
+        return false;
+    }
+
+    async queryChain(func: (args: unknown[]) => unknown, args: unknown[]) {
         const context = this.client;
+        await this.connect();
+        console.log(`Executing method: ${func.name} with args: ${args}`);
+        return await func.apply(context, args);
+    }
+
+    async applyExtrinsic(
+        func: (args: unknown[]) => unknown,
+        args: unknown[],
+        resultSecttion: string,
+        resultNames: string[],
+    ) {
+        const context = this.client;
+        await this.connect();
         return new Promise(async (resolve, reject) => {
             function callback(res) {
                 if (res instanceof Error) {

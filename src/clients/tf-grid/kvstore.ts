@@ -2,24 +2,24 @@ import nacl from "tweetnacl";
 import utils from "tweetnacl-util";
 import { randomNonce } from "../../helpers/utils";
 import Crypto from "crypto-js";
+import { TFClient } from "./client";
 
 class KVStore {
-    tfclient;
-    keypair;
+    tfclient: TFClient;
 
-    constructor(client) {
+    constructor(client: TFClient) {
         this.tfclient = client;
     }
 
     async set(key: string, value: string) {
         const encryptedValue = this.encrypt(value);
-        return this.tfclient.applyExtrinsic(this.tfclient.client.tfStoreSet, [key, encryptedValue], "tfkvStore", [
+        return await this.tfclient.applyExtrinsic(this.tfclient.client.tfStoreSet, [key, encryptedValue], "tfkvStore", [
             "EntrySet",
         ]);
     }
 
     async get(key: string) {
-        const encryptedValue = await this.tfclient.client.tfStoreGet(key);
+        const encryptedValue = await this.tfclient.queryChain(this.tfclient.client.tfStoreGet, [key]);
         if (encryptedValue) {
             try {
                 return this.decrypt(encryptedValue);
@@ -31,7 +31,7 @@ class KVStore {
     }
 
     async list() {
-        return this.tfclient.client.tfStoreList();
+        return await this.tfclient.queryChain(this.tfclient.client.tfStoreList, []);
     }
 
     async remove(key: string) {

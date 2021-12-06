@@ -1,7 +1,9 @@
-class Twins {
-    tfclient;
+import { TFClient } from "./client";
 
-    constructor(client) {
+class Twins {
+    tfclient: TFClient;
+
+    constructor(client: TFClient) {
         this.tfclient = client;
     }
 
@@ -10,20 +12,21 @@ class Twins {
     }
 
     async get(id: number) {
-        return this.tfclient.client.getTwinByID(id);
+        return await this.tfclient.queryChain(this.tfclient.client.getTwinByID, [id]);
     }
 
     async getMyTwinId(): Promise<number> {
+        await this.tfclient.connect();
         const pubKey = this.tfclient.client.address;
         return this.getTwinIdByAccountId(pubKey);
     }
 
     async getTwinIdByAccountId(publicKey: string): Promise<number> {
-        return this.tfclient.client.getTwinIdByAccountId(publicKey);
+        return await this.tfclient.queryChain(this.tfclient.client.getTwinIdByAccountId, [publicKey]);
     }
 
     async list() {
-        return this.tfclient.client.listTwins();
+        return await this.tfclient.queryChain(this.tfclient.client.listTwins, []);
     }
 
     async delete(id: number) {

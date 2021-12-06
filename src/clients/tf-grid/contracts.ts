@@ -1,5 +1,6 @@
 import { TFClient } from "./client";
 import { send } from "../../helpers/requests";
+import { Graphql } from "../graphql/client";
 
 enum ContractState {
     Created = "Created",
@@ -64,16 +65,19 @@ class Contracts {
     }
 
     async listContractsByTwinId(graphqlURL, twinId) {
-        const headers = { "Content-Type": "application/json" };
-        const body = `{
-            nameContracts(where: {twinId_eq: ${twinId}, state_in: [OutOfFunds, Created]}) {
+        const gqlClient = new Graphql(graphqlURL);
+        const options = `(where: {twinId_eq: ${twinId}, state_in: [OutOfFunds, Created]})`;
+        const nameContractsCount = await gqlClient.getItemTotalCount("nameContracts", options);
+        const nodeContractsCount = await gqlClient.getItemTotalCount("nodeContracts", options);
+        const body = `query getContracts($nameContractsCount: Int!, $nodeContractsCount: Int!){
+            nameContracts(where: {twinId_eq: ${twinId}, state_in: [OutOfFunds, Created]}, limit: $nameContractsCount) {
               contractId
             }
-            nodeContracts(where: {twinId_eq: ${twinId}, state_in: [OutOfFunds, Created]}) {
+            nodeContracts(where: {twinId_eq: ${twinId}, state_in: [OutOfFunds, Created]}, limit: $nodeContractsCount) {
               contractId
             }
           }`;
-        const response = await send("post", graphqlURL, JSON.stringify({ query: body }), headers);
+        const response = await gqlClient.query(body, { nodeContractsCount: nodeContractsCount, nameContractsCount: nameContractsCount });
         return response["data"];
     }
 

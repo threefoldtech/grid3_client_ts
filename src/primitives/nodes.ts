@@ -149,7 +149,7 @@ class Nodes {
         return GB * 1024 * 1024 * 1024;
     }
 
-    async getFarms(page: number = 1, max_result: number = 50, url = ""): Promise<FarmInfo[]> {
+    async getFarms(page = 1, max_result = 50, url = ""): Promise<FarmInfo[]> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
@@ -178,7 +178,7 @@ class Nodes {
             .includes(farmId);
     }
 
-    async getNodes(page: number = 1, max_result: number = 50, url = ""): Promise<NodeInfo[]> {
+    async getNodes(page = 1, max_result = 50, url = ""): Promise<NodeInfo[]> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;

@@ -1,5 +1,4 @@
 import { TFClient } from "./client";
-import { send } from "../../helpers/requests";
 import { Graphql } from "../graphql/client";
 
 enum ContractState {
@@ -77,7 +76,10 @@ class Contracts {
               contractId
             }
           }`;
-        const response = await gqlClient.query(body, { nodeContractsCount: nodeContractsCount, nameContractsCount: nameContractsCount });
+        const response = await gqlClient.query(body, {
+            nodeContractsCount: nodeContractsCount,
+            nameContractsCount: nameContractsCount,
+        });
         return response["data"];
     }
 

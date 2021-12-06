@@ -7,6 +7,7 @@ import { events } from "../helpers/events";
 import { TFClient } from "../clients/tf-grid/client";
 import { send } from "../helpers/requests";
 import { GridClient } from "../client";
+import { Graphql } from "../clients/graphql/client";
 
 interface FarmInfo {
     name: string;
@@ -82,21 +83,18 @@ class FilterOptions {
 }
 
 class Nodes {
-    constructor(public graphqlURL: string, public proxyURL: string) {}
+    gqlClient: Graphql;
+    constructor(public graphqlURL: string, public proxyURL: string) {
+        this.gqlClient = new Graphql(graphqlURL);
+    }
 
     async getNodeTwinId(node_id: number): Promise<number> {
-        const headers = { "Content-Type": "application/json" };
         const body = `query getNodeTwinId($nodeId: Int!){
             nodes(where: { nodeId_eq: $nodeId }) {
             twinId
             }
         }`;
-        const response = await send(
-            "post",
-            this.graphqlURL,
-            JSON.stringify({ query: body, variables: { nodeId: node_id } }),
-            headers,
-        );
+        const response = await this.gqlClient.query(body, { nodeId: node_id });
         if (response["data"]["nodes"]["length"] === 0) {
             throw Error(`Couldn't find a node with id: ${node_id}`);
         }
@@ -104,10 +102,7 @@ class Nodes {
     }
 
     async getAccessNodes(): Promise<Record<string, unknown>> {
-        const headers = { "Content-Type": "application/json" };
-        const countBody = `query { nodes: nodesConnection { count: totalCount } }`;
-        const countResponse = await send("post", this.graphqlURL, JSON.stringify({ query: countBody }), headers);
-        const nodesCount = countResponse["data"]["nodes"]["count"];
+        const nodesCount = await this.gqlClient.getItemTotalCount("nodes");
         const body = `query getNodes($count: Int!) {
             nodes(limit: $count) {
           nodeId
@@ -118,12 +113,7 @@ class Nodes {
           }
         }
       }`;
-        const nodeResponse = await send(
-            "post",
-            this.graphqlURL,
-            JSON.stringify({ query: body, variables: { count: nodesCount } }),
-            headers,
-        );
+        const nodeResponse = await this.gqlClient.query(body, { count: nodesCount });
         const nodes = nodeResponse["data"]["nodes"];
         const accessNodes = {};
         for (const node of nodes as Record<string, unknown>[]) {
@@ -159,12 +149,12 @@ class Nodes {
         return GB * 1024 * 1024 * 1024;
     }
 
-    async getFarms(url = ""): Promise<FarmInfo[]> {
+    async getFarms(page: number = 1, max_result: number = 50, url = ""): Promise<FarmInfo[]> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
 
-        return send("get", `${r}/farms`, "", {})
+        return send("get", `${r}/farms?page=${page}&max_result=${max_result}`, "", {})
             .then(res => {
                 return res["data"]["farms"];
             })
@@ -173,9 +163,14 @@ class Nodes {
             });
     }
 
+    async getAllFarms(url = ""): Promise<FarmInfo[]> {
+        const farmsCount = await this.gqlClient.getItemTotalCount("farms");
+        return await this.getFarms(1, farmsCount, url);
+    }
+
     async CheckFarmHasFreePublicIPs(farmId: number, farms: FarmInfo[] = null, url = ""): Promise<boolean> {
         if (!farms) {
-            farms = await this.getFarms(url);
+            farms = await this.getAllFarms(url);
         }
         return farms
             .filter(farm => farm.publicIPs.filter(ip => ip.contractId === 0).length > 0)
@@ -183,13 +178,18 @@ class Nodes {
             .includes(farmId);
     }
 
-    async getNodes(url = ""): Promise<NodeInfo[]> {
+    async getNodes(page: number = 1, max_result: number = 50, url = ""): Promise<NodeInfo[]> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
 
-        const ret = await send("get", `${r}/nodes`, "", {});
+        const ret = await send("get", `${r}/nodes?page=${page}&max_result=${max_result}`, "", {});
         return ret;
+    }
+
+    async getAllNodes(url = ""): Promise<NodeInfo[]> {
+        const farmsCount = await this.gqlClient.getItemTotalCount("nodes");
+        return await this.getNodes(1, farmsCount, url);
     }
 
     async getNodesByFarmID(farmId: number, url = "") {
@@ -271,8 +271,8 @@ class Nodes {
     async filterNodes(options: FilterOptions, url = ""): Promise<NodeInfo[]> {
         options = plainToClass(FilterOptions, options, { excludeExtraneousValues: true });
         await validateObject(options);
-        const farms = await this.getFarms(url);
-        return await this.getNodes(url)
+        const farms = await this.getAllFarms(url);
+        return await this.getAllNodes(url)
             .then(nodes => {
                 const promises = nodes.map(n => this.checkNodeOptions(n, options, farms));
                 return Promise.all(promises);
@@ -295,7 +295,7 @@ class Nodes {
      */
     async getFarmIdFromFarmName(name: string, farms: FarmInfo[] = null, url = ""): Promise<number> {
         if (!farms) {
-            farms = await this.getFarms(url);
+            farms = await this.getAllFarms(url);
         }
         const filteredFarms = farms.filter(f => String(f.name).toLowerCase() === name.toLowerCase());
         if (filteredFarms.length === 0) {

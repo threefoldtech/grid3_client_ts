@@ -21,7 +21,7 @@ class MachineModule extends BaseModule {
         this.vm = new VMHL(config);
     }
 
-    async _createDeloyment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]> {
+    async _createDeployment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]> {
         const networkName = options.network.name;
         const network = new Network(networkName, options.network.ip_range, this.config);
         await network.load();
@@ -64,7 +64,7 @@ class MachineModule extends BaseModule {
             throw Error(`Another machine deployment with the same name ${options.name} already exists`);
         }
 
-        const [twinDeployments, _, wireguardConfig] = await this._createDeloyment(options);
+        const [twinDeployments, _, wireguardConfig] = await this._createDeployment(options);
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
         await this.save(options.name, contracts, wireguardConfig);
         return { contracts: contracts, wireguard_config: wireguardConfig };
@@ -79,7 +79,6 @@ class MachineModule extends BaseModule {
     async getObj(deploymentName: string) {
         const deployments = await this._get(deploymentName);
         const workloads = this._getWorkloadsByTypes(deployments, [WorkloadTypes.zmachine]);
-
         return workloads.map(workload => this._getZmachineData(deployments, workload));
     }
 
@@ -112,7 +111,7 @@ class MachineModule extends BaseModule {
             throw Error("Network name and ip_range can't be changed");
         }
 
-        const [twinDeployments, network, _] = await this._createDeloyment(options);
+        const [twinDeployments, network, _] = await this._createDeployment(options);
         return await this._update(this.vm, options.name, oldDeployments, twinDeployments, network);
     }
 

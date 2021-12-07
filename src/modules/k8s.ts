@@ -117,6 +117,8 @@ class K8sModule extends BaseModule {
                 options.ssh_key,
                 options.metadata,
                 options.description,
+                worker.qsfs_disks,
+                this.config.projectName,
             );
 
             deployments = deployments.concat(twinDeployments);

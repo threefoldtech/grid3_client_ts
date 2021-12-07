@@ -178,11 +178,12 @@ class Nodes {
     }
 
     async getNodesByFarmID(farmId: number, url = "") {
+        const nodesCount = this.gqlClient.getItemTotalCount("nodes", `(where: {farmId_eq: ${farmId}})`);
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
 
-        return send("get", `${r}/nodes?farm_id=${farmId}`, "", {})
+        return send("get", `${r}/nodes?farm_id=${farmId}&max_result=${nodesCount}`, "", {})
             .then(res => {
                 if (res) return res;
                 else throw new Error(`The farm with id ${farmId}: doesn't have any nodes`);
@@ -253,7 +254,7 @@ class Nodes {
         return node;
     }
 
-    async filterNodes(options: FilterOptions, url = ""): Promise<NodeInfo[]> {
+    async filterNodes(options: FilterOptions = {}, url = ""): Promise<NodeInfo[]> {
         options = plainToClass(FilterOptions, options, { excludeExtraneousValues: true });
         await validateObject(options);
         const farms = await this.getAllFarms(url);
@@ -276,7 +277,7 @@ class Nodes {
      * Get farm id from farm name.
      * It returns 0 in case the farm name is not found.
      * @param  {string} name
-     * @returns Promise<number>
+     * @returns {Promise<number>}
      */
     async getFarmIdFromFarmName(name: string, farms: FarmInfo[] = null, url = ""): Promise<number> {
         if (!farms) {

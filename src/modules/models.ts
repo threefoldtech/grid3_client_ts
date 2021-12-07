@@ -295,6 +295,13 @@ class WalletDeleteModel {
 
 class WalletGetModel extends WalletDeleteModel {}
 
+class FarmsGetModel {
+    @Expose() @IsInt() @Min(1) @IsOptional() page?: number; // default 1
+    @Expose() @IsInt() @Min(1) @IsOptional() max_result?: number; // default 50
+}
+
+class NodesGetModel extends FarmsGetModel {}
+
 export {
     DiskModel,
     NetworkModel,
@@ -352,4 +359,6 @@ export {
     GatewayFQDNDeleteModel,
     GatewayNameGetModel,
     GatewayNameDeleteModel,
+    FarmsGetModel,
+    NodesGetModel,
 };

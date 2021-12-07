@@ -1,6 +1,6 @@
 import { Addr } from "netaddr";
 
-import { WorkloadTypes, Workload } from "../zos/workload";
+import { WorkloadTypes } from "../zos/workload";
 
 import { BaseModule } from "./base";
 import { MachinesModel, MachinesDeleteModel, MachinesGetModel, AddMachineModel, DeleteMachineModel } from "./models";

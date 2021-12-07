@@ -102,27 +102,12 @@ class Nodes {
     }
 
     async getAccessNodes(): Promise<Record<string, unknown>> {
-        const nodesCount = await this.gqlClient.getItemTotalCount("nodes");
-        const body = `query getNodes($count: Int!) {
-            nodes(limit: $count) {
-          nodeId
-          publicConfig{
-              ipv4
-              ipv6
-              domain
-          }
-        }
-      }`;
-        const nodeResponse = await this.gqlClient.query(body, { count: nodesCount });
-        const nodes = nodeResponse["data"]["nodes"];
         const accessNodes = {};
-        for (const node of nodes as Record<string, unknown>[]) {
-            if (!node.publicConfig) {
-                continue;
-            }
-            const ipv4 = node.publicConfig["ipv4"];
-            const ipv6 = node.publicConfig["ipv4"];
-            const domain = node.publicConfig["domain"];
+        const nodes = await this.filterNodes({ accessNodeV4: true, accessNodeV6: true });
+        for (const node of nodes) {
+            const ipv4 = node.publicConfig.ipv4;
+            const ipv6 = node.publicConfig.ipv6;
+            const domain = node.publicConfig.domain;
             if (PrivateIp(ipv4.split("/")[0]) === false || PrivateIp(ipv6.split("/")[0]) === false) {
                 accessNodes[+node.nodeId] = { ipv4: ipv4, ipv6: ipv6, domain: domain };
             }

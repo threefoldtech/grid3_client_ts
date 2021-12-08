@@ -302,6 +302,20 @@ class FarmsGetModel {
 
 class NodesGetModel extends FarmsGetModel {}
 
+class FarmHasFreePublicIPsModel {
+    @Expose() @IsInt() @Min(1) farmId: number;
+}
+
+class NodesByFarmIdModel extends FarmHasFreePublicIPsModel {}
+
+class NodeFreeResourcesModel {
+    @Expose() @IsInt() @Min(1) nodeId: number;
+}
+
+class FarmIdFromFarmNameModel {
+    @Expose() @IsString() @IsNotEmpty() farmName: string;
+}
+
 export {
     DiskModel,
     NetworkModel,
@@ -361,4 +375,8 @@ export {
     GatewayNameDeleteModel,
     FarmsGetModel,
     NodesGetModel,
+    FarmHasFreePublicIPsModel,
+    NodesByFarmIdModel,
+    NodeFreeResourcesModel,
+    FarmIdFromFarmNameModel,
 };

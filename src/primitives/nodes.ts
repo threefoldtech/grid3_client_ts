@@ -294,4 +294,4 @@ class Nodes {
     }
 }
 
-export { Nodes, FilterOptions, FarmInfo, NodeResources, NodeInfo };
+export { Nodes, FilterOptions, FarmInfo, NodeResources, NodeInfo, PublicIPs, PublicConfig };

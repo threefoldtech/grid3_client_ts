@@ -23,7 +23,7 @@ Add substrate url and account's mnemonics in `config.json` in [server directory]
 
 ## Life cycle
 
-- User for the outside send an execution request(command with payload) to the RMB server.
+- User from the outside sends an execution request(command with payload) to the RMB server.
 - RMB server puts this request in Redis.
 - Twin server checks if there is an execution request that its command is registered on the Twin server.
 - If this command is registered, the Twin server will pick up this request.

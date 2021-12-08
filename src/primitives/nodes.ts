@@ -134,12 +134,12 @@ class Nodes {
         return GB * 1024 * 1024 * 1024;
     }
 
-    async getFarms(page = 1, max_result = 50, url = ""): Promise<FarmInfo[]> {
+    async getFarms(page = 1, maxResult = 50, url = ""): Promise<FarmInfo[]> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
 
-        return send("get", `${r}/farms?page=${page}&max_result=${max_result}`, "", {})
+        return send("get", `${r}/farms?page=${page}&max_result=${maxResult}`, "", {})
             .then(res => {
                 return res["data"]["farms"];
             })
@@ -163,12 +163,12 @@ class Nodes {
             .includes(farmId);
     }
 
-    async getNodes(page = 1, max_result = 50, url = ""): Promise<NodeInfo[]> {
+    async getNodes(page = 1, maxResult = 50, url = ""): Promise<NodeInfo[]> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
 
-        const ret = await send("get", `${r}/nodes?page=${page}&max_result=${max_result}`, "", {});
+        const ret = await send("get", `${r}/nodes?page=${page}&max_result=${maxResult}`, "", {});
         return ret;
     }
 
@@ -260,8 +260,6 @@ class Nodes {
     }
 
     async filterNodes(options: FilterOptions = {}, url = ""): Promise<NodeInfo[]> {
-        options = plainToClass(FilterOptions, options, { excludeExtraneousValues: true });
-        await validateObject(options);
         const farms = await this.getAllFarms(url);
         return await this.getAllNodes(url)
             .then(nodes => {

@@ -19,13 +19,13 @@ class Capacity {
     @expose
     @validateInput
     async getFarms(options: FarmsGetModel = {}): Promise<FarmInfo[]> {
-        return await this.nodes.getFarms(options.page, options.max_result);
+        return await this.nodes.getFarms(options.page, options.maxResult);
     }
 
     @expose
     @validateInput
     async getNodes(options: NodesGetModel = {}): Promise<NodeInfo[]> {
-        return await this.nodes.getNodes(options.page, options.max_result);
+        return await this.nodes.getNodes(options.page, options.maxResult);
     }
 
     @expose

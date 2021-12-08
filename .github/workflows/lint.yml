@@ -27,5 +27,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Install
       run: yarn
-    - name: Run Lint
+    - name: src lint
       run: yarn eslint -c .eslintrc.json src/ 
+    - name: scripts lint
+      run: yarn eslint -c .eslintrc.json scripts/ 

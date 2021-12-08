@@ -1,12 +1,5 @@
-import "reflect-metadata";
-
-import { log } from "./utils";
 import { getClient } from "./client_loader";
-
-const exampleObj = {
-    key1: "value1",
-    key2: 2,
-};
+import { log } from "./utils";
 
 /*
 KVStore example usage:
@@ -23,7 +16,10 @@ async function main() {
 
     // set key
     const key = "hamada";
-
+    const exampleObj = {
+        key1: "value1",
+        key2: 2,
+    };
     try {
         // set key
         await db.set({ key, value: JSON.stringify(exampleObj) });
@@ -38,15 +34,12 @@ async function main() {
 
         // remove the key
         await db.remove({ key });
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         process.exit(1);
-    }
-    finally {
+    } finally {
         gridClient.disconnect();
     }
-
 }
 
 main();

@@ -1,8 +1,6 @@
-import "reflect-metadata";
-
-import { log } from "./utils";
-import { NetworkModel, K8SModel, KubernetesNodeModel } from "../src/modules/models";
 import { getClient } from "./client_loader";
+import { NetworkModel, K8SModel, KubernetesNodeModel } from "../src";
+import { log } from "./utils";
 
 // create network Object
 const n = new NetworkModel();
@@ -55,16 +53,12 @@ async function main() {
         // // delete
         // const d = await grid3.k8s.delete({ name: k.name });
         // log(d);
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         process.exit(1);
-    }
-    finally {
+    } finally {
         grid3.disconnect();
     }
-
-
 }
 
 main();

@@ -58,7 +58,7 @@ yarn install
     const network = NetworkEnv.dev
     ```
 
-- Mnemonic: 12 words for your account. [create one](https://library.threefold.me/info/threefold#/manual_tfgrid3/threefold__grid3_tfchain_init?id=create-an-account)
+- Mnemonic: 12 words for your account. [create one](https://library.threefold.me/info/manual/#/getstarted/manual__tfchain_portal_polkadot_create_account)
 
 - Store secret: it's any word that will be used for encrypting/decrypting the keys on threefold key-value store.
 

@@ -46,8 +46,8 @@ class Capacity {
 
     @expose
     @validateInput
-    async CheckFarmHasFreePublicIps(options?: FarmHasFreePublicIPsModel): Promise<boolean> {
-        return await this.nodes.CheckFarmHasFreePublicIps(options.farmId);
+    async checkFarmHasFreePublicIps(options?: FarmHasFreePublicIPsModel): Promise<boolean> {
+        return await this.nodes.checkFarmHasFreePublicIps(options.farmId);
     }
 
     @expose

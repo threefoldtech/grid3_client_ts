@@ -655,7 +655,7 @@ single master and multiple workers.
 
 - **Check Farm Has Free Public IPs**
 
-    cmd: `twinserver.capacity.CheckFarmHasFreePublicIps`
+    cmd: `twinserver.capacity.checkFarmHasFreePublicIps`
 
     payload: `'{"farmId": 1}'`
 

@@ -153,7 +153,7 @@ class Nodes {
         return await this.getFarms(1, farmsCount, url);
     }
 
-    async CheckFarmHasFreePublicIps(farmId: number, farms: FarmInfo[] = null, url = ""): Promise<boolean> {
+    async checkFarmHasFreePublicIps(farmId: number, farms: FarmInfo[] = null, url = ""): Promise<boolean> {
         if (!farms) {
             farms = await this.getAllFarms(url);
         }
@@ -233,7 +233,7 @@ class Nodes {
             (options.gateway && !hasDomain) ||
             (options.farmId && options.farmId !== node.farmId) ||
             (options.farmName && (await this.getFarmIdFromFarmName(options.farmName, farms)) !== +node.farmId) ||
-            (options.publicIPs && !(await this.CheckFarmHasFreePublicIps(+node.farmId, farms)))
+            (options.publicIPs && !(await this.checkFarmHasFreePublicIps(+node.farmId, farms)))
         ) {
             node["valid"] = false;
             return node;

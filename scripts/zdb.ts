@@ -19,24 +19,19 @@ zdbs.metadata = '{"test": "test"}';
 
 async function main() {
     const grid3 = await getClient();
-    try {
-        // deploy zdb
-        const res = await grid3.zdbs.deploy(zdbs);
-        log(res);
 
-        // get the deployment
-        const l = await grid3.zdbs.getObj(zdbs.name);
-        log(l);
+    // deploy zdb
+    const res = await grid3.zdbs.deploy(zdbs);
+    log(res);
 
-        // // delete
-        // const d = await grid3.zdbs.delete({ name: zdbs.name });
-        // log(d);
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
-    } finally {
-        grid3.disconnect();
-    }
+    // get the deployment
+    const l = await grid3.zdbs.getObj(zdbs.name);
+    log(l);
+
+    // // delete
+    // const d = await grid3.zdbs.delete({ name: zdbs.name });
+    // log(d);
+
 }
 
 main();

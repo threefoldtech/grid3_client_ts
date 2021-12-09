@@ -89,6 +89,7 @@ async function main() {
     // const r = await grid3.qsfs_zdbs.delete({ name: qsfs_name });
     // log(r);
 
+    await grid3.disconnect();
 }
 
 main();

@@ -58,6 +58,7 @@ async function main() {
     // const d = await grid3.machines.delete({ name: vms.name });
     // log(d);
 
+    await grid3.disconnect();
 }
 
 main();

@@ -88,6 +88,7 @@ async function main() {
 
     // await cancel(grid3);
 
+    await grid3.disconnect();
 }
 
 main();

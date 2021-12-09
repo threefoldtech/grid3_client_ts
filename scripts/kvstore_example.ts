@@ -34,6 +34,7 @@ async function main() {
     // remove the key
     await db.remove({ key });
 
+    await gridClient.disconnect();
 }
 
 main();

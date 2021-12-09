@@ -86,7 +86,6 @@ class GridClient {
     }
 
     disconnect() {
-        console.log("disconnecting");
         for (const key of Object.keys(TFClient.clients)) {
             TFClient.clients[key].disconnect();
         }

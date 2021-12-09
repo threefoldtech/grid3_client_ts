@@ -134,12 +134,12 @@ class Nodes {
         return GB * 1024 * 1024 * 1024;
     }
 
-    async getFarms(page = 1, max_result = 50, url = ""): Promise<FarmInfo[]> {
+    async getFarms(page = 1, maxResult = 50, url = ""): Promise<FarmInfo[]> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
 
-        return send("get", `${r}/farms?page=${page}&max_result=${max_result}`, "", {})
+        return send("get", `${r}/farms?page=${page}&max_result=${maxResult}`, "", {})
             .then(res => {
                 return res["data"]["farms"];
             })
@@ -153,7 +153,7 @@ class Nodes {
         return await this.getFarms(1, farmsCount, url);
     }
 
-    async CheckFarmHasFreePublicIPs(farmId: number, farms: FarmInfo[] = null, url = ""): Promise<boolean> {
+    async checkFarmHasFreePublicIps(farmId: number, farms: FarmInfo[] = null, url = ""): Promise<boolean> {
         if (!farms) {
             farms = await this.getAllFarms(url);
         }
@@ -163,12 +163,12 @@ class Nodes {
             .includes(farmId);
     }
 
-    async getNodes(page = 1, max_result = 50, url = ""): Promise<NodeInfo[]> {
+    async getNodes(page = 1, maxResult = 50, url = ""): Promise<NodeInfo[]> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
 
-        const ret = await send("get", `${r}/nodes?page=${page}&max_result=${max_result}`, "", {});
+        const ret = await send("get", `${r}/nodes?page=${page}&max_result=${maxResult}`, "", {});
         return ret;
     }
 
@@ -177,12 +177,13 @@ class Nodes {
         return await this.getNodes(1, farmsCount, url);
     }
 
-    async getNodesByFarmID(farmId: number, url = "") {
+    async getNodesByFarmId(farmId: number, url = ""): Promise<NodeInfo[]> {
+        const nodesCount = await this.gqlClient.getItemTotalCount("nodes", `(where: {farmId_eq: ${farmId}})`);
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
 
-        return send("get", `${r}/nodes?farm_id=${farmId}`, "", {})
+        return send("get", `${r}/nodes?farm_id=${farmId}&max_result=${nodesCount}`, "", {})
             .then(res => {
                 if (res) return res;
                 else throw new Error(`The farm with id ${farmId}: doesn't have any nodes`);
@@ -192,7 +193,7 @@ class Nodes {
             });
     }
 
-    async freeCapacity(nodeId: number, url = ""): Promise<Record<string, number>> {
+    async getNodeFreeResources(nodeId: number, url = ""): Promise<NodeResources> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
@@ -200,9 +201,9 @@ class Nodes {
         return send("get", `${r}/nodes/${nodeId}`, "", {})
             .then(res => {
                 const node: NodeCapacity = res;
-                const ret: Record<string, number> = {};
+                const ret: NodeResources = { cru: 0, mru: 0, hru: 0, sru: 0, ipv4u: 0 };
 
-                ret.cru = node.capacity.total.cru - node.capacity.used.cru;
+                ret.cru = +node.capacity.total.cru - +node.capacity.used.cru;
                 ret.mru = +node.capacity.total.mru - +node.capacity.used.mru;
                 ret.sru = +node.capacity.total.sru - +node.capacity.used.sru;
                 ret.hru = +node.capacity.total.hru - +node.capacity.used.hru;
@@ -210,7 +211,13 @@ class Nodes {
                 return ret;
             })
             .catch(err => {
-                throw err;
+                if (err.response.status === 404) {
+                    throw Error(`Node: ${nodeId} is not found`);
+                } else if (err.response.status === 502) {
+                    throw Error(`Node: ${nodeId} is not reachable`);
+                } else {
+                    throw err;
+                }
             });
     }
 
@@ -226,7 +233,7 @@ class Nodes {
             (options.gateway && !hasDomain) ||
             (options.farmId && options.farmId !== node.farmId) ||
             (options.farmName && (await this.getFarmIdFromFarmName(options.farmName, farms)) !== +node.farmId) ||
-            (options.publicIPs && !(await this.CheckFarmHasFreePublicIPs(+node.farmId, farms)))
+            (options.publicIPs && !(await this.checkFarmHasFreePublicIps(+node.farmId, farms)))
         ) {
             node["valid"] = false;
             return node;
@@ -235,14 +242,13 @@ class Nodes {
             node["valid"] = false;
             return node;
         }
-        let nodeCapacity;
         if (options.cru || options.mru || options.sru || options.hru) {
-            nodeCapacity = await this.freeCapacity(node.nodeId);
+            const nodeFreeResources = await this.getNodeFreeResources(node.nodeId);
             if (
-                (options.cru && options.cru > nodeCapacity.cru) ||
-                (options.mru && this._g2b(options.mru) > nodeCapacity.mru) ||
-                (options.sru && this._g2b(options.sru) > nodeCapacity.mru) ||
-                (options.hru && this._g2b(options.hru) > nodeCapacity.hru)
+                (options.cru && options.cru > nodeFreeResources.cru) ||
+                (options.mru && this._g2b(options.mru) > nodeFreeResources.mru) ||
+                (options.sru && this._g2b(options.sru) > nodeFreeResources.mru) ||
+                (options.hru && this._g2b(options.hru) > nodeFreeResources.hru)
             ) {
                 events.emit("logs", `Nodes: Node ${node.nodeId} doesn't have enough capacity`);
                 node["valid"] = false;
@@ -253,9 +259,7 @@ class Nodes {
         return node;
     }
 
-    async filterNodes(options: FilterOptions, url = ""): Promise<NodeInfo[]> {
-        options = plainToClass(FilterOptions, options, { excludeExtraneousValues: true });
-        await validateObject(options);
+    async filterNodes(options: FilterOptions = {}, url = ""): Promise<NodeInfo[]> {
         const farms = await this.getAllFarms(url);
         return await this.getAllNodes(url)
             .then(nodes => {
@@ -276,7 +280,7 @@ class Nodes {
      * Get farm id from farm name.
      * It returns 0 in case the farm name is not found.
      * @param  {string} name
-     * @returns Promise<number>
+     * @returns {Promise<number>}
      */
     async getFarmIdFromFarmName(name: string, farms: FarmInfo[] = null, url = ""): Promise<number> {
         if (!farms) {
@@ -290,4 +294,4 @@ class Nodes {
     }
 }
 
-export { Nodes, FilterOptions };
+export { Nodes, FilterOptions, FarmInfo, NodeResources, NodeInfo };

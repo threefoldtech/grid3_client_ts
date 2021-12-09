@@ -1,14 +1,9 @@
-import "reflect-metadata";
-
-import { GridClient } from "../src/client";
-import { log } from "./utils";
-import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../src/modules/models";
-import { Nodes, FilterOptions } from "../src/primitives";
 import { getClient } from "./client_loader";
+import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel, FilterOptions } from "../src";
+import { log } from "./utils";
 
 async function main() {
     const grid3 = await getClient();
-    const nodes = new Nodes(GridClient.config.graphqlURL, GridClient.config.rmbClient["proxyURL"]);
 
     // create network Object
     const n = new NetworkModel();
@@ -31,8 +26,7 @@ async function main() {
     const vm = new MachineModel();
     vm.name = "testvm";
     try {
-        vm.node_id = +(await nodes.filterNodes(server1_options))[0].nodeId; // TODO: allow random choise
-
+        vm.node_id = +(await grid3.capacity.filterNodes(server1_options))[0].nodeId; // TODO: allow random choise
     } catch (err) {
         console.log(err);
         process.exit(1);
@@ -58,8 +52,8 @@ async function main() {
     vms.metadata = "{'testVMs': true}";
     vms.description = "test deploying VMs via ts grid3 client";
 
-    // deploy vms
     try {
+        // deploy vms
         const res = await grid3.machines.deploy(vms);
         log(res);
 
@@ -70,15 +64,12 @@ async function main() {
         // // delete
         // const d = await grid3.machines.delete({ name: vms.name });
         // log(d);
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         process.exit(1);
-    }
-    finally {
+    } finally {
         grid3.disconnect();
     }
-
 }
 
 main();

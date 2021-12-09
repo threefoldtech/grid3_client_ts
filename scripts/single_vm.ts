@@ -1,8 +1,6 @@
-import "reflect-metadata";
-
-import { log } from "./utils";
-import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../src/modules/models";
 import { getClient } from "./client_loader";
+import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../src";
+import { log } from "./utils";
 
 // create network Object
 const n = new NetworkModel();
@@ -43,8 +41,8 @@ vms.description = "test deploying VMs via ts grid3 client";
 async function main() {
     const grid3 = await getClient();
 
-    // deploy vms
     try {
+        // deploy vms
         const res = await grid3.machines.deploy(vms);
         log(res);
 
@@ -55,17 +53,12 @@ async function main() {
         // // delete
         // const d = await grid3.machines.delete({ name: vms.name });
         // log(d);
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         process.exit(1);
-    }
-    finally {
+    } finally {
         grid3.disconnect();
     }
-
-
-};
-
+}
 
 main();

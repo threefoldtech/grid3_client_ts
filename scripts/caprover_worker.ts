@@ -1,9 +1,6 @@
-import "reflect-metadata";
-
-import { log } from "./utils";
-import { NetworkModel, MachineModel, MachinesModel, DiskModel } from "../src/modules/models";
 import { getClient } from "./client_loader";
-// import {generateString} from "../src/helpers/utils";
+import { NetworkModel, MachineModel, MachinesModel, DiskModel } from "../src";
+import { log } from "./utils";
 
 const CAPROVER_FLIST = "https://hub.grid.tf/tf-official-apps/tf-caprover-main.flist";
 // create network Object
@@ -49,8 +46,8 @@ vms.description = "caprover worker machine/node";
 async function main() {
     const grid3 = await getClient();
 
-    // deploy vms
     try {
+        // deploy vms
         const res = await grid3.machines.deploy(vms);
         log(res);
 

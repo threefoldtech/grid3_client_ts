@@ -1,8 +1,6 @@
-import "reflect-metadata";
-
-import { log } from "./utils";
-import { NetworkModel, K8SModel, KubernetesNodeModel, K8SDeleteModel } from "../src/modules/models";
 import { getClient } from "./client_loader";
+import { NetworkModel, K8SModel, KubernetesNodeModel, K8SDeleteModel } from "../src";
+import { log } from "./utils";
 
 const qsfs_name = "testQsfsK8sq1";
 
@@ -15,7 +13,7 @@ const qsfs = {
     disk_size: 10,
     description: "my qsfs test",
     metadata: "",
-}
+};
 
 // create network Object
 const n = new NetworkModel();
@@ -91,15 +89,12 @@ async function main() {
         // log(d);
         // const r = await grid3.qsfs_zdbs.delete({ name: qsfs_name });
         // log(r);
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         process.exit(1);
-    }
-    finally {
+    } finally {
         grid3.disconnect();
     }
-
 }
 
 main();

@@ -8,8 +8,8 @@ grid3_client is a client used for deploying workloads (VMs, ZDBs, k8s, etc.) on 
 
 ## Prerequisites
 
-- node 14.4.0 or higher
-- npm 6.14.5 or higher
+- node 16.13.1 or higher
+- npm 8.2.0 or higher
 - may need to install libtool `apt-get install libtool`
 
 ## Installation

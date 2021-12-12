@@ -71,28 +71,24 @@ async function cancel(grid3) {
 
 async function main() {
     const grid3 = await getClient();
+
     //deploy qsfs
-    try {
-        const res = await grid3.qsfs_zdbs.deploy(qsfs);
-        log(">>>>>>>>>>>>>>>QSFS backend has been created<<<<<<<<<<<<<<<");
-        log(res);
+    const res = await grid3.qsfs_zdbs.deploy(qsfs);
+    log(">>>>>>>>>>>>>>>QSFS backend has been created<<<<<<<<<<<<<<<");
+    log(res);
 
-        const vm_res = await grid3.machines.deploy(vms);
-        log(">>>>>>>>>>>>>>>vm has been created<<<<<<<<<<<<<<<");
-        log(vm_res);
+    const vm_res = await grid3.machines.deploy(vms);
+    log(">>>>>>>>>>>>>>>vm has been created<<<<<<<<<<<<<<<");
+    log(vm_res);
 
-        // get the deployment
-        const l = await grid3.machines.getObj(vms.name);
-        log(">>>>>>>>>>>>>>>Deployment result<<<<<<<<<<<<<<<");
-        log(l);
+    // get the deployment
+    const l = await grid3.machines.getObj(vms.name);
+    log(">>>>>>>>>>>>>>>Deployment result<<<<<<<<<<<<<<<");
+    log(l);
 
-        // await cancel(grid3);
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
-    } finally {
-        grid3.disconnect();
-    }
+    // await cancel(grid3);
+
+    await grid3.disconnect();
 }
 
 main();

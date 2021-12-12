@@ -180,6 +180,7 @@ class BaseModule {
                         qsfs_zdbs_name: metadata.qsfs_zdbs_name,
                         state: workload.result.state,
                         message: workload.result.message,
+                        metricsEndpoint: workload.result.data.metrics_endpoint,
                     };
                 }
             }

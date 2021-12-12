@@ -1,8 +1,7 @@
 import { default as PrivateIp } from "private-ip";
 import { IsBoolean, IsInt, IsOptional, IsString, Min } from "class-validator";
-import { Expose, plainToClass } from "class-transformer";
+import { Expose } from "class-transformer";
 
-import { validateObject } from "../helpers/validator";
 import { events } from "../helpers/events";
 import { TFClient } from "../clients/tf-grid/client";
 import { send } from "../helpers/requests";

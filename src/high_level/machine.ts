@@ -32,6 +32,7 @@ class VMHL extends HighLevelBase {
         description = "",
         qsfsDisks: QSFSDiskModel[] = [],
         qsfsProjectName = "",
+        addAccess = false,
     ): Promise<[TwinDeployment[], string]> {
         const deployments = [];
         const workloads = [];
@@ -106,20 +107,21 @@ class VMHL extends HighLevelBase {
 
         // network
         const deploymentFactory = new DeploymentFactory(this.config);
-        const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
-        const accessNodes = await nodes.getAccessNodes();
         let access_net_workload;
         let wgConfig = "";
-
         let hasAccessNode = false;
-        for (const accessNode of Object.keys(accessNodes)) {
-            if (network.nodeExists(Number(accessNode))) {
-                hasAccessNode = true;
-                break;
+        let accessNodes: Record<string, unknown> = {};
+        if (addAccess) {
+            const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
+            accessNodes = await nodes.getAccessNodes();
+            for (const accessNode of Object.keys(accessNodes)) {
+                if (network.nodeExists(Number(accessNode))) {
+                    hasAccessNode = true;
+                    break;
+                }
             }
         }
-
-        if (!Object.keys(accessNodes).includes(nodeId.toString()) && !hasAccessNode) {
+        if (!Object.keys(accessNodes).includes(nodeId.toString()) && !hasAccessNode && addAccess) {
             // add node to any access node and deploy it
             const filteredAccessNodes = [];
             for (const accessNodeId of Object.keys(accessNodes)) {
@@ -132,7 +134,7 @@ class VMHL extends HighLevelBase {
             wgConfig = await network.addAccess(access_node_id, true);
         }
         const znet_workload = await network.addNode(nodeId, metadata, description);
-        if (znet_workload && (await network.exists())) {
+        if ((await network.exists()) && (znet_workload || access_net_workload)) {
             // update network
             for (const deployment of network.deployments) {
                 const d = await deploymentFactory.fromObj(deployment);
@@ -149,10 +151,10 @@ class VMHL extends HighLevelBase {
                 }
                 deployments.push(new TwinDeployment(d, Operations.update, 0, 0, network));
             }
-            workloads.push(znet_workload);
+            if (znet_workload) workloads.push(znet_workload);
         } else if (znet_workload) {
             // node not exist on the network
-            if (!access_net_workload && !hasAccessNode) {
+            if (!access_net_workload && !hasAccessNode && addAccess) {
                 // this node is access node, so add access point on it
                 wgConfig = await network.addAccess(nodeId, true);
                 znet_workload["data"] = network.updateNetwork(znet_workload.data);

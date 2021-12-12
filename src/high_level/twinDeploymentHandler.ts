@@ -349,7 +349,7 @@ class TwinDeploymentHandler {
                     }
                     events.emit(
                         "logs",
-                        `A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contract_type"]["nodeContract"]["node_id"]}`,
+                        `A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contract_id"]}`,
                     );
                 } else if (twinDeployment.operation === Operations.update) {
                     twinDeployment.deployment.sign(this.config.twinId, this.config.mnemonic, this.tfclient.keypairType);

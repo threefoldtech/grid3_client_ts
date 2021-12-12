@@ -12,7 +12,7 @@ import { GridClientConfig } from "../config";
 import { validateInput } from "../helpers/validator";
 import { checkBalance } from "./utils";
 
-class MachineModule extends BaseModule {
+class MachinesModule extends BaseModule {
     moduleName = "machines";
     workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
     vm: VMHL;
@@ -22,8 +22,7 @@ class MachineModule extends BaseModule {
     }
 
     async _createDeployment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]> {
-        const networkName = options.network.name;
-        const network = new Network(networkName, options.network.ip_range, this.config);
+        const network = new Network(options.network.name, options.network.ip_range, this.config);
         await network.load();
 
         let twinDeployments = [];
@@ -47,6 +46,7 @@ class MachineModule extends BaseModule {
                 options.description,
                 machine.qsfs_disks,
                 this.config.projectName,
+                options.network.addAccess,
             );
             twinDeployments = twinDeployments.concat(TDeployments);
             if (wgConfig) {
@@ -161,4 +161,4 @@ class MachineModule extends BaseModule {
     }
 }
 
-export { MachineModule as machines };
+export { MachinesModule as machines };

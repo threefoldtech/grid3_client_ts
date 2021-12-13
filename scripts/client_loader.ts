@@ -13,9 +13,10 @@ let network = env.NETWORK
 let mnemonic = env.MNEMONIC
 let rmb_proxy = env.RMB_PROXY
 let storeSecret = env.STORE_SECRET
+let ssh_key = env.SSH_KEY
 let config;
 
-if (network === undefined || mnemonic === undefined || rmb_proxy === undefined || storeSecret === undefined) {
+if (network === undefined || mnemonic === undefined || rmb_proxy === undefined || storeSecret === undefined || ssh_key === undefined) {
     console.log("Credentials not all found in env variables. Loading all credentials from default config.json...")
     config = JSON.parse(fs.readFileSync(path.join(__dirname, "./config.json"), "utf-8"));
 }
@@ -25,7 +26,8 @@ else {
         "network": network,
         "mnemonic": mnemonic,
         "rmb_proxy": rmb_proxy,
-        "storeSecret": storeSecret
+        "storeSecret": storeSecret,
+        "ssh_key": ssh_key
     }
 }
 

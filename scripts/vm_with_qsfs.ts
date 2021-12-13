@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import { log } from "./utils";
-import { getClient } from "./client_loader";
+import { config, getClient } from "./client_loader";
 
 const qsfs_name = "wed2710q1";
 const machines_name = "wed2710t1";
@@ -53,8 +53,7 @@ const vms = {
             flist: "https://hub.grid.tf/tf-official-apps/base:latest.flist",
             entrypoint: "/sbin/zinit init",
             env: {
-                SSH_KEY:
-                    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCt1LYcIga3sgbip5ejiC6R7CCa34omOwUilR66ZEvUh/u4RpbZ9VjRryVHVDyYcd/qbUzpWMzqzFlfFmtVhPQ0yoGhxiv/owFwStqddKO2iNI7T3U2ytYLJqtPm0JFLB5n07XLyFRplq0W2/TjNrYl51DedDQqBJDq34lz6vTkECNmMKg9Ld0HpxnpHBLH0PsXMY+JMZ8keH9hLBK61Mx9cnNxcLV9N6oA6xRCtwqOdLAH08MMaItYcJ0UF/PDs1PusJvWkvsH5/olgayeAReI6JFGv/x4Eqq5vRJRQjkj9m+Q275gzf9Y/7M/VX7KOH7P9HmDbxwRtOq1F0bRutKF",
+                SSH_KEY: config.ssh_key,
             },
         },
     ],

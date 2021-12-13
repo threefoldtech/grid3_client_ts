@@ -41,6 +41,7 @@ class QSFSDiskModel {
 class NetworkModel {
     @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
     @Expose() @IsString() @IsNotEmpty() ip_range: string;
+    @Expose() @IsBoolean() @IsOptional() addAccess?: boolean;
 }
 
 class BaseGetDeleteModel {
@@ -295,6 +296,27 @@ class WalletDeleteModel {
 
 class WalletGetModel extends WalletDeleteModel {}
 
+class FarmsGetModel {
+    @Expose() @IsInt() @Min(1) @IsOptional() page?: number; // default 1
+    @Expose() @IsInt() @Min(1) @IsOptional() maxResult?: number; // default 50
+}
+
+class NodesGetModel extends FarmsGetModel {}
+
+class FarmHasFreePublicIPsModel {
+    @Expose() @IsInt() @Min(1) farmId: number;
+}
+
+class NodesByFarmIdModel extends FarmHasFreePublicIPsModel {}
+
+class NodeFreeResourcesModel {
+    @Expose() @IsInt() @Min(1) nodeId: number;
+}
+
+class FarmIdFromFarmNameModel {
+    @Expose() @IsString() @IsNotEmpty() farmName: string;
+}
+
 export {
     DiskModel,
     NetworkModel,
@@ -352,4 +374,10 @@ export {
     GatewayFQDNDeleteModel,
     GatewayNameGetModel,
     GatewayNameDeleteModel,
+    FarmsGetModel,
+    NodesGetModel,
+    FarmHasFreePublicIPsModel,
+    NodesByFarmIdModel,
+    NodeFreeResourcesModel,
+    FarmIdFromFarmNameModel,
 };

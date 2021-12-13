@@ -47,6 +47,7 @@ class TFClient {
 
     disconnect(): void {
         if (this.isConnected()) {
+            console.log("disconnecting");
             this.client.api.disconnect();
         }
     }

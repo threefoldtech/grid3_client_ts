@@ -8,8 +8,8 @@ grid3_client is a client used for deploying workloads (VMs, ZDBs, k8s, etc.) on 
 
 ## Prerequisites
 
-- node 14.4.0 or higher
-- npm 6.14.5 or higher
+- node 16.13.1 or higher
+- npm 8.2.0 or higher
 - may need to install libtool `apt-get install libtool`
 
 ## Installation
@@ -58,7 +58,7 @@ yarn install
     const network = NetworkEnv.dev
     ```
 
-- Mnemonic: 12 words for your account. [create one](https://library.threefold.me/info/threefold#/manual_tfgrid3/threefold__grid3_tfchain_init?id=create-an-account)
+- Mnemonic: 12 words for your account. [create one](https://library.threefold.me/info/manual/#/getstarted/manual__tfchain_portal_polkadot_create_account)
 
 - Store secret: it's any word that will be used for encrypting/decrypting the keys on threefold key-value store.
 

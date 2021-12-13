@@ -1,33 +1,27 @@
-import "reflect-metadata";
-
-import { log } from "./utils";
-import { GridClient } from "../src/client";
-import { Nodes } from "../src/primitives";
-
 import { getClient } from "./client_loader";
+import { log } from "./utils";
 
 async function main() {
     const grid3 = await getClient();
-    const nodes = new Nodes(GridClient.config.graphqlURL, GridClient.config.rmbClient["proxyURL"]);
     try {
         log("getFarms");
-        const f = await nodes.getFarms();
+        const f = await grid3.capacity.getFarms();
         log(f);
 
         log("getNodes");
-        const n = await nodes.getNodes();
+        const n = await grid3.capacity.getNodes();
         log(n);
 
-        log("getNodesByFarmID(2)");
-        const z = await nodes.getNodesByFarmID(1);
+        log("getNodesByFarmID(1)");
+        const z = await grid3.capacity.getNodesByFarmId({ farmId: 1 });
         log(z);
 
-        log("freeCapacity(64)");
-        const c = await nodes.freeCapacity(1);
+        log("NodeFreeResources(1)");
+        const c = await grid3.capacity.getNodeFreeResources({ nodeId: 1 });
         log(c);
 
         log("filterNodes");
-        const x = await nodes.filterNodes({
+        const x = await grid3.capacity.filterNodes({
             country: "Belgium",
             publicIPs: true,
             cru: 20,

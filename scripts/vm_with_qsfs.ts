@@ -1,12 +1,11 @@
-import "reflect-metadata";
-
-import { log } from "./utils";
 import { config, getClient } from "./client_loader";
+import { MachinesModel, QSFSZDBSModel } from "../src";
+import { log } from "./utils";
 
 const qsfs_name = "wed2710q1";
 const machines_name = "wed2710t1";
 
-const qsfs = {
+const qsfs: QSFSZDBSModel = {
     name: qsfs_name,
     count: 8,
     node_ids: [16, 17],
@@ -14,9 +13,9 @@ const qsfs = {
     disk_size: 10,
     description: "my qsfs test",
     metadata: "",
-}
+};
 
-const vms = {
+const vms: MachinesModel = {
     name: machines_name,
     network: {
         name: "wed2710n1",
@@ -59,8 +58,7 @@ const vms = {
     ],
     metadata: "{'testVMs': true}",
     description: "test deploying VMs via ts grid3 client",
-}
-
+};
 
 async function cancel(grid3) {
     // delete
@@ -72,31 +70,24 @@ async function cancel(grid3) {
 
 async function main() {
     const grid3 = await getClient();
+
     //deploy qsfs
-    try {
-        const res = await grid3.qsfs_zdbs.deploy(qsfs);
-        log(">>>>>>>>>>>>>>>QSFS backend has been created<<<<<<<<<<<<<<<");
-        log(res);
+    const res = await grid3.qsfs_zdbs.deploy(qsfs);
+    log(">>>>>>>>>>>>>>>QSFS backend has been created<<<<<<<<<<<<<<<");
+    log(res);
 
-        const vm_res = await grid3.machines.deploy(vms);
-        log(">>>>>>>>>>>>>>>vm has been created<<<<<<<<<<<<<<<");
-        log(vm_res);
+    const vm_res = await grid3.machines.deploy(vms);
+    log(">>>>>>>>>>>>>>>vm has been created<<<<<<<<<<<<<<<");
+    log(vm_res);
 
-        // get the deployment
-        const l = await grid3.machines.getObj(vms.name);
-        log(">>>>>>>>>>>>>>>Deployment result<<<<<<<<<<<<<<<");
-        log(l);
+    // get the deployment
+    const l = await grid3.machines.getObj(vms.name);
+    log(">>>>>>>>>>>>>>>Deployment result<<<<<<<<<<<<<<<");
+    log(l);
 
-        // await cancel(grid3);
-    }
-    catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
-    finally {
-        grid3.disconnect();
-    }
+    // await cancel(grid3);
 
+    await grid3.disconnect();
 }
 
 main();

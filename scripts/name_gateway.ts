@@ -1,8 +1,6 @@
-import "reflect-metadata";
-
-import { log } from "./utils";
-import { GatewayNameModel, GatewayNameDeleteModel } from "../src/modules/models";
 import { getClient } from "./client_loader";
+import { GatewayNameModel, GatewayNameDeleteModel } from "../src";
+import { log } from "./utils";
 
 // read more about the gateway types in this doc: https://github.com/threefoldtech/zos/tree/main/docs/gateway
 

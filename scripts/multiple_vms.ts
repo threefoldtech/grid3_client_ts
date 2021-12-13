@@ -1,8 +1,7 @@
-import "reflect-metadata";
-
-import { log } from "./utils";
-import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../src/modules/models";
 import { config, getClient } from "./client_loader";
+import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../src";
+import { log } from "./utils";
+>>>>>>> alleotech/development
 
 // create network Object
 const n = new NetworkModel();
@@ -66,27 +65,18 @@ async function main() {
     const grid3 = await getClient();
 
     // deploy vms
-    try {
-        const res = await grid3.machines.deploy(vms);
-        log(res);
+    const res = await grid3.machines.deploy(vms);
+    log(res);
 
-        // get the deployment
-        const l = await grid3.machines.getObj(vms.name);
-        log(l);
+    // get the deployment
+    const l = await grid3.machines.getObj(vms.name);
+    log(l);
 
-        // // delete
-        // const d = await grid3.machines.delete({ name: vms.name });
-        // log(d);
-    }
-    catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
-    finally {
-        grid3.disconnect();
-    }
+    // // delete
+    // const d = await grid3.machines.delete({ name: vms.name });
+    // log(d);
 
-
+    await grid3.disconnect();
 }
 
 main();

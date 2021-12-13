@@ -20,6 +20,7 @@ class GridClient {
     twins: modules.twins;
     kvstore: modules.kvstore;
     balance: modules.balance;
+    capacity: modules.capacity;
     twinId: number;
 
     constructor(
@@ -31,20 +32,20 @@ class GridClient {
         public backendStorageType: BackendStorageType = BackendStorageType.auto,
         public keypairType: KeypairType = KeypairType.sr25519,
     ) {}
-    async connect() {
+    async connect(): Promise<void> {
         const urls = this.getDefaultUrls(this.network);
         const tfclient = new TFClient(urls.substrate, this.mnemonic, this.storeSecret, this.keypairType);
         await tfclient.connect();
         if (BackendStorage.isEnvNode()) {
+            process.on("exit", this.disconnect);
             process.on("SIGINT", this.disconnect);
             process.on("SIGUSR1", this.disconnect);
             process.on("SIGUSR2", this.disconnect);
-            process.on("uncaughtException", this.disconnect);
         } else window.onbeforeunload = this.disconnect;
         this.twinId = await tfclient.twins.getMyTwinId();
         this._connect();
     }
-    _connect() {
+    _connect(): void {
         const urls = this.getDefaultUrls(this.network);
         this.rmbClient["twinId"] = this.twinId;
         this.rmbClient["proxyURL"] = urls.rmbProxy;
@@ -70,7 +71,7 @@ class GridClient {
         }
     }
 
-    getDefaultUrls(network: NetworkEnv) {
+    getDefaultUrls(network: NetworkEnv): Record<string, string> {
         const urls = { rmbProxy: "", substrate: "", graphql: "" };
         if (network === NetworkEnv.dev) {
             urls.rmbProxy = "https://gridproxy.dev.grid.tf";
@@ -84,8 +85,7 @@ class GridClient {
         return urls;
     }
 
-    disconnect() {
-        console.log("disconnecting");
+    disconnect(): void {
         for (const key of Object.keys(TFClient.clients)) {
             TFClient.clients[key].disconnect();
         }

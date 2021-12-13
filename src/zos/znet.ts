@@ -27,7 +27,7 @@ class Znet extends WorkloadData {
     @Expose() @IsString() @IsNotEmpty() ip_range: string;
     @Expose() @IsString() @IsNotEmpty() wireguard_private_key: string;
     @Expose() @IsInt() @IsNotEmpty() wireguard_listen_port: number;
-    @Expose() @Type(() => Peer) @ValidateNested({ each: true }) @ArrayNotEmpty() peers: Peer[];
+    @Expose() @Type(() => Peer) @ValidateNested({ each: true }) peers: Peer[];
 
     challenge(): string {
         let out = "";

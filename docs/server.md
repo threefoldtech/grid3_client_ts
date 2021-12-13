@@ -4,6 +4,7 @@ Twin server is an [RMB](https://github.com/threefoldtech/go-rmb) server that exp
 
 ## Prerequisites
 
+- [Redis server](https://redis.io)
 - [RMB server](https://github.com/threefoldtech/go-rmb) should be installed and running
 
 ## Configuration
@@ -19,6 +20,16 @@ Add substrate url and account's mnemonics in `config.json` in [server directory]
     "keypairType": "sr25519" // keypair type for the account created on substrate
 }
 ```
+
+## Life cycle
+
+- User from the outside sends an execution request(command with payload) to the RMB server.
+- RMB server puts this request in Redis.
+- Twin server checks if there is an execution request that its command is registered on the Twin server.
+- If this command is registered, the Twin server will pick up this request.
+- Twin server starts to execute it using the Grid3 client.
+- After finishing the execution, the Twin server puts the result back to Redis.
+- RMB keeps checking for the result is ready, and sends it back to the user once it's ready.
 
 ## Running
 

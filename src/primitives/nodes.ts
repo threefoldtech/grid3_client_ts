@@ -1,12 +1,12 @@
 import { default as PrivateIp } from "private-ip";
 import { IsBoolean, IsInt, IsOptional, IsString, Min } from "class-validator";
-import { Expose, plainToClass } from "class-transformer";
+import { Expose } from "class-transformer";
 
-import { validateObject } from "../helpers/validator";
 import { events } from "../helpers/events";
 import { TFClient } from "../clients/tf-grid/client";
 import { send } from "../helpers/requests";
 import { GridClient } from "../client";
+import { Graphql } from "../clients/graphql/client";
 
 interface FarmInfo {
     name: string;
@@ -82,21 +82,18 @@ class FilterOptions {
 }
 
 class Nodes {
-    constructor(public graphqlURL: string, public proxyURL: string) {}
+    gqlClient: Graphql;
+    constructor(public graphqlURL: string, public proxyURL: string) {
+        this.gqlClient = new Graphql(graphqlURL);
+    }
 
     async getNodeTwinId(node_id: number): Promise<number> {
-        const headers = { "Content-Type": "application/json" };
         const body = `query getNodeTwinId($nodeId: Int!){
             nodes(where: { nodeId_eq: $nodeId }) {
             twinId
             }
         }`;
-        const response = await send(
-            "post",
-            this.graphqlURL,
-            JSON.stringify({ query: body, variables: { nodeId: node_id } }),
-            headers,
-        );
+        const response = await this.gqlClient.query(body, { nodeId: node_id });
         if (response["data"]["nodes"]["length"] === 0) {
             throw Error(`Couldn't find a node with id: ${node_id}`);
         }
@@ -104,35 +101,12 @@ class Nodes {
     }
 
     async getAccessNodes(): Promise<Record<string, unknown>> {
-        const headers = { "Content-Type": "application/json" };
-        const countBody = `query { nodes: nodesConnection { count: totalCount } }`;
-        const countResponse = await send("post", this.graphqlURL, JSON.stringify({ query: countBody }), headers);
-        const nodesCount = countResponse["data"]["nodes"]["count"];
-        const body = `query getNodes($count: Int!) {
-            nodes(limit: $count) {
-          nodeId
-          publicConfig{
-              ipv4
-              ipv6
-              domain
-          }
-        }
-      }`;
-        const nodeResponse = await send(
-            "post",
-            this.graphqlURL,
-            JSON.stringify({ query: body, variables: { count: nodesCount } }),
-            headers,
-        );
-        const nodes = nodeResponse["data"]["nodes"];
         const accessNodes = {};
-        for (const node of nodes as Record<string, unknown>[]) {
-            if (!node.publicConfig) {
-                continue;
-            }
-            const ipv4 = node.publicConfig["ipv4"];
-            const ipv6 = node.publicConfig["ipv4"];
-            const domain = node.publicConfig["domain"];
+        const nodes = await this.filterNodes({ accessNodeV4: true, accessNodeV6: true });
+        for (const node of nodes) {
+            const ipv4 = node.publicConfig.ipv4;
+            const ipv6 = node.publicConfig.ipv6;
+            const domain = node.publicConfig.domain;
             if (PrivateIp(ipv4.split("/")[0]) === false || PrivateIp(ipv6.split("/")[0]) === false) {
                 accessNodes[+node.nodeId] = { ipv4: ipv4, ipv6: ipv6, domain: domain };
             }
@@ -159,12 +133,12 @@ class Nodes {
         return GB * 1024 * 1024 * 1024;
     }
 
-    async getFarms(url = ""): Promise<FarmInfo[]> {
+    async getFarms(page = 1, maxResult = 50, url = ""): Promise<FarmInfo[]> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
 
-        return send("get", `${r}/farms`, "", {})
+        return send("get", `${r}/farms?page=${page}&max_result=${maxResult}`, "", {})
             .then(res => {
                 return res["data"]["farms"];
             })
@@ -173,9 +147,14 @@ class Nodes {
             });
     }
 
-    async CheckFarmHasFreePublicIPs(farmId: number, farms: FarmInfo[] = null, url = ""): Promise<boolean> {
+    async getAllFarms(url = ""): Promise<FarmInfo[]> {
+        const farmsCount = await this.gqlClient.getItemTotalCount("farms");
+        return await this.getFarms(1, farmsCount, url);
+    }
+
+    async checkFarmHasFreePublicIps(farmId: number, farms: FarmInfo[] = null, url = ""): Promise<boolean> {
         if (!farms) {
-            farms = await this.getFarms(url);
+            farms = await this.getAllFarms(url);
         }
         return farms
             .filter(farm => farm.publicIPs.filter(ip => ip.contractId === 0).length > 0)
@@ -183,21 +162,27 @@ class Nodes {
             .includes(farmId);
     }
 
-    async getNodes(url = ""): Promise<NodeInfo[]> {
+    async getNodes(page = 1, maxResult = 50, url = ""): Promise<NodeInfo[]> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
 
-        const ret = await send("get", `${r}/nodes`, "", {});
+        const ret = await send("get", `${r}/nodes?page=${page}&max_result=${maxResult}`, "", {});
         return ret;
     }
 
-    async getNodesByFarmID(farmId: number, url = "") {
+    async getAllNodes(url = ""): Promise<NodeInfo[]> {
+        const farmsCount = await this.gqlClient.getItemTotalCount("nodes");
+        return await this.getNodes(1, farmsCount, url);
+    }
+
+    async getNodesByFarmId(farmId: number, url = ""): Promise<NodeInfo[]> {
+        const nodesCount = await this.gqlClient.getItemTotalCount("nodes", `(where: {farmId_eq: ${farmId}})`);
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
 
-        return send("get", `${r}/nodes?farm_id=${farmId}`, "", {})
+        return send("get", `${r}/nodes?farm_id=${farmId}&max_result=${nodesCount}`, "", {})
             .then(res => {
                 if (res) return res;
                 else throw new Error(`The farm with id ${farmId}: doesn't have any nodes`);
@@ -207,7 +192,7 @@ class Nodes {
             });
     }
 
-    async freeCapacity(nodeId: number, url = ""): Promise<Record<string, number>> {
+    async getNodeFreeResources(nodeId: number, url = ""): Promise<NodeResources> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
@@ -215,9 +200,9 @@ class Nodes {
         return send("get", `${r}/nodes/${nodeId}`, "", {})
             .then(res => {
                 const node: NodeCapacity = res;
-                const ret: Record<string, number> = {};
+                const ret: NodeResources = { cru: 0, mru: 0, hru: 0, sru: 0, ipv4u: 0 };
 
-                ret.cru = node.capacity.total.cru - node.capacity.used.cru;
+                ret.cru = +node.capacity.total.cru - +node.capacity.used.cru;
                 ret.mru = +node.capacity.total.mru - +node.capacity.used.mru;
                 ret.sru = +node.capacity.total.sru - +node.capacity.used.sru;
                 ret.hru = +node.capacity.total.hru - +node.capacity.used.hru;
@@ -225,7 +210,13 @@ class Nodes {
                 return ret;
             })
             .catch(err => {
-                throw err;
+                if (err.response.status === 404) {
+                    throw Error(`Node: ${nodeId} is not found`);
+                } else if (err.response.status === 502) {
+                    throw Error(`Node: ${nodeId} is not reachable`);
+                } else {
+                    throw err;
+                }
             });
     }
 
@@ -241,7 +232,7 @@ class Nodes {
             (options.gateway && !hasDomain) ||
             (options.farmId && options.farmId !== node.farmId) ||
             (options.farmName && (await this.getFarmIdFromFarmName(options.farmName, farms)) !== +node.farmId) ||
-            (options.publicIPs && !(await this.CheckFarmHasFreePublicIPs(+node.farmId, farms)))
+            (options.publicIPs && !(await this.checkFarmHasFreePublicIps(+node.farmId, farms)))
         ) {
             node["valid"] = false;
             return node;
@@ -250,14 +241,13 @@ class Nodes {
             node["valid"] = false;
             return node;
         }
-        let nodeCapacity;
         if (options.cru || options.mru || options.sru || options.hru) {
-            nodeCapacity = await this.freeCapacity(node.nodeId);
+            const nodeFreeResources = await this.getNodeFreeResources(node.nodeId);
             if (
-                (options.cru && options.cru > nodeCapacity.cru) ||
-                (options.mru && this._g2b(options.mru) > nodeCapacity.mru) ||
-                (options.sru && this._g2b(options.sru) > nodeCapacity.mru) ||
-                (options.hru && this._g2b(options.hru) > nodeCapacity.hru)
+                (options.cru && options.cru > nodeFreeResources.cru) ||
+                (options.mru && this._g2b(options.mru) > nodeFreeResources.mru) ||
+                (options.sru && this._g2b(options.sru) > nodeFreeResources.mru) ||
+                (options.hru && this._g2b(options.hru) > nodeFreeResources.hru)
             ) {
                 events.emit("logs", `Nodes: Node ${node.nodeId} doesn't have enough capacity`);
                 node["valid"] = false;
@@ -268,11 +258,9 @@ class Nodes {
         return node;
     }
 
-    async filterNodes(options: FilterOptions, url = ""): Promise<NodeInfo[]> {
-        options = plainToClass(FilterOptions, options, { excludeExtraneousValues: true });
-        await validateObject(options);
-        const farms = await this.getFarms(url);
-        return await this.getNodes(url)
+    async filterNodes(options: FilterOptions = {}, url = ""): Promise<NodeInfo[]> {
+        const farms = await this.getAllFarms(url);
+        return await this.getAllNodes(url)
             .then(nodes => {
                 const promises = nodes.map(n => this.checkNodeOptions(n, options, farms));
                 return Promise.all(promises);
@@ -291,11 +279,11 @@ class Nodes {
      * Get farm id from farm name.
      * It returns 0 in case the farm name is not found.
      * @param  {string} name
-     * @returns Promise<number>
+     * @returns {Promise<number>}
      */
     async getFarmIdFromFarmName(name: string, farms: FarmInfo[] = null, url = ""): Promise<number> {
         if (!farms) {
-            farms = await this.getFarms(url);
+            farms = await this.getAllFarms(url);
         }
         const filteredFarms = farms.filter(f => String(f.name).toLowerCase() === name.toLowerCase());
         if (filteredFarms.length === 0) {
@@ -305,4 +293,4 @@ class Nodes {
     }
 }
 
-export { Nodes, FilterOptions };
+export { Nodes, FilterOptions, FarmInfo, NodeResources, NodeInfo, PublicIPs, PublicConfig };

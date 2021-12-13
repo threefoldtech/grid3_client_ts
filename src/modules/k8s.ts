@@ -30,6 +30,7 @@ class K8sModule extends BaseModule {
             }
             for (const workload of d.workloads) {
                 if (workload.type === WorkloadTypes.zmachine && workload.data["env"]["K3S_URL"] === "") {
+                    workload["contractId"] = deployment.contract_id;
                     workloads.push(workload);
                 }
             }
@@ -46,6 +47,7 @@ class K8sModule extends BaseModule {
             }
             for (const workload of d.workloads) {
                 if (workload.type === WorkloadTypes.zmachine && workload.data["env"]["K3S_URL"] !== "") {
+                    workload["contractId"] = deployment.contract_id;
                     workloads.push(workload);
                 }
             }
@@ -85,6 +87,7 @@ class K8sModule extends BaseModule {
                 options.description,
                 master.qsfs_disks,
                 this.config.projectName,
+                options.network.addAccess,
             );
 
             deployments = deployments.concat(twinDeployments);
@@ -115,6 +118,9 @@ class K8sModule extends BaseModule {
                 options.ssh_key,
                 options.metadata,
                 options.description,
+                worker.qsfs_disks,
+                this.config.projectName,
+                options.network.addAccess,
             );
 
             deployments = deployments.concat(twinDeployments);

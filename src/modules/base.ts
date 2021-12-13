@@ -115,6 +115,7 @@ class BaseModule {
         for (const deployment of deployments) {
             for (const workload of deployment.workloads) {
                 if (types.includes(workload.type)) {
+                    workload["contractId"] = deployment.contract_id;
                     r.push(workload);
                 }
             }
@@ -136,14 +137,14 @@ class BaseModule {
         const data = workload.data as Zmachine;
         return {
             version: workload.version,
+            contractId: workload["contractId"],
             name: workload.name,
             created: workload.result.created,
             status: workload.result.state,
             message: workload.result.message,
             flist: data.flist,
             publicIP: this._getMachinePubIP(deployments, data.network.public_ip),
-            planetary: data.network.planetary,
-            yggIP: data.network.planetary ? (workload.result.data as ZmachineResult).ygg_ip : "",
+            planetary: data.network.planetary ? (workload.result.data as ZmachineResult).ygg_ip : "",
             interfaces: data.network.interfaces.map(n => ({
                 network: n.network,
                 ip: n.ip,
@@ -179,6 +180,7 @@ class BaseModule {
                         qsfs_zdbs_name: metadata.qsfs_zdbs_name,
                         state: workload.result.state,
                         message: workload.result.message,
+                        metricsEndpoint: workload.result.data.metrics_endpoint,
                     };
                 }
             }

@@ -14,77 +14,77 @@ Module should be:
 
 - **Create**
 
-   cmd: `twinserver.twins.create`
+    cmd: `twinserver.twins.create`
 
-   payload: `'{"ip": "<yggdrasil ip>"}'`
+    payload: `'{"ip": "<yggdrasil ip>"}'`
 
 - **Get**
 
-   cmd: `twinserver.twins.get`
+    cmd: `twinserver.twins.get`
 
-   payload: `'{"id": <twin id>}'`
+    payload: `'{"id": <twin id>}'`
 
 - **Get my twin id**
 
-   cmd: `twinserver.twins.get_my_twin_id`
+    cmd: `twinserver.twins.get_my_twin_id`
 
-   payload: `""`
+    payload: `""`
 
 - **Get twin id by account id**
 
-   cmd: `twinserver.twins.get_twin_id_by_account_id`
+    cmd: `twinserver.twins.get_twin_id_by_account_id`
 
-   payload: `'{"public_key": <substrate account id>}'`
+    payload: `'{"public_key": <substrate account id>}'`
 
 - **List**
 
-   cmd: `twinserver.twins.list`
+    cmd: `twinserver.twins.list`
 
-   payload: `""`
+    payload: `""`
 
 - **Delete**
 
-   cmd: `twinserver.twins.delete`
+    cmd: `twinserver.twins.delete`
 
-   payload: `'{"id": <twin id>}'`
+    payload: `'{"id": <twin id>}'`
 
 ### Contracts
 
 - **Create Node**
 
-   cmd: `twinserver.contracts.create_node`
+    cmd: `twinserver.contracts.create_node`
 
-   payload: `'{"node_id": "<zos node id>", "hash": "<deployment challenge hash>", "data": "<deployment data>", "public_ip": <number of public IPs>}'`
+    payload: `'{"node_id": "<zos node id>", "hash": "<deployment challenge hash>", "data": "<deployment data>", "public_ip": <number of public IPs>}'`
 
 - **Create Name**
 
-   cmd: `twinserver.contracts.create_name`
+    cmd: `twinserver.contracts.create_name`
 
-   payload: `'{"name": "<contract name>"}'`
+    payload: `'{"name": "<contract name>"}'`
 
 - **Get**
 
-   cmd: `twinserver.contracts.get`
+    cmd: `twinserver.contracts.get`
 
-   payload: `'{"id": <contract id>}'`
+    payload: `'{"id": <contract id>}'`
 
 - **Get contract id by node id and hash**
 
-   cmd: `twinserver.contracts.get_contract_id_by_node_id_and_hash`
+    cmd: `twinserver.contracts.get_contract_id_by_node_id_and_hash`
 
-   payload: `'{"node_id": 1, "hash": <deployment challenge hash>}'`
+    payload: `'{"node_id": 1, "hash": <deployment challenge hash>}'`
 
 - **Get node contracts**
 
-   cmd: `twinserver.contracts.get_node_contracts`
+    cmd: `twinserver.contracts.get_node_contracts`
 
-   payload: `'{"node_id": 1, "state": <contracts state should be "Created", "Deleted", or "OutOfFunds">}'`
+    payload: `'{"node_id": 1, "state": <contracts state should be "Created", "Deleted", or "OutOfFunds">}'`
 
 - **Get name contract**
 
-   cmd: `twinserver.contracts.get_name_contract`
+    cmd: `twinserver.contracts.get_name_contract`
 
-   payload: `'{"name": <contract name>}'`
+    payload: `'{"name": <contract name>}'`
 
 - **Update Node**
 
@@ -94,19 +94,19 @@ Module should be:
 
 - **Cancel**
 
-   cmd: `twinserver.contracts.cancel`
+    cmd: `twinserver.contracts.cancel`
 
-   payload: `'{"id": <contract id>}'`
+    payload: `'{"id": <contract id>}'`
 
 ### ZOS
 
 - **Deploy**
 
-   cmd: `twinserver.zos.deploy`
+    cmd: `twinserver.zos.deploy`
 
-   payload: the same as zos deployment without signing with additional parameter `'{"node_id": <zos node id> }'`
+    payload: the same as zos deployment without signing with additional parameter `'{"node_id": <zos node id> }'`
 
-**Note:** `node_id` will be optional when the grid3_proxy_server is ready to be used.
+    > **Note:** `node_id` will be optional when the grid3_proxy_server is ready to be used.
 
 ### Generic Machines
 
@@ -116,33 +116,88 @@ Module should be:
 
     payload:
 
-```json
-{
-        "name": "wed1310t1",
-        "network": {
-            "ip_range": "10.203.0.0/16",
-            "name": "wed159n3"
-        },
-        "machines": [{
-            "name": "wed1310t2",
-            "node_id": 3,
+    ```json
+    {
+            "name": "wed1310t1",
+            "network": {
+                "ip_range": "10.203.0.0/16",
+                "name": "wed159n3"
+            },
+            "machines": [{
+                "name": "wed1310t2",
+                "node_id": 3,
+                "disks": [
+                    {
+                        "name": "wed1310d2",
+                        "size": 10,
+                        "mountpoint": "/hamada"
+                    }
+                ],
+                "qsfs_disks":[
+                    {
+                        "qsfs_zdbs_name": "hamada",
+                        "name": "mon2410t2",
+                        "prefix": "hamada",
+                        "cache": 1, // in GB
+                        "minimal_shards": 2, 
+                        "expected_shards": 4,
+                        "encryption_key": "hamada",
+                        "mountpoint": "/ahmed",
+                    }
+                ],
+                "public_ip": false,
+                "planetary": true,
+                "cpu": 1,
+                "memory": 1024,
+                "rootfs_size": 1,
+                "flist": "https://hub.grid.tf/tf-official-apps/base:latest.flist",
+                "entrypoint": "/sbin/zinit init",
+                "env": {
+                    "SSH_KEY": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmm8OzLt+lTdGaMUwMFcw0P+vr+a/h/UsR//EzzeQsgNtC0bdls4MawVEhb3hNcycEQNd2P/+tXdLC4qcaJ6iABYip4xqqAeY098owGDYhUKYwmnMyo+NwSgpjZs8taOhMxh5XHRI+Ifr4l/GmzbqExS0KVD21PI+4sdiLspbcnVBlg9Eg9enM///zx6rSkulrca/+MnSYHboC5+y4XLYboArD/gpWy3zwIUyxX/1MjJwPeSnd5LFBIWvPGrm3cl+dAtADwTZRkt5Yuet8y5HI73Q5/NSlCdYXMtlsKBLpJu3Ar8nz1QfSQL7dB8pa7/sf/s8wO17rXqWQgZG6JzvZ root@ahmed-Inspiron-3576"
+                }
+            }],
+            "metadata": "",
+            "description": ""
+        };
+
+    ```
+
+    > **Note:** disk size and rootfs_size in GB, memory in MB, disk name should be different than the machine name
+
+- **List**
+
+    cmd: `twinserver.machines.list`
+
+    payload: `""`
+
+- **Get**
+
+    cmd: `twinserver.machines.get`
+
+    payload: `{"name": "<deployment name>"}`
+
+- **Delete**
+
+    cmd: `twinserver.machines.delete`
+
+    payload: `{"name": "<deployment name>"}`
+
+- **Add machine**
+
+    cmd: `twinserver.machines.add_machine`
+
+    payload:
+
+    ```json
+    {
+            "deployment_name": "wed1310t1",
+            "name": "wed1310m4",
+            "node_id": 2,
             "disks": [
                 {
-                    "name": "wed1310d2",
+                    "name": "wed1310d4",
                     "size": 10,
                     "mountpoint": "/hamada"
-                }
-            ],
-            "qsfs_disks":[
-                {
-                    "qsfs_zdbs_name": "hamada",
-                    "name": "mon2410t2",
-                    "prefix": "hamada",
-                    "cache": 1, // in GB
-                    "minimal_shards": 2, 
-                    "expected_shards": 4,
-                    "encryption_key": "hamada",
-                    "mountpoint": "/ahmed",
                 }
             ],
             "public_ip": false,
@@ -155,76 +210,21 @@ Module should be:
             "env": {
                 "SSH_KEY": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmm8OzLt+lTdGaMUwMFcw0P+vr+a/h/UsR//EzzeQsgNtC0bdls4MawVEhb3hNcycEQNd2P/+tXdLC4qcaJ6iABYip4xqqAeY098owGDYhUKYwmnMyo+NwSgpjZs8taOhMxh5XHRI+Ifr4l/GmzbqExS0KVD21PI+4sdiLspbcnVBlg9Eg9enM///zx6rSkulrca/+MnSYHboC5+y4XLYboArD/gpWy3zwIUyxX/1MjJwPeSnd5LFBIWvPGrm3cl+dAtADwTZRkt5Yuet8y5HI73Q5/NSlCdYXMtlsKBLpJu3Ar8nz1QfSQL7dB8pa7/sf/s8wO17rXqWQgZG6JzvZ root@ahmed-Inspiron-3576"
             }
-        }],
-        "metadata": "",
-        "description": ""
-    };
-
-```
-
-**Note:** disk size and rootfs_size in GB, memory in MB, disk name should be different than the machine name
-
-- **List**
-
-cmd: `twinserver.machines.list`
-
-payload: `""`
-
-- **Get**
-
-cmd: `twinserver.machines.get`
-
-payload: `{"name": "<deployment name>"}`
-
-- **Delete**
-
-cmd: `twinserver.machines.delete`
-
-payload: `{"name": "<deployment name>"}`
-
-- **Add machine**
-
-cmd: `twinserver.machines.add_machine`
-
-payload:
-
-```json
-{
-        "deployment_name": "wed1310t1",
-        "name": "wed1310m4",
-        "node_id": 2,
-        "disks": [
-            {
-                "name": "wed1310d4",
-                "size": 10,
-                "mountpoint": "/hamada"
-            }
-        ],
-        "public_ip": false,
-        "planetary": true,
-        "cpu": 1,
-        "memory": 1024,
-        "rootfs_size": 1,
-        "flist": "https://hub.grid.tf/tf-official-apps/base:latest.flist",
-        "entrypoint": "/sbin/zinit init",
-        "env": {
-            "SSH_KEY": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmm8OzLt+lTdGaMUwMFcw0P+vr+a/h/UsR//EzzeQsgNtC0bdls4MawVEhb3hNcycEQNd2P/+tXdLC4qcaJ6iABYip4xqqAeY098owGDYhUKYwmnMyo+NwSgpjZs8taOhMxh5XHRI+Ifr4l/GmzbqExS0KVD21PI+4sdiLspbcnVBlg9Eg9enM///zx6rSkulrca/+MnSYHboC5+y4XLYboArD/gpWy3zwIUyxX/1MjJwPeSnd5LFBIWvPGrm3cl+dAtADwTZRkt5Yuet8y5HI73Q5/NSlCdYXMtlsKBLpJu3Ar8nz1QfSQL7dB8pa7/sf/s8wO17rXqWQgZG6JzvZ root@ahmed-Inspiron-3576"
         }
-    }
-```
+    ```
 
 - **Delete machine**
 
-cmd: `twinserver.machines.delete_machine`
+    cmd: `twinserver.machines.delete_machine`
 
-payload:
+    payload:
 
-```json
-{
-        "deployment_name": "wed1310t1",
-        "name": "wed1310m2",
-    }
-```
+    ```json
+    {
+            "deployment_name": "wed1310t1",
+            "name": "wed1310m2",
+        }
+    ```
 
 ### Kubernetes
 
@@ -236,98 +236,98 @@ single master and multiple workers.
 
     payload:
 
-```json
-{
-        "name": "mon69t5",
-        "secret": "hamadaellol",
-        "network": {
-                "name": "hamadanet",
-                "ip_range": "10.201.0.0/16"
-        },
-        "masters": [
-            {
-                "name": "master1",
-                "node_id": 3,
-                "cpu": 1,
-                "memory": 1024,
-                "rootfs_size": 1,
-                "disk_size": 15,
-                "public_ip": true,
-                "planetary": true
-            }
-        ],
-        "workers": [
-            {
-                "name":"worker1" ,
-                "node_id": 2,
-                "cpu": 1,
-                "memory": 1024,
-                "rootfs_size": 1,
-                "disk_size": 15,
-                "public_ip": false,
-                "planetary": true
+    ```json
+    {
+            "name": "mon69t5",
+            "secret": "hamadaellol",
+            "network": {
+                    "name": "hamadanet",
+                    "ip_range": "10.201.0.0/16"
+            },
+            "masters": [
+                {
+                    "name": "master1",
+                    "node_id": 3,
+                    "cpu": 1,
+                    "memory": 1024,
+                    "rootfs_size": 1,
+                    "disk_size": 15,
+                    "public_ip": true,
+                    "planetary": true
+                }
+            ],
+            "workers": [
+                {
+                    "name":"worker1" ,
+                    "node_id": 2,
+                    "cpu": 1,
+                    "memory": 1024,
+                    "rootfs_size": 1,
+                    "disk_size": 15,
+                    "public_ip": false,
+                    "planetary": true
 
-            }
-        ],
-        "metadata": "",
-        "description": "",
-        "ssh_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmm8OzLt+lTdGaMUwMFcw0P+vr+a/h/UsR//EzzeQsgNtC0bdls4MawVEhb3hNcycEQNd2P/+tXdLC4qcaJ6iABYip4xqqAeY098owGDYhUKYwmnMyo+NwSgpjZs8taOhMxh5XHRI+Ifr4l/GmzbqExS0KVD21PI+4sdiLspbcnVBlg9Eg9enM///zx6rSkulrca/+MnSYHboC5+y4XLYboArD/gpWy3zwIUyxX/1MjJwPeSnd5LFBIWvPGrm3cl+dAtADwTZRkt5Yuet8y5HI73Q5/NSlCdYXMtlsKBLpJu3Ar8nz1QfSQL7dB8pa7/sf/s8wO17rXqWQgZG6JzvZ root@ahmed-Inspiron-3576"
-    }
-```
+                }
+            ],
+            "metadata": "",
+            "description": "",
+            "ssh_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmm8OzLt+lTdGaMUwMFcw0P+vr+a/h/UsR//EzzeQsgNtC0bdls4MawVEhb3hNcycEQNd2P/+tXdLC4qcaJ6iABYip4xqqAeY098owGDYhUKYwmnMyo+NwSgpjZs8taOhMxh5XHRI+Ifr4l/GmzbqExS0KVD21PI+4sdiLspbcnVBlg9Eg9enM///zx6rSkulrca/+MnSYHboC5+y4XLYboArD/gpWy3zwIUyxX/1MjJwPeSnd5LFBIWvPGrm3cl+dAtADwTZRkt5Yuet8y5HI73Q5/NSlCdYXMtlsKBLpJu3Ar8nz1QfSQL7dB8pa7/sf/s8wO17rXqWQgZG6JzvZ root@ahmed-Inspiron-3576"
+        }
+    ```
 
-**Note:** disk size and rootfs_size in GB, memory in MB, masters and workers names should be different
+    > **Note:** disk size and rootfs_size in GB, memory in MB, masters and workers names should be different
 
 - **List**
 
-cmd: `twinserver.k8s.list`
+    cmd: `twinserver.k8s.list`
 
-payload: `""`
+    payload: `""`
 
 - **Get**
 
-cmd: `twinserver.k8s.get`
+    cmd: `twinserver.k8s.get`
 
-payload: `{"name": "<deployment name>"}`
+    payload: `{"name": "<deployment name>"}`
 
 - **Delete**
 
-cmd: `twinserver.k8s.delete`
+    cmd: `twinserver.k8s.delete`
 
-payload: `{"name": "<deployment name>"}`
+    payload: `{"name": "<deployment name>"}`
 
 - **Add worker**
 
-cmd: `twinserver.k8s.add_worker`
+    cmd: `twinserver.k8s.add_worker`
 
-payload:
+    payload:
 
-```json
-{
-        "deployment_name": "sun199t2",
-        "name": "sun199t1worker5",
-        "node_id": 5,
-        "cpu": 2,
-        "memory": 1024,
-        "rootfs_size": 1,
-        "disk_size": 15,
-        "public_ip": false,
-        "planetary": true
-        
-    }
-```
+    ```json
+    {
+            "deployment_name": "sun199t2",
+            "name": "sun199t1worker5",
+            "node_id": 5,
+            "cpu": 2,
+            "memory": 1024,
+            "rootfs_size": 1,
+            "disk_size": 15,
+            "public_ip": false,
+            "planetary": true
+            
+        }
+    ```
 
 - **Delete worker**
 
-cmd: `twinserver.k8s.delete_worker`
+    cmd: `twinserver.k8s.delete_worker`
 
-payload:
+    payload:
 
-```json
-{
-        "deployment_name": "sun199t2",
-        "name": "sun199t1worker5",
-    }
-```
+    ```json
+    {
+            "deployment_name": "sun199t2",
+            "name": "sun199t1worker5",
+        }
+    ```
 
 ### zdb
 
@@ -337,80 +337,80 @@ payload:
 
     payload:
 
-```json
-{
-        "name": "hamada",
-        "zdbs": [{
-            "name": "zdb1",
-            "node_id": 3,
-            "mode": "seq",
-            "disk_size": 10,
-            "public": true,
-            "password": "hamadaellol",
-        }, {
-            "name": "zdb2",
-            "node_id": 3,
-            "mode": "seq",
-            "disk_size": 10,
-            "public": true,
-            "password": "hamadaellol",
-        }],
-        "metadata": "",
-        "description": ""
-    }
-```
+    ```json
+    {
+            "name": "hamada",
+            "zdbs": [{
+                "name": "zdb1",
+                "node_id": 3,
+                "mode": "seq",
+                "disk_size": 10,
+                "public": true,
+                "password": "hamadaellol",
+            }, {
+                "name": "zdb2",
+                "node_id": 3,
+                "mode": "seq",
+                "disk_size": 10,
+                "public": true,
+                "password": "hamadaellol",
+            }],
+            "metadata": "",
+            "description": ""
+        }
+    ```
 
-**Note:** disk size in GB, zdb names should be different
+    > **Note:** disk size in GB, zdb names should be different
 
 - **List**
 
-cmd: `twinserver.zdbs.list`
+    cmd: `twinserver.zdbs.list`
 
-payload: `""`
+    payload: `""`
 
 - **Get**
 
-cmd: `twinserver.zdbs.get`
+    cmd: `twinserver.zdbs.get`
 
-payload: `{"name": "<deployment name>"}`
+    payload: `{"name": "<deployment name>"}`
 
 - **Delete**
 
-cmd: `twinserver.zdbs.delete`
+    cmd: `twinserver.zdbs.delete`
 
-payload: `{"name": "<deployment name>"}`
+    payload: `{"name": "<deployment name>"}`
 
 - **Add zdb**
 
-cmd: `twinserver.zdbs.add_zdb`
+    cmd: `twinserver.zdbs.add_zdb`
 
-payload:
+    payload:
 
-```json
-{
-        "deployment_name": "sun199t1",
-        "name": "hamada1",
-        "node_id": 2,
-        "mode": "seq",
-        "disk_size": 10,
-        "public": true,
-        "password": "hamada12345",
+    ```json
+    {
+            "deployment_name": "sun199t1",
+            "name": "hamada1",
+            "node_id": 2,
+            "mode": "seq",
+            "disk_size": 10,
+            "public": true,
+            "password": "hamada12345",
 
-    }
-```
+        }
+    ```
 
 - **Delete zdb**
 
-cmd: `twinserver.zdbs.delete_zdb`
+    cmd: `twinserver.zdbs.delete_zdb`
 
-payload:
+    payload:
 
-```json
-{
-        "deployment_name": "sun199t1",
-        "name": "hamada1",
-    }
-```
+    ```json
+    {
+            "deployment_name": "sun199t1",
+            "name": "hamada1",
+        }
+    ```
 
 ### QSFS Zdbs
 
@@ -420,163 +420,259 @@ payload:
 
     payload:
 
-```json
-{
-        "name": "hamada",
-        "count": 3,
-        "node_ids": [3, 5],
-        "disk_size": 10,
-        "password": "hamadaellol",
-        "metadata": "",
-        "description": ""
-    }
-```
+    ```json
+    {
+            "name": "hamada",
+            "count": 3,
+            "node_ids": [3, 5],
+            "disk_size": 10,
+            "password": "hamadaellol",
+            "metadata": "",
+            "description": ""
+        }
+    ```
 
-**Note:** disk size in GB
+    > **Note:** disk size in GB
 
 - **List**
 
-cmd: `twinserver.qsfs_zdbs.list`
+    cmd: `twinserver.qsfs_zdbs.list`
 
-payload: `""`
+    payload: `""`
 
 - **Get**
 
-cmd: `twinserver.qsfs_zdbs.get`
+    cmd: `twinserver.qsfs_zdbs.get`
 
-payload: `{"name": "<deployment name>"}`
+    payload: `{"name": "<deployment name>"}`
 
 - **Delete**
 
-cmd: `twinserver.qsfs_zdbs.delete`
+    cmd: `twinserver.qsfs_zdbs.delete`
 
-payload: `{"name": "<deployment name>"}`
+    payload: `{"name": "<deployment name>"}`
 
 ### Stellar
 
 - **Import**
-It will return the wallet address after importing the wallet and saving it.
+    It will return the wallet address after importing the wallet and saving it.
 
-cmd: `twinserver.stellar.import`
+    cmd: `twinserver.stellar.import`
 
-payload:
+    payload:
 
-```json
-{
-    "name": "mywallet",
-    "secret": "<wallet secret>",
-}
-```
+    ```json
+    {
+        "name": "mywallet",
+        "secret": "<wallet secret>",
+    }
+    ```
 
 - **Get**
-It will return the wallet address.
+    It will return the wallet address.
 
-cmd: `twinserver.stellar.get`
+    cmd: `twinserver.stellar.get`
 
-payload: `{"name": "<wallet name>"}`
+    payload: `{"name": "<wallet name>"}`
 
 - **Update**
-It will return the new wallet address after updating the wallet and saving it.
+    It will return the new wallet address after updating the wallet and saving it.
 
-cmd: `twinserver.stellar.update`
+    cmd: `twinserver.stellar.update`
 
-payload:
+    payload:
 
-```json
-{
-    "name": "mywallet",
-    "secret": "<wallet secret>",
-}
-```
+    ```json
+    {
+        "name": "mywallet",
+        "secret": "<wallet secret>",
+    }
+    ```
 
 - **Exists**
 
-cmd: `twinserver.stellar.exists`
+    cmd: `twinserver.stellar.exists`
 
-payload: `{"name": "<wallet name>"}`
+    payload: `{"name": "<wallet name>"}`
 
 - **List**
 
-cmd: `twinserver.stellar.list`
+    cmd: `twinserver.stellar.list`
 
-payload: `""`
+    payload: `""`
 
 - **Balance by name**
 
-cmd: `twinserver.stellar.balance_by_name`
+    cmd: `twinserver.stellar.balance_by_name`
 
-payload: `{"name": "<wallet name>"}`
+    payload: `{"name": "<wallet name>"}`
 
 - **Balance by address**
 
-cmd: `twinserver.stellar.balance_by_address`
+    cmd: `twinserver.stellar.balance_by_address`
 
-payload: `{"address": "<wallet name>"}`
+    payload: `{"address": "<wallet name>"}`
 
 - **Transfer**
 
-cmd: `twinserver.stellar.transfer`
+    cmd: `twinserver.stellar.transfer`
 
-payload:
+    payload:
 
-```json
-{
-    "name": "<wallet name>",
-    "target_address": "<target wallet address>",
-    "amount": 10,
-    "asset": "TFT",
-    "memo": "try1",
-}
-```
+    ```json
+    {
+        "name": "<wallet name>",
+        "target_address": "<target wallet address>",
+        "amount": 10,
+        "asset": "TFT",
+        "memo": "try1",
+    }
+    ```
 
 - **Delete**
 
-cmd: `twinserver.stellar.delete`
+    cmd: `twinserver.stellar.delete`
 
-payload: `{"name": "<wallet name>"}`
+    payload: `{"name": "<wallet name>"}`
 
 ### KVSotre
 
 - **Set**
 
-   cmd: `twinserver.kvstore.set`
+    cmd: `twinserver.kvstore.set`
 
-   payload: `'{"key": "<your key>", "value": "<key's value>"}'`
+    payload: `'{"key": "<your key>", "value": "<key's value>"}'`
 
 - **Get**
 
-   cmd: `twinserver.kvstore.get`
+    cmd: `twinserver.kvstore.get`
 
-   payload: `'{"key": "<your key>"}'`
+    payload: `'{"key": "<your key>"}'`
 
 - **List**
 
-   cmd: `twinserver.kvstore.list`
+    cmd: `twinserver.kvstore.list`
 
-   payload: `""`
+    payload: `""`
 
 - **Remove**
 
-   cmd: `twinserver.kvstore.remove`
+    cmd: `twinserver.kvstore.remove`
 
-   payload: `'{"key": "<your key>"}'`
+    payload: `'{"key": "<your key>"}'`
 
 ### Balance
 
 - **Get My Balance**
 
-   cmd: `twinserver.balance.getMyBalance`
+    cmd: `twinserver.balance.getMyBalance`
 
-   payload: `""`
+    payload: `""`
 
 - **Get**
 
-   cmd: `twinserver.balance.get`
+    cmd: `twinserver.balance.get`
 
-   payload: `'{"address": "<Substrate account address>"}'`
+    payload: `'{"address": "<Substrate account address>"}'`
 
 - **Transfer**
 
-   cmd: `twinserver.balance.transfer`
+    cmd: `twinserver.balance.transfer`
 
-   payload: `'{"address": "<Substrate account address>", "amount": 1}'`
+    payload: `'{"address": "<Substrate account address>", "amount": 1}'`
+
+### Capacity Planner
+
+- **Get Farms**
+
+    cmd: `twinserver.capacity.getFarms`
+
+    payload: `'{"page": <page number>, "maxResult": <result count per page>}'`
+
+    > **Note:** page, maxResult are optional with default values page: 1, maxResult: 50
+
+- **Get All Farms**
+
+    cmd: `twinserver.capacity.getAllFarms`
+
+    payload: `""`
+
+- **Get Nodes**
+
+    cmd: `twinserver.capacity.getNodes`
+
+    payload: `'{"page": <page number>, "maxResult": <result count per page>}'`
+
+    > **Note:** page, maxResult are optional with default values page: 1, maxResult: 50
+
+- **Get All Nodes**
+
+    cmd: `twinserver.capacity.getAllNodes`
+
+    payload: `""`
+
+- **Filter Nodes**
+
+    cmd: `twinserver.capacity.filterNodes`
+
+    payload:
+
+    ```json
+        {
+        "cru": <nodes with free cores>,
+        "mru": <nodes with free memory in GB>,
+        "sru": <node with free SSD storage in GB>,
+        "hru": <nodes with free HDD storage in GB>,
+        "publicIPs": <nodes in a farm with free public ips>,
+        "accessNodeV4": <nodes with public config for ipv4>,
+        "accessNodeV6": <nodes with public config for ipv6>,
+        "gateway": <nodes with domain>,
+        "farmId": <nodes in a farm with that farmId>,
+        "farmName": "<nodes in a farm with that farmId>",
+        "country": "<nodes in a specific country>",
+        "city": "<nodes in a specific city>"
+        }
+    ```
+
+    example:
+
+    ```json
+        {
+        "cru": 2,
+        "mru": 4,
+        "sru": 40,
+        "publicIPs": true,
+        "accessNodeV4": false,
+        "accessNodeV6": false,
+        "gateway": true,
+        "farmName": "freefarm",
+        }
+    ```
+
+    > **Notes:**
+    > All filter options are optional.
+    > It filters nodes with status(up or down) by default.
+
+- **Check Farm Has Free Public IPs**
+
+    cmd: `twinserver.capacity.checkFarmHasFreePublicIps`
+
+    payload: `'{"farmId": 1}'`
+
+- **Get Nodes By FarmId**
+
+    cmd: `twinserver.capacity.getNodesByFarmId`
+
+    payload: `'{"farmId": 1}'`
+
+- **Get Node Free Resources**
+
+    cmd: `twinserver.capacity.getNodeFreeResources`
+
+    payload: `'{"nodeId": 7}'`
+
+- **Get FarmId From Farm Name**
+
+    cmd: `twinserver.capacity.getFarmIdFromFarmName`
+
+    payload: `'{"farmName": "freefarm"}'`

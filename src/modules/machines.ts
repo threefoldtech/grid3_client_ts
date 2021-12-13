@@ -1,6 +1,6 @@
 import { Addr } from "netaddr";
 
-import { WorkloadTypes, Workload } from "../zos/workload";
+import { WorkloadTypes } from "../zos/workload";
 
 import { BaseModule } from "./base";
 import { MachinesModel, MachinesDeleteModel, MachinesGetModel, AddMachineModel, DeleteMachineModel } from "./models";
@@ -12,7 +12,7 @@ import { GridClientConfig } from "../config";
 import { validateInput } from "../helpers/validator";
 import { checkBalance } from "./utils";
 
-class MachineModule extends BaseModule {
+class MachinesModule extends BaseModule {
     moduleName = "machines";
     workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
     vm: VMHL;
@@ -21,9 +21,8 @@ class MachineModule extends BaseModule {
         this.vm = new VMHL(config);
     }
 
-    async _createDeloyment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]> {
-        const networkName = options.network.name;
-        const network = new Network(networkName, options.network.ip_range, this.config);
+    async _createDeployment(options: MachinesModel): Promise<[TwinDeployment[], Network, string]> {
+        const network = new Network(options.network.name, options.network.ip_range, this.config);
         await network.load();
 
         let twinDeployments = [];
@@ -47,6 +46,7 @@ class MachineModule extends BaseModule {
                 options.description,
                 machine.qsfs_disks,
                 this.config.projectName,
+                options.network.addAccess,
             );
             twinDeployments = twinDeployments.concat(TDeployments);
             if (wgConfig) {
@@ -64,7 +64,7 @@ class MachineModule extends BaseModule {
             throw Error(`Another machine deployment with the same name ${options.name} already exists`);
         }
 
-        const [twinDeployments, _, wireguardConfig] = await this._createDeloyment(options);
+        const [twinDeployments, _, wireguardConfig] = await this._createDeployment(options);
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
         await this.save(options.name, contracts, wireguardConfig);
         return { contracts: contracts, wireguard_config: wireguardConfig };
@@ -79,7 +79,6 @@ class MachineModule extends BaseModule {
     async getObj(deploymentName: string) {
         const deployments = await this._get(deploymentName);
         const workloads = this._getWorkloadsByTypes(deployments, [WorkloadTypes.zmachine]);
-
         return workloads.map(workload => this._getZmachineData(deployments, workload));
     }
 
@@ -112,7 +111,7 @@ class MachineModule extends BaseModule {
             throw Error("Network name and ip_range can't be changed");
         }
 
-        const [twinDeployments, network, _] = await this._createDeloyment(options);
+        const [twinDeployments, network, _] = await this._createDeployment(options);
         return await this._update(this.vm, options.name, oldDeployments, twinDeployments, network);
     }
 
@@ -162,4 +161,4 @@ class MachineModule extends BaseModule {
     }
 }
 
-export { MachineModule as machines };
+export { MachinesModule as machines };

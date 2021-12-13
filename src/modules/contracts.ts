@@ -1,5 +1,3 @@
-import { MessageBusClientInterface } from "ts-rmb-client-base";
-
 import { TFClient } from "../clients/tf-grid/client";
 import {
     NodeContractCreateModel,

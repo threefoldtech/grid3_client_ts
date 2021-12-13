@@ -17,15 +17,18 @@ import { Network } from "../primitives/network";
 import { VMHL } from "../high_level/machine";
 import { TFClient } from "../clients/tf-grid/client";
 import { GridClientConfig } from "../config";
+import { RMB } from "../clients";
 
 class BaseModule {
     moduleName = "";
     workloadTypes = [];
+    rmb: RMB;
     deploymentFactory: DeploymentFactory;
     twinDeploymentHandler: TwinDeploymentHandler;
     backendStorage: BackendStorage;
 
     constructor(public config: GridClientConfig) {
+        this.rmb = new RMB(config.rmbClient);
         this.deploymentFactory = new DeploymentFactory(config);
         this.twinDeploymentHandler = new TwinDeploymentHandler(config);
         this.backendStorage = new BackendStorage(
@@ -208,14 +211,12 @@ class BaseModule {
             const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
             const node_twin_id = await nodes.getNodeTwinId(contract["node_id"]);
             const payload = JSON.stringify({ contract_id: contract["contract_id"] });
-
-            const msg = this.config.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
-            const messgae = await this.config.rmbClient.send(msg, payload);
-            const result = await this.config.rmbClient.read(messgae);
-            if (result[0].err) {
-                throw Error(String(result[0].err));
+            let deployment;
+            try {
+                deployment = await this.rmb.request([node_twin_id], "zos.deployment.get", payload);
+            } catch (e) {
+                throw Error(`Failed to get deployment due to ${e}`);
             }
-            const deployment = JSON.parse(String(result[0].dat));
             let found = false;
             for (const workload of deployment.workloads) {
                 if (this.workloadTypes.includes(workload.type) && workload.result.state !== "deleted") {

@@ -49,7 +49,7 @@ class Server {
 }
 
 if (!(config.network && config.mnemonic && config.storeSecret)) {
-    throw new Error(`Invalid config. Please fill the config.json file with correct data`);
+    throw new Error(`Invalid config. Please fill the config.json file with the correct data`);
 }
 
 const server = new Server();

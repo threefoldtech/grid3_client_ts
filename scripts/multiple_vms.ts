@@ -1,7 +1,6 @@
 import { config, getClient } from "./client_loader";
 import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../src";
 import { log } from "./utils";
->>>>>>> alleotech/development
 
 // create network Object
 const n = new NetworkModel();

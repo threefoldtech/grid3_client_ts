@@ -1,4 +1,4 @@
-import { conofig, getClient } from "./client_loader";
+import { config, getClient } from "./client_loader";
 import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel, FilterOptions } from "../src";
 import { log } from "./utils";
 

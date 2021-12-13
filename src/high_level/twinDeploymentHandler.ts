@@ -151,7 +151,7 @@ class TwinDeploymentHandler {
         const promises = twinDeployments.map(t => {
             if ([Operations.deploy, Operations.update].includes(t.operation)) {
                 events.emit("logs", `Waiting for deployment with contract_id: ${t.deployment.contract_id} to be ready`);
-                this.waitForDeployment(t, timeout);
+                return this.waitForDeployment(t, timeout);
             }
         });
         return Promise.all(promises);

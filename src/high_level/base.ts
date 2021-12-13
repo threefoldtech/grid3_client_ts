@@ -162,7 +162,7 @@ class HighLevelBase {
         ],
     ): Promise<TwinDeployment[]> {
         if (types.includes(WorkloadTypes.network)) {
-            throw Error("network can't be deleted");
+            throw Error("Network workload can't be deleted");
         }
         const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
         const node_id = await nodes.getNodeIdFromContractId(deployment.contract_id, this.config.mnemonic);

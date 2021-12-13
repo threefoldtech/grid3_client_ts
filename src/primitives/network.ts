@@ -14,6 +14,7 @@ import { getRandomNumber } from "../helpers/utils";
 import { Nodes } from "./nodes";
 import { events } from "../helpers/events";
 import { GridClientConfig } from "../config";
+import { RMB } from "../clients";
 
 class WireGuardKeys {
     privateKey: string;
@@ -39,6 +40,7 @@ class Network {
     networks: Znet[] = [];
     accessPoints: AccessPoint[] = [];
     backendStorage: BackendStorage;
+    rmb: RMB;
 
     constructor(public name: string, public ipRange: string, public config: GridClientConfig) {
         if (Addr(ipRange).prefix !== 16) {
@@ -54,6 +56,7 @@ class Network {
             config.storeSecret,
             config.keypairType,
         );
+        this.rmb = new RMB(config.rmbClient);
     }
 
     async addAccess(node_id: number, ipv4: boolean): Promise<string> {
@@ -187,13 +190,13 @@ class Network {
         for (const node of network["nodes"]) {
             const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
             const node_twin_id = await nodes.getNodeTwinId(node.node_id);
-            const msg = this.config.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
-            const message = await this.config.rmbClient.send(msg, JSON.stringify({ contract_id: node.contract_id }));
-            const result = await this.config.rmbClient.read(message);
-            if (result[0].err) {
-                console.error(`Could not load network deployment ${node.contract_id} due to error: ${result[0].err} `);
+            const payload = JSON.stringify({ contract_id: node.contract_id });
+            let res;
+            try {
+                res = await this.rmb.request([node_twin_id], "zos.deployment.get", payload);
+            } catch (e) {
+                throw Error(`Failed to load network deployment ${node.contract_id} due to ${e}`);
             }
-            const res = JSON.parse(String(result[0].dat));
             res["node_id"] = node.node_id;
             for (const workload of res["workloads"]) {
                 if (
@@ -397,13 +400,16 @@ class Network {
     async getFreePort(node_id: number): Promise<number> {
         const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
         const node_twin_id = await nodes.getNodeTwinId(node_id);
-        const msg = this.config.rmbClient.prepare("zos.network.list_wg_ports", [node_twin_id], 0, 2);
-        const message = await this.config.rmbClient.send(msg, "");
-        const result = await this.config.rmbClient.read(message);
-        events.emit("logs", result);
+        let result;
+        try {
+            result = await this.rmb.request([node_twin_id], "zos.network.list_wg_ports", "");
+        } catch (e) {
+            throw Error(`Couldn't get free Wireguard ports for node ${node_id} due to ${e}`);
+        }
+        events.emit("logs", `Node ${node_id} reserved ports: ${result}`);
 
         let port = 0;
-        while (!port || JSON.parse(String(result[0].dat)).includes(port)) {
+        while (!port || result.includes(port)) {
             port = getRandomNumber(2000, 8000);
         }
         return port;
@@ -416,36 +422,37 @@ class Network {
     async getNodeEndpoint(node_id: number): Promise<string> {
         const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
         const node_twin_id = await nodes.getNodeTwinId(node_id);
-        let msg = this.config.rmbClient.prepare("zos.network.public_config_get", [node_twin_id], 0, 2);
-        let message = await this.config.rmbClient.send(msg, "");
-        let result = await this.config.rmbClient.read(message);
-        events.emit("logs", result);
+        let result;
+        try {
+            result = await this.rmb.request([node_twin_id], "zos.network.public_config_get", "");
+        } catch (e) {
+            console.log(`Couldn't get public config for node ${node_id} due to ${e}`);
+        }
+        events.emit("logs", `Node ${node_id} public config: ${result}`);
 
-        if (!result[0].err && result[0].dat) {
-            const data = JSON.parse(String(result[0].dat));
-            const ipv4 = data.ipv4;
+        if (result) {
+            const ipv4 = result.ipv4;
             if (!this.isPrivateIP(ipv4)) {
                 return ipv4.split("/")[0];
             }
-            const ipv6 = data.ipv6;
+            const ipv6 = result.ipv6;
             if (!this.isPrivateIP(ipv6)) {
                 return ipv6.split("/")[0];
             }
         }
-        events.emit("logs", `node ${node_id} has no public config`);
+        try {
+            result = await this.rmb.request([node_twin_id], "zos.network.interfaces", "");
+        } catch (e) {
+            throw Error(`Couldn't get the network interfaces for node ${node_id} due to ${e}`);
+        }
+        events.emit("logs", `Node ${node_id} network interfaces: ${result}`);
 
-        msg = this.config.rmbClient.prepare("zos.network.interfaces", [node_twin_id], 0, 2);
-        message = await this.config.rmbClient.send(msg, "");
-        result = await this.config.rmbClient.read(message);
-        events.emit("logs", result);
-
-        if (!result[0].err && result[0].dat) {
-            const data = JSON.parse(String(result[0].dat));
-            for (const iface of Object.keys(data)) {
+        if (result) {
+            for (const iface of Object.keys(result)) {
                 if (iface !== "zos") {
                     continue;
                 }
-                for (const ip of data[iface]) {
+                for (const ip of result[iface]) {
                     if (!this.isPrivateIP(ip)) {
                         return ip;
                     }

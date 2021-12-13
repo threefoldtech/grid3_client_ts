@@ -7,23 +7,27 @@ import { Nodes } from "../primitives/index";
 import { events } from "../helpers/events";
 import { validateObject } from "../helpers/validator";
 import { GridClientConfig } from "../config";
+import { RMB } from "../clients";
 
 class TwinDeploymentHandler {
     tfclient: TFClient;
+    rmb: RMB;
 
     constructor(public config: GridClientConfig) {
         this.tfclient = new TFClient(config.substrateURL, config.mnemonic, config.storeSecret, config.keypairType);
+        this.rmb = new RMB(config.rmbClient);
     }
 
     async createNameContract(name: string) {
         const c = await this.tfclient.contracts.getNameContract(name);
         if (!c) {
-            const contract = await this.tfclient.contracts.createName(name);
-            if (contract instanceof Error) {
-                throw Error(`Failed to create name contract ${contract}`);
+            try {
+                const contract = await this.tfclient.contracts.createName(name);
+                events.emit("logs", `Name contract with id: ${contract["contract_id"]} has been created`);
+                return contract;
+            } catch (e) {
+                throw Error(`Failed to create name contract ${name} due to ${e}`);
             }
-            events.emit("logs", `Name contract with id: ${contract["contract_id"]} has been created`);
-            return contract;
         }
         events.emit("logs", `Name contract found with id: ${c}`);
         return c;
@@ -39,50 +43,50 @@ class TwinDeploymentHandler {
     }
 
     async deploy(deployment: Deployment, node_id: number, publicIps: number) {
-        const contract = await this.tfclient.contracts.createNode(node_id, deployment.challenge_hash(), "", publicIps);
-        if (contract instanceof Error) {
-            throw Error(`Failed to create contract ${contract}`);
+        let contract;
+        try {
+            contract = await this.tfclient.contracts.createNode(node_id, deployment.challenge_hash(), "", publicIps);
+            events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
+        } catch (e) {
+            throw Error(`Failed to create contract on node: ${node_id} due to ${e}`);
         }
-        events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
 
         try {
             deployment.contract_id = contract["contract_id"];
             const payload = JSON.stringify(deployment);
             const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
             const node_twin_id = await nodes.getNodeTwinId(node_id);
-            const msg = this.config.rmbClient.prepare("zos.deployment.deploy", [node_twin_id], 0, 2);
-            const message = await this.config.rmbClient.send(msg, payload);
-            const result = await this.config.rmbClient.read(message);
-            if (result[0].err) {
-                throw Error(String(result[0].err));
-            }
-        } catch (err) {
+            await this.rmb.request([node_twin_id], "zos.deployment.deploy", payload);
+        } catch (e) {
             await this.tfclient.contracts.cancel(contract["contract_id"]);
-            throw Error(err);
+            throw Error(`Failed to deploy on node ${node_id} due to ${e}`);
         }
         return contract;
     }
 
     async update(deployment: Deployment, publicIps: number) {
         // TODO: update the contract with public when it is available
-        const contract = await this.tfclient.contracts.updateNode(
-            deployment.contract_id,
-            "",
-            deployment.challenge_hash(),
-        );
-        if (contract instanceof Error) {
+        let contract;
+        try {
+            contract = await this.tfclient.contracts.updateNode(
+                deployment.contract_id,
+                "",
+                deployment.challenge_hash(),
+            );
+            events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
+        } catch (e) {
             throw Error(`Failed to update contract ${contract}`);
         }
-        events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
-
-        const payload = JSON.stringify(deployment);
-        const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
-        const node_twin_id = await nodes.getNodeTwinId(contract["contract_type"]["nodeContract"]["node_id"]);
-        const msg = this.config.rmbClient.prepare("zos.deployment.update", [node_twin_id], 0, 2);
-        const message = await this.config.rmbClient.send(msg, payload);
-        const result = await this.config.rmbClient.read(message);
-        if (result[0].err) {
-            throw Error(String(result[0].err));
+        const node_id = contract["contract_type"]["nodeContract"]["node_id"];
+        try {
+            const payload = JSON.stringify(deployment);
+            const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
+            const node_twin_id = await nodes.getNodeTwinId(node_id);
+            await this.rmb.request([node_twin_id], "zos.deployment.update", payload);
+        } catch (e) {
+            throw Error(
+                `Failed to update deployment on node ${node_id} with contract ${contract["contract_id"]} due to ${e}`,
+            );
         }
         return contract;
     }
@@ -97,22 +101,15 @@ class TwinDeploymentHandler {
     }
 
     async getDeployment(contract_id: number, node_twin_id: number) {
-        const msg = this.config.rmbClient.prepare("zos.deployment.get", [node_twin_id], 0, 2);
-        const payload = { contract_id: contract_id };
-        const message = await this.config.rmbClient.send(msg, JSON.stringify(payload));
-        const result = await this.config.rmbClient.read(message);
-        if (result[0].err) {
-            console.error(`Could not get deployment ${contract_id} due to error: ${result[0].err} `);
-        }
-        const res = JSON.parse(String(result[0].dat));
-        return res;
+        const payload = JSON.stringify({ contract_id: contract_id });
+        return await this.rmb.request([node_twin_id], "zos.deployment.get", payload);
     }
 
-    checkWorkload(workload: Workload, targetWorkload: Workload): boolean {
+    checkWorkload(workload: Workload, targetWorkload: Workload, nodeId: number): boolean {
         let state = false;
         if (workload.result.state === "error") {
             throw Error(
-                `Failed to deploy ${workload.type} with name ${workload.name} due to: ${workload.result.message}`,
+                `Failed to deploy ${workload.type} with name ${workload.name} on node ${nodeId} due to: ${workload.result.message}`,
             );
         } else if (workload.result.state === "ok") {
             state = true;
@@ -138,12 +135,12 @@ class TwinDeploymentHandler {
             }
             let readyWorkloads = 0;
             for (let i = 0; i < deployment.workloads.length; i++) {
-                if (this.checkWorkload(deployment.workloads[i], twinDeployment.deployment.workloads[i])) {
+                if (this.checkWorkload(deployment.workloads[i], twinDeployment.deployment.workloads[i], node_id)) {
                     readyWorkloads += 1;
                 }
             }
             if (readyWorkloads === twinDeployment.deployment.workloads.length) {
-                return true;
+                return;
             }
             await new Promise(f => setTimeout(f, 2000));
         }
@@ -151,22 +148,13 @@ class TwinDeploymentHandler {
     }
 
     async waitForDeployments(twinDeployments: TwinDeployment[], timeout = 5) {
-        const promises = [];
-        for (const twinDeployment of twinDeployments) {
-            if ([Operations.deploy, Operations.update].includes(twinDeployment.operation)) {
-                events.emit(
-                    "logs",
-                    `Waiting for deployment with contract_id: ${twinDeployment.deployment.contract_id} to be ready`,
-                );
-                promises.push(this.waitForDeployment(twinDeployment, timeout));
+        const promises = twinDeployments.map(t => {
+            if ([Operations.deploy, Operations.update].includes(t.operation)) {
+                events.emit("logs", `Waiting for deployment with contract_id: ${t.deployment.contract_id} to be ready`);
+                return this.waitForDeployment(t, timeout);
             }
-        }
-        for (const promise of promises) {
-            if (!(await promise)) {
-                return false;
-            }
-        }
-        return true;
+        });
+        return Promise.all(promises);
     }
 
     async saveNetworks(twinDeployments: TwinDeployment[]) {

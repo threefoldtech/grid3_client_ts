@@ -40,6 +40,8 @@ class Network {
     networks: Znet[] = [];
     accessPoints: AccessPoint[] = [];
     backendStorage: BackendStorage;
+    _endpoints: Record<string, string> = {};
+    _accessNodes: number[] = [];
     rmb: RMB;
 
     constructor(public name: string, public ipRange: string, public config: GridClientConfig) {
@@ -248,6 +250,9 @@ class Network {
     }
 
     async getAccessNodes(): Promise<number[]> {
+        if (this._accessNodes.length !== 0) {
+            return this._accessNodes;
+        }
         const accessNodes: number[] = [];
         const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
         const allAccessNodes = await nodes.getAccessNodes();
@@ -256,6 +261,7 @@ class Network {
                 accessNodes.push(+accessNode);
             }
         }
+        this._accessNodes = accessNodes;
         return accessNodes;
     }
 
@@ -432,6 +438,9 @@ class Network {
     }
 
     async getNodeEndpoint(node_id: number): Promise<string> {
+        if (Object.keys(this._endpoints).includes(String(node_id))) {
+            return this._endpoints[node_id];
+        }
         const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
         const node_twin_id = await nodes.getNodeTwinId(node_id);
         let result;
@@ -442,14 +451,15 @@ class Network {
         }
         events.emit("logs", `Node ${node_id} public config: ${result}`);
 
+        let endpoint;
         if (result) {
             const ipv4 = result.ipv4;
             if (!this.isPrivateIP(ipv4)) {
-                return ipv4.split("/")[0];
+                endpoint = ipv4.split("/")[0];
             }
             const ipv6 = result.ipv6;
             if (!this.isPrivateIP(ipv6)) {
-                return ipv6.split("/")[0];
+                endpoint = ipv6.split("/")[0];
             }
         }
         try {
@@ -466,11 +476,13 @@ class Network {
                 }
                 for (const ip of result[iface]) {
                     if (!this.isPrivateIP(ip)) {
-                        return ip;
+                        endpoint = ip;
                     }
                 }
             }
         }
+        this._endpoints[node_id] = endpoint;
+        return endpoint;
     }
 
     wgRoutingIP(subnet: string): string {

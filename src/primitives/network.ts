@@ -247,6 +247,18 @@ class Network {
         return false;
     }
 
+    async getAccessNodes(): Promise<number[]> {
+        const accessNodes: number[] = [];
+        const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
+        const allAccessNodes = await nodes.getAccessNodes();
+        for (const accessNode of Object.keys(allAccessNodes)) {
+            if (this.nodeExists(+accessNode)) {
+                accessNodes.push(+accessNode);
+            }
+        }
+        return accessNodes;
+    }
+
     generateWireguardKeypair() {
         const keypair = TweetNACL.box.keyPair();
         const wg = new WireGuardKeys();
@@ -526,6 +538,34 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
 
     async generatePeers(): Promise<void> {
         events.emit("logs", `Generating peers for network ${this.name}`);
+        const accessNodes = await this.getAccessNodes();
+        const hiddenNodeAccessNodesIds = {};
+        const hiddenNodes = [];
+        for (const net of this.networks) {
+            if (this.networks.length === 1) {
+                continue;
+            }
+            const accessIP = await this.getNodeEndpoint(net["node_id"]);
+            if (accessIP) {
+                continue;
+            }
+
+            if (accessNodes.length === 0) {
+                throw Error(
+                    `Couldn't add node ${net["node_id"]} as it's a hidden node ` +
+                        `and there is no access node in this network ${this.name}. ` +
+                        "Please add addAccess = true in the network configuration.",
+                );
+            }
+            hiddenNodeAccessNodesIds[net["node_id"]] = accessNodes[0];
+            const hiddenNode = new AccessPoint();
+            hiddenNode.node_id = accessNodes[0];
+            hiddenNode.subnet = net.subnet;
+            hiddenNode.wireguard_public_key = this.getPublicKey(net.wireguard_private_key);
+            hiddenNodes.push(hiddenNode);
+        }
+        const accessPoints = [...this.accessPoints, ...hiddenNodes];
+
         for (const n of this.networks) {
             n.peers = [];
             for (const net of this.networks) {
@@ -533,17 +573,35 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
                     continue;
                 }
                 const allowed_ips = [];
+                if (Object.keys(hiddenNodeAccessNodesIds).includes(String(n["node_id"]))) {
+                    if (net["node_id"] !== +hiddenNodeAccessNodesIds[n["node_id"]]) {
+                        continue;
+                    }
+                    for (const subnet of this.getReservedSubnets()) {
+                        if (subnet === n.subnet || subnet === net.subnet) {
+                            continue;
+                        }
+                        allowed_ips.push(subnet);
+                        allowed_ips.push(this.wgRoutingIP(subnet));
+                    }
+                }
                 allowed_ips.push(net.subnet);
                 allowed_ips.push(this.wgRoutingIP(net.subnet));
 
                 // add access points as allowed ips if this node "net" is the access node and has access point to it
-                for (const accessPoint of this.accessPoints) {
+                for (const accessPoint of accessPoints) {
                     if (accessPoint.node_id === net["node_id"]) {
+                        if (allowed_ips.includes(accessPoint.subnet)) {
+                            continue;
+                        }
                         allowed_ips.push(accessPoint.subnet);
                         allowed_ips.push(this.wgRoutingIP(accessPoint.subnet));
                     }
                 }
                 let accessIP = await this.getNodeEndpoint(net["node_id"]);
+                if (!accessIP) {
+                    continue;
+                }
                 if (accessIP.includes(":")) {
                     accessIP = `[${accessIP}]`;
                 }
@@ -554,7 +612,7 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
                 peer.endpoint = `${accessIP}:${net.wireguard_listen_port}`;
                 n.peers.push(peer);
             }
-            for (const accessPoint of this.accessPoints) {
+            for (const accessPoint of accessPoints) {
                 if (n["node_id"] === accessPoint.node_id) {
                     const allowed_ips = [];
                     allowed_ips.push(accessPoint.subnet);

@@ -1,7 +1,7 @@
 import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
 import { validateInput } from "../helpers/validator";
-import { Nodes, FilterOptions, FarmInfo, NodeInfo, NodeResources } from "../primitives/nodes";
+import { Nodes, FarmInfo, NodeInfo, NodeResources } from "../primitives/nodes";
 import {
     FarmsGetModel,
     NodesGetModel,
@@ -9,6 +9,7 @@ import {
     NodesByFarmIdModel,
     NodeFreeResourcesModel,
     FarmIdFromFarmNameModel,
+    FilterOptions,
 } from "./models";
 
 class Capacity {

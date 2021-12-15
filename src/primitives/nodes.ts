@@ -1,12 +1,11 @@
 import { default as PrivateIp } from "private-ip";
-import { IsBoolean, IsInt, IsOptional, IsString, Min } from "class-validator";
-import { Expose } from "class-transformer";
 
 import { events } from "../helpers/events";
 import { TFClient } from "../clients/tf-grid/client";
 import { send } from "../helpers/requests";
 import { GridClient } from "../client";
 import { Graphql } from "../clients/graphql/client";
+import { FilterOptions } from "../modules/models";
 
 interface FarmInfo {
     name: string;
@@ -64,21 +63,6 @@ interface NodeCapacity {
         total: NodeResources;
         used: NodeResources;
     };
-}
-
-class FilterOptions {
-    @Expose() @IsOptional() @Min(0) cru?: number;
-    @Expose() @IsOptional() @Min(0) mru?: number; // GB
-    @Expose() @IsOptional() @Min(0) sru?: number; // GB
-    @Expose() @IsOptional() @Min(0) hru?: number; // GB
-    @Expose() @IsOptional() @IsBoolean() publicIPs?: boolean;
-    @Expose() @IsOptional() @IsBoolean() accessNodeV4?: boolean;
-    @Expose() @IsOptional() @IsBoolean() accessNodeV6?: boolean;
-    @Expose() @IsOptional() @IsBoolean() gateway?: boolean;
-    @Expose() @IsOptional() @IsInt() @Min(1) farmId?: number;
-    @Expose() @IsOptional() @IsString() farmName?: string;
-    @Expose() @IsOptional() @IsString() country?: string;
-    @Expose() @IsOptional() @IsString() city?: string;
 }
 
 class Nodes {
@@ -293,4 +277,4 @@ class Nodes {
     }
 }
 
-export { Nodes, FilterOptions, FarmInfo, NodeResources, NodeInfo, PublicIPs, PublicConfig };
+export { Nodes, FarmInfo, NodeResources, NodeInfo, PublicIPs, PublicConfig };

@@ -11,10 +11,11 @@ jobs:
   deployment-scripts:
     runs-on: ubuntu-20.04
     env:
-      NETWORK: dev
+      NETWORK: ${{ secrets.NETWORK }}
       RMB_PROXY: true
       STORE_SECRET: secret
       MNEMONIC: ${{ secrets.MNEMONIC }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
     
     steps:
       - uses: actions/checkout@v2

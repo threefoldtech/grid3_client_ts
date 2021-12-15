@@ -1,5 +1,6 @@
 import { TFClient } from "./client";
 import { Graphql } from "../graphql/client";
+import { Decimal } from "decimal.js";
 
 enum ContractState {
     Created = "Created",
@@ -81,6 +82,28 @@ class Contracts {
             nameContractsCount: nameContractsCount,
         });
         return response["data"];
+    }
+    /**
+     * Get contract consumption per hour in TFT.
+     *
+     * @param  {number} id
+     * @param  {string} graphqlURL
+     * @returns {Promise<number>}
+     */
+    async getConsumption(id: number, graphqlURL: string): Promise<number> {
+        const gqlClient = new Graphql(graphqlURL);
+        const body = `query getConsumption($contractId: Int!){
+            contractBillReports(where: {contractId_eq: $contractId}) {
+                amountBilled
+            }
+          }`;
+        const response = await gqlClient.query(body, { contractId: id });
+        const billReports = response["data"]["contractBillReports"];
+        if (billReports.length !== 0) {
+            const amountBilled = new Decimal(billReports[billReports.length - 1]["amountBilled"]);
+            return amountBilled.div(10 ** 7).toNumber();
+        }
+        return 0;
     }
 
     async listContractsByAddress(graphqlURL, address) {

@@ -233,6 +233,10 @@ class ContractsByAddress {
     @Expose() @IsString() @IsNotEmpty() address: string;
 }
 
+class ContractConsumption {
+    @Expose() @IsInt() @Min(1) id: number;
+}
+
 class TwinCreateModel {
     @Expose() @IsString() @IsNotEmpty() ip: string;
 }
@@ -355,6 +359,7 @@ export {
     ContractCancelModel,
     ContractsByTwinId,
     ContractsByAddress,
+    ContractConsumption,
     TwinCreateModel,
     TwinGetModel,
     TwinGetByAccountIdModel,

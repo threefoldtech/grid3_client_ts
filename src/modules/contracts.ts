@@ -10,6 +10,7 @@ import {
     NameContractGetModel,
     ContractsByTwinId,
     ContractsByAddress,
+    ContractConsumption,
 } from "./models";
 import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
@@ -99,6 +100,18 @@ class Contracts {
     @checkBalance
     async cancelMyContracts(): Promise<Record<string, number>[]> {
         return await this.client.contracts.cancelMyContracts(this.config.graphqlURL);
+    }
+
+    /**
+     * Get contract consumption per hour in TFT.
+     *
+     * @param  {ContractConsumption} options
+     * @returns {Promise<number>}
+     */
+    @expose
+    @validateInput
+    async getConsumption(options: ContractConsumption): Promise<number> {
+        return await this.client.contracts.getConsumption(options.id, this.config.graphqlURL);
     }
 }
 

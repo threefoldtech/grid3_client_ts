@@ -116,11 +116,15 @@ class TFClient {
         resultNames: string[],
     ) {
         await TFClient.lock.acquireAsync();
+        console.log("Lock acquired");
+        let result;
         try {
-            await this._applyExtrinsic(func, args, resultSecttion, resultNames);
+            result = await this._applyExtrinsic(func, args, resultSecttion, resultNames);
         } finally {
             TFClient.lock.release();
+            console.log("Lock released");
         }
+        return result;
     }
 }
 export { TFClient, KeypairType };

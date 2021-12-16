@@ -2,6 +2,7 @@ import { MessageBusClientInterface } from "ts-rmb-client-base";
 
 import { KeypairType } from "./clients/tf-grid/client";
 import { BackendStorageType } from "./storage/backend";
+import BackendInterface from "./storage/BackendInterface";
 
 enum NetworkEnv {
     dev = "dev",
@@ -15,6 +16,7 @@ class GridClientConfig {
     rmbClient: MessageBusClientInterface;
     projectName: string;
     backendStorageType: BackendStorageType;
+    backendStorage: BackendInterface;
     keypairType: KeypairType;
     storePath: string;
     graphqlURL: string;

@@ -50,13 +50,12 @@ class Network {
         if (!this.isPrivateIP(ipRange)) {
             throw Error("Network ip_range should be a private range");
         }
-        this.backendStorage = new BackendStorage(
-            config.backendStorageType,
-            config.substrateURL,
-            config.mnemonic,
-            config.storeSecret,
-            config.keypairType,
-        );
+        this.backendStorage = new BackendStorage(config.backendStorage, config.backendStorageType, {
+            substrateURL: config.substrateURL,
+            mnemonic: config.mnemonic,
+            storeSecret: config.storeSecret,
+            keypairType: config.keypairType,
+        });
         this.rmb = new RMB(config.rmbClient);
     }
 

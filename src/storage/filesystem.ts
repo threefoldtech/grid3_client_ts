@@ -2,7 +2,7 @@ import fs from "fs";
 import PATH from "path";
 import BackendInterface from "./BackendInterface";
 
-class FS implements BackendInterface{
+class FS implements BackendInterface {
     async set(key: string, value: string) {
         if (value && value !== '""' && !fs.existsSync(PATH.dirname(key))) {
             fs.mkdirSync(PATH.dirname(key), { recursive: true });

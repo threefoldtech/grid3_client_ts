@@ -41,7 +41,12 @@ class GridClient {
     constructor(public options: ClientOptions) {}
     async connect() {
         const urls = this.getDefaultUrls(this.options.network);
-        const tfclient = new TFClient(urls.substrate, this.options.mnemonic, this.options.storeSecret, this.options.keypairType);
+        const tfclient = new TFClient(
+            urls.substrate,
+            this.options.mnemonic,
+            this.options.storeSecret,
+            this.options.keypairType,
+        );
         await tfclient.connect();
         if (BackendStorage.isEnvNode()) {
             process.on("exit", this.disconnect);

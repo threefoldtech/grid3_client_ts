@@ -41,7 +41,7 @@ class BackendStorage {
         log(backend);
         // Return if backend storage instance sent as parameter
         if (this.backend) return;
-        
+
         // Assign backend storage instance based on type and options
         if (type === BackendStorageType.auto) {
             if (BackendStorage.isEnvNode()) {

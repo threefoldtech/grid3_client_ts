@@ -1,7 +1,7 @@
 import BackendInterface from "./BackendInterface";
 import { crop } from "./utils";
 
-class LocalStorage implements BackendInterface{
+class LocalStorage implements BackendInterface {
     @crop
     async set(key: string, value: string) {
         if (!value || value === '""') {

@@ -63,7 +63,7 @@ class TwinDeploymentHandler {
         return contract;
     }
 
-    async update(deployment: Deployment, publicIps: number) {
+    async update(deployment: Deployment) {
         // TODO: update the contract with public when it is available
         let contract;
         try {
@@ -358,7 +358,7 @@ class TwinDeploymentHandler {
                             await this.createNameContract(workload.data["name"]);
                         }
                     }
-                    const contract = await this.update(twinDeployment.deployment, twinDeployment.publicIps);
+                    const contract = await this.update(twinDeployment.deployment);
                     contracts.updated.push(contract);
                     twinDeployment.nodeId = contract["contract_type"]["nodeContract"]["node_id"];
                     events.emit("logs", `Deployment has been updated with contract_id: ${contract["contract_id"]}`);

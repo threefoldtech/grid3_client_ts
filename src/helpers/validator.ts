@@ -1,4 +1,4 @@
-import { plainToClass } from "class-transformer";
+import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 
 async function validateObject(obj) {
@@ -12,12 +12,12 @@ async function validateObject(obj) {
     }
 }
 // used as decorator
-function validateInput(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+function validateInput(target, propertyKey: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
     descriptor.value = async function (...args) {
         const types = Reflect.getMetadata("design:paramtypes", target, propertyKey);
         for (let i = 0; i < args.length; i++) {
-            const input = plainToClass(types[i], args[i], { excludeExtraneousValues: true });
+            const input = plainToInstance(types[i], args[i], { excludeExtraneousValues: true });
             await validateObject(input);
         }
         return await method.apply(this, args);

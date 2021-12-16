@@ -45,7 +45,7 @@ class Stellar {
     }
 
     async getWalletSecret(name: string) {
-        const [_, data] = await this._load();
+        const [, data] = await this._load();
         return data[name];
     }
 
@@ -96,7 +96,7 @@ class Stellar {
     @expose
     @validateInput
     async list() {
-        const [_, data] = await this._load();
+        const [, data] = await this._load();
         return Object.keys(data);
     }
 

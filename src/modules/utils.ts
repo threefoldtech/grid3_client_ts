@@ -2,7 +2,7 @@ import { GridClient } from "../client";
 import { TFClient } from "../clients/tf-grid/client";
 
 // used as decorator
-function checkBalance(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+function checkBalance(target, propertyKey: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
     descriptor.value = async function (...args) {
         const { substrateURL, mnemonic, storePath, keypairType } = GridClient.config;

@@ -86,7 +86,7 @@ class TFClient {
                 const { events = [], status } = res;
                 if (status.isFinalized) {
                     events.forEach(({ phase, event: { data, method, section } }) => {
-                        console.log("section", section, "method", method);
+                        console.log("phase", phase, "section", section, "method", method);
                         if (section === "system" && method === "ExtrinsicFailed") {
                             const errorType = ErrorsMap[resultSection][data.toJSON()[0].module.error];
                             reject(

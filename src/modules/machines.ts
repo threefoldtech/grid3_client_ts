@@ -63,7 +63,7 @@ class MachinesModule extends BaseModule {
             throw Error(`Another machine deployment with the same name ${options.name} already exists`);
         }
 
-        const [twinDeployments, _, wireguardConfig] = await this._createDeployment(options);
+        const [twinDeployments, , wireguardConfig] = await this._createDeployment(options);
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
         await this.save(options.name, contracts, wireguardConfig);
         return { contracts: contracts, wireguard_config: wireguardConfig };
@@ -110,7 +110,7 @@ class MachinesModule extends BaseModule {
             throw Error("Network name and ip_range can't be changed");
         }
 
-        const [twinDeployments, network, _] = await this._createDeployment(options);
+        const [twinDeployments, network] = await this._createDeployment(options);
         return await this._update(this.vm, options.name, oldDeployments, twinDeployments, network);
     }
 
@@ -128,7 +128,7 @@ class MachinesModule extends BaseModule {
         const network = new Network(networkName, networkIpRange, this.config);
         await network.load();
 
-        const [twinDeployments, wgConfig] = await this.vm.create(
+        const [twinDeployments] = await this.vm.create(
             options.name,
             options.node_id,
             options.flist,

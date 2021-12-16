@@ -9,7 +9,7 @@ import { RMB } from "../clients";
 import { GridClientConfig } from "../config";
 import { events } from "../helpers/events";
 import { getRandomNumber } from "../helpers/utils";
-import { appPath, BackendStorage, BackendStorageType } from "../storage/backend";
+import { BackendStorage } from "../storage/backend";
 import { Deployment } from "../zos/deployment";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Peer, Znet } from "../zos/znet";

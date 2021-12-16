@@ -88,7 +88,7 @@ class GWModule extends BaseModule {
         return await this._delete(options.name);
     }
 
-    async getObj(deploymentName: string): Promise<any> {
+    async getObj(deploymentName: string) {
         const deployments = await this._get(deploymentName);
         const workloads = this._getWorkloadsByTypes(deployments, [
             WorkloadTypes.gatewayfqdnproxy,

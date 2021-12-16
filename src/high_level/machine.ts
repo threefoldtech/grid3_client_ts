@@ -1,5 +1,4 @@
 import { Addr } from "netaddr";
-import * as PATH from "path";
 
 import { events } from "../helpers/events";
 import { randomChoice } from "../helpers/utils";

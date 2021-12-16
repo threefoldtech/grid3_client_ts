@@ -1,7 +1,7 @@
 {
     "name": "grid3_client",
     "author": "Ahmed Hanafy",
-    "version": "0.0.34",
+    "version": "0.0.35",
     "license": "ISC",
     "homepage": "https://github.com/threefoldtech/grid3_client_ts/blob/development/README.md",
     "repository": {
@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "appdata-path": "^1.0.0",
+        "await-lock": "^2.1.0",
         "axios": "^0.24.0",
         "buffer": "^6.0.3",
         "class-transformer": "^0.5.1",

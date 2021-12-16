@@ -4,6 +4,7 @@ import { Twins } from "./twins";
 import { KVStore } from "./kvstore";
 import { Balance } from "./balance";
 import { ErrorsMap } from "./errors";
+import AwaitLock from "await-lock";
 
 enum KeypairType {
     sr25519 = "sr25519",
@@ -12,6 +13,7 @@ enum KeypairType {
 
 class TFClient {
     static clients: Record<string, TFClient> = {};
+    static lock: AwaitLock = new AwaitLock();
     client;
     contracts: Contracts;
     twins: Twins;
@@ -66,7 +68,7 @@ class TFClient {
         return await func.apply(context, args);
     }
 
-    async applyExtrinsic(
+    private async _applyExtrinsic(
         func: (args: unknown[]) => unknown,
         args: unknown[],
         resultSecttion: string,
@@ -105,6 +107,24 @@ class TFClient {
                 reject(e);
             }
         });
+    }
+
+    async applyExtrinsic(
+        func: (args: unknown[]) => unknown,
+        args: unknown[],
+        resultSecttion: string,
+        resultNames: string[],
+    ) {
+        await TFClient.lock.acquireAsync();
+        console.log("Lock acquired");
+        let result;
+        try {
+            result = await this._applyExtrinsic(func, args, resultSecttion, resultNames);
+        } finally {
+            TFClient.lock.release();
+            console.log("Lock released");
+        }
+        return result;
     }
 }
 export { TFClient, KeypairType };

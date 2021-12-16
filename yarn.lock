@@ -707,6 +707,11 @@
   "resolved" "https://registry.npmjs.org/asynckit/-/asynckit-0.4.0.tgz"
   "version" "0.4.0"
 
+"await-lock@^2.1.0":
+  "integrity" "sha512-t7Zm5YGgEEc/3eYAicF32m/TNvL+XOeYZy9CvBUeJY/szM7frLolFylhrlZNWV/ohWhcUXygrBGjYmoQdxF4CQ=="
+  "resolved" "https://registry.npmjs.org/await-lock/-/await-lock-2.1.0.tgz"
+  "version" "2.1.0"
+
 "axios@^0.22.0":
   "integrity" "sha512-Z0U3uhqQeg1oNcihswf4ZD57O3NrR1+ZXhxaROaWpDmsDTx7T2HNBV2ulBtie2hwJptu8UvgnJoK+BIqdzh/1w=="
   "resolved" "https://registry.npmjs.org/axios/-/axios-0.22.0.tgz"

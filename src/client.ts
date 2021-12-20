@@ -56,7 +56,7 @@ class GridClient {
         this.twinId = await tfclient.twins.getMyTwinId();
         this._connect();
     }
-    _connect() {
+    _connect(): void {
         const urls = this.getDefaultUrls(this.options.network);
         this.options.rmbClient["twinId"] = this.twinId;
         this.options.rmbClient["proxyURL"] = urls.rmbProxy;

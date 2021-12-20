@@ -1,5 +1,5 @@
+import { ZDBDeleteModel, ZDBModel, ZdbModes, ZDBSModel } from "../src";
 import { getClient } from "./client_loader";
-import { ZdbModes, ZDBModel, ZDBSModel, ZDBDeleteModel } from "../src";
 import { log } from "./utils";
 
 // create zdb object

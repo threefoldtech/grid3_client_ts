@@ -1,5 +1,5 @@
-import { config, getClient } from "./client_loader";
 import { MachinesModel, QSFSZDBSModel } from "../src";
+import { config, getClient } from "./client_loader";
 import { log } from "./utils";
 
 const qsfs_name = "wed2710q1";

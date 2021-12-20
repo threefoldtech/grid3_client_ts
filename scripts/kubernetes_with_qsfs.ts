@@ -1,5 +1,5 @@
+import { K8SDeleteModel, K8SModel, KubernetesNodeModel, NetworkModel } from "../src";
 import { getClient } from "./client_loader";
-import { NetworkModel, K8SModel, KubernetesNodeModel, K8SDeleteModel } from "../src";
 import { log } from "./utils";
 
 const qsfs_name = "testQsfsK8sq1";

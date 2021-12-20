@@ -22,5 +22,10 @@
         "prettier/prettier": "error",
         "@typescript-eslint/no-var-requires": "off",
         "simple-import-sort/imports": "error"
-    }
+    },
+    "ignorePatterns": [
+        "node_modules/**",
+        "dist/**",
+        "docs/**"
+    ]
 }

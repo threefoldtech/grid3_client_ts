@@ -64,7 +64,8 @@
         "node-build": "tsc --build tsconfig-node.json",
         "es6-build": "tsc --build tsconfig-es6.json",
         "server": "ts-node --project tsconfig-node.json server/server.ts",
-        "lint": "eslint -c .eslintrc.json src/ --fix",
+        "lint": "eslint -c .eslintrc.json . --fix",
+        "check-lint": "eslint -c .eslintrc.json .",
         "generate-docs": "typedoc --tsconfig tsconfig-es6.json src/index.ts --out docs/api",
         "serve-docs": "http-server docs/api"
     }

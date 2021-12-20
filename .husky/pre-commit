@@ -1,5 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npx eslint -c .eslintrc.json src/ 
-npx eslint -c .eslintrc.json scripts/
+npm run check-lint

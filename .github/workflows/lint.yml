@@ -28,6 +28,5 @@ jobs:
     - name: Install
       run: yarn
     - name: src lint
-      run: yarn eslint -c .eslintrc.json src/ 
-    - name: scripts lint
-      run: yarn eslint -c .eslintrc.json scripts/ 
+      run: yarn check-lint
+   

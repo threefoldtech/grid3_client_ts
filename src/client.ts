@@ -19,7 +19,6 @@ class ClientOptions {
         public backendStorage: BackendInterface = null,
         public backendStorageType: BackendStorageType = BackendStorageType.auto,
         public keypairType: KeypairType = KeypairType.sr25519,
-        public pkidNodeURL: string = "",
     ) {}
 }
 

@@ -21,7 +21,6 @@ enum BackendStorageType {
     fs = "fs",
     localstorage = "localstorage",
     tfkvstore = "tfkvstore",
-    pkid = "pkid",
 }
 
 class BackendStorageOptions {

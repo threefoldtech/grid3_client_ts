@@ -27,6 +27,6 @@ jobs:
 
     - name: Install
       run: yarn
-    - name: src lint
+    - name: Lint
       run: yarn check-lint
    

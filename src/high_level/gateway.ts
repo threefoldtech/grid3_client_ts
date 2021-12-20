@@ -1,6 +1,6 @@
-import { TwinDeployment, Operations } from "./models";
+import { DeploymentFactory, GWPrimitive } from "../primitives/index";
 import { HighLevelBase } from "./base";
-import { GWPrimitive, DeploymentFactory } from "../primitives/index";
+import { Operations, TwinDeployment } from "./models";
 
 class GatewayHL extends HighLevelBase {
     async create(

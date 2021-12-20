@@ -1,5 +1,5 @@
-import { IsInt, Min } from "class-validator";
 import { Expose } from "class-transformer";
+import { IsInt, Min } from "class-validator";
 
 class ComputeCapacity {
     @Expose() @IsInt() @Min(1) cpu: number;

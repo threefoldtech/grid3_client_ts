@@ -1,5 +1,5 @@
-import { IsInt, Min } from "class-validator";
 import { Expose } from "class-transformer";
+import { IsInt, Min } from "class-validator";
 
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
 

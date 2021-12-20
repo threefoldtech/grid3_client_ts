@@ -1,7 +1,8 @@
-import * as PATH from "path";
 import getAppDataPath from "appdata-path";
-import { TFKVStore } from "./tfkvstore";
+import * as PATH from "path";
+
 import { KeypairType } from "../clients/tf-grid/client";
+import { TFKVStore } from "./tfkvstore";
 
 const appsPath = getAppDataPath();
 const appPath = PATH.join(appsPath, "grid3_client");

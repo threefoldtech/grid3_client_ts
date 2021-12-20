@@ -1,13 +1,12 @@
-import { Deployment } from "../zos/deployment";
-import { WorkloadTypes, Workload } from "../zos/workload";
+import { RMB } from "../clients";
 import { TFClient } from "../clients/tf-grid/client";
-
-import { Operations, TwinDeployment } from "./models";
-import { Nodes } from "../primitives/index";
+import { GridClientConfig } from "../config";
 import { events } from "../helpers/events";
 import { validateObject } from "../helpers/validator";
-import { GridClientConfig } from "../config";
-import { RMB } from "../clients";
+import { Nodes } from "../primitives/index";
+import { Deployment } from "../zos/deployment";
+import { Workload, WorkloadTypes } from "../zos/workload";
+import { Operations, TwinDeployment } from "./models";
 
 class TwinDeploymentHandler {
     tfclient: TFClient;

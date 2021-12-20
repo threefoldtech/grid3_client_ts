@@ -1,6 +1,6 @@
-import { Zmachine, Mount, ZNetworkInterface, ZmachineNetwork } from "../zos/zmachine";
-import { WorkloadTypes, Workload } from "../zos/workload";
 import { ComputeCapacity } from "../zos/computecapacity";
+import { Workload, WorkloadTypes } from "../zos/workload";
+import { Mount, Zmachine, ZmachineNetwork, ZNetworkInterface } from "../zos/zmachine";
 
 class VMPrimitive {
     _createComputeCapacity(cpu: number, memory: number): ComputeCapacity {

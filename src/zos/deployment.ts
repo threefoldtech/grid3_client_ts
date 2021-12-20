@@ -1,10 +1,10 @@
-import { IsString, IsNotEmpty, IsBoolean, IsDefined, IsInt, Min, ValidateNested, IsEnum } from "class-validator";
-import { Expose, Type, Transform } from "class-transformer";
-import { default as md5 } from "crypto-js/md5";
 import { Keyring } from "@polkadot/keyring";
+import { Expose, Transform, Type } from "class-transformer";
+import { IsBoolean, IsDefined, IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from "class-validator";
+import { default as md5 } from "crypto-js/md5";
 
-import { Workload } from "./workload";
 import { KeypairType } from "../clients//tf-grid/client";
+import { Workload } from "./workload";
 
 class SignatureRequest {
     @Expose() @IsInt() @Min(1) twin_id: number;

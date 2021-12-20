@@ -1,5 +1,5 @@
-import { IsBoolean, IsString, IsNotEmpty, IsInt, Min, IsEnum } from "class-validator";
 import { Expose, Transform } from "class-transformer";
+import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsString, Min } from "class-validator";
 
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
 

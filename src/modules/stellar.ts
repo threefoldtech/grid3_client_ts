@@ -1,19 +1,18 @@
 import * as PATH from "path";
-
 import { default as StellarSdk } from "stellar-sdk";
 
-import {
-    WalletImportModel,
-    WalletBalanceByNameModel,
-    WalletBalanceByAddressModel,
-    WalletTransferModel,
-    WalletGetModel,
-    WalletDeleteModel,
-} from ".";
 import { GridClientConfig } from "../config";
 import { expose } from "../helpers/expose";
-import { appPath, BackendStorage, StorageUpdateAction } from "../storage/backend";
 import { validateInput } from "../helpers/validator";
+import { appPath, BackendStorage, StorageUpdateAction } from "../storage/backend";
+import {
+    WalletBalanceByAddressModel,
+    WalletBalanceByNameModel,
+    WalletDeleteModel,
+    WalletGetModel,
+    WalletImportModel,
+    WalletTransferModel,
+} from ".";
 
 const server = new StellarSdk.Server("https://horizon.stellar.org");
 

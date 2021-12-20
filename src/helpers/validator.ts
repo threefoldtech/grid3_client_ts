@@ -1,5 +1,5 @@
-import { validate } from "class-validator";
 import { plainToClass } from "class-transformer";
+import { validate } from "class-validator";
 
 async function validateObject(obj) {
     const errors = await validate(obj);

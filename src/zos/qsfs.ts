@@ -1,5 +1,5 @@
-import { IsString, IsNotEmpty, IsInt, Min, ValidateNested } from "class-validator";
 import { Expose, Type } from "class-transformer";
+import { IsInt, IsNotEmpty, IsString, Min, ValidateNested } from "class-validator";
 
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
 

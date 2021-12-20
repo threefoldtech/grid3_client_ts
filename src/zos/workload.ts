@@ -1,15 +1,15 @@
-import { IsString, IsNotEmpty, IsDefined, IsInt, Min, ValidateNested, IsEnum } from "class-validator";
 import { Expose, Transform, Type } from "class-transformer";
+import { IsDefined, IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from "class-validator";
 
-import { Znet } from "./znet";
-import { Zmount, ZmountResult } from "./zmount";
-import { Zmachine, ZmachineResult } from "./zmachine";
-import { Zdb, ZdbResult } from "./zdb";
-import { PublicIP } from "./ipv4";
 import { GatewayFQDNProxy, GatewayNameProxy, GatewayResult } from "./gateway";
+import { PublicIP } from "./ipv4";
+import { PublicIPResult } from "./ipv4";
 import { QuantumSafeFS, QuantumSafeFSResult } from "./qsfs";
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
-import { PublicIPResult } from "./ipv4";
+import { Zdb, ZdbResult } from "./zdb";
+import { Zmachine, ZmachineResult } from "./zmachine";
+import { Zmount, ZmountResult } from "./zmount";
+import { Znet } from "./znet";
 
 enum ResultStates {
     error = "error",

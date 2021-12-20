@@ -1,11 +1,11 @@
-import { WorkloadTypes } from "../zos/workload";
-import { ZOSModel } from "./models";
+import { GridClientConfig } from "../config";
 import { expose } from "../helpers/expose";
+import { validateInput } from "../helpers/validator";
 import { Operations, TwinDeployment } from "../high_level/models";
 import { TwinDeploymentHandler } from "../high_level/twinDeploymentHandler";
 import { DeploymentFactory } from "../primitives/deployment";
-import { GridClientConfig } from "../config";
-import { validateInput } from "../helpers/validator";
+import { WorkloadTypes } from "../zos/workload";
+import { ZOSModel } from "./models";
 import { checkBalance } from "./utils";
 
 class Zos {

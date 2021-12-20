@@ -1,6 +1,7 @@
-import { TFClient } from "./client";
-import { Graphql } from "../graphql/client";
 import { Decimal } from "decimal.js";
+
+import { Graphql } from "../graphql/client";
+import { TFClient } from "./client";
 
 enum ContractState {
     Created = "Created",

@@ -1,20 +1,19 @@
-import * as PATH from "path";
-
-import { default as TweetNACL } from "tweetnacl";
 import { Buffer } from "buffer";
 import { plainToClass } from "class-transformer";
 import { Addr } from "netaddr";
+import * as PATH from "path";
 import { default as PrivateIp } from "private-ip";
+import { default as TweetNACL } from "tweetnacl";
 
-import { Workload, WorkloadTypes } from "../zos/workload";
-import { Znet, Peer } from "../zos/znet";
-import { Deployment } from "../zos/deployment";
-import { BackendStorage, BackendStorageType, appPath } from "../storage/backend";
-import { getRandomNumber } from "../helpers/utils";
-import { Nodes } from "./nodes";
-import { events } from "../helpers/events";
-import { GridClientConfig } from "../config";
 import { RMB } from "../clients";
+import { GridClientConfig } from "../config";
+import { events } from "../helpers/events";
+import { getRandomNumber } from "../helpers/utils";
+import { appPath, BackendStorage, BackendStorageType } from "../storage/backend";
+import { Deployment } from "../zos/deployment";
+import { Workload, WorkloadTypes } from "../zos/workload";
+import { Peer, Znet } from "../zos/znet";
+import { Nodes } from "./nodes";
 
 class WireGuardKeys {
     privateKey: string;

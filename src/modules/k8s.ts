@@ -1,14 +1,14 @@
-import { Workload, WorkloadTypes } from "../zos/workload";
 import { Addr } from "netaddr";
 
-import { AddWorkerModel, DeleteWorkerModel, K8SModel, K8SDeleteModel, K8SGetModel } from "./models";
-import { BaseModule } from "./base";
-import { TwinDeployment } from "../high_level/models";
-import { KubernetesHL } from "../high_level/kubernetes";
-import { Network } from "../primitives/network";
-import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
+import { expose } from "../helpers/expose";
 import { validateInput } from "../helpers/validator";
+import { KubernetesHL } from "../high_level/kubernetes";
+import { TwinDeployment } from "../high_level/models";
+import { Network } from "../primitives/network";
+import { Workload, WorkloadTypes } from "../zos/workload";
+import { BaseModule } from "./base";
+import { AddWorkerModel, DeleteWorkerModel, K8SDeleteModel, K8SGetModel, K8SModel } from "./models";
 import { checkBalance } from "./utils";
 
 class K8sModule extends BaseModule {

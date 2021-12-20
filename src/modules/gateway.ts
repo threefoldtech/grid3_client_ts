@@ -1,19 +1,18 @@
+import { GridClientConfig } from "../config";
+import { expose } from "../helpers/expose";
+import { validateInput } from "../helpers/validator";
+import { GatewayHL } from "../high_level/gateway";
+import { GatewayFQDNProxy, GatewayResult } from "../zos/gateway";
+import { WorkloadTypes } from "../zos/workload";
 import { BaseModule } from "./base";
 import {
-    GatewayFQDNModel,
-    GatewayNameModel,
-    GatewayFQDNGetModel,
     GatewayFQDNDeleteModel,
-    GatewayNameGetModel,
+    GatewayFQDNGetModel,
+    GatewayFQDNModel,
     GatewayNameDeleteModel,
+    GatewayNameGetModel,
+    GatewayNameModel,
 } from "./models";
-import { GatewayHL } from "../high_level/gateway";
-import { WorkloadTypes } from "../zos/workload";
-import { GatewayFQDNProxy, GatewayResult } from "../zos/gateway";
-
-import { expose } from "../helpers/expose";
-import { GridClientConfig } from "../config";
-import { validateInput } from "../helpers/validator";
 import { checkBalance } from "./utils";
 
 class GWModule extends BaseModule {

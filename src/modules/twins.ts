@@ -1,8 +1,8 @@
 import { TFClient } from "../clients/tf-grid/client";
-import { TwinCreateModel, TwinGetModel, TwinGetByAccountIdModel, TwinDeleteModel } from "./models";
-import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
+import { expose } from "../helpers/expose";
 import { validateInput } from "../helpers/validator";
+import { TwinCreateModel, TwinDeleteModel, TwinGetByAccountIdModel, TwinGetModel } from "./models";
 import { checkBalance } from "./utils";
 
 class Twins {

@@ -1,5 +1,5 @@
-import { IsString, IsNotEmpty, IsIP, IsBoolean, IsInt, Min, ValidateNested, IsDefined } from "class-validator";
 import { Expose, Type } from "class-transformer";
+import { IsBoolean, IsDefined, IsInt, IsIP, IsNotEmpty, IsString, Min, ValidateNested } from "class-validator";
 
 import { ComputeCapacity } from "./computecapacity";
 import { WorkloadData, WorkloadDataResult } from "./workload_base";

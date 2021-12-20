@@ -1,13 +1,12 @@
-import { Deployment } from "../zos/deployment";
-import { WorkloadTypes, Workload } from "../zos/workload";
+import { RMB } from "../clients";
 import { TFClient } from "../clients/tf-grid/client";
-
-import { Operations, TwinDeployment } from "./models";
-import { Nodes } from "../primitives/index";
+import { GridClientConfig } from "../config";
 import { events } from "../helpers/events";
 import { validateObject } from "../helpers/validator";
-import { GridClientConfig } from "../config";
-import { RMB } from "../clients";
+import { Nodes } from "../primitives/index";
+import { Deployment } from "../zos/deployment";
+import { Workload, WorkloadTypes } from "../zos/workload";
+import { Operations, TwinDeployment } from "./models";
 
 class TwinDeploymentHandler {
     tfclient: TFClient;
@@ -64,7 +63,7 @@ class TwinDeploymentHandler {
         return contract;
     }
 
-    async update(deployment: Deployment, publicIps: number) {
+    async update(deployment: Deployment) {
         // TODO: update the contract with public when it is available
         let contract;
         try {
@@ -359,7 +358,7 @@ class TwinDeploymentHandler {
                             await this.createNameContract(workload.data["name"]);
                         }
                     }
-                    const contract = await this.update(twinDeployment.deployment, twinDeployment.publicIps);
+                    const contract = await this.update(twinDeployment.deployment);
                     contracts.updated.push(contract);
                     twinDeployment.nodeId = contract["contract_type"]["nodeContract"]["node_id"];
                     events.emit("logs", `Deployment has been updated with contract_id: ${contract["contract_id"]}`);

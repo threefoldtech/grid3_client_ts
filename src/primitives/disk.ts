@@ -1,6 +1,6 @@
-import { WorkloadTypes, Workload } from "../zos/workload";
-import { Zmount } from "../zos/zmount";
+import { Workload, WorkloadTypes } from "../zos/workload";
 import { Mount } from "../zos/zmachine";
+import { Zmount } from "../zos/zmount";
 
 class DiskPrimitive {
     createMount(name: string, mountpoint: string): Mount {

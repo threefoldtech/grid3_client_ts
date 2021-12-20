@@ -1,5 +1,5 @@
+import { DiskModel, FilterOptions, MachineModel, MachinesDeleteModel, MachinesModel, NetworkModel } from "../src";
 import { config, getClient } from "./client_loader";
-import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel, FilterOptions } from "../src";
 import { log } from "./utils";
 
 async function main() {

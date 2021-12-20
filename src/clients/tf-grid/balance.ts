@@ -1,4 +1,5 @@
 import { Decimal } from "decimal.js";
+
 import { TFClient } from "./client";
 
 class Balance {

@@ -1,12 +1,11 @@
-import { ZdbModes } from "../zos/zdb";
+import { events } from "../helpers/events";
+import { Operations, TwinDeployment } from "../high_level/models";
+import { DeploymentFactory } from "../primitives/deployment";
+import { ZdbPrimitive } from "../primitives/zdb";
 import { Deployment } from "../zos/deployment";
 import { WorkloadTypes } from "../zos/workload";
-
+import { ZdbModes } from "../zos/zdb";
 import { HighLevelBase } from "./base";
-import { ZdbPrimitive } from "../primitives/zdb";
-import { DeploymentFactory } from "../primitives/deployment";
-import { TwinDeployment, Operations } from "../high_level/models";
-import { events } from "../helpers/events";
 
 class ZdbHL extends HighLevelBase {
     create(

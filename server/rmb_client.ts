@@ -1,10 +1,9 @@
-import path from "path";
 import fs from "fs";
-import { MessageBusClientInterface } from "ts-rmb-client-base";
-import { MessageBusClient } from "ts-rmb-redis-client";
-import { HTTPMessageBusClient } from "ts-rmb-http-client";
+import path from "path";
 import { argv, env } from "process";
-
+import { MessageBusClientInterface } from "ts-rmb-client-base";
+import { HTTPMessageBusClient } from "ts-rmb-http-client";
+import { MessageBusClient } from "ts-rmb-redis-client";
 
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, "./config.json"), "utf-8"));
 

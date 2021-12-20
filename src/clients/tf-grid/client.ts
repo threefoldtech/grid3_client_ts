@@ -1,10 +1,11 @@
-import { default as Client } from "tfgrid-api-client";
-import { Contracts } from "./contracts";
-import { Twins } from "./twins";
-import { KVStore } from "./kvstore";
-import { Balance } from "./balance";
-import { ErrorsMap } from "./errors";
 import AwaitLock from "await-lock";
+import { default as Client } from "tfgrid-api-client";
+
+import { Balance } from "./balance";
+import { Contracts } from "./contracts";
+import { ErrorsMap } from "./errors";
+import { KVStore } from "./kvstore";
+import { Twins } from "./twins";
 
 enum KeypairType {
     sr25519 = "sr25519",
@@ -71,7 +72,7 @@ class TFClient {
     private async _applyExtrinsic(
         func: (args: unknown[]) => unknown,
         args: unknown[],
-        resultSecttion: string,
+        resultSection: string,
         resultNames: string[],
     ) {
         const context = this.client;
@@ -85,16 +86,16 @@ class TFClient {
                 const { events = [], status } = res;
                 if (status.isFinalized) {
                     events.forEach(({ phase, event: { data, method, section } }) => {
-                        console.log("section", section, "method", method);
+                        console.log("phase", phase, "section", section, "method", method);
                         if (section === "system" && method === "ExtrinsicFailed") {
-                            const errorType = ErrorsMap[resultSecttion][data.toJSON()[0].module.error];
+                            const errorType = ErrorsMap[resultSection][data.toJSON()[0].module.error];
                             reject(
-                                `Failed to apply ${func.name} in module ${resultSecttion} with ${args.slice(
+                                `Failed to apply ${func.name} in module ${resultSection} with ${args.slice(
                                     0,
                                     -1,
                                 )} due to error: ${errorType}`,
                             );
-                        } else if (section === resultSecttion && resultNames.includes(method)) {
+                        } else if (section === resultSection && resultNames.includes(method)) {
                             resolve(data.toJSON()[0]);
                         }
                     });
@@ -112,14 +113,14 @@ class TFClient {
     async applyExtrinsic(
         func: (args: unknown[]) => unknown,
         args: unknown[],
-        resultSecttion: string,
+        resultSection: string,
         resultNames: string[],
     ) {
         await TFClient.lock.acquireAsync();
         console.log("Lock acquired");
         let result;
         try {
-            result = await this._applyExtrinsic(func, args, resultSecttion, resultNames);
+            result = await this._applyExtrinsic(func, args, resultSection, resultNames);
         } finally {
             TFClient.lock.release();
             console.log("Lock released");

@@ -1,13 +1,12 @@
 import { plainToClass } from "class-transformer";
-import { validateObject } from "../helpers/validator";
 
+import { GridClientConfig } from "../config";
+import { validateObject } from "../helpers/validator";
 import { Deployment, SignatureRequest, SignatureRequirement } from "../zos/deployment";
 import { Workload } from "../zos/workload";
 import { WorkloadTypes } from "../zos/workload";
-import { Nodes } from "./nodes";
-
 import { Network } from "./network";
-import { GridClientConfig } from "../config";
+import { Nodes } from "./nodes";
 
 class DeploymentFactory {
     constructor(public config: GridClientConfig) {}

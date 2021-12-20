@@ -1,12 +1,11 @@
 import * as PATH from "path";
-
 import { MessageBusClientInterface } from "ts-rmb-client-base";
-import { KeypairType, TFClient } from "./clients/tf-grid/client";
 
-import { appPath } from "./storage/backend";
-import * as modules from "./modules/index";
-import { BackendStorageType, BackendStorage } from "./storage/backend";
+import { KeypairType, TFClient } from "./clients/tf-grid/client";
 import { GridClientConfig, NetworkEnv } from "./config";
+import * as modules from "./modules/index";
+import { appPath } from "./storage/backend";
+import { BackendStorage, BackendStorageType } from "./storage/backend";
 
 class GridClient {
     static config: GridClientConfig;

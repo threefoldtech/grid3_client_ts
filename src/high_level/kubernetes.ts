@@ -1,11 +1,10 @@
+import { events } from "../helpers/events";
+import { VMHL } from "../high_level//machine";
+import { QSFSDiskModel } from "../modules/models";
+import { Network } from "../primitives/network";
 import { Deployment } from "../zos/deployment";
 import { WorkloadTypes } from "../zos/workload";
-
-import { Network } from "../primitives/network";
-import { VMHL } from "../high_level//machine";
 import { HighLevelBase } from "./base";
-import { events } from "../helpers/events";
-import { QSFSDiskModel } from "../modules/models";
 
 const Flist = "https://hub.grid.tf/ahmed_hanafy_1/ahmedhanafy725-k3s-latest.flist";
 

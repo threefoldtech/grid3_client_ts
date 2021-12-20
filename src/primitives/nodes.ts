@@ -1,10 +1,10 @@
 import { default as PrivateIp } from "private-ip";
 
-import { events } from "../helpers/events";
-import { TFClient } from "../clients/tf-grid/client";
-import { send } from "../helpers/requests";
 import { GridClient } from "../client";
 import { Graphql } from "../clients/graphql/client";
+import { TFClient } from "../clients/tf-grid/client";
+import { events } from "../helpers/events";
+import { send } from "../helpers/requests";
 import { FilterOptions } from "../modules/models";
 
 interface FarmInfo {

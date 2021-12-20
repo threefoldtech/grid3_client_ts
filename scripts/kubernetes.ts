@@ -1,5 +1,5 @@
+import { K8SModel, KubernetesNodeModel, NetworkModel } from "../src";
 import { getClient } from "./client_loader";
-import { NetworkModel, K8SModel, KubernetesNodeModel } from "../src";
 import { log } from "./utils";
 
 // create network Object

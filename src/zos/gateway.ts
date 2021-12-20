@@ -1,5 +1,5 @@
-import { IsFQDN, IsBoolean, IsString, IsUrl, IsNotEmpty, ArrayNotEmpty } from "class-validator";
 import { Expose } from "class-transformer";
+import { ArrayNotEmpty, IsBoolean, IsFQDN, IsNotEmpty, IsString, IsUrl } from "class-validator";
 
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
 

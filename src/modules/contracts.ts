@@ -1,21 +1,21 @@
 import { TFClient } from "../clients/tf-grid/client";
-import {
-    NodeContractCreateModel,
-    NameContractCreateModel,
-    ContractGetModel,
-    NodeContractUpdateModel,
-    ContractCancelModel,
-    ContractGetByNodeIdAndHashModel,
-    NodeContractsGetModel,
-    NameContractGetModel,
-    ContractsByTwinId,
-    ContractsByAddress,
-    ContractConsumption,
-} from "./models";
-import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
-import { Nodes } from "../primitives/nodes";
+import { expose } from "../helpers/expose";
 import { validateInput } from "../helpers/validator";
+import { Nodes } from "../primitives/nodes";
+import {
+    ContractCancelModel,
+    ContractConsumption,
+    ContractGetByNodeIdAndHashModel,
+    ContractGetModel,
+    ContractsByAddress,
+    ContractsByTwinId,
+    NameContractCreateModel,
+    NameContractGetModel,
+    NodeContractCreateModel,
+    NodeContractsGetModel,
+    NodeContractUpdateModel,
+} from "./models";
 import { checkBalance } from "./utils";
 
 class Contracts {

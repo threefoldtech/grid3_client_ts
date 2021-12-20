@@ -38,14 +38,15 @@
         "@typescript-eslint/parser": "^5.6.0",
         "eslint": "^8.4.1",
         "eslint-plugin-prettier": "^4.0.0",
+        "eslint-plugin-simple-import-sort": "^7.0.0",
+        "husky": "^7.0.4",
         "npm-run-all": "^4.1.5",
+        "pinst": "^2.1.6",
         "prettier": "^2.5.1",
         "ts-loader": "^9.2.6",
         "ts-node": "^10.4.0",
         "tsconfig-paths-webpack-plugin": "^3.5.2",
-        "typedoc": "^0.22.10",
-        "webpack": "^5.65.0",
-        "webpack-cli": "^4.9.1"
+        "typedoc": "^0.22.10"
     },
     "exports": {
         "require": "./dist/node/index.js",
@@ -55,12 +56,17 @@
     "files": [
         "/dist"
     ],
+    "private": false,
     "scripts": {
+        "postinstall": "husky install",
+        "prepublishOnly": "pinst --disable",
+        "postpublish": "pinst --enable",
         "build": "npm-run-all es6-build node-build",
         "node-build": "tsc --build tsconfig-node.json",
         "es6-build": "tsc --build tsconfig-es6.json",
         "server": "ts-node --project tsconfig-node.json server/server.ts",
-        "lint": "eslint -c .eslintrc.json src/ --fix",
+        "lint": "eslint -c .eslintrc.json . --fix",
+        "check-lint": "eslint -c .eslintrc.json .",
         "generate-docs": "typedoc --tsconfig tsconfig-es6.json src/index.ts --out docs/api",
         "serve-docs": "http-server docs/api"
     }

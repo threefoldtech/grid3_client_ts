@@ -1,6 +1,4 @@
-import { ContractState } from "../clients/tf-grid/contracts";
-import { Deployment } from "../zos/deployment";
-import { ZdbModes } from "../zos/zdb";
+import { Expose, Transform, Type } from "class-transformer";
 import {
     ArrayNotEmpty,
     IsAlphanumeric,
@@ -16,7 +14,10 @@ import {
     Min,
     ValidateNested,
 } from "class-validator";
-import { Expose, Transform, Type } from "class-transformer";
+
+import { ContractState } from "../clients/tf-grid/contracts";
+import { Deployment } from "../zos/deployment";
+import { ZdbModes } from "../zos/zdb";
 
 const NameLength = 15;
 

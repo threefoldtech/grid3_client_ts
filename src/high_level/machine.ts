@@ -1,18 +1,16 @@
-import * as PATH from "path";
-
 import { Addr } from "netaddr";
-import { Deployment } from "../zos/deployment";
-import { WorkloadTypes } from "../zos/workload";
 
-import { TwinDeployment, Operations } from "./models";
-import { HighLevelBase } from "./base";
-import { DiskPrimitive, VMPrimitive, IPv4Primitive, DeploymentFactory, Network, Nodes } from "../primitives/index";
+import { events } from "../helpers/events";
 import { randomChoice } from "../helpers/utils";
 import { DiskModel, QSFSDiskModel } from "../modules/models";
-import { events } from "../helpers/events";
-import { QSFSPrimitive } from "../primitives/qsfs";
 import { qsfs_zdbs } from "../modules/qsfs_zdbs";
+import { DeploymentFactory, DiskPrimitive, IPv4Primitive, Network, Nodes, VMPrimitive } from "../primitives/index";
+import { QSFSPrimitive } from "../primitives/qsfs";
 import { ZdbGroup } from "../zos";
+import { Deployment } from "../zos/deployment";
+import { WorkloadTypes } from "../zos/workload";
+import { HighLevelBase } from "./base";
+import { Operations, TwinDeployment } from "./models";
 
 class VMHL extends HighLevelBase {
     async create(

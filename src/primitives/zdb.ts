@@ -1,5 +1,5 @@
+import { Workload, WorkloadTypes } from "../zos/workload";
 import { Zdb, ZdbModes } from "../zos/zdb";
-import { WorkloadTypes, Workload } from "../zos/workload";
 
 class ZdbPrimitive {
     create(

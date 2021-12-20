@@ -1,14 +1,14 @@
-import { Workload, WorkloadTypes } from "../zos/workload";
 import { Addr } from "netaddr";
 
-import { AddWorkerModel, DeleteWorkerModel, K8SModel, K8SDeleteModel, K8SGetModel } from "./models";
-import { BaseModule } from "./base";
-import { TwinDeployment } from "../high_level/models";
-import { KubernetesHL } from "../high_level/kubernetes";
-import { Network } from "../primitives/network";
-import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
+import { expose } from "../helpers/expose";
 import { validateInput } from "../helpers/validator";
+import { KubernetesHL } from "../high_level/kubernetes";
+import { TwinDeployment } from "../high_level/models";
+import { Network } from "../primitives/network";
+import { Workload, WorkloadTypes } from "../zos/workload";
+import { BaseModule } from "./base";
+import { AddWorkerModel, DeleteWorkerModel, K8SDeleteModel, K8SGetModel, K8SModel } from "./models";
 import { checkBalance } from "./utils";
 
 class K8sModule extends BaseModule {
@@ -103,7 +103,7 @@ class K8sModule extends BaseModule {
             }
         }
         for (const worker of options.workers) {
-            const [twinDeployments, _] = await this.kubernetes.add_worker(
+            const [twinDeployments] = await this.kubernetes.add_worker(
                 worker.name,
                 worker.node_id,
                 options.secret,
@@ -140,7 +140,7 @@ class K8sModule extends BaseModule {
             throw Error(`Another k8s deployment with the same name ${options.name} already exists`);
         }
 
-        const [deployments, _, wireguardConfig] = await this._createDeployment(options);
+        const [deployments, , wireguardConfig] = await this._createDeployment(options);
         const contracts = await this.twinDeploymentHandler.handle(deployments);
         await this.save(options.name, contracts, wireguardConfig);
         return { contracts: contracts, wireguard_config: wireguardConfig };
@@ -210,7 +210,7 @@ class K8sModule extends BaseModule {
         }
 
         //TODO: check that the master nodes are not changed
-        const [twinDeployments, network, _] = await this._createDeployment(options, masterIps);
+        const [twinDeployments, network] = await this._createDeployment(options, masterIps);
         return await this._update(this.kubernetes, options.name, oldDeployments, twinDeployments, network);
     }
 
@@ -231,7 +231,7 @@ class K8sModule extends BaseModule {
         const networkIpRange = Addr(masterWorkload.data["network"].interfaces[0].ip).mask(16).toString();
         const network = new Network(networkName, networkIpRange, this.config);
         await network.load();
-        const [twinDeployments, _] = await this.kubernetes.add_worker(
+        const [twinDeployments] = await this.kubernetes.add_worker(
             options.name,
             options.node_id,
             masterWorkload.data["env"]["K3S_TOKEN"],

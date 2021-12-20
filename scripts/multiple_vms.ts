@@ -1,5 +1,5 @@
+import { DiskModel, MachineModel, MachinesDeleteModel, MachinesModel, NetworkModel } from "../src";
 import { config, getClient } from "./client_loader";
-import { NetworkModel, MachineModel, MachinesModel, DiskModel, MachinesDeleteModel } from "../src";
 import { log } from "./utils";
 
 // create network Object

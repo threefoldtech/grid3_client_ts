@@ -1,13 +1,14 @@
-import { Deployment } from "../zos/deployment";
-import { WorkloadTypes, Workload } from "../zos/workload";
 import { Addr } from "netaddr";
 
+import { GridClientConfig } from "../config";
+import { events } from "../helpers/events";
+import { Operations, TwinDeployment } from "../high_level/models";
 import { DeploymentFactory } from "../primitives/deployment";
 import { Network } from "../primitives/network";
 import { Nodes } from "../primitives/nodes";
-import { TwinDeployment, Operations } from "../high_level/models";
-import { events } from "../helpers/events";
-import { GridClientConfig } from "../config";
+import { Deployment } from "../zos/deployment";
+import { Workload, WorkloadTypes } from "../zos/workload";
+
 class HighLevelBase {
     constructor(public config: GridClientConfig) {}
 

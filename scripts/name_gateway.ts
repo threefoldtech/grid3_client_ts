@@ -1,5 +1,5 @@
+import { GatewayNameDeleteModel, GatewayNameModel } from "../src";
 import { getClient } from "./client_loader";
-import { GatewayNameModel, GatewayNameDeleteModel } from "../src";
 import { log } from "./utils";
 
 // read more about the gateway types in this doc: https://github.com/threefoldtech/zos/tree/main/docs/gateway

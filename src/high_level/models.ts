@@ -1,5 +1,5 @@
-import { Deployment } from "../zos/deployment";
 import { Network } from "../primitives/network";
+import { Deployment } from "../zos/deployment";
 
 enum Operations {
     deploy = "deploy",

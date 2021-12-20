@@ -1,19 +1,18 @@
+import { GridClientConfig } from "../config";
+import { expose } from "../helpers/expose";
+import { validateInput } from "../helpers/validator";
+import { GatewayHL } from "../high_level/gateway";
+import { GatewayFQDNProxy, GatewayResult } from "../zos/gateway";
+import { WorkloadTypes } from "../zos/workload";
 import { BaseModule } from "./base";
 import {
-    GatewayFQDNModel,
-    GatewayNameModel,
-    GatewayFQDNGetModel,
     GatewayFQDNDeleteModel,
-    GatewayNameGetModel,
+    GatewayFQDNGetModel,
+    GatewayFQDNModel,
     GatewayNameDeleteModel,
+    GatewayNameGetModel,
+    GatewayNameModel,
 } from "./models";
-import { GatewayHL } from "../high_level/gateway";
-import { WorkloadTypes } from "../zos/workload";
-import { GatewayFQDNProxy, GatewayResult } from "../zos/gateway";
-
-import { expose } from "../helpers/expose";
-import { GridClientConfig } from "../config";
-import { validateInput } from "../helpers/validator";
 import { checkBalance } from "./utils";
 
 class GWModule extends BaseModule {
@@ -89,7 +88,7 @@ class GWModule extends BaseModule {
         return await this._delete(options.name);
     }
 
-    async getObj(deploymentName: string): Promise<any> {
+    async getObj(deploymentName: string) {
         const deployments = await this._get(deploymentName);
         const workloads = this._getWorkloadsByTypes(deployments, [
             WorkloadTypes.gatewayfqdnproxy,

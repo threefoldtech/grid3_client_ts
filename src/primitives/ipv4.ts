@@ -1,5 +1,5 @@
-import { Workload, WorkloadTypes } from "../zos/workload";
 import { PublicIP } from "../zos/ipv4";
+import { Workload, WorkloadTypes } from "../zos/workload";
 
 class IPv4Primitive {
     create(name: string, metadata = "", description = "", version = 0): Workload {

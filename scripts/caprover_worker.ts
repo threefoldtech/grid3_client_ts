@@ -1,5 +1,5 @@
+import { DiskModel, MachineModel, MachinesModel, NetworkModel } from "../src";
 import { getClient } from "./client_loader";
-import { NetworkModel, MachineModel, MachinesModel, DiskModel } from "../src";
 import { log } from "./utils";
 
 const CAPROVER_FLIST = "https://hub.grid.tf/tf-official-apps/tf-caprover-main.flist";

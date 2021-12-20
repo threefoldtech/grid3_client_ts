@@ -1,12 +1,12 @@
-import { BaseModule } from "./base";
-import { ZDBSModel, DeleteZDBModel, AddZDBModel, ZDBGetModel, ZDBDeleteModel } from "./models";
+import { GridClientConfig } from "../config";
+import { expose } from "../helpers/expose";
+import { validateInput } from "../helpers/validator";
+import { TwinDeployment } from "../high_level/models";
+import { ZdbHL } from "../high_level/zdb";
 import { WorkloadTypes } from "../zos/workload";
 import { Zdb, ZdbResult } from "../zos/zdb";
-import { ZdbHL } from "../high_level/zdb";
-import { TwinDeployment } from "../high_level/models";
-import { expose } from "../helpers/expose";
-import { GridClientConfig } from "../config";
-import { validateInput } from "../helpers/validator";
+import { BaseModule } from "./base";
+import { AddZDBModel, DeleteZDBModel, ZDBDeleteModel, ZDBGetModel, ZDBSModel } from "./models";
 import { checkBalance } from "./utils";
 
 class ZdbsModule extends BaseModule {

@@ -1,8 +1,8 @@
 import { TFClient } from "../clients/tf-grid/client";
-import { KVStoreSetModel, KVStoreGetModel, KVStoreRemoveModel } from "./models";
-import { expose } from "../helpers/expose";
 import { GridClientConfig } from "../config";
+import { expose } from "../helpers/expose";
 import { validateInput } from "../helpers/validator";
+import { KVStoreGetModel, KVStoreRemoveModel, KVStoreSetModel } from "./models";
 import { checkBalance } from "./utils";
 
 class KVStore {

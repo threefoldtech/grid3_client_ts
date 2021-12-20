@@ -1,5 +1,5 @@
+import { GatewayFQDNDeleteModel, GatewayFQDNModel } from "../src";
 import { getClient } from "./client_loader";
-import { GatewayFQDNModel, GatewayFQDNDeleteModel } from "../src";
 import { log } from "./utils";
 
 // read more about the gateway types in this doc: https://github.com/threefoldtech/zos/tree/main/docs/gateway

@@ -39,6 +39,7 @@
         "eslint": "^8.4.1",
         "eslint-plugin-prettier": "^4.0.0",
         "eslint-plugin-simple-import-sort": "^7.0.0",
+        "husky": "^7.0.4",
         "npm-run-all": "^4.1.5",
         "prettier": "^2.5.1",
         "ts-loader": "^9.2.6",
@@ -57,6 +58,8 @@
         "/dist"
     ],
     "scripts": {
+        "prepare": "husky install",
+        "postinstall": "husky install",
         "build": "npm-run-all es6-build node-build",
         "node-build": "tsc --build tsconfig-node.json",
         "es6-build": "tsc --build tsconfig-es6.json",

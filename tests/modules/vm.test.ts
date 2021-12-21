@@ -1,6 +1,6 @@
-import { log } from "../../scripts/utils";
 import { FilterOptions, generateString, GridClient, MachinesModel, randomChoice } from "../../src";
 import { config, getClient } from "../client_loader";
+import { log } from "../utils";
 
 jest.setTimeout(300000);
 
@@ -46,7 +46,23 @@ test("Test001 creating a vm", async () => {
 
     const res = await gridClient.machines.deploy(vms);
     log(res);
-    expect(res.contracts.created.length).toBe(1);
+    expect(res.contracts.created).toHaveLength(1);
+    expect(res.contracts.updated).toHaveLength(0);
+    expect(res.contracts.deleted).toHaveLength(0);
+
+    const vmsList = await gridClient.machines.list();
+    log(vmsList);
+    expect(vmsList.length).toBeGreaterThanOrEqual(1);
+    expect(vmsList).toContain(vms.name);
+
+    const result = await gridClient.machines.getObj(vms.name);
+    log(result);
+    expect(result[0].status).toBe("ok");
+    expect(result[0].flist).toBe(vms.machines[0].flist);
+    expect(result[0].capacity["cpu"]).toBe(cpu);
+    expect(result[0].capacity["memory"]).toBe(memory);
+    expect(result[0].planetary).toBeDefined();
+    expect(result[0].publicIP).toBeNull();
 });
 
 afterEach(async () => {

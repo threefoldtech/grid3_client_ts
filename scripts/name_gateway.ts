@@ -1,4 +1,4 @@
-import { GatewayNameDeleteModel, GatewayNameModel } from "../src";
+import { GatewayNameModel } from "../src";
 import { getClient } from "./client_loader";
 import { log } from "./utils";
 

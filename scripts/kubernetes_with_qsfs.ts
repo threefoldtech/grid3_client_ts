@@ -1,4 +1,4 @@
-import { K8SDeleteModel, K8SModel, KubernetesNodeModel, NetworkModel } from "../src";
+import { K8SModel, KubernetesNodeModel, NetworkModel } from "../src";
 import { getClient } from "./client_loader";
 import { log } from "./utils";
 
@@ -83,8 +83,7 @@ async function main() {
     log(l);
 
     // // delete
-    // const m = new K8SDeleteModel();
-    // const d = await grid3.k8s.delete({ name: k.name })
+    // const d = await grid3.k8s.delete({ name: k.name });
     // log(d);
     // const r = await grid3.qsfs_zdbs.delete({ name: qsfs_name });
     // log(r);

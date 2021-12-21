@@ -42,6 +42,7 @@
         "eslint-plugin-simple-import-sort": "^7.0.0",
         "husky": "^7.0.4",
         "jest": "^27.4.5",
+        "lint-staged": "^12.1.3",
         "npm-run-all": "^4.1.5",
         "pinst": "^2.1.6",
         "prettier": "^2.5.1",
@@ -72,5 +73,10 @@
         "generate-docs": "typedoc --tsconfig tsconfig-es6.json src/index.ts --out docs/api",
         "serve-docs": "http-server docs/api",
         "test": "jest"
+    },
+    "lint-staged": {
+        "*.{ts,js}": [
+            "eslint -c .eslintrc.json . --fix"
+        ]
     }
 }

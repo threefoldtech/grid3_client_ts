@@ -1,0 +1,42 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: tests
+
+on:
+  # schedule:
+  #   - cron: "0 0 * * *"
+  # workflow_dispatch:
+  push:
+    branches: [ development_testing ]
+  
+
+jobs:
+  deployment-scripts:
+    runs-on: ubuntu-20.04
+    env:
+      NETWORK: ${{ secrets.NETWORK }}
+      RMB_PROXY: true
+      STORE_SECRET: secret
+      MNEMONIC: ${{ secrets.MNEMONIC }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up node 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'yarn'
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git libtool tmux redis net-tools
+      - name: Install
+        run: yarn
+      - name: Run tests 
+        run: yarn test --ci
+      - name: Cleanup
+        continue-on-error: true
+        run: yarn run ts-node --project tsconfig-node.json tests/global_teardown.ts

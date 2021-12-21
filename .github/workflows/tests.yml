@@ -36,7 +36,12 @@ jobs:
       - name: Install
         run: yarn
       - name: Run tests 
-        run: yarn test --ci
+        run: yarn test --ci --coverage
       - name: Cleanup
         continue-on-error: true
         run: yarn run ts-node --project tsconfig-node.json tests/global_teardown.ts
+      - name: Upload coverage to Codecov
+        if: success()
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

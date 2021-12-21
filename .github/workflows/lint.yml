@@ -10,7 +10,7 @@ on:
     branches: [ development ]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     strategy:
       matrix:

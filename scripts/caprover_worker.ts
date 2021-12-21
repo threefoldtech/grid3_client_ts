@@ -1,5 +1,5 @@
 import { DiskModel, MachineModel, MachinesModel, NetworkModel } from "../src";
-import { getClient } from "./client_loader";
+import { config, getClient } from "./client_loader";
 import { log } from "./utils";
 
 const CAPROVER_FLIST = "https://hub.grid.tf/tf-official-apps/tf-caprover-main.flist";
@@ -28,8 +28,7 @@ vm.flist = CAPROVER_FLIST;
 vm.entrypoint = "/sbin/zinit init";
 vm.env = {
     // These env. vars needed to be changed based on the leader node.
-    PUBLIC_KEY:
-        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDF7MKO2kjhnc3K02hsvJrMofIc8aploPsbPXzPZgeegd4sVJiGzdnTfiTjNUl7mdvct2FpoBBWQd9SeiLAW592CHMP9pOXO2CzOi/xNBrar7TnBc6nNnPjbd9bQEgLK9b2LQLCzLmZQmTWJolPETrkWcCLt4fmTchxHKROoRG6TOfAW2rieJSY8yj1+xtvjIHtFceD7vNByI62kOTzdlzOVmiGZ+9gkBJHSRTZkWniaACg0Mt3R9Xq6q6XHpIPTGqSOXeundPpaw+z+PUBc42Aa+LIgV2aoZP00yokx7WCttG3tS+xLv/6pEmIst5b/m4WNMkBx9fkGEIM4eaAH2mFXNc0bQNQJVqXEQSi7DWecWzNkHKDqRN6HoN/BAUF+clKW3fkvWme8iE8XK9xRCiNc8G3sQh2xIajKj0UbKn88k1fYMughJye93Q82mKXFw5QU3S0GzH/YoOEWhXUO8N76zZz+jyjYg9VBy/AU8lm1UJxAjiANIydkXjBFFofLh8= rafy@rafy-Inspiron-3576",
+    PUBLIC_KEY: config.ssh_key,
     SWM_NODE_MODE: "worker",
     SWMTKN: "SWMTKN-1-1eikxeyat4br9t4la1dnln11l1tvlnrngzwh5iq68m2vn7edi1-6lc6xtw3pzd99lrowyuayr5yv",
     LEADER_PUBLIC_IP: "185.206.122.157",

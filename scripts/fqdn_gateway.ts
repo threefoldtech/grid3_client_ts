@@ -1,4 +1,4 @@
-import { GatewayFQDNDeleteModel, GatewayFQDNModel } from "../src";
+import { GatewayFQDNModel } from "../src";
 import { getClient } from "./client_loader";
 import { log } from "./utils";
 

@@ -1,4 +1,4 @@
-import { DiskModel, MachineModel, MachinesDeleteModel, MachinesModel, NetworkModel } from "../src";
+import { DiskModel, MachineModel, MachinesModel, NetworkModel } from "../src";
 import { config, getClient } from "./client_loader";
 import { log } from "./utils";
 

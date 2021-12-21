@@ -8,7 +8,7 @@ import { default as TweetNACL } from "tweetnacl";
 import { RMB } from "../clients";
 import { GridClientConfig } from "../config";
 import { events } from "../helpers/events";
-import { getRandomNumber } from "../helpers/utils";
+import { getRandomNumber, randomChoice } from "../helpers/utils";
 import { BackendStorage } from "../storage/backend";
 import { Deployment } from "../zos/deployment";
 import { Workload, WorkloadTypes } from "../zos/workload";
@@ -549,7 +549,6 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
 
     async generatePeers(): Promise<void> {
         events.emit("logs", `Generating peers for network ${this.name}`);
-        const accessNodes = await this.getAccessNodes();
         const hiddenNodeAccessNodesIds = {};
         const hiddenNodes = [];
         for (const net of this.networks) {
@@ -560,7 +559,7 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
             if (accessIP) {
                 continue;
             }
-
+            const accessNodes = await this.getAccessNodes();
             if (accessNodes.length === 0) {
                 throw Error(
                     `Couldn't add node ${net["node_id"]} as it's a hidden node ` +
@@ -568,9 +567,10 @@ PersistentKeepalive = 25\nEndpoint = ${endpoint}`;
                         "Please add addAccess = true in the network configuration.",
                 );
             }
-            hiddenNodeAccessNodesIds[net["node_id"]] = accessNodes[0];
+            const accessNode = randomChoice(accessNodes);
+            hiddenNodeAccessNodesIds[net["node_id"]] = accessNode;
             const hiddenNode = new AccessPoint();
-            hiddenNode.node_id = accessNodes[0];
+            hiddenNode.node_id = accessNode;
             hiddenNode.subnet = net.subnet;
             hiddenNode.wireguard_public_key = this.getPublicKey(net.wireguard_private_key);
             hiddenNodes.push(hiddenNode);

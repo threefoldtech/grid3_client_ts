@@ -1,5 +1,5 @@
 import { K8SModel, KubernetesNodeModel, NetworkModel } from "../src";
-import { getClient } from "./client_loader";
+import { config, getClient } from "./client_loader";
 import { log } from "./utils";
 
 // create network Object
@@ -38,8 +38,7 @@ k.masters = [master];
 k.workers = [worker];
 k.metadata = "{'testk8s': true}";
 k.description = "test deploying k8s via ts grid3 client";
-k.ssh_key =
-    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCt1LYcIga3sgbip5ejiC6R7CCa34omOwUilR66ZEvUh/u4RpbZ9VjRryVHVDyYcd/qbUzpWMzqzFlfFmtVhPQ0yoGhxiv/owFwStqddKO2iNI7T3U2ytYLJqtPm0JFLB5n07XLyFRplq0W2/TjNrYl51DedDQqBJDq34lz6vTkECNmMKg9Ld0HpxnpHBLH0PsXMY+JMZ8keH9hLBK61Mx9cnNxcLV9N6oA6xRCtwqOdLAH08MMaItYcJ0UF/PDs1PusJvWkvsH5/olgayeAReI6JFGv/x4Eqq5vRJRQjkj9m+Q275gzf9Y/7M/VX7KOH7P9HmDbxwRtOq1F0bRutKF";
+k.ssh_key = config.ssh_key;
 
 async function main() {
     const grid3 = await getClient();

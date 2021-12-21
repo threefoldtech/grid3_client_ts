@@ -34,16 +34,19 @@
         "uuid4": "^2.0.2"
     },
     "devDependencies": {
+        "@types/jest": "^27.0.3",
         "@typescript-eslint/eslint-plugin": "^5.6.0",
         "@typescript-eslint/parser": "^5.6.0",
         "eslint": "^8.4.1",
         "eslint-plugin-prettier": "^4.0.0",
         "eslint-plugin-simple-import-sort": "^7.0.0",
         "husky": "^7.0.4",
+        "jest": "^27.4.5",
+        "lint-staged": "^12.1.3",
         "npm-run-all": "^4.1.5",
         "pinst": "^2.1.6",
         "prettier": "^2.5.1",
-        "ts-loader": "^9.2.6",
+        "ts-jest": "^27.1.2",
         "ts-node": "^10.4.0",
         "tsconfig-paths-webpack-plugin": "^3.5.2",
         "typedoc": "^0.22.10"
@@ -68,6 +71,12 @@
         "lint": "eslint -c .eslintrc.json . --fix",
         "check-lint": "eslint -c .eslintrc.json .",
         "generate-docs": "typedoc --tsconfig tsconfig-es6.json src/index.ts --out docs/api",
-        "serve-docs": "http-server docs/api"
+        "serve-docs": "http-server docs/api",
+        "test": "jest"
+    },
+    "lint-staged": {
+        "*.{ts,js}": [
+            "eslint -c .eslintrc.json . --fix"
+        ]
     }
 }

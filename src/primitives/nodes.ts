@@ -230,7 +230,7 @@ class Nodes {
             if (
                 (options.cru && options.cru > nodeFreeResources.cru) ||
                 (options.mru && this._g2b(options.mru) > nodeFreeResources.mru) ||
-                (options.sru && this._g2b(options.sru) > nodeFreeResources.mru) ||
+                (options.sru && this._g2b(options.sru) > nodeFreeResources.sru) ||
                 (options.hru && this._g2b(options.hru) > nodeFreeResources.hru)
             ) {
                 events.emit("logs", `Nodes: Node ${node.nodeId} doesn't have enough capacity`);

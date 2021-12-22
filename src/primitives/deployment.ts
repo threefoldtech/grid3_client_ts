@@ -1,4 +1,4 @@
-import { plainToClass } from "class-transformer";
+import { plainToInstance } from "class-transformer";
 
 import { GridClientConfig } from "../config";
 import { validateObject } from "../helpers/validator";
@@ -121,7 +121,7 @@ class DeploymentFactory {
                 workload.result.data["__type"] = workload.type;
             }
         }
-        const d = plainToClass(Deployment, deployment, { excludeExtraneousValues: true });
+        const d = plainToInstance(Deployment, deployment, { excludeExtraneousValues: true });
         await validateObject(d);
         return d;
     }

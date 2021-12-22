@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import { plainToClass } from "class-transformer";
+import { plainToInstance } from "class-transformer";
 import { Addr } from "netaddr";
 import * as PATH from "path";
 import { default as PrivateIp } from "private-ip";
@@ -222,7 +222,7 @@ class Network {
     }
 
     _fromObj(net: Znet): Znet {
-        const znet = plainToClass(Znet, net);
+        const znet = plainToInstance(Znet, net);
         return znet;
     }
 

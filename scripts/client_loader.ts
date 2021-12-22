@@ -1,11 +1,11 @@
 import fs from "fs";
 import path from "path";
 import { env } from "process";
-import { ClientOptions, GridClient } from "../src/client";
-
 import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import { MessageBusClient } from "ts-rmb-redis-client";
+
+import { ClientOptions, GridClient } from "../src/client";
 
 const network = env.NETWORK;
 const mnemonic = env.MNEMONIC;

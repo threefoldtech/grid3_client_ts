@@ -25,7 +25,7 @@ class LocalStorage implements BackendInterface {
     }
 
     @crop
-    async list(key: string) {
+    async list(key: string): Promise<any> {
         const keys = [];
         for (let i = 0; i < localStorage.length; i++) {
             keys.push(localStorage.key(i));

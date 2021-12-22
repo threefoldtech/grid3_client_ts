@@ -1,12 +1,12 @@
 import getAppDataPath from "appdata-path";
+import { Expose, Type } from "class-transformer";
+import { IsEnum, IsOptional, IsString, ValidateNested } from "class-validator";
 import * as PATH from "path";
 
 import { KeypairType } from "../clients/tf-grid/client";
-import { TFKVStore } from "./tfkvstore";
-import BackendInterface from "./BackendInterface";
-import { IsOptional } from "class-validator";
-import { Expose } from "class-transformer";
 import { log } from "../helpers/utils";
+import BackendInterface from "./BackendInterface";
+import { TFKVStore } from "./tfkvstore";
 
 const appsPath = getAppDataPath();
 const appPath = PATH.join(appsPath, "grid3_client");
@@ -24,11 +24,10 @@ enum BackendStorageType {
 }
 
 class BackendStorageOptions {
-    @Expose() @IsOptional() substrateURL?: string;
-    @Expose() @IsOptional() mnemonic?: string;
-    @Expose() @IsOptional() storeSecret?: string | Uint8Array;
-    @Expose() @IsOptional() keypairType?: KeypairType;
-    @Expose() @IsOptional() nodeURL?: string;
+    @Expose() @IsString() @IsOptional() substrateURL?: string;
+    @Expose() @IsString() @IsOptional() mnemonic?: string;
+    @Expose() @Type(() => String || Uint8Array) @IsOptional() storeSecret?: string | Uint8Array;
+    @Expose() @IsEnum(KeypairType) @IsOptional() keypairType?: KeypairType = KeypairType.sr25519;
 }
 
 class BackendStorage {
@@ -37,7 +36,6 @@ class BackendStorage {
         public type: BackendStorageType = BackendStorageType.auto,
         public options: BackendStorageOptions = {},
     ) {
-        log(backend);
         // Return if backend storage instance sent as parameter
         if (this.backend) return;
 

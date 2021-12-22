@@ -8,7 +8,6 @@ import { appPath } from "./storage/backend";
 import { BackendStorage, BackendStorageType } from "./storage/backend";
 import BackendInterface from "./storage/BackendInterface";
 
-
 class ClientOptions {
     constructor(
         public network: NetworkEnv,

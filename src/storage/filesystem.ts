@@ -1,5 +1,6 @@
 import fs from "fs";
 import PATH from "path";
+
 import BackendInterface from "./BackendInterface";
 
 class FS implements BackendInterface {
@@ -13,11 +14,11 @@ class FS implements BackendInterface {
         return fs.writeFileSync(key, value);
     }
 
-    async get(key: string) {
+    async get(key: string): Promise<string> {
         if (!fs.existsSync(key)) {
             return '""';
         }
-        return fs.readFileSync(key);
+        return fs.readFileSync(key).toString();
     }
 
     async remove(key: string) {

@@ -5,9 +5,7 @@ import path from "path";
 import { MessageBusServer } from "ts-rmb-redis-client";
 
 import { ClientOptions, GridClient } from "../src/client";
-import { getRMBClient } from "./rmb_client";
 import { isExposed } from "../src/helpers/expose";
-import { BackendStorageType } from "../src/storage/backend";
 import { getRMBClient } from "./rmb_client";
 
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, "./config.json"), "utf-8"));

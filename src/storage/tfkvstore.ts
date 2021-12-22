@@ -47,7 +47,7 @@ class TFKVStore implements BackendInterface {
     }
 
     @crop
-    async list(key: string) {
+    async list(key: string): Promise<any> {
         const keys = await this.client.kvStore.list();
         const filteredKeys = new Set();
         for (const k of keys) {

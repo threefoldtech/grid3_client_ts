@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "esnext",
+        "lib": [
+            "ESNext",
+            "DOM"
+        ],
+        "types": [
+            "node",
+            "jest"
+        ],
+        "declaration": true,
+        "declarationMap": true,
+        "outDir": "./dist/node",
+        "esModuleInterop": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowJs": true,
+        "baseUrl": "."
+    },
+    "include": [
+        "src/**/*"
+    ]
+}

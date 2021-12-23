@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "module": "ES2015",
+        "target": "es6",
+        "lib": [
+            "DOM",
+            "ES6",
+            "DOM.Iterable",
+            "ScriptHost",
+            "ES2016.Array.Include"
+        ],
+        "types": [
+            "node"
+        ],
+        "declaration": true,
+        "declarationMap": true,
+        "outDir": "./dist/es6",
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "baseUrl": "."
+    },
+    "include": [
+        "src/**/*"
+    ]
+}

@@ -6,7 +6,6 @@ import { TFClient } from "./client";
 enum ContractState {
     Created = "Created",
     Deleted = "Deleted",
-    OutOfFunds = "OutOfFunds",
 }
 class Contracts {
     tfclient: TFClient;
@@ -57,24 +56,20 @@ class Contracts {
         return await this.tfclient.queryChain(this.tfclient.client.contractIDByNodeIDAndHash, [nodeId, hash]);
     }
 
-    async getNodeContracts(nodeId: number, state: ContractState) {
-        return await this.tfclient.queryChain(this.tfclient.client.nodeContracts, [nodeId, state]);
-    }
-
     async getNameContract(name: string) {
         return await this.tfclient.queryChain(this.tfclient.client.contractIDByNameRegistration, [name]);
     }
 
     async listContractsByTwinId(graphqlURL, twinId) {
         const gqlClient = new Graphql(graphqlURL);
-        const options = `(where: {twinId_eq: ${twinId}, state_in: [OutOfFunds, Created]})`;
+        const options = `(where: {twinId_eq: ${twinId}, state_eq: Created})`;
         const nameContractsCount = await gqlClient.getItemTotalCount("nameContracts", options);
         const nodeContractsCount = await gqlClient.getItemTotalCount("nodeContracts", options);
         const body = `query getContracts($nameContractsCount: Int!, $nodeContractsCount: Int!){
-            nameContracts(where: {twinId_eq: ${twinId}, state_in: [OutOfFunds, Created]}, limit: $nameContractsCount) {
+            nameContracts(where: {twinId_eq: ${twinId}, state_eq: Created}, limit: $nameContractsCount) {
               contractId
             }
-            nodeContracts(where: {twinId_eq: ${twinId}, state_in: [OutOfFunds, Created]}, limit: $nodeContractsCount) {
+            nodeContracts(where: {twinId_eq: ${twinId}, state_eq: Created}, limit: $nodeContractsCount) {
               contractId
             }
           }`;

@@ -51,12 +51,6 @@ class Contracts {
 
     @expose
     @validateInput
-    async get_node_contracts(options: NodeContractsGetModel) {
-        return await this.client.contracts.getNodeContracts(options.node_id, options.state);
-    }
-
-    @expose
-    @validateInput
     async get_name_contract(options: NameContractGetModel) {
         return await this.client.contracts.getNameContract(options.name);
     }

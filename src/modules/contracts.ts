@@ -13,7 +13,6 @@ import {
     NameContractCreateModel,
     NameContractGetModel,
     NodeContractCreateModel,
-    NodeContractsGetModel,
     NodeContractUpdateModel,
 } from "./models";
 import { checkBalance } from "./utils";

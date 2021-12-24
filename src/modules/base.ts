@@ -203,7 +203,7 @@ class BaseModule {
                 this.config.keypairType,
             );
             const c = await tfClient.contracts.get(contract["contract_id"]);
-            if (c.state !== "Created") {
+            if (Object.keys(c.state).includes("Deleted")) {
                 await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
                 continue;
             }

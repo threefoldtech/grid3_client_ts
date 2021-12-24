@@ -3,10 +3,6 @@ import { Decimal } from "decimal.js";
 import { Graphql } from "../graphql/client";
 import { TFClient } from "./client";
 
-enum ContractState {
-    Created = "Created",
-    Deleted = "Deleted",
-}
 class Contracts {
     tfclient: TFClient;
 
@@ -127,4 +123,4 @@ class Contracts {
     }
 }
 
-export { Contracts, ContractState };
+export { Contracts };

@@ -15,7 +15,6 @@ import {
     ValidateNested,
 } from "class-validator";
 
-import { ContractState } from "../clients/tf-grid/contracts";
 import { Deployment } from "../zos/deployment";
 import { ZdbModes } from "../zos/zdb";
 
@@ -207,11 +206,6 @@ class ContractGetByNodeIdAndHashModel {
     @Expose() @IsString() @IsNotEmpty() hash: string;
 }
 
-class NodeContractsGetModel {
-    @Expose() @IsInt() @Min(1) node_id: number;
-    @Expose() @Transform(({ value }) => ContractState[value]) @IsEnum(ContractState) state: ContractState;
-}
-
 class NameContractGetModel {
     @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
 }
@@ -368,7 +362,6 @@ export {
     NameContractCreateModel,
     ContractGetModel,
     ContractGetByNodeIdAndHashModel,
-    NodeContractsGetModel,
     NameContractGetModel,
     NodeContractUpdateModel,
     ContractCancelModel,

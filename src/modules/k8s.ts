@@ -195,8 +195,8 @@ class K8sModule extends BaseModule {
                 if (workload.type !== WorkloadTypes.network) {
                     continue;
                 }
-                const networkName = workload.data["network"].interfaces[0].network;
-                const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
+                const networkName = workload.name;
+                const networkIpRange = Addr(workload.data["ip_range"]).mask(16).toString();
                 if (networkName === options.network.name && networkIpRange === options.network.ip_range) {
                     break;
                 }

@@ -190,23 +190,20 @@ class K8sModule extends BaseModule {
             throw Error("Multiple masters are not supported");
         }
         const oldDeployments = await this._get(options.name);
-        for (const oldDeployment of oldDeployments) {
-            for (const workload of oldDeployment.workloads) {
-                if (workload.type !== WorkloadTypes.network) {
-                    continue;
-                }
-                const networkName = workload.data["network"].interfaces[0].network;
-                const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
-                if (networkName === options.network.name && networkIpRange === options.network.ip_range) {
-                    break;
-                }
-                throw Error("Network name and ip_range can't be changed");
-            }
-        }
 
         const masterIps = this._getMastersIp(oldDeployments);
         if (masterIps.length === 0) {
             throw Error("Couldn't get master ip");
+        }
+        const masterWorkloads = this._getMastersWorkload(oldDeployments);
+        if (masterWorkloads.length === 0) {
+            throw Error("Couldn't get master node");
+        }
+        const masterWorkload = masterWorkloads[0];
+        const networkName = masterWorkload.data["network"].interfaces[0].network;
+        const networkIpRange = Addr(masterWorkload.data["network"].interfaces[0].ip).mask(16).toString();
+        if (networkName !== options.network.name && networkIpRange !== options.network.ip_range) {
+            throw Error("Network name and ip_range can't be changed");
         }
 
         //TODO: check that the master nodes are not changed

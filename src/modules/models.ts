@@ -15,7 +15,6 @@ import {
     ValidateNested,
 } from "class-validator";
 
-import { ContractState } from "../clients/tf-grid/contracts";
 import { Deployment } from "../zos/deployment";
 import { ZdbModes } from "../zos/zdb";
 
@@ -173,16 +172,19 @@ class GatewayFQDNGetModel extends BaseGetDeleteModel {}
 
 class GatewayFQDNDeleteModel extends BaseGetDeleteModel {}
 
-class GatewayNameModel {
-    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+class BaseGatewayNameModel {
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() name: string;
+}
+
+class GatewayNameModel extends BaseGatewayNameModel {
     @Expose() @IsInt() @Min(1) node_id: number;
     @Expose() @IsBoolean() tls_passthrough: boolean;
     @Expose() @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
 }
 
-class GatewayNameGetModel extends BaseGetDeleteModel {}
+class GatewayNameGetModel extends BaseGatewayNameModel {}
 
-class GatewayNameDeleteModel extends BaseGetDeleteModel {}
+class GatewayNameDeleteModel extends BaseGatewayNameModel {}
 
 class ZOSModel extends Deployment {
     @Expose() @IsInt() @Min(1) node_id: number;
@@ -205,11 +207,6 @@ class ContractGetModel {
 class ContractGetByNodeIdAndHashModel {
     @Expose() @IsInt() @Min(1) node_id: number;
     @Expose() @IsString() @IsNotEmpty() hash: string;
-}
-
-class NodeContractsGetModel {
-    @Expose() @IsInt() @Min(1) node_id: number;
-    @Expose() @Transform(({ value }) => ContractState[value]) @IsEnum(ContractState) state: ContractState;
 }
 
 class NameContractGetModel {
@@ -368,7 +365,6 @@ export {
     NameContractCreateModel,
     ContractGetModel,
     ContractGetByNodeIdAndHashModel,
-    NodeContractsGetModel,
     NameContractGetModel,
     NodeContractUpdateModel,
     ContractCancelModel,

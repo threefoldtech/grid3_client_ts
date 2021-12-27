@@ -13,7 +13,6 @@ import {
     NameContractCreateModel,
     NameContractGetModel,
     NodeContractCreateModel,
-    NodeContractsGetModel,
     NodeContractUpdateModel,
 } from "./models";
 import { checkBalance } from "./utils";
@@ -47,12 +46,6 @@ class Contracts {
     @validateInput
     async get_contract_id_by_node_id_and_hash(options: ContractGetByNodeIdAndHashModel) {
         return await this.client.contracts.getContractIdByNodeIdAndHash(options.node_id, options.hash);
-    }
-
-    @expose
-    @validateInput
-    async get_node_contracts(options: NodeContractsGetModel) {
-        return await this.client.contracts.getNodeContracts(options.node_id, options.state);
     }
 
     @expose

@@ -172,16 +172,19 @@ class GatewayFQDNGetModel extends BaseGetDeleteModel {}
 
 class GatewayFQDNDeleteModel extends BaseGetDeleteModel {}
 
-class GatewayNameModel {
-    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
+class BaseGatewayNameModel {
+    @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() name: string;
+}
+
+class GatewayNameModel extends BaseGatewayNameModel {
     @Expose() @IsInt() @Min(1) node_id: number;
     @Expose() @IsBoolean() tls_passthrough: boolean;
     @Expose() @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
 }
 
-class GatewayNameGetModel extends BaseGetDeleteModel {}
+class GatewayNameGetModel extends BaseGatewayNameModel {}
 
-class GatewayNameDeleteModel extends BaseGetDeleteModel {}
+class GatewayNameDeleteModel extends BaseGatewayNameModel {}
 
 class ZOSModel extends Deployment {
     @Expose() @IsInt() @Min(1) node_id: number;

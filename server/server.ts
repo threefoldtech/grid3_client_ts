@@ -9,7 +9,14 @@ import { isExposed } from "../src/helpers/expose";
 import { BackendStorageType } from "../src/storage/backend";
 import { getRMBClient } from "./rmb_client";
 
-const config = JSON.parse(fs.readFileSync(path.join(__dirname, "./config.json"), "utf-8"));
+const argv = process.argv.slice(2);
+let config_file = path.join(__dirname, "./config.json");
+argv.forEach((value, ind) => {
+    if (value == "--config" || value == "-c") {
+        config_file = argv[ind + 1];
+    }
+});
+const config = JSON.parse(fs.readFileSync(config_file, "utf-8"));
 class Server {
     server: MessageBusServer;
     constructor(port = 6379) {

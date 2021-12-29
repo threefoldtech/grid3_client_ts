@@ -42,6 +42,7 @@ interface NodeInfo {
     hru: string;
     publicConfig: PublicConfig;
     status: string;
+    certificationType: string;
 }
 interface PublicConfig {
     domain: string;

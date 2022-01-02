@@ -318,7 +318,24 @@ class Network {
             throw Error(`node_id is not in the network. Please add it first`);
         }
     }
+    validateUserIP(node_id: number, ip_address = "") {
+        const reserved_ips = this.getNodeReservedIps(node_id);
+        if (reserved_ips.includes(ip_address)) {
+            throw Error(`private ip ${ip_address} is being used please select another ip or leave it empty`);
+        }
+        const nodeSubnet = this.getNodeSubnet(node_id);
+        const ip = Addr(ip_address);
 
+        if (!Addr(nodeSubnet).contains(ip)) {
+            throw Error(`Selected ip is not available in node subnet, node subnet: ${nodeSubnet}`);
+        }
+        for (const node of this.nodes) {
+            if (node.node_id === node_id) {
+                node.reserved_ips.push(ip_address);
+                return ip_address;
+            }
+        }
+    }
     getNodeReservedIps(node_id: number): string[] {
         for (const node of this.nodes) {
             if (node.node_id !== node_id) {

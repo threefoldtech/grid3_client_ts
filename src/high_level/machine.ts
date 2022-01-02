@@ -32,6 +32,7 @@ class VMHL extends HighLevelBase {
         qsfsDisks: QSFSDiskModel[] = [],
         qsfsProjectName = "",
         addAccess = false,
+        ip = "",
     ): Promise<[TwinDeployment[], string]> {
         const deployments = [];
         const workloads = [];
@@ -171,7 +172,12 @@ class VMHL extends HighLevelBase {
         }
         // vm
         const vm = new VMPrimitive();
-        const machine_ip = network.getFreeIP(nodeId);
+        let machine_ip;
+        if (ip !== "") {
+            machine_ip = network.validateUserIP(nodeId, ip);
+        } else {
+            machine_ip = network.getFreeIP(nodeId);
+        }
         events.emit(
             "logs",
             `Creating a vm on node: ${nodeId}, network: ${network.name} with private ip: ${machine_ip}`,

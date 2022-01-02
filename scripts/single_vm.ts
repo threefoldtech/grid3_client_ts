@@ -28,6 +28,7 @@ vm.entrypoint = "/sbin/zinit init";
 vm.env = {
     SSH_KEY: config.ssh_key,
 };
+// vm.ip = "10.249.2.5" // create a machine with specific private ip
 
 // create VMs Object
 const vms = new MachinesModel();

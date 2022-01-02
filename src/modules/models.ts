@@ -62,6 +62,7 @@ class MachineModel {
     @Expose() @IsUrl() @IsNotEmpty() flist: string;
     @Expose() @IsString() @IsDefined() entrypoint: string;
     @Expose() env: Record<string, unknown>;
+    @Expose() @IsOptional() @IsString() ip?: string;
 }
 
 class MachinesModel {

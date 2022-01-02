@@ -47,6 +47,7 @@ class MachinesModule extends BaseModule {
                 machine.qsfs_disks,
                 this.config.projectName,
                 options.network.addAccess,
+                machine.ip,
             );
             twinDeployments = twinDeployments.concat(TDeployments);
             if (wgConfig) {

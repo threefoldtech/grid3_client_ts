@@ -110,7 +110,7 @@ class VMHL extends HighLevelBase {
         // validate user ip subnet in case of no networks already
         let userIPsubnet;
         if (ip) {
-            userIPsubnet = Addr(ip).mask(24).toString();
+            userIPsubnet = network.ValidateFreeSubnet(Addr(ip).mask(24).toString());
         }
         // network
         const deploymentFactory = new DeploymentFactory(this.config);

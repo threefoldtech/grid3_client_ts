@@ -108,7 +108,7 @@ class Network {
         if (!subnet) {
             znet.subnet = this.getFreeSubnet();
         } else {
-            znet.subnet = this.ValidateFreeSubnet(subnet);
+            znet.subnet = subnet;
         }
         znet.ip_range = this.ipRange;
         znet.wireguard_private_key = keypair.privateKey;

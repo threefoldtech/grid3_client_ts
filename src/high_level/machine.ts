@@ -107,6 +107,11 @@ class VMHL extends HighLevelBase {
             }
         }
 
+        // validate user ip subnet in case of no networks already
+        let userIPsubnet;
+        if (ip) {
+            userIPsubnet = Addr(ip).mask(24).toString();
+        }
         // network
         const deploymentFactory = new DeploymentFactory(this.config);
         let access_net_workload;
@@ -132,10 +137,10 @@ class VMHL extends HighLevelBase {
                 }
             }
             const access_node_id = Number(randomChoice(filteredAccessNodes));
-            access_net_workload = await network.addNode(access_node_id, metadata, description);
+            access_net_workload = await network.addNode(access_node_id, metadata, description, userIPsubnet);
             wgConfig = await network.addAccess(access_node_id, true);
         }
-        const znet_workload = await network.addNode(nodeId, metadata, description);
+        const znet_workload = await network.addNode(nodeId, metadata, description, userIPsubnet);
         if ((await network.exists()) && (znet_workload || access_net_workload)) {
             // update network
             for (const deployment of network.deployments) {

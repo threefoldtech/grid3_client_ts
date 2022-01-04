@@ -41,7 +41,7 @@ class Mount {
 class Zmachine extends WorkloadData {
     @Expose() @IsString() @IsNotEmpty() flist: string;
     @Expose() @Type(() => ZmachineNetwork) @ValidateNested() network: ZmachineNetwork;
-    @Expose() @IsInt() @Min(1024 * 1024 * 250) size: number; // in bytes
+    @Expose() @IsInt() size: number; // in bytes
     @Expose() @Type(() => ComputeCapacity) @ValidateNested() compute_capacity: ComputeCapacity;
     @Expose() @Type(() => Mount) @ValidateNested({ each: true }) mounts: Mount[];
     @Expose() @IsString() @IsNotEmpty() entrypoint: string;

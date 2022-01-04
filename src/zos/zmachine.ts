@@ -51,7 +51,7 @@ class Zmachine extends WorkloadData {
         let out = "";
         out += this.flist;
         out += this.network.challenge();
-        out += this.size || "";
+        out += this.size || "0";
         out += this.compute_capacity.challenge();
         for (let i = 0; i < this.mounts.length; i++) {
             out += this.mounts[i].challenge();

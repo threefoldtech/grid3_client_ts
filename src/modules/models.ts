@@ -57,7 +57,7 @@ class MachineModel {
     @Expose() @IsBoolean() planetary: boolean;
     @Expose() @IsInt() @Min(1) cpu: number;
     @Expose() @Min(250) memory: number; // in MB
-    @Expose() @Min(0.25) rootfs_size: number; // in GB
+    @Expose() rootfs_size: number; // in GB
     @Expose() @IsUrl() @IsNotEmpty() flist: string;
     @Expose() @IsString() @IsDefined() entrypoint: string;
     @Expose() env: Record<string, unknown>;
@@ -89,7 +89,7 @@ class KubernetesNodeModel {
     @Expose() @IsInt() @Min(1) node_id: number;
     @Expose() @IsInt() @Min(1) cpu: number;
     @Expose() @Min(250) memory: number; // in MB
-    @Expose() @Min(0.25) rootfs_size: number; // in GB
+    @Expose() rootfs_size: number; // in GB
     @Expose() @Min(0.25) disk_size: number; // in GB
     @Expose() @IsOptional() @Type(() => QSFSDiskModel) @ValidateNested({ each: true }) qsfs_disks?: QSFSDiskModel[];
     @Expose() @IsBoolean() public_ip: boolean;

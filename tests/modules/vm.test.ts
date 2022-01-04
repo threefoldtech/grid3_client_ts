@@ -13,7 +13,7 @@ beforeAll(async () => {
 test("Test001 creating a vm", async () => {
     const cpu = 1;
     const memory = 1024;
-    const rootfsSize = 1;
+    const rootfsSize = 0;
 
     const nodes = await gridClient.capacity.filterNodes({ cru: cpu, mru: memory / 1024, sru: 1 } as FilterOptions);
     const nodeId = +randomChoice(nodes).nodeId;

@@ -1,12 +1,13 @@
+#!/usr/bin/env node
 import "reflect-metadata";
 
 import fs from "fs";
 import path from "path";
 import { MessageBusServer } from "ts-rmb-redis-client";
 
-import { GridClient } from "../src/client";
-import { isExposed } from "../src/helpers/expose";
-import { BackendStorageType } from "../src/storage/backend";
+import { GridClient } from "../client";
+import { isExposed } from "../helpers/expose";
+import { BackendStorageType } from "../storage/backend";
 import { getRMBClient } from "./rmb_client";
 
 const argv = process.argv.slice(2);
@@ -24,7 +25,7 @@ class Server {
     }
 
     async wrapFunc(message, payload) {
-        const rmbClient = getRMBClient();
+        const rmbClient = getRMBClient(config);
         const gridClient = new GridClient(
             config.network,
             config.mnemonic,
@@ -44,7 +45,7 @@ class Server {
     }
 
     register() {
-        const rmbClient = getRMBClient();
+        const rmbClient = getRMBClient(config);
         const gridClient = new GridClient(
             config.network,
             config.mnemonic,

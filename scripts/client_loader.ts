@@ -5,7 +5,7 @@ import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import { MessageBusClient } from "ts-rmb-redis-client";
 
-import { BackendStorageType, GridClient, KeypairType } from "../src";
+import { ClientOptions, GridClient } from "../src/client";
 
 const network = env.NETWORK;
 const mnemonic = env.MNEMONIC;
@@ -35,21 +35,19 @@ if (
 }
 
 async function getClient(): Promise<GridClient> {
-    let rmb: MessageBusClientInterface;
+    let rmbClient: MessageBusClientInterface;
     if (config.rmb_proxy) {
-        rmb = new HTTPMessageBusClient(0, "");
+        rmbClient = new HTTPMessageBusClient(0, "");
     } else {
-        rmb = new MessageBusClient();
+        rmbClient = new MessageBusClient();
     }
-    const gridClient = new GridClient(
-        config.network,
-        config.mnemonic,
-        config.storeSecret,
-        rmb,
-        "",
-        BackendStorageType.auto,
-        KeypairType.sr25519,
-    );
+
+    const gridClient = new GridClient({
+        network: config.network,
+        mnemonic: config.mnemonic,
+        storeSecret: config.storeSecret,
+        rmbClient,
+    } as ClientOptions);
     await gridClient.connect();
     return gridClient;
 }

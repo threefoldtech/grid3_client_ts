@@ -4,9 +4,8 @@ import fs from "fs";
 import path from "path";
 import { MessageBusServer } from "ts-rmb-redis-client";
 
-import { GridClient } from "../src/client";
+import { ClientOptions, GridClient } from "../src/client";
 import { isExposed } from "../src/helpers/expose";
-import { BackendStorageType } from "../src/storage/backend";
 import { getRMBClient } from "./rmb_client";
 
 const argv = process.argv.slice(2);
@@ -25,15 +24,13 @@ class Server {
 
     async wrapFunc(message, payload) {
         const rmbClient = getRMBClient();
-        const gridClient = new GridClient(
-            config.network,
-            config.mnemonic,
-            config.storeSecret,
+        const gridClient = new GridClient({
+            network: config.network,
+            mnemonic: config.mnemonic,
+            storeSecret: config.storeSecret,
             rmbClient,
-            "",
-            BackendStorageType.auto,
-            config.keypairType,
-        );
+            keypairType: config.keypairType,
+        } as ClientOptions);
         await gridClient.connect();
         const parts = message.cmd.split(".");
         const module = parts[1];
@@ -45,15 +42,13 @@ class Server {
 
     register() {
         const rmbClient = getRMBClient();
-        const gridClient = new GridClient(
-            config.network,
-            config.mnemonic,
-            config.storeSecret,
+        const gridClient = new GridClient({
+            network: config.network,
+            mnemonic: config.mnemonic,
+            storeSecret: config.storeSecret,
             rmbClient,
-            "",
-            BackendStorageType.auto,
-            config.keypairType,
-        );
+            keypairType: config.keypairType,
+        } as ClientOptions);
         gridClient._connect();
         for (const module of Object.getOwnPropertyNames(gridClient).filter(
             item => typeof gridClient[item] === "object",

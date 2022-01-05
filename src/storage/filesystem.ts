@@ -1,7 +1,9 @@
 import fs from "fs";
 import PATH from "path";
 
-class FS {
+import BackendInterface from "./BackendInterface";
+
+class FS implements BackendInterface {
     async set(key: string, value: string) {
         if (value && value !== '""' && !fs.existsSync(PATH.dirname(key))) {
             fs.mkdirSync(PATH.dirname(key), { recursive: true });
@@ -12,11 +14,11 @@ class FS {
         return fs.writeFileSync(key, value);
     }
 
-    async get(key: string) {
+    async get(key: string): Promise<string> {
         if (!fs.existsSync(key)) {
             return '""';
         }
-        return fs.readFileSync(key);
+        return fs.readFileSync(key).toString();
     }
 
     async remove(key: string) {

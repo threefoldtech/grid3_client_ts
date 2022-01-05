@@ -21,13 +21,12 @@ class Stellar {
     backendStorage: BackendStorage;
 
     constructor(config: GridClientConfig) {
-        this.backendStorage = new BackendStorage(
-            config.backendStorageType,
-            config.substrateURL,
-            config.mnemonic,
-            config.storeSecret,
-            config.keypairType,
-        );
+        this.backendStorage = new BackendStorage(config.backendStorage, config.backendStorageType, {
+            substrateURL: config.substrateURL,
+            mnemonic: config.mnemonic,
+            storeSecret: config.storeSecret,
+            keypairType: config.keypairType,
+        });
     }
 
     async _load() {

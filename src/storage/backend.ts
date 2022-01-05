@@ -1,7 +1,11 @@
 import getAppDataPath from "appdata-path";
+import { Expose, Type } from "class-transformer";
+import { IsEnum, IsOptional, IsString, ValidateNested } from "class-validator";
 import * as PATH from "path";
 
 import { KeypairType } from "../clients/tf-grid/client";
+import { log } from "../helpers/utils";
+import BackendInterface from "./BackendInterface";
 import { TFKVStore } from "./tfkvstore";
 
 const appsPath = getAppDataPath();
@@ -19,31 +23,44 @@ enum BackendStorageType {
     tfkvstore = "tfkvstore",
 }
 
+class BackendStorageOptions {
+    @Expose() @IsString() @IsOptional() substrateURL?: string;
+    @Expose() @IsString() @IsOptional() mnemonic?: string;
+    @Expose() @Type(() => String || Uint8Array) @IsOptional() storeSecret?: string | Uint8Array;
+    @Expose() @IsEnum(KeypairType) @IsOptional() keypairType?: KeypairType = KeypairType.sr25519;
+}
+
 class BackendStorage {
-    storage;
     constructor(
+        public backend?: BackendInterface,
         public type: BackendStorageType = BackendStorageType.auto,
-        substrateURL = "",
-        mnemonic = "",
-        storeSecret: string | Uint8Array,
-        keypairType: KeypairType,
+        public options: BackendStorageOptions = {},
     ) {
+        // Return if backend storage instance sent as parameter
+        if (this.backend) return;
+
+        // Assign backend storage instance based on type and options
         if (type === BackendStorageType.auto) {
             if (BackendStorage.isEnvNode()) {
                 const storage = require("./filesystem");
-                this.storage = new storage.FS();
+                this.backend = new storage.FS();
             } else {
                 const storage = require("./localstorage");
-                this.storage = new storage.LocalStorage();
+                this.backend = new storage.LocalStorage();
             }
         } else if (type === BackendStorageType.tfkvstore) {
-            this.storage = new TFKVStore(substrateURL, mnemonic, storeSecret, keypairType);
+            this.backend = new TFKVStore(
+                options.substrateURL,
+                options.mnemonic,
+                options.storeSecret,
+                options.keypairType,
+            );
         } else if (type === BackendStorageType.fs) {
             const storage = require("./filesystem");
-            this.storage = new storage.FS();
+            this.backend = new storage.FS();
         } else if (type === BackendStorageType.localstorage) {
             const storage = require("./localstorage");
-            this.storage = new storage.LocalStorage();
+            this.backend = new storage.LocalStorage();
         } else {
             throw Error("Unsupported type for backend");
         }
@@ -58,16 +75,16 @@ class BackendStorage {
     }
 
     async load(key: string) {
-        const data = await this.storage.get(key);
+        const data = await this.backend.get(key);
         return JSON.parse(data.toString());
     }
 
     async list(key: string) {
-        return await this.storage.list(key);
+        return await this.backend.list(key);
     }
 
     async dump(key: string, value) {
-        return await this.storage.set(key, JSON.stringify(value));
+        return await this.backend.set(key, JSON.stringify(value));
     }
 
     async update(key: string, field: string, data = null, action: StorageUpdateAction = StorageUpdateAction.add) {

@@ -1,9 +1,9 @@
 import { KeypairType, TFClient } from "../clients/tf-grid/client";
+import BackendInterface from "./BackendInterface";
 import { crop } from "./utils";
 
 const SPLIT_SIZE = 1490;
-
-class TFKVStore {
+class TFKVStore implements BackendInterface {
     client: TFClient;
     constructor(url: string, mnemonic: string, storeSecret: string | Uint8Array, keypairType: KeypairType) {
         this.client = new TFClient(url, mnemonic, storeSecret, keypairType);
@@ -47,7 +47,7 @@ class TFKVStore {
     }
 
     @crop
-    async list(key: string) {
+    async list(key: string): Promise<any> {
         const keys = await this.client.kvStore.list();
         const filteredKeys = new Set();
         for (const k of keys) {

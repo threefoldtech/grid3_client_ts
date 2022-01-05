@@ -1,6 +1,7 @@
+import BackendInterface from "./BackendInterface";
 import { crop } from "./utils";
 
-class LocalStorage {
+class LocalStorage implements BackendInterface {
     @crop
     async set(key: string, value: string) {
         if (!value || value === '""') {
@@ -24,7 +25,7 @@ class LocalStorage {
     }
 
     @crop
-    async list(key: string) {
+    async list(key: string): Promise<any> {
         const keys = [];
         for (let i = 0; i < localStorage.length; i++) {
             keys.push(localStorage.key(i));

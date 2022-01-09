@@ -45,6 +45,7 @@ const vms: MachinesModel = {
                 },
             ],
             public_ip: false,
+            public_ip6: false,
             planetary: true,
             cpu: 1,
             memory: 1024 * 2,

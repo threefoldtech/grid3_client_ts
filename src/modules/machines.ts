@@ -13,7 +13,7 @@ import { checkBalance } from "./utils";
 
 class MachinesModule extends BaseModule {
     moduleName = "machines";
-    workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
+    workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ip];
     vm: VMHL;
     constructor(public config: GridClientConfig) {
         super(config);
@@ -37,6 +37,7 @@ class MachinesModule extends BaseModule {
                 machine.rootfs_size,
                 machine.disks,
                 machine.public_ip,
+                machine.public_ip6,
                 machine.planetary,
                 network,
                 machine.entrypoint,
@@ -137,6 +138,7 @@ class MachinesModule extends BaseModule {
             options.rootfs_size,
             options.disks,
             options.public_ip,
+            options.public_ip6,
             options.planetary,
             network,
             options.entrypoint,

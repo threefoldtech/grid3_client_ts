@@ -13,7 +13,7 @@ import { checkBalance } from "./utils";
 
 class K8sModule extends BaseModule {
     moduleName = "kubernetes";
-    workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
+    workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ip];
     kubernetes: KubernetesHL;
 
     constructor(public config: GridClientConfig) {
@@ -80,6 +80,7 @@ class K8sModule extends BaseModule {
                 master.rootfs_size,
                 master.disk_size,
                 master.public_ip,
+                master.public_ip6,
                 master.planetary,
                 network,
                 options.ssh_key,
@@ -113,6 +114,7 @@ class K8sModule extends BaseModule {
                 worker.rootfs_size,
                 worker.disk_size,
                 worker.public_ip,
+                worker.public_ip6,
                 worker.planetary,
                 network,
                 options.ssh_key,
@@ -238,6 +240,7 @@ class K8sModule extends BaseModule {
             options.rootfs_size,
             options.disk_size,
             options.public_ip,
+            options.public_ip6,
             options.planetary,
             network,
             masterWorkload.data["env"]["SSH_KEY"],

@@ -16,7 +16,7 @@ class HighLevelBase {
         deployment: Deployment,
         names: string[],
         types: WorkloadTypes[] = [
-            WorkloadTypes.ipv4,
+            WorkloadTypes.ip,
             WorkloadTypes.zmachine,
             WorkloadTypes.zmount,
             WorkloadTypes.zdb,
@@ -153,7 +153,7 @@ class HighLevelBase {
         deployment: Deployment,
         names: string[],
         types: WorkloadTypes[] = [
-            WorkloadTypes.ipv4,
+            WorkloadTypes.ip,
             WorkloadTypes.zmachine,
             WorkloadTypes.zmount,
             WorkloadTypes.zdb,

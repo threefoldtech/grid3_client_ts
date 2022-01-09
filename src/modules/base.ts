@@ -14,7 +14,7 @@ import { Network } from "../primitives/network";
 import { Nodes } from "../primitives/nodes";
 import { BackendStorage } from "../storage/backend";
 import { Deployment } from "../zos/deployment";
-import { PublicIPResult } from "../zos/ipv4";
+import { PublicIPResult } from "../zos/public_ip";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Zmachine, ZmachineResult } from "../zos/zmachine";
 
@@ -125,10 +125,10 @@ class BaseModule {
         return r;
     }
 
-    _getMachinePubIP(deployments, ipv4WorkloadName: string): PublicIPResult {
-        const ipv4Workloads = this._getWorkloadsByTypes(deployments, [WorkloadTypes.ipv4]);
-        for (const workload of ipv4Workloads) {
-            if (workload.name === ipv4WorkloadName) {
+    _getMachinePubIP(deployments, publicIPWorkloadName: string): PublicIPResult {
+        const publicIPWorkloads = this._getWorkloadsByTypes(deployments, [WorkloadTypes.ip]);
+        for (const workload of publicIPWorkloads) {
+            if (workload.name === publicIPWorkloadName) {
                 return workload.result.data as PublicIPResult;
             }
         }

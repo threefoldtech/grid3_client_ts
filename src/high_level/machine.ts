@@ -4,7 +4,7 @@ import { events } from "../helpers/events";
 import { randomChoice } from "../helpers/utils";
 import { DiskModel, QSFSDiskModel } from "../modules/models";
 import { qsfs_zdbs } from "../modules/qsfs_zdbs";
-import { DeploymentFactory, DiskPrimitive, IPv4Primitive, Network, Nodes, VMPrimitive } from "../primitives/index";
+import { DeploymentFactory, DiskPrimitive, Network, Nodes, PublicIPPrimitive, VMPrimitive } from "../primitives/index";
 import { QSFSPrimitive } from "../primitives/qsfs";
 import { ZdbGroup } from "../zos";
 import { Deployment } from "../zos/deployment";
@@ -22,6 +22,7 @@ class VMHL extends HighLevelBase {
         rootfs_size: number,
         disks: DiskModel[],
         publicIp: boolean,
+        publicIp6: boolean,
         planetary: boolean,
         network: Network,
         entrypoint: string,
@@ -96,11 +97,13 @@ class VMHL extends HighLevelBase {
         // ipv4
         let ipName = "";
         let publicIps = 0;
-        if (publicIp) {
-            const ipv4 = new IPv4Primitive();
+        if (publicIp || publicIp6) {
+            const ip = new PublicIPPrimitive();
             ipName = `${name}_pubip`;
-            workloads.push(ipv4.create(ipName, metadata, description));
-            publicIps++;
+            workloads.push(ip.create(ipName, metadata, description, 0, publicIp, publicIp6));
+            if (publicIp) {
+                publicIps++;
+            }
         }
 
         // network
@@ -202,7 +205,7 @@ class VMHL extends HighLevelBase {
 
     async delete(deployment: Deployment, names: string[]) {
         return await this._delete(deployment, names, [
-            WorkloadTypes.ipv4,
+            WorkloadTypes.ip,
             WorkloadTypes.zmount,
             WorkloadTypes.zmachine,
             WorkloadTypes.qsfs,

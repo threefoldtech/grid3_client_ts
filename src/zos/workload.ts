@@ -2,8 +2,7 @@ import { Expose, Transform, Type } from "class-transformer";
 import { IsDefined, IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from "class-validator";
 
 import { GatewayFQDNProxy, GatewayNameProxy, GatewayResult } from "./gateway";
-import { PublicIP } from "./ipv4";
-import { PublicIPResult } from "./ipv4";
+import { PublicIP, PublicIPResult } from "./public_ip";
 import { QuantumSafeFS, QuantumSafeFSResult } from "./qsfs";
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
 import { Zdb, ZdbResult } from "./zdb";
@@ -22,7 +21,7 @@ enum WorkloadTypes {
     zmount = "zmount",
     network = "network",
     zdb = "zdb",
-    ipv4 = "ipv4",
+    ip = "ip",
     gatewayfqdnproxy = "gateway-fqdn-proxy",
     gatewaynameproxy = "gateway-name-proxy",
     qsfs = "qsfs",
@@ -52,7 +51,7 @@ class DeploymentResult {
                 { value: WorkloadDataResult, name: WorkloadTypes.network },
                 { value: ZmachineResult, name: WorkloadTypes.zmachine },
                 { value: ZdbResult, name: WorkloadTypes.zdb },
-                { value: PublicIPResult, name: WorkloadTypes.ipv4 },
+                { value: PublicIPResult, name: WorkloadTypes.ip },
                 { value: WorkloadDataResult, name: WorkloadTypes.gatewayfqdnproxy },
                 { value: WorkloadDataResult, name: WorkloadTypes.gatewaynameproxy },
                 { value: QuantumSafeFSResult, name: WorkloadTypes.qsfs },
@@ -86,7 +85,7 @@ class Workload {
                 { value: Znet, name: WorkloadTypes.network },
                 { value: Zmachine, name: WorkloadTypes.zmachine },
                 { value: Zdb, name: WorkloadTypes.zdb },
-                { value: PublicIP, name: WorkloadTypes.ipv4 },
+                { value: PublicIP, name: WorkloadTypes.ip },
                 { value: GatewayFQDNProxy, name: WorkloadTypes.gatewayfqdnproxy },
                 { value: GatewayNameProxy, name: WorkloadTypes.gatewaynameproxy },
                 { value: QuantumSafeFS, name: WorkloadTypes.qsfs },

@@ -54,6 +54,7 @@ class MachineModel {
     @Expose() @IsOptional() @Type(() => DiskModel) @ValidateNested({ each: true }) disks?: DiskModel[];
     @Expose() @IsOptional() @Type(() => QSFSDiskModel) @ValidateNested({ each: true }) qsfs_disks?: QSFSDiskModel[];
     @Expose() @IsBoolean() public_ip: boolean;
+    @Expose() @IsOptional() @IsBoolean() public_ip6: boolean;
     @Expose() @IsBoolean() planetary: boolean;
     @Expose() @IsInt() @Min(1) cpu: number;
     @Expose() @Min(250) memory: number; // in MB
@@ -93,6 +94,7 @@ class KubernetesNodeModel {
     @Expose() @Min(0.25) disk_size: number; // in GB
     @Expose() @IsOptional() @Type(() => QSFSDiskModel) @ValidateNested({ each: true }) qsfs_disks?: QSFSDiskModel[];
     @Expose() @IsBoolean() public_ip: boolean;
+    @Expose() @IsOptional() @IsBoolean() public_ip6: boolean;
     @Expose() @IsBoolean() planetary: boolean;
 }
 

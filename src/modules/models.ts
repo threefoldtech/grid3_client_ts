@@ -6,6 +6,7 @@ import {
     IsDefined,
     IsEnum,
     IsInt,
+    IsIP,
     IsNotEmpty,
     IsOptional,
     IsString,
@@ -62,7 +63,7 @@ class MachineModel {
     @Expose() @IsUrl() @IsNotEmpty() flist: string;
     @Expose() @IsString() @IsDefined() entrypoint: string;
     @Expose() env: Record<string, unknown>;
-    @Expose() @IsOptional() @IsString() ip?: string;
+    @Expose() @IsOptional() @IsIP() ip?: string;
 }
 
 class MachinesModel {

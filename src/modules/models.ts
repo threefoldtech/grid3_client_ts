@@ -197,7 +197,6 @@ class NodeContractCreateModel {
     @Expose() @IsString() @IsNotEmpty() hash: string;
     @Expose() @IsString() @IsDefined() data: string;
     @Expose() @IsInt() @Min(0) public_ip: number;
-    @Expose() @IsOptional() @IsInt() @Min(0) public_ip6: number;
 }
 
 class NameContractCreateModel {

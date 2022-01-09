@@ -97,16 +97,13 @@ class VMHL extends HighLevelBase {
         // ipv4
         let ipName = "";
         let publicIps = 0;
-
-        if (publicIp) {
-            const ipv4 = new PublicIPPrimitive();
+        if (publicIp || publicIp6) {
+            const ip = new PublicIPPrimitive();
             ipName = `${name}_pubip`;
-            workloads.push(ipv4.create(ipName, metadata, description, 0, publicIp, publicIp6));
-            publicIps++;
-        } else {
-            const ipv6 = new PublicIPPrimitive();
-            ipName = `${name}_pubip6`;
-            workloads.push(ipv6.create(ipName, metadata, description, 0, publicIp, true));
+            workloads.push(ip.create(ipName, metadata, description, 0, publicIp, publicIp6));
+            if (publicIp) {
+                publicIps++;
+            }
         }
 
         // network

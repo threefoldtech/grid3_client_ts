@@ -125,7 +125,12 @@ class KubernetesHL extends HighLevelBase {
     }
 
     async delete(deployment: Deployment, names: string[]) {
-        return await this._delete(deployment, names, [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.ip]);
+        return await this._delete(deployment, names, [
+            WorkloadTypes.zmachine,
+            WorkloadTypes.zmount,
+            WorkloadTypes.ip,
+            WorkloadTypes.ipv4,
+        ]); // TODO: remove deprecated
     }
 }
 export { KubernetesHL };

@@ -13,7 +13,13 @@ import { checkBalance } from "./utils";
 
 class K8sModule extends BaseModule {
     moduleName = "kubernetes";
-    workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ip];
+    workloadTypes = [
+        WorkloadTypes.zmachine,
+        WorkloadTypes.zmount,
+        WorkloadTypes.qsfs,
+        WorkloadTypes.ip,
+        WorkloadTypes.ipv4,
+    ]; // TODO: remove deprecated
     kubernetes: KubernetesHL;
 
     constructor(public config: GridClientConfig) {

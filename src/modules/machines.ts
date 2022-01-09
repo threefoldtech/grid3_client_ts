@@ -13,7 +13,13 @@ import { checkBalance } from "./utils";
 
 class MachinesModule extends BaseModule {
     moduleName = "machines";
-    workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ip];
+    workloadTypes = [
+        WorkloadTypes.zmachine,
+        WorkloadTypes.zmount,
+        WorkloadTypes.qsfs,
+        WorkloadTypes.ip,
+        WorkloadTypes.ipv4,
+    ]; // TODO: remove deprecated
     vm: VMHL;
     constructor(public config: GridClientConfig) {
         super(config);

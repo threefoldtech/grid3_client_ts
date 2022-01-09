@@ -219,6 +219,7 @@ class VMHL extends HighLevelBase {
     async delete(deployment: Deployment, names: string[]) {
         return await this._delete(deployment, names, [
             WorkloadTypes.ip,
+            WorkloadTypes.ipv4, // TODO: remove deprecated
             WorkloadTypes.zmount,
             WorkloadTypes.zmachine,
             WorkloadTypes.qsfs,

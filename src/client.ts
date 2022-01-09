@@ -80,6 +80,10 @@ class GridClient {
             urls.rmbProxy = "https://gridproxy.test.grid.tf";
             urls.substrate = "wss://tfchain.test.grid.tf/ws";
             urls.graphql = "https://graphql.test.grid.tf/graphql";
+        } else if (network === NetworkEnv.main) {
+            urls.rmbProxy = "https://gridproxy.grid.tf";
+            urls.substrate = "wss://tfchain.grid.tf/ws";
+            urls.graphql = "https://graphql.grid.tf/graphql";
         }
         return urls;
     }

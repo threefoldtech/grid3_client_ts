@@ -57,13 +57,14 @@ class ZdbsModule extends BaseModule {
 
     async getObj(deploymentName: string) {
         const deployments = await this._get(deploymentName);
-        const workloads = this._getWorkloadsByTypes(deployments, [WorkloadTypes.zdb]);
+        const workloads = await this._getWorkloadsByTypes(deploymentName, deployments, [WorkloadTypes.zdb]);
         const ret = [];
         for (const workload of workloads) {
             const data = workload.data as Zdb;
             ret.push({
                 version: workload.version,
                 contractId: workload["contractId"],
+                nodeId: workload["nodeId"],
                 name: workload.name,
                 created: workload.result.created,
                 status: workload.result.state,

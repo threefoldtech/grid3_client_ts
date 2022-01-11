@@ -85,8 +85,11 @@ class MachinesModule extends BaseModule {
 
     async getObj(deploymentName: string) {
         const deployments = await this._get(deploymentName);
-        const workloads = this._getWorkloadsByTypes(deployments, [WorkloadTypes.zmachine]);
-        return workloads.map(workload => this._getZmachineData(deployments, workload));
+        const workloads = await this._getWorkloadsByTypes(deploymentName, deployments, [WorkloadTypes.zmachine]);
+        const promises = workloads.map(
+            async workload => await this._getZmachineData(deploymentName, deployments, workload),
+        );
+        return await Promise.all(promises);
     }
 
     @expose
@@ -111,7 +114,7 @@ class MachinesModule extends BaseModule {
         }
 
         const oldDeployments = await this._get(options.name);
-        const workload = this._getWorkloadsByTypes(oldDeployments, [WorkloadTypes.zmachine])[0];
+        const workload = await this._getWorkloadsByTypes(options.name, oldDeployments, [WorkloadTypes.zmachine])[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
         if (networkName !== options.network.name || networkIpRange !== options.network.ip_range) {
@@ -130,7 +133,9 @@ class MachinesModule extends BaseModule {
             throw Error(`There are no machine deployments with the name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
-        const workload = this._getWorkloadsByTypes(oldDeployments, [WorkloadTypes.zmachine])[0];
+        const workload = await this._getWorkloadsByTypes(options.deployment_name, oldDeployments, [
+            WorkloadTypes.zmachine,
+        ])[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
         const network = new Network(networkName, networkIpRange, this.config);

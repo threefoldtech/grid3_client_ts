@@ -112,12 +112,13 @@ class BaseModule {
         }
     }
 
-    _getWorkloadsByTypes(deployments, types: WorkloadTypes[]): Workload[] {
+    async _getWorkloadsByTypes(deploymentName: string, deployments, types: WorkloadTypes[]): Promise<Workload[]> {
         const r = [];
         for (const deployment of deployments) {
             for (const workload of deployment.workloads) {
                 if (types.includes(workload.type)) {
                     workload["contractId"] = deployment.contract_id;
+                    workload["nodeId"] = await this._getNodeIdFromContractId(deploymentName, deployment.contract_id);
                     r.push(workload);
                 }
             }
@@ -125,8 +126,11 @@ class BaseModule {
         return r;
     }
 
-    _getMachinePubIP(deployments, publicIPWorkloadName: string): PublicIPResult {
-        const publicIPWorkloads = this._getWorkloadsByTypes(deployments, [WorkloadTypes.ip, WorkloadTypes.ipv4]);
+    async _getMachinePubIP(deploymentName: string, deployments, publicIPWorkloadName: string): Promise<PublicIPResult> {
+        const publicIPWorkloads = await this._getWorkloadsByTypes(deploymentName, deployments, [
+            WorkloadTypes.ip,
+            WorkloadTypes.ipv4,
+        ]);
         for (const workload of publicIPWorkloads) {
             if (workload.name === publicIPWorkloadName) {
                 return workload.result.data as PublicIPResult;
@@ -135,17 +139,18 @@ class BaseModule {
         return null;
     }
 
-    _getZmachineData(deployments, workload: Workload): Record<string, unknown> {
+    async _getZmachineData(deploymentName: string, deployments, workload: Workload): Promise<Record<string, unknown>> {
         const data = workload.data as Zmachine;
         return {
             version: workload.version,
             contractId: workload["contractId"],
+            nodeId: workload["nodeId"],
             name: workload.name,
             created: workload.result.created,
             status: workload.result.state,
             message: workload.result.message,
             flist: data.flist,
-            publicIP: this._getMachinePubIP(deployments, data.network.public_ip),
+            publicIP: await this._getMachinePubIP(deploymentName, deployments, data.network.public_ip),
             planetary: data.network.planetary ? (workload.result.data as ZmachineResult).ygg_ip : "",
             interfaces: data.network.interfaces.map(n => ({
                 network: n.network,

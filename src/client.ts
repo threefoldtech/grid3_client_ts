@@ -40,7 +40,7 @@ class GridClient {
             process.on("SIGINT", this.disconnectAndExit);
             process.on("SIGUSR1", this.disconnectAndExit);
             process.on("SIGUSR2", this.disconnectAndExit);
-        } else window.onbeforeunload = GridClient.disconnect;
+        } else window.onbeforeunload = this.disconnect;
         this.twinId = await tfclient.twins.getMyTwinId();
         this._connect();
     }
@@ -88,7 +88,7 @@ class GridClient {
         return urls;
     }
 
-    static async disconnect(): Promise<void> {
+    async disconnect(): Promise<void> {
         for (const key of Object.keys(TFClient.clients)) {
             await TFClient.clients[key].disconnect();
         }
@@ -96,7 +96,9 @@ class GridClient {
 
     async disconnectAndExit(): Promise<void> {
         // this should be only used by nodejs process
-        await GridClient.disconnect();
+        for (const key of Object.keys(TFClient.clients)) {
+            await TFClient.clients[key].disconnect();
+        }
         process.exit(0);
     }
 }

@@ -48,10 +48,10 @@ class TFClient {
         }
     }
 
-    disconnect(): void {
+    async disconnect(): Promise<void> {
         if (this.isConnected()) {
             console.log("disconnecting");
-            this.client.api.disconnect();
+            await this.client.api.disconnect();
         }
     }
 

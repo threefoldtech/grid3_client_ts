@@ -3,7 +3,7 @@ import { MessageBusClientInterface } from "ts-rmb-client-base";
 import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import { MessageBusClient } from "ts-rmb-redis-client";
 
-function getRmbProxy(config?: any): [boolean, string] {
+function getRmbProxy(config?): [boolean, string] {
     let isProxy = false;
     let rmbProxyUrl = "";
     // Check for rmb proxy url value from arguments
@@ -32,7 +32,7 @@ function getRmbProxy(config?: any): [boolean, string] {
 }
 
 // MsgBusClientInterface
-function getRMBClient(config?: any): MessageBusClientInterface {
+function getRMBClient(config?): MessageBusClientInterface {
     const [isProxy, rmb_proxy] = getRmbProxy(config);
     if (isProxy) {
         return new HTTPMessageBusClient(0, rmb_proxy);

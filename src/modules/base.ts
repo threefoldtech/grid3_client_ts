@@ -14,7 +14,6 @@ import { Network } from "../primitives/network";
 import { Nodes } from "../primitives/nodes";
 import { BackendStorage } from "../storage/backend";
 import { Deployment } from "../zos/deployment";
-import { PublicIPv4Result } from "../zos/ipv4"; // TODO: remove deprecated
 import { PublicIPResult } from "../zos/public_ip";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Zmachine, ZmachineResult } from "../zos/zmachine";

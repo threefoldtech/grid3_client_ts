@@ -90,7 +90,7 @@ class GWModule extends BaseModule {
 
     async getObj(deploymentName: string) {
         const deployments = await this._get(deploymentName);
-        const workloads = this._getWorkloadsByTypes(deployments, [
+        const workloads = await this._getWorkloadsByTypes(deploymentName, deployments, [
             WorkloadTypes.gatewayfqdnproxy,
             WorkloadTypes.gatewaynameproxy,
         ]);

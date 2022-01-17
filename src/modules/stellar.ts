@@ -33,7 +33,7 @@ class Stellar {
     async _load() {
         const path = PATH.join(appPath, this.fileName);
         let data = await this.backendStorage.load(path);
-        if (data === "") {
+        if (!data) {
             data = {};
         }
         return [path, data];

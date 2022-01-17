@@ -58,7 +58,7 @@ class TwinDeploymentHandler {
             await this.rmb.request([node_twin_id], "zos.deployment.deploy", payload);
         } catch (e) {
             await this.rollback([new TwinDeployment(deployment, Operations.delete, publicIps, node_id)], {
-                created: [contract["contract_id"]],
+                created: [{ contract_id: contract["contract_id"] }],
             });
             throw Error(`Failed to deploy on node ${node_id} due to ${e}`);
         }

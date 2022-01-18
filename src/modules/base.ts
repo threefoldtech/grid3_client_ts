@@ -207,6 +207,9 @@ class BaseModule {
         }
         const deployments = [];
         const contracts = await this.getDeploymentContracts(name);
+        if (contracts.length === 0) {
+            await this.save(name, { created: [], deleted: [] });
+        }
         for (const contract of contracts) {
             const tfClient = new TFClient(
                 this.config.substrateURL,

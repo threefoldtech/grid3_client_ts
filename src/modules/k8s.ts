@@ -157,7 +157,6 @@ class K8sModule extends BaseModule {
     }
 
     @expose
-    @validateInput
     async list() {
         return await this._list();
     }

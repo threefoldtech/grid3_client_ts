@@ -63,6 +63,11 @@ class GWModule extends BaseModule {
     }
 
     @expose
+    async list() {
+        return await this._list();
+    }
+
+    @expose
     @validateInput
     async get_fqdn(options: GatewayFQDNGetModel) {
         return await this._get(options.name);

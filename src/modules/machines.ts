@@ -78,7 +78,6 @@ class MachinesModule extends BaseModule {
     }
 
     @expose
-    @validateInput
     async list() {
         return await this._list();
     }

@@ -20,6 +20,7 @@ import { Zmachine, ZmachineResult } from "../zos/zmachine";
 
 class BaseModule {
     moduleName = "";
+    projectName = "";
     workloadTypes = [];
     rmb: RMB;
     deploymentFactory: DeploymentFactory;
@@ -27,6 +28,7 @@ class BaseModule {
     backendStorage: BackendStorage;
 
     constructor(public config: GridClientConfig) {
+        this.projectName = config.projectName;
         this.rmb = new RMB(config.rmbClient);
         this.deploymentFactory = new DeploymentFactory(config);
         this.twinDeploymentHandler = new TwinDeploymentHandler(config);
@@ -40,7 +42,7 @@ class BaseModule {
     }
 
     getDeploymentPath(name: string): string {
-        return PATH.join(this.config.storePath, this.config.projectName, this.moduleName, name);
+        return PATH.join(this.config.storePath, this.projectName, this.moduleName, name);
     }
 
     async getDeploymentContracts(name: string) {
@@ -63,9 +65,14 @@ class BaseModule {
                 contract_id: contract["contract_id"],
                 node_id: contract["contract_type"]["nodeContract"]["node_id"],
             });
+            const contractPath = PATH.join(this.config.storePath, "contracts", `${contract["contract_id"]}.json`);
+            const contractInfo = { projectName: this.projectName, moduleName: this.moduleName, deploymentName: name };
+            this.backendStorage.dump(contractPath, contractInfo);
         }
         for (const contract of contracts["deleted"]) {
             StoreContracts = StoreContracts.filter(c => c["contract_id"] !== contract["contract_id"]);
+            const contractPath = PATH.join(this.config.storePath, "contracts", `${contract["contract_id"]}.json`);
+            this.backendStorage.dump(contractPath, "");
         }
         if (wgConfig) {
             this.backendStorage.dump(wireguardPath, wgConfig);
@@ -200,6 +207,9 @@ class BaseModule {
         }
         const deployments = [];
         const contracts = await this.getDeploymentContracts(name);
+        if (contracts.length === 0) {
+            await this.save(name, { created: [], deleted: [] });
+        }
         for (const contract of contracts) {
             const tfClient = new TFClient(
                 this.config.substrateURL,
@@ -208,7 +218,7 @@ class BaseModule {
                 this.config.keypairType,
             );
             const c = await tfClient.contracts.get(contract["contract_id"]);
-            if (Object.keys(c.state).includes("Deleted")) {
+            if (Object.keys(c.state).includes("deleted")) {
                 await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
                 continue;
             }

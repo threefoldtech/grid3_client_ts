@@ -27,6 +27,8 @@ class KubernetesHL extends HighLevelBase {
         qsfs_disks: QSFSDiskModel[] = [],
         qsfsProjectName = "",
         addAccess = false,
+        ip = "",
+        corex = false,
     ) {
         events.emit("logs", `Creating a master with name: ${name} on node: ${nodeId}, network: ${network.name}`);
         const machine = new VMHL(this.config);
@@ -63,6 +65,8 @@ class KubernetesHL extends HighLevelBase {
             qsfs_disks,
             qsfsProjectName,
             addAccess,
+            ip,
+            corex,
         );
     }
 
@@ -85,6 +89,8 @@ class KubernetesHL extends HighLevelBase {
         qsfs_disks: QSFSDiskModel[] = [],
         qsfsProjectName = "",
         addAccess = false,
+        ip = "",
+        corex = false,
     ) {
         events.emit("logs", `Creating a worker with name: ${name} on node: ${nodeId}, network: ${network.name}`);
         const machine = new VMHL(this.config);
@@ -121,6 +127,8 @@ class KubernetesHL extends HighLevelBase {
             qsfs_disks,
             qsfsProjectName,
             addAccess,
+            ip,
+            corex,
         );
     }
 

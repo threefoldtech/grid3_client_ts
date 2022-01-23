@@ -31,7 +31,7 @@ if (!network || !mnemonic || !rmb_proxy || !storeSecret || !ssh_key) {
 async function getClient(): Promise<GridClient> {
     let rmb: MessageBusClientInterface;
     if (config.rmb_proxy) {
-        rmb = new HTTPMessageBusClient(0, "");
+        rmb = new HTTPMessageBusClient(0, "", "");
     } else {
         rmb = new MessageBusClient();
     }

@@ -48,6 +48,7 @@ class GridClient {
         const urls = this.getDefaultUrls(this.network);
         this.rmbClient["twinId"] = this.twinId;
         this.rmbClient["proxyURL"] = urls.rmbProxy;
+        this.rmbClient["mnemonic"] = this.mnemonic;
         const storePath = PATH.join(appPath, this.network, String(this.twinId));
         GridClient.config = {
             network: this.network,

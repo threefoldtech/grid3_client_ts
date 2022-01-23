@@ -77,7 +77,7 @@ yarn install
     ```ts
     import { HTTPMessageBusClient } from "ts-rmb-http-client";
 
-    const rmb = new HTTPMessageBusClient(0, "");
+    const rmb = new HTTPMessageBusClient(0, "", "");
     ```
 
     **Note:** twinId and proxyURL are set to `0` and `""` as the grid client will auto set them based on network environment selected and mnemonic entered.
@@ -122,7 +122,7 @@ import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import { MessageBusClient } from "ts-rmb-redis-client";
 
 // use http proxy client
-const rmb = new HTTPMessageBusClient(0, "");
+const rmb = new HTTPMessageBusClient(0, "", "");
 
 const gridClient = new GridClient(NetworkEnv.dev, mnemonic, "mysecret", rmb, "myproject", BackendStorageType.auto, KeypairType.sr25519);
 await gridClient.connect();

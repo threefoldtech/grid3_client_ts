@@ -24,7 +24,7 @@
         "stellar-sdk": "^9.1.0",
         "tfgrid-api-client": "^1.0.4",
         "ts-rmb-client-base": "^0.0.1",
-        "ts-rmb-http-client": "file:../ts-rmb-client/packages/http_client",
+        "ts-rmb-http-client": "1.0.1",
         "ts-rmb-redis-client": "^0.0.3",
         "tweetnacl": "^1.0.3",
         "tweetnacl-util": "^0.15.1",

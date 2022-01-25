@@ -4695,7 +4695,7 @@ ts-rmb-client-base@0.0.1, ts-rmb-client-base@^0.0.1:
   resolved "https://registry.yarnpkg.com/ts-rmb-client-base/-/ts-rmb-client-base-0.0.1.tgz#7405aa498a50f34d562caec740bffcc25f15777a"
   integrity sha512-xe7NxHgDyQnHTOFNfuHnhRXSY1xAEyRC/dRmCLI8H3THXLfLr3UcTqNg4Cxli0JEa2oW7s9DQvfZXek91FYo+w==
 
-ts-rmb-http-client@1.0.1:
+ts-rmb-http-client@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/ts-rmb-http-client/-/ts-rmb-http-client-1.0.1.tgz#2b15ebcb8f4639cac0efee0299bb5db8d3aabd23"
   integrity sha512-36ic96kyzh1+X9qob1vViXGYmhNkxsXIwelPfi2BPKj2i/Shl1VK9vjF6l3JYiR7hTOEP49xEIdIcnOXMQqTuA==

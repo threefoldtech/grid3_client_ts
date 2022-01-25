@@ -35,7 +35,7 @@ function getRmbProxy(config?): [boolean, string] {
 function getRMBClient(config?): MessageBusClientInterface {
     const [isProxy, rmb_proxy] = getRmbProxy(config);
     if (isProxy) {
-        return new HTTPMessageBusClient(0, rmb_proxy);
+        return new HTTPMessageBusClient(0, rmb_proxy, "", "");
     } else {
         return new MessageBusClient();
     }

@@ -14,9 +14,9 @@ interface FarmInfo {
     version: number;
     pricingPolicyId: number;
     stellarAddress: string;
-    publicIPs: PublicIPs[];
+    publicIps: PublicIps[];
 }
-interface PublicIPs {
+interface PublicIps {
     id: string;
     ip: string;
     contractId: number;
@@ -29,17 +29,17 @@ interface NodeInfo {
     nodeId: number;
     farmId: number;
     twinId: number;
-    country: string;
     gridVersion: number;
-    city: string;
     uptime: number;
     created: number;
     farmingPolicyId: number;
     updatedAt: string;
-    cru: string;
-    mru: string;
-    sru: string;
-    hru: string;
+    total_resources: NodeResources;
+    used_resources: NodeResources;
+    location: {
+        country: string;
+        city: string;
+    };
     publicConfig: PublicConfig;
     status: string;
     certificationType: string;
@@ -61,8 +61,8 @@ interface NodeResources {
 }
 interface NodeCapacity {
     capacity: {
-        total: NodeResources;
-        used: NodeResources;
+        total_resources: NodeResources;
+        used_resources: NodeResources;
     };
 }
 
@@ -118,14 +118,14 @@ class Nodes {
         return GB * 1024 * 1024 * 1024;
     }
 
-    async getFarms(page = 1, maxResult = 50, url = ""): Promise<FarmInfo[]> {
+    async getFarms(page = 1, pageSize = 50, url = ""): Promise<FarmInfo[]> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
 
-        return send("get", `${r}/farms?page=${page}&max_result=${maxResult}`, "", {})
+        return send("get", `${r}/farms?page=${page}&size=${pageSize}`, "", {})
             .then(res => {
-                return res["data"]["farms"];
+                return res;
             })
             .catch(err => {
                 throw err;
@@ -142,17 +142,17 @@ class Nodes {
             farms = await this.getAllFarms(url);
         }
         return farms
-            .filter(farm => farm.publicIPs.filter(ip => ip.contractId === 0).length > 0)
+            .filter(farm => farm.publicIps.filter(ip => ip.contractId === 0).length > 0)
             .map(farm => farm.farmId)
             .includes(farmId);
     }
 
-    async getNodes(page = 1, maxResult = 50, url = ""): Promise<NodeInfo[]> {
+    async getNodes(page = 1, pageSize = 50, url = ""): Promise<NodeInfo[]> {
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;
 
-        const ret = await send("get", `${r}/nodes?page=${page}&max_result=${maxResult}`, "", {});
+        const ret = await send("get", `${r}/nodes?page=${page}&size=${pageSize}`, "", {});
         return ret;
     }
 
@@ -167,7 +167,7 @@ class Nodes {
         if (url) r = url;
         else r = this.proxyURL;
 
-        return send("get", `${r}/nodes?farm_id=${farmId}&max_result=${nodesCount}`, "", {})
+        return send("get", `${r}/nodes?farm_id=${farmId}&size=${nodesCount}`, "", {})
             .then(res => {
                 if (res) return res;
                 else throw new Error(`The farm with id ${farmId}: doesn't have any nodes`);
@@ -187,14 +187,15 @@ class Nodes {
                 const node: NodeCapacity = res;
                 const ret: NodeResources = { cru: 0, mru: 0, hru: 0, sru: 0, ipv4u: 0 };
 
-                ret.cru = +node.capacity.total.cru - +node.capacity.used.cru;
-                ret.mru = +node.capacity.total.mru - +node.capacity.used.mru;
-                ret.sru = +node.capacity.total.sru - +node.capacity.used.sru;
-                ret.hru = +node.capacity.total.hru - +node.capacity.used.hru;
+                ret.cru = +node.capacity.total_resources.cru - +node.capacity.used_resources.cru;
+                ret.mru = +node.capacity.total_resources.mru - +node.capacity.used_resources.mru;
+                ret.sru = +node.capacity.total_resources.sru - +node.capacity.used_resources.sru;
+                ret.hru = +node.capacity.total_resources.hru - +node.capacity.used_resources.hru;
 
                 return ret;
             })
             .catch(err => {
+                console.log(err);
                 if (err.response.status === 404) {
                     throw Error(`Node: ${nodeId} is not found`);
                 } else if (err.response.status === 502) {
@@ -210,8 +211,8 @@ class Nodes {
         const hasPublicIpv4 = node.publicConfig.ipv4 ? true : false;
         const hasPublicIpv6 = node.publicConfig.ipv6 ? true : false;
         if (
-            (options.country && options.country !== node.country) ||
-            (options.city && options.city !== node.city) ||
+            (options.country && options.country !== node.location.country) ||
+            (options.city && options.city !== node.location.city) ||
             (options.accessNodeV4 && !hasPublicIpv4) ||
             (options.accessNodeV6 && !hasPublicIpv6) ||
             (options.gateway && !hasDomain) ||
@@ -226,18 +227,15 @@ class Nodes {
             node["valid"] = false;
             return node;
         }
-        if (options.cru || options.mru || options.sru || options.hru) {
-            const nodeFreeResources = await this.getNodeFreeResources(node.nodeId);
-            if (
-                (options.cru && options.cru > nodeFreeResources.cru) ||
-                (options.mru && this._g2b(options.mru) > nodeFreeResources.mru) ||
-                (options.sru && this._g2b(options.sru) > nodeFreeResources.sru) ||
-                (options.hru && this._g2b(options.hru) > nodeFreeResources.hru)
-            ) {
-                events.emit("logs", `Nodes: Node ${node.nodeId} doesn't have enough capacity`);
-                node["valid"] = false;
-                return node;
-            }
+        if (
+            (options.cru && options.cru > +node.total_resources.cru - +node.used_resources.cru) ||
+            (options.mru && this._g2b(options.mru) > +node.total_resources.mru - +node.used_resources.mru) ||
+            (options.sru && this._g2b(options.sru) > +node.total_resources.sru - +node.used_resources.sru) ||
+            (options.hru && this._g2b(options.hru) > +node.total_resources.hru - +node.used_resources.hru)
+        ) {
+            events.emit("logs", `Nodes: Node ${node.nodeId} doesn't have enough capacity`);
+            node["valid"] = false;
+            return node;
         }
         node["valid"] = true;
         return node;
@@ -278,4 +276,4 @@ class Nodes {
     }
 }
 
-export { Nodes, FarmInfo, NodeResources, NodeInfo, PublicIPs, PublicConfig };
+export { Nodes, FarmInfo, NodeResources, NodeInfo, PublicIps, PublicConfig };

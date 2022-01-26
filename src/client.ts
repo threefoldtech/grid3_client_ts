@@ -36,10 +36,10 @@ class GridClient {
         const tfclient = new TFClient(urls.substrate, this.mnemonic, this.storeSecret, this.keypairType);
         await tfclient.connect();
         if (BackendStorage.isEnvNode()) {
-            process.on("exit", this.disconnect);
-            process.on("SIGINT", this.disconnect);
-            process.on("SIGUSR1", this.disconnect);
-            process.on("SIGUSR2", this.disconnect);
+            process.on("SIGTERM", this.disconnectAndExit);
+            process.on("SIGINT", this.disconnectAndExit);
+            process.on("SIGUSR1", this.disconnectAndExit);
+            process.on("SIGUSR2", this.disconnectAndExit);
         } else window.onbeforeunload = this.disconnect;
         this.twinId = await tfclient.twins.getMyTwinId();
         this._connect();
@@ -80,14 +80,26 @@ class GridClient {
             urls.rmbProxy = "https://gridproxy.test.grid.tf";
             urls.substrate = "wss://tfchain.test.grid.tf/ws";
             urls.graphql = "https://graphql.test.grid.tf/graphql";
+        } else if (network === NetworkEnv.main) {
+            urls.rmbProxy = "https://gridproxy.grid.tf";
+            urls.substrate = "wss://tfchain.grid.tf/ws";
+            urls.graphql = "https://graphql.grid.tf/graphql";
         }
         return urls;
     }
 
-    disconnect(): void {
+    async disconnect(): Promise<void> {
         for (const key of Object.keys(TFClient.clients)) {
-            TFClient.clients[key].disconnect();
+            await TFClient.clients[key].disconnect();
         }
+    }
+
+    async disconnectAndExit(): Promise<void> {
+        // this should be only used by nodejs process
+        for (const key of Object.keys(TFClient.clients)) {
+            await TFClient.clients[key].disconnect();
+        }
+        process.exit(0);
     }
 }
 

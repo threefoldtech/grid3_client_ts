@@ -6,6 +6,7 @@ import { BackendStorageType } from "./storage/backend";
 enum NetworkEnv {
     dev = "dev",
     test = "test",
+    main = "main",
 }
 
 class GridClientConfig {

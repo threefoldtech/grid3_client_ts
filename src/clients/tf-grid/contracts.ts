@@ -37,6 +37,10 @@ class Contracts {
     }
 
     async cancel(id: number) {
+        const contract = await this.get(id);
+        if (Object.keys(contract.state).includes("deleted")) {
+            return id;
+        }
         return await this.tfclient.applyExtrinsic(this.tfclient.client.cancelContract, [id], "smartContractModule", [
             "NodeContractCanceled",
             "NameContractCanceled",

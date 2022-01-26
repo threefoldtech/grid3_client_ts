@@ -22,12 +22,13 @@ class Balance {
         return await this.get(this.tfclient.client.address);
     }
 
-    async transfer(address: string, amount: number): Promise<void> {
+    async transfer(address: string, amount: number): Promise<number> {
         const decimalAmount = new Decimal(amount);
         const decimalAmountInTFT = decimalAmount.mul(10 ** 7).toNumber();
         await this.tfclient.applyExtrinsic(this.tfclient.client.transfer, [address, decimalAmountInTFT], "balances", [
             "Transfer",
         ]);
+        return amount;
     }
 }
 

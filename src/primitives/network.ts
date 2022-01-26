@@ -98,14 +98,18 @@ class Network {
         return this.getWireguardConfig(accessPoint.subnet, keypair.privateKey, nodesWGPubkey, endpoint);
     }
 
-    async addNode(node_id: number, metadata = "", description = ""): Promise<Workload> {
+    async addNode(node_id: number, metadata = "", description = "", subnet = ""): Promise<Workload> {
         if (this.nodeExists(node_id)) {
             return;
         }
         events.emit("logs", `Adding node ${node_id} to network ${this.name}`);
         const keypair = this.generateWireguardKeypair();
         let znet = new Znet();
-        znet.subnet = this.getFreeSubnet();
+        if (!subnet) {
+            znet.subnet = this.getFreeSubnet();
+        } else {
+            znet.subnet = subnet;
+        }
         znet.ip_range = this.ipRange;
         znet.wireguard_private_key = keypair.privateKey;
         znet.wireguard_listen_port = await this.getFreePort(node_id);
@@ -318,7 +322,25 @@ class Network {
             throw Error(`node_id is not in the network. Please add it first`);
         }
     }
+    validateUserIP(node_id: number, ip_address = "") {
+        const reserved_ips = this.getNodeReservedIps(node_id);
+        if (reserved_ips.includes(ip_address)) {
+            throw Error(`private ip ${ip_address} is being used please select another ip or leave it empty`);
+        }
 
+        const nodeSubnet = this.getNodeSubnet(node_id);
+        const ip = Addr(ip_address);
+
+        if (!Addr(nodeSubnet).contains(ip)) {
+            throw Error(`Selected ip is not available in node subnet, node subnet: ${nodeSubnet}`);
+        }
+        for (const node of this.nodes) {
+            if (node.node_id === node_id) {
+                node.reserved_ips.push(ip_address);
+                return ip_address;
+            }
+        }
+    }
     getNodeReservedIps(node_id: number): string[] {
         for (const node of this.nodes) {
             if (node.node_id !== node_id) {
@@ -374,6 +396,16 @@ class Network {
         }
         this.reservedSubnets.push(subnet.toString());
         return subnet.toString();
+    }
+
+    ValidateFreeSubnet(subnet): string {
+        const reservedSubnets = this.getReservedSubnets();
+        if (!reservedSubnets.includes(subnet)) {
+            this.reservedSubnets.push(subnet);
+            return subnet;
+        } else {
+            throw Error(`subnet ${subnet} is not free`);
+        }
     }
 
     async getAccessPoints(): Promise<AccessPoint[]> {

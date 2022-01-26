@@ -45,10 +45,11 @@ const vms: MachinesModel = {
                 },
             ],
             public_ip: false,
+            public_ip6: false,
             planetary: true,
             cpu: 1,
             memory: 1024 * 2,
-            rootfs_size: 1,
+            rootfs_size: 0,
             flist: "https://hub.grid.tf/tf-official-apps/base:latest.flist",
             entrypoint: "/sbin/zinit init",
             env: {

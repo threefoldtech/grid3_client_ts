@@ -4,7 +4,7 @@ import { events } from "../helpers/events";
 import { randomChoice } from "../helpers/utils";
 import { DiskModel, QSFSDiskModel } from "../modules/models";
 import { qsfs_zdbs } from "../modules/qsfs_zdbs";
-import { DeploymentFactory, DiskPrimitive, IPv4Primitive, Network, Nodes, VMPrimitive } from "../primitives/index";
+import { DeploymentFactory, DiskPrimitive, Network, Nodes, PublicIPPrimitive, VMPrimitive } from "../primitives/index";
 import { QSFSPrimitive } from "../primitives/qsfs";
 import { ZdbGroup } from "../zos";
 import { Deployment } from "../zos/deployment";
@@ -22,6 +22,7 @@ class VMHL extends HighLevelBase {
         rootfs_size: number,
         disks: DiskModel[],
         publicIp: boolean,
+        publicIp6: boolean,
         planetary: boolean,
         network: Network,
         entrypoint: string,
@@ -31,6 +32,7 @@ class VMHL extends HighLevelBase {
         qsfsDisks: QSFSDiskModel[] = [],
         qsfsProjectName = "",
         addAccess = false,
+        ip = "",
     ): Promise<[TwinDeployment[], string]> {
         const deployments = [];
         const workloads = [];
@@ -96,13 +98,22 @@ class VMHL extends HighLevelBase {
         // ipv4
         let ipName = "";
         let publicIps = 0;
-        if (publicIp) {
-            const ipv4 = new IPv4Primitive();
+        if (publicIp || publicIp6) {
+            const ip = new PublicIPPrimitive();
             ipName = `${name}_pubip`;
-            workloads.push(ipv4.create(ipName, metadata, description));
-            publicIps++;
+            workloads.push(ip.create(ipName, metadata, description, 0, publicIp, publicIp6));
+            if (publicIp) {
+                publicIps++;
+            }
         }
 
+        // validate user ip subnet in case of no networks already
+        let userIPsubnet;
+        let accessNodeSubnet;
+        if (ip) {
+            userIPsubnet = network.ValidateFreeSubnet(Addr(ip).mask(24).toString());
+            accessNodeSubnet = network.getFreeSubnet();
+        }
         // network
         const deploymentFactory = new DeploymentFactory(this.config);
         let access_net_workload;
@@ -128,10 +139,10 @@ class VMHL extends HighLevelBase {
                 }
             }
             const access_node_id = Number(randomChoice(filteredAccessNodes));
-            access_net_workload = await network.addNode(access_node_id, metadata, description);
+            access_net_workload = await network.addNode(access_node_id, metadata, description, accessNodeSubnet);
             wgConfig = await network.addAccess(access_node_id, true);
         }
-        const znet_workload = await network.addNode(nodeId, metadata, description);
+        const znet_workload = await network.addNode(nodeId, metadata, description, userIPsubnet);
         if ((await network.exists()) && (znet_workload || access_net_workload)) {
             // update network
             for (const deployment of network.deployments) {
@@ -168,7 +179,12 @@ class VMHL extends HighLevelBase {
         }
         // vm
         const vm = new VMPrimitive();
-        const machine_ip = network.getFreeIP(nodeId);
+        let machine_ip;
+        if (ip !== "") {
+            machine_ip = network.validateUserIP(nodeId, ip);
+        } else {
+            machine_ip = network.getFreeIP(nodeId);
+        }
         events.emit(
             "logs",
             `Creating a vm on node: ${nodeId}, network: ${network.name} with private ip: ${machine_ip}`,
@@ -202,7 +218,8 @@ class VMHL extends HighLevelBase {
 
     async delete(deployment: Deployment, names: string[]) {
         return await this._delete(deployment, names, [
-            WorkloadTypes.ipv4,
+            WorkloadTypes.ip,
+            WorkloadTypes.ipv4, // TODO: remove deprecated
             WorkloadTypes.zmount,
             WorkloadTypes.zmachine,
             WorkloadTypes.qsfs,

@@ -1,7 +1,7 @@
 {
     "name": "grid3_client",
     "author": "Ahmed Hanafy",
-    "version": "0.0.38",
+    "version": "1.0.8",
     "license": "ISC",
     "homepage": "https://github.com/threefoldtech/grid3_client_ts/blob/development/README.md",
     "repository": {
@@ -22,7 +22,7 @@
         "private-ip": "^2.3.3",
         "reflect-metadata": "^0.1.13",
         "stellar-sdk": "^9.1.0",
-        "tfgrid-api-client": "^1.0.3",
+        "tfgrid-api-client": "^1.0.4",
         "ts-rmb-client-base": "^0.0.1",
         "ts-rmb-http-client": "^0.1.9",
         "ts-rmb-redis-client": "^0.0.3",
@@ -58,13 +58,16 @@
     "files": [
         "/dist"
     ],
+    "bin": {
+        "twinserver": "./dist/node/server/server.js"
+    },
     "private": false,
     "scripts": {
         "prepare": "husky install",
         "build": "npm-run-all es6-build node-build",
         "node-build": "tsc --build tsconfig-node.json",
         "es6-build": "tsc --build tsconfig-es6.json",
-        "server": "ts-node --project tsconfig-node.json server/server.ts",
+        "server": "ts-node --project tsconfig-node.json src/server/server.ts",
         "lint": "eslint -c .eslintrc.json . --fix",
         "check-lint": "eslint -c .eslintrc.json .",
         "generate-docs": "typedoc --tsconfig tsconfig-es6.json src/index.ts --out docs/api",

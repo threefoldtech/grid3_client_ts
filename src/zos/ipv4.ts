@@ -1,15 +1,17 @@
+// TODO:---------Deprecated ------------------------------------//
+
 import { Expose } from "class-transformer";
 
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
-class PublicIP extends WorkloadData {
+class PublicIPv4 extends WorkloadData {
     challenge(): string {
         return "";
     }
 }
 
-class PublicIPResult extends WorkloadDataResult {
+class PublicIPv4Result extends WorkloadDataResult {
     @Expose() ip: string;
     @Expose() gateway: string;
 }
 
-export { PublicIP, PublicIPResult };
+export { PublicIPv4, PublicIPv4Result };

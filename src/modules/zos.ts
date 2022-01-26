@@ -24,7 +24,7 @@ class Zos {
 
         let publicIps = 0;
         for (const workload of deployment.workloads) {
-            if (workload.type === WorkloadTypes.ipv4) {
+            if (workload.type === WorkloadTypes.ip && workload.data["v4"]) {
                 publicIps++;
             }
         }

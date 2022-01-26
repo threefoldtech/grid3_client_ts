@@ -16,7 +16,8 @@ class HighLevelBase {
         deployment: Deployment,
         names: string[],
         types: WorkloadTypes[] = [
-            WorkloadTypes.ipv4,
+            WorkloadTypes.ip,
+            WorkloadTypes.ipv4, // TODO: remove deprecated
             WorkloadTypes.zmachine,
             WorkloadTypes.zmount,
             WorkloadTypes.zdb,
@@ -153,7 +154,8 @@ class HighLevelBase {
         deployment: Deployment,
         names: string[],
         types: WorkloadTypes[] = [
-            WorkloadTypes.ipv4,
+            WorkloadTypes.ip,
+            WorkloadTypes.ipv4, // TODO: remove deprecated
             WorkloadTypes.zmachine,
             WorkloadTypes.zmount,
             WorkloadTypes.zdb,

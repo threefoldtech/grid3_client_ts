@@ -63,6 +63,11 @@ class GWModule extends BaseModule {
     }
 
     @expose
+    async list() {
+        return await this._list();
+    }
+
+    @expose
     @validateInput
     async get_fqdn(options: GatewayFQDNGetModel) {
         return await this._get(options.name);
@@ -90,7 +95,7 @@ class GWModule extends BaseModule {
 
     async getObj(deploymentName: string) {
         const deployments = await this._get(deploymentName);
-        const workloads = this._getWorkloadsByTypes(deployments, [
+        const workloads = await this._getWorkloadsByTypes(deploymentName, deployments, [
             WorkloadTypes.gatewayfqdnproxy,
             WorkloadTypes.gatewaynameproxy,
         ]);

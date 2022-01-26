@@ -13,7 +13,13 @@ import { checkBalance } from "./utils";
 
 class MachinesModule extends BaseModule {
     moduleName = "machines";
-    workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
+    workloadTypes = [
+        WorkloadTypes.zmachine,
+        WorkloadTypes.zmount,
+        WorkloadTypes.qsfs,
+        WorkloadTypes.ip,
+        WorkloadTypes.ipv4,
+    ]; // TODO: remove deprecated
     vm: VMHL;
     constructor(public config: GridClientConfig) {
         super(config);
@@ -37,6 +43,7 @@ class MachinesModule extends BaseModule {
                 machine.rootfs_size,
                 machine.disks,
                 machine.public_ip,
+                machine.public_ip6,
                 machine.planetary,
                 network,
                 machine.entrypoint,
@@ -46,6 +53,7 @@ class MachinesModule extends BaseModule {
                 machine.qsfs_disks,
                 this.config.projectName,
                 options.network.addAccess,
+                machine.ip,
             );
             twinDeployments = twinDeployments.concat(TDeployments);
             if (wgConfig) {
@@ -70,15 +78,17 @@ class MachinesModule extends BaseModule {
     }
 
     @expose
-    @validateInput
     async list() {
         return await this._list();
     }
 
     async getObj(deploymentName: string) {
         const deployments = await this._get(deploymentName);
-        const workloads = this._getWorkloadsByTypes(deployments, [WorkloadTypes.zmachine]);
-        return workloads.map(workload => this._getZmachineData(deployments, workload));
+        const workloads = await this._getWorkloadsByTypes(deploymentName, deployments, [WorkloadTypes.zmachine]);
+        const promises = workloads.map(
+            async workload => await this._getZmachineData(deploymentName, deployments, workload),
+        );
+        return await Promise.all(promises);
     }
 
     @expose
@@ -103,7 +113,7 @@ class MachinesModule extends BaseModule {
         }
 
         const oldDeployments = await this._get(options.name);
-        const workload = this._getWorkloadsByTypes(oldDeployments, [WorkloadTypes.zmachine])[0];
+        const workload = await this._getWorkloadsByTypes(options.name, oldDeployments, [WorkloadTypes.zmachine])[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
         if (networkName !== options.network.name || networkIpRange !== options.network.ip_range) {
@@ -122,7 +132,9 @@ class MachinesModule extends BaseModule {
             throw Error(`There are no machine deployments with the name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
-        const workload = this._getWorkloadsByTypes(oldDeployments, [WorkloadTypes.zmachine])[0];
+        const workload = await this._getWorkloadsByTypes(options.deployment_name, oldDeployments, [
+            WorkloadTypes.zmachine,
+        ])[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
         const network = new Network(networkName, networkIpRange, this.config);
@@ -137,6 +149,7 @@ class MachinesModule extends BaseModule {
             options.rootfs_size,
             options.disks,
             options.public_ip,
+            options.public_ip6,
             options.planetary,
             network,
             options.entrypoint,

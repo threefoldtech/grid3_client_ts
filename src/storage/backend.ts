@@ -71,7 +71,10 @@ class BackendStorage {
     }
 
     async update(key: string, field: string, data = null, action: StorageUpdateAction = StorageUpdateAction.add) {
-        const storedData = await this.load(key);
+        let storedData = await this.load(key);
+        if (!storedData) {
+            storedData = {};
+        }
         if (action === StorageUpdateAction.add) {
             storedData[field] = data;
         } else if (action === StorageUpdateAction.delete) {

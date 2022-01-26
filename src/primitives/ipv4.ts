@@ -1,9 +1,11 @@
-import { PublicIP } from "../zos/ipv4";
+// // TODO:----------------------- deprecated ---------------------------------//
+
+import { PublicIPv4 } from "../zos/ipv4";
 import { Workload, WorkloadTypes } from "../zos/workload";
 
 class IPv4Primitive {
     create(name: string, metadata = "", description = "", version = 0): Workload {
-        const public_ip = new PublicIP();
+        const public_ip = new PublicIPv4();
         const ipv4_workload = new Workload();
         ipv4_workload.version = version;
         ipv4_workload.name = name;

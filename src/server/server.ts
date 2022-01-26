@@ -1,15 +1,23 @@
+#!/usr/bin/env node
 import "reflect-metadata";
 
 import fs from "fs";
 import path from "path";
 import { MessageBusServer } from "ts-rmb-redis-client";
 
-import { GridClient } from "../src/client";
-import { isExposed } from "../src/helpers/expose";
-import { BackendStorageType } from "../src/storage/backend";
+import { GridClient } from "../client";
+import { isExposed } from "../helpers/expose";
+import { BackendStorageType } from "../storage/backend";
 import { getRMBClient } from "./rmb_client";
 
-const config = JSON.parse(fs.readFileSync(path.join(__dirname, "./config.json"), "utf-8"));
+const argv = process.argv.slice(2);
+let config_file = path.join(__dirname, "./config.json");
+argv.forEach((value, ind) => {
+    if (value == "--config" || value == "-c") {
+        config_file = argv[ind + 1];
+    }
+});
+const config = JSON.parse(fs.readFileSync(config_file, "utf-8"));
 class Server {
     server: MessageBusServer;
     constructor(port = 6379) {
@@ -17,7 +25,7 @@ class Server {
     }
 
     async wrapFunc(message, payload) {
-        const rmbClient = getRMBClient();
+        const rmbClient = getRMBClient(config);
         const gridClient = new GridClient(
             config.network,
             config.mnemonic,
@@ -37,7 +45,7 @@ class Server {
     }
 
     register() {
-        const rmbClient = getRMBClient();
+        const rmbClient = getRMBClient(config);
         const gridClient = new GridClient(
             config.network,
             config.mnemonic,

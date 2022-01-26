@@ -1,5 +1,5 @@
 import { Expose, Type } from "class-transformer";
-import { IsBoolean, IsDefined, IsInt, IsIP, IsNotEmpty, IsString, Min, ValidateNested } from "class-validator";
+import { IsBoolean, IsDefined, IsInt, IsIP, IsNotEmpty, IsString, ValidateNested } from "class-validator";
 
 import { ComputeCapacity } from "./computecapacity";
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
@@ -41,7 +41,7 @@ class Mount {
 class Zmachine extends WorkloadData {
     @Expose() @IsString() @IsNotEmpty() flist: string;
     @Expose() @Type(() => ZmachineNetwork) @ValidateNested() network: ZmachineNetwork;
-    @Expose() @IsInt() @Min(1024 * 1024 * 250) size: number; // in bytes
+    @Expose() @IsInt() size: number; // in bytes
     @Expose() @Type(() => ComputeCapacity) @ValidateNested() compute_capacity: ComputeCapacity;
     @Expose() @Type(() => Mount) @ValidateNested({ each: true }) mounts: Mount[];
     @Expose() @IsString() @IsNotEmpty() entrypoint: string;
@@ -51,7 +51,7 @@ class Zmachine extends WorkloadData {
         let out = "";
         out += this.flist;
         out += this.network.challenge();
-        out += this.size || "";
+        out += this.size || "0";
         out += this.compute_capacity.challenge();
         for (let i = 0; i < this.mounts.length; i++) {
             out += this.mounts[i].challenge();

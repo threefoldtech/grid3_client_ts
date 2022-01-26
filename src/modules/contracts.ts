@@ -1,8 +1,11 @@
+import * as PATH from "path";
+
 import { TFClient } from "../clients/tf-grid/client";
 import { GridClientConfig } from "../config";
 import { expose } from "../helpers/expose";
 import { validateInput } from "../helpers/validator";
 import { Nodes } from "../primitives/nodes";
+import { BaseModule } from "./base";
 import {
     ContractCancelModel,
     ContractConsumption,
@@ -23,6 +26,17 @@ class Contracts {
     constructor(public config: GridClientConfig) {
         this.client = new TFClient(config.substrateURL, config.mnemonic, config.storeSecret, config.keypairType);
         this.nodes = new Nodes(config.graphqlURL, config.rmbClient["proxyURL"]);
+    }
+
+    private async invalidateDeployment(contractId: number) {
+        const baseModule = new BaseModule(this.config);
+        const contractPath = PATH.join(this.config.storePath, "contracts", `${contractId}.json`);
+        const contractInfo = await baseModule.backendStorage.load(contractPath);
+        if (contractInfo) {
+            baseModule.moduleName = contractInfo["moduleName"];
+            baseModule.projectName = contractInfo["projectName"];
+            await baseModule._get(contractInfo["deploymentName"]);
+        }
     }
 
     @expose
@@ -64,7 +78,9 @@ class Contracts {
     @validateInput
     @checkBalance
     async cancel(options: ContractCancelModel) {
-        return await this.client.contracts.cancel(options.id);
+        const deletedContract = await this.client.contracts.cancel(options.id);
+        await this.invalidateDeployment(options.id);
+        return deletedContract;
     }
 
     @expose
@@ -92,7 +108,11 @@ class Contracts {
     @validateInput
     @checkBalance
     async cancelMyContracts(): Promise<Record<string, number>[]> {
-        return await this.client.contracts.cancelMyContracts(this.config.graphqlURL);
+        const contracts = await this.client.contracts.cancelMyContracts(this.config.graphqlURL);
+        for (const contract of contracts) {
+            await this.invalidateDeployment(contract.contractId);
+        }
+        return contracts;
     }
 
     /**

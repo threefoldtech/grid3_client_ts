@@ -14,12 +14,13 @@ import { Network } from "../primitives/network";
 import { Nodes } from "../primitives/nodes";
 import { BackendStorage } from "../storage/backend";
 import { Deployment } from "../zos/deployment";
-import { PublicIPResult } from "../zos/ipv4";
+import { PublicIPResult } from "../zos/public_ip";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Zmachine, ZmachineResult } from "../zos/zmachine";
 
 class BaseModule {
     moduleName = "";
+    projectName = "";
     workloadTypes = [];
     rmb: RMB;
     deploymentFactory: DeploymentFactory;
@@ -27,6 +28,7 @@ class BaseModule {
     backendStorage: BackendStorage;
 
     constructor(public config: GridClientConfig) {
+        this.projectName = config.projectName;
         this.rmb = new RMB(config.rmbClient);
         this.deploymentFactory = new DeploymentFactory(config);
         this.twinDeploymentHandler = new TwinDeploymentHandler(config);
@@ -40,7 +42,7 @@ class BaseModule {
     }
 
     getDeploymentPath(name: string): string {
-        return PATH.join(this.config.storePath, this.config.projectName, this.moduleName, name);
+        return PATH.join(this.config.storePath, this.projectName, this.moduleName, name);
     }
 
     async getDeploymentContracts(name: string) {
@@ -63,9 +65,14 @@ class BaseModule {
                 contract_id: contract["contract_id"],
                 node_id: contract["contract_type"]["nodeContract"]["node_id"],
             });
+            const contractPath = PATH.join(this.config.storePath, "contracts", `${contract["contract_id"]}.json`);
+            const contractInfo = { projectName: this.projectName, moduleName: this.moduleName, deploymentName: name };
+            this.backendStorage.dump(contractPath, contractInfo);
         }
         for (const contract of contracts["deleted"]) {
             StoreContracts = StoreContracts.filter(c => c["contract_id"] !== contract["contract_id"]);
+            const contractPath = PATH.join(this.config.storePath, "contracts", `${contract["contract_id"]}.json`);
+            this.backendStorage.dump(contractPath, "");
         }
         if (wgConfig) {
             this.backendStorage.dump(wireguardPath, wgConfig);
@@ -112,12 +119,13 @@ class BaseModule {
         }
     }
 
-    _getWorkloadsByTypes(deployments, types: WorkloadTypes[]): Workload[] {
+    async _getWorkloadsByTypes(deploymentName: string, deployments, types: WorkloadTypes[]): Promise<Workload[]> {
         const r = [];
         for (const deployment of deployments) {
             for (const workload of deployment.workloads) {
                 if (types.includes(workload.type)) {
                     workload["contractId"] = deployment.contract_id;
+                    workload["nodeId"] = await this._getNodeIdFromContractId(deploymentName, deployment.contract_id);
                     r.push(workload);
                 }
             }
@@ -125,27 +133,31 @@ class BaseModule {
         return r;
     }
 
-    _getMachinePubIP(deployments, ipv4WorkloadName: string): PublicIPResult {
-        const ipv4Workloads = this._getWorkloadsByTypes(deployments, [WorkloadTypes.ipv4]);
-        for (const workload of ipv4Workloads) {
-            if (workload.name === ipv4WorkloadName) {
+    async _getMachinePubIP(deploymentName: string, deployments, publicIPWorkloadName: string): Promise<PublicIPResult> {
+        const publicIPWorkloads = await this._getWorkloadsByTypes(deploymentName, deployments, [
+            WorkloadTypes.ip,
+            WorkloadTypes.ipv4,
+        ]);
+        for (const workload of publicIPWorkloads) {
+            if (workload.name === publicIPWorkloadName) {
                 return workload.result.data as PublicIPResult;
             }
         }
         return null;
     }
 
-    _getZmachineData(deployments, workload: Workload): Record<string, unknown> {
+    async _getZmachineData(deploymentName: string, deployments, workload: Workload): Promise<Record<string, unknown>> {
         const data = workload.data as Zmachine;
         return {
             version: workload.version,
             contractId: workload["contractId"],
+            nodeId: workload["nodeId"],
             name: workload.name,
             created: workload.result.created,
             status: workload.result.state,
             message: workload.result.message,
             flist: data.flist,
-            publicIP: this._getMachinePubIP(deployments, data.network.public_ip),
+            publicIP: await this._getMachinePubIP(deploymentName, deployments, data.network.public_ip),
             planetary: data.network.planetary ? (workload.result.data as ZmachineResult).ygg_ip : "",
             interfaces: data.network.interfaces.map(n => ({
                 network: n.network,
@@ -195,6 +207,9 @@ class BaseModule {
         }
         const deployments = [];
         const contracts = await this.getDeploymentContracts(name);
+        if (contracts.length === 0) {
+            await this.save(name, { created: [], deleted: [] });
+        }
         for (const contract of contracts) {
             const tfClient = new TFClient(
                 this.config.substrateURL,
@@ -203,7 +218,7 @@ class BaseModule {
                 this.config.keypairType,
             );
             const c = await tfClient.contracts.get(contract["contract_id"]);
-            if (Object.keys(c.state).includes("Deleted")) {
+            if (Object.keys(c.state).includes("deleted")) {
                 await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
                 continue;
             }

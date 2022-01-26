@@ -18,6 +18,7 @@ class KubernetesHL extends HighLevelBase {
         rootfs_size: number,
         diskSize: number,
         publicIp: boolean,
+        publicIp6: boolean,
         planetary: boolean,
         network: Network,
         sshKey: string,
@@ -52,6 +53,7 @@ class KubernetesHL extends HighLevelBase {
             rootfs_size,
             [disk],
             publicIp,
+            publicIp6,
             planetary,
             network,
             "/sbin/zinit init",
@@ -74,6 +76,7 @@ class KubernetesHL extends HighLevelBase {
         rootfs_size: number,
         diskSize: number,
         publicIp: boolean,
+        publicIp6: boolean,
         planetary: boolean,
         network: Network,
         sshKey: string,
@@ -108,6 +111,7 @@ class KubernetesHL extends HighLevelBase {
             rootfs_size,
             [disk],
             publicIp,
+            publicIp6,
             planetary,
             network,
             "/sbin/zinit init",
@@ -124,8 +128,9 @@ class KubernetesHL extends HighLevelBase {
         return await this._delete(deployment, names, [
             WorkloadTypes.zmachine,
             WorkloadTypes.zmount,
+            WorkloadTypes.ip,
             WorkloadTypes.ipv4,
-        ]);
+        ]); // TODO: remove deprecated
     }
 }
 export { KubernetesHL };

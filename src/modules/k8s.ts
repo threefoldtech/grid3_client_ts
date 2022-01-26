@@ -13,7 +13,13 @@ import { checkBalance } from "./utils";
 
 class K8sModule extends BaseModule {
     moduleName = "kubernetes";
-    workloadTypes = [WorkloadTypes.zmachine, WorkloadTypes.zmount, WorkloadTypes.qsfs, WorkloadTypes.ipv4];
+    workloadTypes = [
+        WorkloadTypes.zmachine,
+        WorkloadTypes.zmount,
+        WorkloadTypes.qsfs,
+        WorkloadTypes.ip,
+        WorkloadTypes.ipv4,
+    ]; // TODO: remove deprecated
     kubernetes: KubernetesHL;
 
     constructor(public config: GridClientConfig) {
@@ -21,7 +27,7 @@ class K8sModule extends BaseModule {
         this.kubernetes = new KubernetesHL(config);
     }
 
-    _getMastersWorkload(deployments): Workload[] {
+    async _getMastersWorkload(deploymentName: string, deployments): Promise<Workload[]> {
         const workloads = [];
         for (const deployment of deployments) {
             let d = deployment;
@@ -31,6 +37,7 @@ class K8sModule extends BaseModule {
             for (const workload of d.workloads) {
                 if (workload.type === WorkloadTypes.zmachine && workload.data["env"]["K3S_URL"] === "") {
                     workload["contractId"] = deployment.contract_id;
+                    workload["nodeId"] = await this._getNodeIdFromContractId(deploymentName, deployment.contract_id);
                     workloads.push(workload);
                 }
             }
@@ -38,7 +45,7 @@ class K8sModule extends BaseModule {
         return workloads;
     }
 
-    _getWorkersWorkload(deployments): Workload[] {
+    async _getWorkersWorkload(deploymentName: string, deployments): Promise<Workload[]> {
         const workloads = [];
         for (const deployment of deployments) {
             let d = deployment;
@@ -48,6 +55,7 @@ class K8sModule extends BaseModule {
             for (const workload of d.workloads) {
                 if (workload.type === WorkloadTypes.zmachine && workload.data["env"]["K3S_URL"] !== "") {
                     workload["contractId"] = deployment.contract_id;
+                    workload["nodeId"] = await this._getNodeIdFromContractId(deploymentName, deployment.contract_id);
                     workloads.push(workload);
                 }
             }
@@ -55,9 +63,9 @@ class K8sModule extends BaseModule {
         return workloads;
     }
 
-    _getMastersIp(deployments): string[] {
+    async _getMastersIp(deploymentName: string, deployments): Promise<string[]> {
         const ips = [];
-        const workloads = this._getMastersWorkload(deployments);
+        const workloads = await this._getMastersWorkload(deploymentName, deployments);
         for (const workload of workloads) {
             ips.push(workload.data["network"]["interfaces"][0]["ip"]);
         }
@@ -80,6 +88,7 @@ class K8sModule extends BaseModule {
                 master.rootfs_size,
                 master.disk_size,
                 master.public_ip,
+                master.public_ip6,
                 master.planetary,
                 network,
                 options.ssh_key,
@@ -97,7 +106,7 @@ class K8sModule extends BaseModule {
         }
 
         if (masterIps.length === 0) {
-            masterIps = this._getMastersIp(deployments);
+            masterIps = await this._getMastersIp(options.name, deployments);
             if (masterIps.length === 0) {
                 throw Error("Couldn't get master ip");
             }
@@ -113,6 +122,7 @@ class K8sModule extends BaseModule {
                 worker.rootfs_size,
                 worker.disk_size,
                 worker.public_ip,
+                worker.public_ip6,
                 worker.planetary,
                 network,
                 options.ssh_key,
@@ -147,7 +157,6 @@ class K8sModule extends BaseModule {
     }
 
     @expose
-    @validateInput
     async list() {
         return await this._list();
     }
@@ -155,14 +164,14 @@ class K8sModule extends BaseModule {
     async getObj(deploymentName: string) {
         const k = { masters: [], workers: [] };
         const deployments = await this._get(deploymentName);
-        const masters = this._getMastersWorkload(deployments);
-        const workers = this._getWorkersWorkload(deployments);
-        masters.forEach(workload => {
-            k.masters.push(this._getZmachineData(deployments, workload));
-        });
-        workers.forEach(workload => {
-            k.workers.push(this._getZmachineData(deployments, workload));
-        });
+        const masters = await this._getMastersWorkload(deploymentName, deployments);
+        const workers = await this._getWorkersWorkload(deploymentName, deployments);
+        for (const master of masters) {
+            k.masters.push(await this._getZmachineData(deploymentName, deployments, master));
+        }
+        for (const worker of workers) {
+            k.workers.push(await this._getZmachineData(deploymentName, deployments, worker));
+        }
         return k;
     }
 
@@ -191,11 +200,11 @@ class K8sModule extends BaseModule {
         }
         const oldDeployments = await this._get(options.name);
 
-        const masterIps = this._getMastersIp(oldDeployments);
+        const masterIps = await this._getMastersIp(options.name, oldDeployments);
         if (masterIps.length === 0) {
             throw Error("Couldn't get master ip");
         }
-        const masterWorkloads = this._getMastersWorkload(oldDeployments);
+        const masterWorkloads = await this._getMastersWorkload(options.name, oldDeployments);
         if (masterWorkloads.length === 0) {
             throw Error("Couldn't get master node");
         }
@@ -219,7 +228,7 @@ class K8sModule extends BaseModule {
             throw Error(`There is no k8s deployment with the name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
-        const masterWorkloads = this._getMastersWorkload(oldDeployments);
+        const masterWorkloads = await this._getMastersWorkload(options.deployment_name, oldDeployments);
         if (masterWorkloads.length === 0) {
             throw Error("Couldn't get master node");
         }
@@ -238,6 +247,7 @@ class K8sModule extends BaseModule {
             options.rootfs_size,
             options.disk_size,
             options.public_ip,
+            options.public_ip6,
             options.planetary,
             network,
             masterWorkload.data["env"]["SSH_KEY"],

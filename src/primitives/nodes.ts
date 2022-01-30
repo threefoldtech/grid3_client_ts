@@ -4,6 +4,7 @@ import { GridClient } from "../client";
 import { Graphql } from "../clients/graphql/client";
 import { TFClient } from "../clients/tf-grid/client";
 import { events } from "../helpers/events";
+import { nsLookup } from "../helpers/nettools";
 import { send } from "../helpers/requests";
 import { FilterOptions } from "../modules/models";
 
@@ -216,6 +217,7 @@ class Nodes {
             (options.accessNodeV4 && !hasPublicIpv4) ||
             (options.accessNodeV6 && !hasPublicIpv6) ||
             (options.gateway && !hasDomain) ||
+            (hasDomain && !(await this.validateGatewayNode(node))) ||
             (options.farmId && options.farmId !== node.farmId) ||
             (options.farmName && (await this.getFarmIdFromFarmName(options.farmName, farms)) !== +node.farmId) ||
             (options.publicIPs && !(await this.checkFarmHasFreePublicIps(+node.farmId, farms)))
@@ -273,6 +275,21 @@ class Nodes {
             return 0; // not found
         }
         return filteredFarms[0].farmId;
+    }
+
+    async validateGatewayNode(node: NodeInfo) {
+        let domainAddresses = [];
+        try {
+            domainAddresses = await nsLookup(node.publicConfig.domain);
+        } catch (e) {
+            console.log(`Couldn't reach the domain "${node.publicConfig.domain}" on node id "${node.nodeId}" `);
+        }
+        const nodePublicIpv4 = node.publicConfig.ipv4.split("/")[0];
+        const nodePublicIpv6 = node.publicConfig.ipv6.split("/")[0];
+        for (const addr of domainAddresses) {
+            if (addr === nodePublicIpv4 || addr === nodePublicIpv6) return true;
+        }
+        return false;
     }
 }
 

@@ -54,6 +54,7 @@ class MachinesModule extends BaseModule {
                 this.config.projectName,
                 options.network.addAccess,
                 machine.ip,
+                machine.corex,
             );
             twinDeployments = twinDeployments.concat(TDeployments);
             if (wgConfig) {
@@ -158,6 +159,9 @@ class MachinesModule extends BaseModule {
             workload.description,
             options.qsfs_disks,
             this.config.projectName,
+            false,
+            options.ip,
+            options.corex,
         );
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);
     }

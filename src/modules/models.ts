@@ -64,6 +64,7 @@ class MachineModel {
     @Expose() @IsString() @IsDefined() entrypoint: string;
     @Expose() env: Record<string, unknown>;
     @Expose() @IsOptional() @IsIP() ip?: string;
+    @Expose() @IsOptional() @IsBoolean() corex?: boolean;
 }
 
 class MachinesModel {
@@ -98,6 +99,8 @@ class KubernetesNodeModel {
     @Expose() @IsBoolean() public_ip: boolean;
     @Expose() @IsOptional() @IsBoolean() public_ip6: boolean;
     @Expose() @IsBoolean() planetary: boolean;
+    @Expose() @IsOptional() @IsIP() ip?: string;
+    @Expose() @IsOptional() @IsBoolean() corex?: boolean;
 }
 
 class K8SModel {

@@ -46,6 +46,7 @@ class Zmachine extends WorkloadData {
     @Expose() @Type(() => Mount) @ValidateNested({ each: true }) mounts: Mount[];
     @Expose() @IsString() @IsNotEmpty() entrypoint: string;
     @Expose() env: Record<string, unknown>;
+    @Expose() @IsBoolean() corex: boolean;
 
     challenge(): string {
         let out = "";

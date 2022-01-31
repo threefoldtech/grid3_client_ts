@@ -33,6 +33,7 @@ class VMHL extends HighLevelBase {
         qsfsProjectName = "",
         addAccess = false,
         ip = "",
+        corex = false,
     ): Promise<[TwinDeployment[], string]> {
         const deployments = [];
         const workloads = [];
@@ -205,6 +206,8 @@ class VMHL extends HighLevelBase {
                 env,
                 metadata,
                 description,
+                0,
+                corex,
             ),
         );
 

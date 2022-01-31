@@ -97,6 +97,8 @@ class K8sModule extends BaseModule {
                 master.qsfs_disks,
                 this.config.projectName,
                 options.network.addAccess,
+                master.ip,
+                master.corex,
             );
 
             deployments = deployments.concat(twinDeployments);
@@ -131,6 +133,8 @@ class K8sModule extends BaseModule {
                 worker.qsfs_disks,
                 this.config.projectName,
                 options.network.addAccess,
+                worker.ip,
+                worker.corex,
             );
 
             deployments = deployments.concat(twinDeployments);
@@ -255,6 +259,9 @@ class K8sModule extends BaseModule {
             masterWorkload.description,
             options.qsfs_disks,
             this.config.projectName,
+            false,
+            options.ip,
+            options.corex,
         );
 
         return await this._add(options.deployment_name, options.node_id, oldDeployments, twinDeployments, network);

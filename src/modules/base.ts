@@ -176,6 +176,7 @@ class BaseModule {
             entrypoint: data.entrypoint,
             metadata: workload.metadata,
             description: workload.description,
+            corex: data.corex,
         };
     }
 

@@ -38,6 +38,7 @@ class VMPrimitive {
         metadata = "",
         description = "",
         version = 0,
+        corex = false,
     ): Workload {
         const zmachine = new Zmachine();
         zmachine.flist = flist;
@@ -47,6 +48,7 @@ class VMPrimitive {
         zmachine.entrypoint = entrypoint;
         zmachine.compute_capacity = this._createComputeCapacity(cpu, memory);
         zmachine.env = env;
+        zmachine.corex = corex;
 
         const zmachine_workload = new Workload();
         zmachine_workload.version = version || 0;

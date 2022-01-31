@@ -19,6 +19,7 @@
         "decimal.js": "^10.3.1",
         "http-server": "^14.0.0",
         "netaddr": "^1.1.0",
+        "nslookup": "^1.1.1",
         "private-ip": "^2.3.3",
         "reflect-metadata": "^0.1.13",
         "stellar-sdk": "^9.1.0",

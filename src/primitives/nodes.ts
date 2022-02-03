@@ -93,7 +93,7 @@ class Nodes {
             const ipv4 = node.publicConfig.ipv4;
             const ipv6 = node.publicConfig.ipv6;
             const domain = node.publicConfig.domain;
-            if (this.isPublicIp(ipv4) || this.isPublicIp(ipv6)) {
+            if (PrivateIp(ipv4.split("/")[0]) === false || PrivateIp(ipv6.split("/")[0]) === false) {
                 accessNodes[+node.nodeId] = { ipv4: ipv4, ipv6: ipv6, domain: domain };
             }
         }
@@ -214,9 +214,10 @@ class Nodes {
         if (
             (options.country && options.country !== node.location.country) ||
             (options.city && options.city !== node.location.city) ||
-            (options.accessNodeV4 && (!hasPublicIpv4 || (hasPublicIpv4 && !this.isPublicIp(node.publicConfig.ipv4)))) ||
-            (options.accessNodeV6 && (!hasPublicIpv6 || (hasPublicIpv6 && !this.isPublicIp(node.publicConfig.ipv6)))) ||
-            (options.gateway && (!hasDomain || (hasDomain && !(await this.validateGatewayNode(node))))) ||
+            (options.accessNodeV4 && !hasPublicIpv4) ||
+            (options.accessNodeV6 && !hasPublicIpv6) ||
+            (options.gateway && !hasDomain) ||
+            (hasDomain && !(await this.validateGatewayNode(node))) ||
             (options.farmId && options.farmId !== node.farmId) ||
             (options.farmName && (await this.getFarmIdFromFarmName(options.farmName, farms)) !== +node.farmId) ||
             (options.publicIPs && !(await this.checkFarmHasFreePublicIps(+node.farmId, farms)))
@@ -276,7 +277,7 @@ class Nodes {
         return filteredFarms[0].farmId;
     }
 
-    async validateGatewayNode(node: NodeInfo): Promise<boolean> {
+    async validateGatewayNode(node: NodeInfo) {
         let domainAddresses = [];
         try {
             domainAddresses = await nsLookup(node.publicConfig.domain);
@@ -286,17 +287,9 @@ class Nodes {
         const nodePublicIpv4 = node.publicConfig.ipv4.split("/")[0];
         const nodePublicIpv6 = node.publicConfig.ipv6.split("/")[0];
         for (const addr of domainAddresses) {
-            if (
-                (addr === nodePublicIpv4 && this.isPublicIp(nodePublicIpv4)) ||
-                (addr === nodePublicIpv6 && this.isPublicIp(nodePublicIpv6))
-            )
-                return true;
+            if (addr === nodePublicIpv4 || addr === nodePublicIpv6) return true;
         }
         return false;
-    }
-
-    isPublicIp(ip: string): boolean {
-        return PrivateIp(ip.split("/")[0]) === false;
     }
 }
 

@@ -1,4 +1,4 @@
-import { Expose, Type } from "class-transformer";
+import { Expose, Transform, Type } from "class-transformer";
 import { IsBoolean, IsDefined, IsInt, IsIP, IsNotEmpty, IsString, ValidateNested } from "class-validator";
 
 import { ComputeCapacity } from "./computecapacity";
@@ -46,7 +46,7 @@ class Zmachine extends WorkloadData {
     @Expose() @Type(() => Mount) @ValidateNested({ each: true }) mounts: Mount[];
     @Expose() @IsString() @IsNotEmpty() entrypoint: string;
     @Expose() env: Record<string, unknown>;
-    @Expose() @IsBoolean() corex: boolean;
+    @Expose() @Transform(({ value }) => (value ? true : false)) @IsBoolean() corex: boolean;
 
     challenge(): string {
         let out = "";

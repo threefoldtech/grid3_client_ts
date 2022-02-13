@@ -56,6 +56,7 @@ class GridClient {
         this.rmbClient["graphqlURL"] = urls.graphql;
         this.rmbClient["mnemonic"] = this.mnemonic;
         this.rmbClient["keypairType"] = this.keypairType;
+        this.rmbClient["verifyResponse"] = true;
         const storePath = PATH.join(appPath, this.network, String(this.twinId));
         GridClient.config = {
             network: this.network,

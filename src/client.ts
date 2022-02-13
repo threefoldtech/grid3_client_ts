@@ -41,7 +41,12 @@ class GridClient {
             process.on("SIGUSR1", this.disconnectAndExit);
             process.on("SIGUSR2", this.disconnectAndExit);
         } else window.onbeforeunload = this.disconnect;
-        this.twinId = await tfclient.twins.getMyTwinId();
+        try {
+            this.twinId = await tfclient.twins.getMyTwinId();
+        } catch (e) {
+            console.log(e);
+            throw Error(`Couldn't find a user for the provided mnemonic on ${this.network} network.`);
+        }
         this._connect();
     }
     _connect(): void {
@@ -51,6 +56,7 @@ class GridClient {
         this.rmbClient["graphqlURL"] = urls.graphql;
         this.rmbClient["mnemonic"] = this.mnemonic;
         this.rmbClient["keypairType"] = this.keypairType;
+        this.rmbClient["verifyResponse"] = true;
         const storePath = PATH.join(appPath, this.network, String(this.twinId));
         GridClient.config = {
             network: this.network,

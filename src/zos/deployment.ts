@@ -57,10 +57,10 @@ class Deployment {
     challenge(): string {
         let out = "";
         out += this.version;
-        out += this.twin_id || "";
+        out += this.twin_id;
         out += this.metadata;
         out += this.description;
-        out += this.expiration || "";
+        out += this.expiration;
 
         for (let i = 0; i < this.workloads.length; i++) {
             out += this.workloads[i].challenge();

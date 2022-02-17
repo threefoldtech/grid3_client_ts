@@ -118,7 +118,7 @@ class K8sModule extends BaseModule {
                 worker.name,
                 worker.node_id,
                 options.secret,
-                masterIps[0],
+                masterIps[masterIps.length - 1],
                 worker.cpu,
                 worker.memory,
                 worker.rootfs_size,
@@ -236,7 +236,7 @@ class K8sModule extends BaseModule {
         if (masterWorkloads.length === 0) {
             throw Error("Couldn't get master node");
         }
-        const masterWorkload = masterWorkloads[0];
+        const masterWorkload = masterWorkloads[masterWorkloads.length - 1];
         const networkName = masterWorkload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(masterWorkload.data["network"].interfaces[0].ip).mask(16).toString();
         const network = new Network(networkName, networkIpRange, this.config);

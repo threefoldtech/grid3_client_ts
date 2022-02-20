@@ -2,6 +2,7 @@ import * as PATH from "path";
 
 import { TFClient } from "../clients/tf-grid/client";
 import { GridClientConfig } from "../config";
+import { events } from "../helpers/events";
 import { expose } from "../helpers/expose";
 import { validateInput } from "../helpers/validator";
 import { Nodes } from "../primitives/nodes";
@@ -31,7 +32,15 @@ class Contracts {
     private async invalidateDeployment(contractId: number) {
         const baseModule = new BaseModule(this.config);
         const contractPath = PATH.join(this.config.storePath, "contracts", `${contractId}.json`);
-        const contractInfo = await baseModule.backendStorage.load(contractPath);
+        let contractInfo;
+        try {
+            contractInfo = await baseModule.backendStorage.load(contractPath);
+        } catch (e) {
+            events.emit(
+                "logs",
+                `Couldn't delete the deployment's cached data for contract id: ${contractId} due to ${e}`,
+            );
+        }
         if (contractInfo) {
             baseModule.moduleName = contractInfo["moduleName"];
             baseModule.projectName = contractInfo["projectName"];

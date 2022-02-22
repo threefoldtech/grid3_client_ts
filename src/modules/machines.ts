@@ -114,7 +114,7 @@ class MachinesModule extends BaseModule {
         }
 
         const oldDeployments = await this._get(options.name);
-        const workload = await this._getWorkloadsByTypes(options.name, oldDeployments, [WorkloadTypes.zmachine])[0];
+        const workload = (await this._getWorkloadsByTypes(options.name, oldDeployments, [WorkloadTypes.zmachine]))[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
         if (networkName !== options.network.name || networkIpRange !== options.network.ip_range) {
@@ -133,9 +133,9 @@ class MachinesModule extends BaseModule {
             throw Error(`There are no machine deployments with the name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
-        const workload = await this._getWorkloadsByTypes(options.deployment_name, oldDeployments, [
-            WorkloadTypes.zmachine,
-        ])[0];
+        const workload = (
+            await this._getWorkloadsByTypes(options.deployment_name, oldDeployments, [WorkloadTypes.zmachine])
+        )[0];
         const networkName = workload.data["network"].interfaces[0].network;
         const networkIpRange = Addr(workload.data["network"].interfaces[0].ip).mask(16).toString();
         const network = new Network(networkName, networkIpRange, this.config);

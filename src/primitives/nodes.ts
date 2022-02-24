@@ -3,7 +3,6 @@ import { default as PrivateIp } from "private-ip";
 import { GridClient } from "../client";
 import { Graphql } from "../clients/graphql/client";
 import { TFClient } from "../clients/tf-grid/client";
-import { events } from "../helpers/events";
 import { send } from "../helpers/requests";
 import { FilterOptions } from "../modules/models";
 
@@ -206,56 +205,19 @@ class Nodes {
             });
     }
 
-    private async checkNodeOptions(node: NodeInfo, options: FilterOptions, farms: FarmInfo[]): Promise<NodeInfo> {
-        const hasDomain = node.publicConfig.domain ? true : false;
-        const hasPublicIpv4 = node.publicConfig.ipv4 ? true : false;
-        const hasPublicIpv6 = node.publicConfig.ipv6 ? true : false;
-        if (
-            (options.country && options.country !== node.location.country) ||
-            (options.city && options.city !== node.location.city) ||
-            (options.accessNodeV4 && !hasPublicIpv4) ||
-            (options.accessNodeV6 && !hasPublicIpv6) ||
-            (options.gateway && !hasDomain) ||
-            (options.farmId && options.farmId !== node.farmId) ||
-            (options.farmName && (await this.getFarmIdFromFarmName(options.farmName, farms)) !== +node.farmId) ||
-            (options.publicIPs && !(await this.checkFarmHasFreePublicIps(+node.farmId, farms)))
-        ) {
-            node["valid"] = false;
-            return node;
-        }
-        if (node.status !== "up") {
-            node["valid"] = false;
-            return node;
-        }
-        if (
-            (options.cru && options.cru > +node.total_resources.cru - +node.used_resources.cru) ||
-            (options.mru && this._g2b(options.mru) > +node.total_resources.mru - +node.used_resources.mru) ||
-            (options.sru && this._g2b(options.sru) > +node.total_resources.sru - +node.used_resources.sru) ||
-            (options.hru && this._g2b(options.hru) > +node.total_resources.hru - +node.used_resources.hru)
-        ) {
-            events.emit("logs", `Nodes: Node ${node.nodeId} doesn't have enough capacity`);
-            node["valid"] = false;
-            return node;
-        }
-        node["valid"] = true;
-        return node;
-    }
-
     async filterNodes(options: FilterOptions = {}, url = ""): Promise<NodeInfo[]> {
-        const farms = await this.getAllFarms(url);
-        return await this.getAllNodes(url)
-            .then(nodes => {
-                const promises = nodes.map(n => this.checkNodeOptions(n, options, farms));
-                return Promise.all(promises);
-            })
-            .then(nodes => {
-                const ret = nodes.filter(n => n["valid"]);
-                if (ret.length > 0) {
-                    return ret;
-                } else {
-                    throw new Error(`Nodes: Couldn't find a valid node for these options ${JSON.stringify(options)}`);
-                }
-            });
+        let nodes = [];
+        url = url || this.proxyURL;
+        const query = this.getUrlQuery(options);
+        try {
+            nodes = await send("GET", `${url}/nodes?${query}`, "", {});
+        } catch {
+            throw Error(`Invalid query: ${query}`);
+        }
+        if (nodes.length) {
+            return nodes;
+        }
+        throw Error(`Couldn't find any node with options: ${JSON.stringify(options)}`);
     }
 
     /**
@@ -273,6 +235,32 @@ class Nodes {
             return 0; // not found
         }
         return filteredFarms[0].farmId;
+    }
+
+    getUrlQuery(options: FilterOptions = {}) {
+        const params = {
+            free_cru: options.cru,
+            free_mru: options.mru,
+            free_sru: options.sru,
+            free_hru: options.hru,
+            free_ips: options.publicIPs ? 1 : 0,
+            ipv4: options.accessNodeV4,
+            ipv6: options.accessNodeV6,
+            gateway: options.gateway,
+            farm_ids: [options.farmId],
+            farm_name: options.farmName,
+            country: options.country,
+            city: options.city,
+            status: "up",
+        };
+        if (options.gateway) {
+            params["ipv4"] = true;
+            params["ipv6"] = true;
+            params["domain"] = true;
+        }
+        return Object.entries(params)
+            .map(param => param.join("="))
+            .join("&");
     }
 }
 

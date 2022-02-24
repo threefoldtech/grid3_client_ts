@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/grid3_client.svg)](https://badge.fury.io/js/grid3_client)
 [![Build](https://github.com/threefoldtech/grid3_client_ts/actions/workflows/build.yml/badge.svg)](https://github.com/threefoldtech/grid3_client_ts/actions/workflows/build.yml)
 [![tests](https://github.com/threefoldtech/grid3_client_ts/actions/workflows/tests.yml/badge.svg)](https://github.com/threefoldtech/grid3_client_ts/actions/workflows/tests.yml)
-[![[https://codecov.io/gh/threefoldtech/grid3_client_ts]](https://codecov.io/gh/threefoldtech/grid3_client_ts/branch/development/graph/badge.svg)](https://codecov.io/gh/threefoldtech/grid3_client_ts/branch/development)
+[![code coverage](https://codecov.io/gh/threefoldtech/grid3_client_ts/branch/development/graph/badge.svg)](https://codecov.io/gh/threefoldtech/grid3_client_ts/branch/development)
 
 
 

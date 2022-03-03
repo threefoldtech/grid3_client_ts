@@ -4586,10 +4586,10 @@ ts-rmb-client-base@0.0.1, ts-rmb-client-base@^0.0.1:
   resolved "https://registry.yarnpkg.com/ts-rmb-client-base/-/ts-rmb-client-base-0.0.1.tgz#7405aa498a50f34d562caec740bffcc25f15777a"
   integrity sha512-xe7NxHgDyQnHTOFNfuHnhRXSY1xAEyRC/dRmCLI8H3THXLfLr3UcTqNg4Cxli0JEa2oW7s9DQvfZXek91FYo+w==
 
-ts-rmb-http-client@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/ts-rmb-http-client/-/ts-rmb-http-client-1.0.3.tgz#33a491fd2feb67d2d219bedbc9b951cedcba59a7"
-  integrity sha512-XO9DwFcmvDB5LB3hp78VAbI2rHaNpPg0FiKYjo9LctqtwAtjdyuA43RovmGrN4XZswFdRhDAW8hhL5j+OFMhiQ==
+ts-rmb-http-client@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/ts-rmb-http-client/-/ts-rmb-http-client-1.0.4.tgz#d8ae38e88a9c0cd29fda828a6cdc708fadc81000"
+  integrity sha512-QVAYOQ8jxLd2jsvspK6Y9tAocuzRlW08NQNIuLkNlw4on/c4BhMvbYskaSVMx3W5cEMgc58Kqh8wvR2rbOyh5g==
   dependencies:
     "@polkadot/keyring" "^6.11.1"
     "@types/crypto-js" "^4.1.0"

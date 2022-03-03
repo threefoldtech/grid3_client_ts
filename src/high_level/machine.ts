@@ -213,7 +213,7 @@ class VMHL extends HighLevelBase {
 
         // deployment
         // NOTE: expiration is not used for zos deployment
-        const deployment = deploymentFactory.create(workloads, 1626394539, metadata, description);
+        const deployment = deploymentFactory.create(workloads, 0, metadata, description);
 
         deployments.push(new TwinDeployment(deployment, Operations.deploy, publicIps, nodeId, network));
         return [deployments, wgConfig];

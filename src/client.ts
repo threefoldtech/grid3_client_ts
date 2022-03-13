@@ -40,7 +40,12 @@ class GridClient {
             process.on("SIGINT", this.disconnectAndExit);
             process.on("SIGUSR1", this.disconnectAndExit);
             process.on("SIGUSR2", this.disconnectAndExit);
-        } else window.onbeforeunload = this.disconnect;
+        } else {
+            window.onbeforeunload = () => {
+                return "";
+            };
+            window.onunload = this.disconnect;
+        }
         try {
             this.twinId = await tfclient.twins.getMyTwinId();
         } catch (e) {

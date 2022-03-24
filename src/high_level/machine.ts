@@ -37,12 +37,20 @@ class VMHL extends HighLevelBase {
     ): Promise<[TwinDeployment[], string]> {
         const deployments = [];
         const workloads = [];
+        let totalDisksSize = rootfs_size;
+        const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
+
         // disks
         const diskMounts = [];
         const disk = new DiskPrimitive();
         for (const d of disks) {
+            totalDisksSize += d.size;
             workloads.push(disk.create(d.size, d.name, metadata, description));
             diskMounts.push(disk.createMount(d.name, d.mountpoint));
+        }
+
+        if (!(await nodes.nodeHasResources(nodeId, { sru: totalDisksSize, mru: memory / 1024 }))) {
+            throw Error(`Node ${nodeId} doesn't have enough resources: sru=${totalDisksSize}, mru=${memory / 1024}`);
         }
 
         // qsfs disks
@@ -122,7 +130,6 @@ class VMHL extends HighLevelBase {
         let hasAccessNode = false;
         let accessNodes: Record<string, unknown> = {};
         if (addAccess) {
-            const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
             accessNodes = await nodes.getAccessNodes();
             for (const accessNode of Object.keys(accessNodes)) {
                 if (network.nodeExists(Number(accessNode))) {

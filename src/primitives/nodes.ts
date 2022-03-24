@@ -114,7 +114,7 @@ class Nodes {
     }
 
     _g2b(GB: number): number {
-        return GB * 1024 * 1024 * 1024;
+        return GB * 1024 ** 3;
     }
 
     async getFarms(page = 1, pageSize = 50, url = ""): Promise<FarmInfo[]> {
@@ -188,7 +188,7 @@ class Nodes {
 
                 ret.cru = +node.capacity.total_resources.cru - +node.capacity.used_resources.cru;
                 ret.mru = +node.capacity.total_resources.mru - +node.capacity.used_resources.mru;
-                ret.sru = +node.capacity.total_resources.sru - +node.capacity.used_resources.sru;
+                ret.sru = +node.capacity.total_resources.sru * 2 - +node.capacity.used_resources.sru; // over provisioning
                 ret.hru = +node.capacity.total_resources.hru - +node.capacity.used_resources.hru;
 
                 return ret;
@@ -261,6 +261,18 @@ class Nodes {
         return Object.entries(params)
             .map(param => param.join("="))
             .join("&");
+    }
+
+    async nodeHasResources(nodeId: number, options: FilterOptions): Promise<boolean> {
+        const resources = await this.getNodeFreeResources(nodeId);
+        if (
+            resources.mru < this._g2b(options.mru) ||
+            resources.sru < this._g2b(options.sru) ||
+            resources.hru < this._g2b(options.hru)
+        ) {
+            return false;
+        }
+        return true;
     }
 }
 

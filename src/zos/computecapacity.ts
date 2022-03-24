@@ -1,9 +1,9 @@
 import { Expose } from "class-transformer";
-import { IsInt, Min } from "class-validator";
+import { IsInt, Max, Min } from "class-validator";
 
 class ComputeCapacity {
-    @Expose() @IsInt() @Min(1) cpu: number;
-    @Expose() @IsInt() @Min(1024 * 1024 * 250) memory: number; // in bytes
+    @Expose() @IsInt() @Min(1) @Max(32) cpu: number;
+    @Expose() @IsInt() @Min(256 * 1024 ** 2) @Max(256 * 1024 ** 3) memory: number; // in bytes
 
     challenge(): string {
         let out = "";

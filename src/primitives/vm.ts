@@ -6,7 +6,7 @@ class VMPrimitive {
     _createComputeCapacity(cpu: number, memory: number): ComputeCapacity {
         const compute_capacity = new ComputeCapacity();
         compute_capacity.cpu = cpu;
-        compute_capacity.memory = 1024 * 1024 * memory;
+        compute_capacity.memory = memory * 1024 ** 2;
         return compute_capacity;
     }
     _createNetworkInterface(networkName: string, ip: string): ZNetworkInterface {
@@ -43,7 +43,7 @@ class VMPrimitive {
         const zmachine = new Zmachine();
         zmachine.flist = flist;
         zmachine.network = this._createMachineNetwork(networkName, ip, planetary, public_ip);
-        zmachine.size = rootfs_size * 1024 * 1024 * 1024;
+        zmachine.size = rootfs_size * 1024 ** 3;
         zmachine.mounts = disks;
         zmachine.entrypoint = entrypoint;
         zmachine.compute_capacity = this._createComputeCapacity(cpu, memory);

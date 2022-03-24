@@ -70,7 +70,7 @@ class QSFSPrimitive {
         quantumSafeFSConfig.compression = quantumCompression;
 
         const quantumSafeFS = new QuantumSafeFS();
-        quantumSafeFS.cache = cache * 1024 * 1024 * 1024;
+        quantumSafeFS.cache = cache * 1024 ** 3;
         quantumSafeFS.config = quantumSafeFSConfig;
 
         const qsfs_workload = new Workload();

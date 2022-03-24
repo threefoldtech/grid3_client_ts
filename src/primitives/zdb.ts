@@ -13,7 +13,7 @@ class ZdbPrimitive {
         version = 0,
     ): Workload {
         const zdb = new Zdb();
-        zdb.size = size * 1024 * 1024 * 1024;
+        zdb.size = size * 1024 ** 3;
         zdb.mode = mode;
         zdb.password = password;
         zdb.public = publicNamespace;

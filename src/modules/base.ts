@@ -165,7 +165,7 @@ class BaseModule {
             })),
             capacity: {
                 cpu: data.compute_capacity.cpu,
-                memory: data.compute_capacity.memory / (1024 * 1024), // MB
+                memory: data.compute_capacity.memory / 1024 ** 2, // MB
             },
             mounts: data.mounts.map(m => ({
                 name: m.name,

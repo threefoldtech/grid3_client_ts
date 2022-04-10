@@ -19,7 +19,7 @@ class QSFSZdbsModule extends BaseModule {
         this.zdb = new ZdbHL(config);
     }
 
-    _createDeployment(options: QSFSZDBSModel): TwinDeployment[] {
+    async _createDeployment(options: QSFSZDBSModel): Promise<TwinDeployment[]> {
         if (options.count < 3) {
             throw Error("QSFS zdbs count can't be less than 3");
         }
@@ -31,7 +31,7 @@ class QSFSZdbsModule extends BaseModule {
                 mode = "user";
             }
             const nodeId = options.node_ids[(i - 1) % options.node_ids.length];
-            const twinDeployment = this.zdb.create(
+            const twinDeployment = await this.zdb.create(
                 options.name + i,
                 nodeId,
                 options.disk_size,
@@ -53,7 +53,7 @@ class QSFSZdbsModule extends BaseModule {
         if (await this.exists(options.name)) {
             throw Error(`Another QSFS zdbs deployment with the same name ${options.name} already exists`);
         }
-        const twinDeployments = this._createDeployment(options);
+        const twinDeployments = await this._createDeployment(options);
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
         await this.save(options.name, contracts);
         return { contracts: contracts };

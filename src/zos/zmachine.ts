@@ -1,5 +1,5 @@
 import { Expose, Transform, Type } from "class-transformer";
-import { IsBoolean, IsDefined, IsInt, IsIP, IsNotEmpty, IsString, ValidateNested } from "class-validator";
+import { IsBoolean, IsDefined, IsInt, IsIP, IsNotEmpty, IsString, Max, Min, ValidateNested } from "class-validator";
 
 import { ComputeCapacity } from "./computecapacity";
 import { WorkloadData, WorkloadDataResult } from "./workload_base";
@@ -41,7 +41,7 @@ class Mount {
 class Zmachine extends WorkloadData {
     @Expose() @IsString() @IsNotEmpty() flist: string;
     @Expose() @Type(() => ZmachineNetwork) @ValidateNested() network: ZmachineNetwork;
-    @Expose() @IsInt() size: number; // in bytes
+    @Expose() @IsInt() @Min(250 * 1024 ** 2) @Max(10 * 1024 ** 4) size: number; // in bytes
     @Expose() @Type(() => ComputeCapacity) @ValidateNested() compute_capacity: ComputeCapacity;
     @Expose() @Type(() => Mount) @ValidateNested({ each: true }) mounts: Mount[];
     @Expose() @IsString() @IsNotEmpty() entrypoint: string;

@@ -11,7 +11,7 @@ class DiskPrimitive {
     }
     create(size: number, name: string, metadata = "", description = "", version = 0): Workload {
         const zmount = new Zmount();
-        zmount.size = 1024 * 1024 * 1024 * size;
+        zmount.size = size * 1024 ** 3;
 
         const zmount_workload = new Workload();
         zmount_workload.version = version;

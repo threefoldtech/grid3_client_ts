@@ -18,10 +18,10 @@ class ZdbsModule extends BaseModule {
         this.zdb = new ZdbHL(config);
     }
 
-    _createDeployment(options: ZDBSModel): TwinDeployment[] {
+    async _createDeployment(options: ZDBSModel): Promise<TwinDeployment[]> {
         const twinDeployments = [];
         for (const instance of options.zdbs) {
-            const twinDeployment = this.zdb.create(
+            const twinDeployment = await this.zdb.create(
                 instance.name,
                 instance.node_id,
                 instance.disk_size,
@@ -43,7 +43,7 @@ class ZdbsModule extends BaseModule {
         if (await this.exists(options.name)) {
             throw Error(`Another zdb deployment with the same name ${options.name} already exists`);
         }
-        const twinDeployments = this._createDeployment(options);
+        const twinDeployments = await this._createDeployment(options);
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
         await this.save(options.name, contracts);
         return { contracts: contracts };
@@ -101,7 +101,7 @@ class ZdbsModule extends BaseModule {
             throw Error(`There is no zdb deployment with name: ${options.name}`);
         }
         const oldDeployments = await this._get(options.name);
-        const twinDeployments = this._createDeployment(options);
+        const twinDeployments = await this._createDeployment(options);
         return await this._update(this.zdb, options.name, oldDeployments, twinDeployments);
     }
 
@@ -113,7 +113,7 @@ class ZdbsModule extends BaseModule {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
-        const twinDeployment = this.zdb.create(
+        const twinDeployment = await this.zdb.create(
             options.name,
             options.node_id,
             options.disk_size,

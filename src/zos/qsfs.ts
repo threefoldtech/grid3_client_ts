@@ -106,7 +106,7 @@ class QuantumSafeFSConfig {
 }
 
 class QuantumSafeFS extends WorkloadData {
-    @Expose() @IsInt() @Min(1024 * 1024 * 250) cache: number;
+    @Expose() @IsInt() @Min(250 * 1024 ** 2) cache: number;
     @Expose() @Type(() => QuantumSafeFSConfig) @ValidateNested() config: QuantumSafeFSConfig;
 
     challenge(): string {

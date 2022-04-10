@@ -240,9 +240,9 @@ class Nodes {
     getUrlQuery(options: FilterOptions = {}) {
         const params = {
             free_cru: options.cru,
-            free_mru: options.mru,
-            free_sru: options.sru,
-            free_hru: options.hru,
+            free_mru: Math.ceil(this._g2b(options.mru)) || 0,
+            free_sru: Math.ceil(this._g2b(options.sru)) || 0,
+            free_hru: Math.ceil(this._g2b(options.hru)) || 0,
             free_ips: options.publicIPs ? 1 : 0,
             ipv4: options.accessNodeV4,
             ipv6: options.accessNodeV6,

@@ -455,7 +455,7 @@ class Network {
         } catch (e) {
             throw Error(`Couldn't get free Wireguard ports for node ${node_id} due to ${e}`);
         }
-        events.emit("logs", `Node ${node_id} reserved ports: ${result}`);
+        events.emit("logs", `Node ${node_id} reserved ports: ${JSON.stringify(result)}`);
 
         let port = 0;
         while (!port || result.includes(port)) {
@@ -480,7 +480,7 @@ class Network {
         } catch (e) {
             console.log(`Couldn't get public config for node ${node_id} due to ${e}`);
         }
-        events.emit("logs", `Node ${node_id} public config: ${result}`);
+        events.emit("logs", `Node ${node_id} public config: ${JSON.stringify(result)}`);
 
         let endpoint;
         if (result) {
@@ -498,7 +498,7 @@ class Network {
         } catch (e) {
             throw Error(`Couldn't get the network interfaces for node ${node_id} due to ${e}`);
         }
-        events.emit("logs", `Node ${node_id} network interfaces: ${result}`);
+        events.emit("logs", `Node ${node_id} network interfaces: ${JSON.stringify(result)}`);
 
         if (result) {
             for (const iface of Object.keys(result)) {

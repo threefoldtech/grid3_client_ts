@@ -88,7 +88,7 @@ class Contracts {
      */
     async getConsumption(id: number, graphqlURL: string): Promise<number> {
         const gqlClient = new Graphql(graphqlURL);
-        const body = `query getConsumption($contractId: Int!){
+        const body = `query getConsumption($contractId: BigInt!){
             contractBillReports(where: {contractID_eq: $contractId}) {
                 amountBilled
             }

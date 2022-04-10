@@ -62,15 +62,15 @@ class Contracts {
 
     async listContractsByTwinId(graphqlURL, twinId) {
         const gqlClient = new Graphql(graphqlURL);
-        const options = `(where: {twinId_eq: ${twinId}, state_eq: Created})`;
+        const options = `(where: {twinID_eq: ${twinId}, state_eq: Created}, orderBy: twinID_ASC)`;
         const nameContractsCount = await gqlClient.getItemTotalCount("nameContracts", options);
         const nodeContractsCount = await gqlClient.getItemTotalCount("nodeContracts", options);
         const body = `query getContracts($nameContractsCount: Int!, $nodeContractsCount: Int!){
-            nameContracts(where: {twinId_eq: ${twinId}, state_eq: Created}, limit: $nameContractsCount) {
-              contractId
+            nameContracts(where: {twinID_eq: ${twinId}, state_eq: Created}, limit: $nameContractsCount) {
+              contractID
             }
-            nodeContracts(where: {twinId_eq: ${twinId}, state_eq: Created}, limit: $nodeContractsCount) {
-              contractId
+            nodeContracts(where: {twinID_eq: ${twinId}, state_eq: Created}, limit: $nodeContractsCount) {
+              contractID
             }
           }`;
         const response = await gqlClient.query(body, {
@@ -89,7 +89,7 @@ class Contracts {
     async getConsumption(id: number, graphqlURL: string): Promise<number> {
         const gqlClient = new Graphql(graphqlURL);
         const body = `query getConsumption($contractId: Int!){
-            contractBillReports(where: {contractId_eq: $contractId}) {
+            contractBillReports(where: {contractID_eq: $contractId}) {
                 amountBilled
             }
           }`;
@@ -121,7 +121,7 @@ class Contracts {
         const allContracts = await this.listMyContracts(graphqlURL);
         const contracts = [...allContracts["nameContracts"], ...allContracts["nodeContracts"]];
         for (const contract of contracts) {
-            await this.cancel(contract["contractId"]);
+            await this.cancel(contract["contractID"]);
         }
         return contracts;
     }

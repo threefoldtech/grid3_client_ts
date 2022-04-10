@@ -73,15 +73,15 @@ class Nodes {
 
     async getNodeTwinId(node_id: number): Promise<number> {
         const body = `query getNodeTwinId($nodeId: Int!){
-            nodes(where: { nodeId_eq: $nodeId }) {
-            twinId
+            nodes(where: { nodeID_eq: $nodeId }) {
+            twinID
             }
         }`;
         const response = await this.gqlClient.query(body, { nodeId: node_id });
         if (response["data"]["nodes"]["length"] === 0) {
             throw Error(`Couldn't find a node with id: ${node_id}`);
         }
-        return response["data"]["nodes"][0]["twinId"];
+        return response["data"]["nodes"][0]["twinID"];
     }
 
     async getAccessNodes(): Promise<Record<string, unknown>> {
@@ -132,7 +132,7 @@ class Nodes {
     }
 
     async getAllFarms(url = ""): Promise<FarmInfo[]> {
-        const farmsCount = await this.gqlClient.getItemTotalCount("farms");
+        const farmsCount = await this.gqlClient.getItemTotalCount("farms", "(orderBy: farmID_ASC)");
         return await this.getFarms(1, farmsCount, url);
     }
 
@@ -156,12 +156,15 @@ class Nodes {
     }
 
     async getAllNodes(url = ""): Promise<NodeInfo[]> {
-        const farmsCount = await this.gqlClient.getItemTotalCount("nodes");
-        return await this.getNodes(1, farmsCount, url);
+        const nodesCount = await this.gqlClient.getItemTotalCount("nodes", "(orderBy: nodeID_ASC)");
+        return await this.getNodes(1, nodesCount, url);
     }
 
     async getNodesByFarmId(farmId: number, url = ""): Promise<NodeInfo[]> {
-        const nodesCount = await this.gqlClient.getItemTotalCount("nodes", `(where: {farmId_eq: ${farmId}})`);
+        const nodesCount = await this.gqlClient.getItemTotalCount(
+            "nodes",
+            `(where: {farmId_eq: ${farmId}}, orderBy: nodeID_ASC)`,
+        );
         let r: string;
         if (url) r = url;
         else r = this.proxyURL;

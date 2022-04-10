@@ -18,6 +18,8 @@ export const ErrorsMap = {
         "ContractIsNotUnique",
         "NameExists",
         "NameNotValid",
+        "InvalidContractType",
+        "TFTPriceValueError",
     ],
     // order same as:
     // https://github.com/threefoldtech/tfchain_pallets/blob/f0bb8747d7c70769c77cf814d8f02384b211c88d/pallet-tfgrid/src/lib.rs#L129
@@ -35,6 +37,8 @@ export const ErrorsMap = {
         "CannotCreateFarmWrongTwin",
         "CannotUpdateFarmWrongTwin",
         "CannotDeleteFarm",
+        "CannotDeleteFarmWithPublicIPs",
+        "CannotDeleteFarmWithNodesAssigned",
         "CannotDeleteFarmWrongTwin",
         "IpExists",
         "IpNotExists",
@@ -45,7 +49,7 @@ export const ErrorsMap = {
         "EntityWithSignatureAlreadyExists",
         "CannotUpdateEntity",
         "CannotDeleteEntity",
-        "SignatureLengthIsIncorrect",
+        "SignatureLenghtIsIncorrect",
         "TwinExists",
         "TwinNotExists",
         "TwinWithPubkeyExists",
@@ -53,8 +57,14 @@ export const ErrorsMap = {
         "UnauthorizedToUpdateTwin",
         "PricingPolicyExists",
         "PricingPolicyNotExists",
+        "PricingPolicyWithDifferentIdExists",
         "CertificationCodeExists",
         "FarmingPolicyAlreadyExists",
+        "FarmPayoutAdressAlreadyRegistered",
+        "FarmerDoesNotHaveEnoughFunds",
+        "UserDidNotSignTermsAndConditions",
+        "FarmerDidNotSignTermsAndConditions",
+        "FarmerNotAuthorized",
     ],
     // order same as:
     // https://github.com/threefoldtech/tfchain_pallets/blob/27e82b3e0ca030f40cf63adba6021cc4c359e5c0/pallet-kvstore/src/lib.rs#L43

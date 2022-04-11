@@ -4486,10 +4486,10 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-tfgrid-api-client@^1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/tfgrid-api-client/-/tfgrid-api-client-1.7.0.tgz#964abcdb9a4210db80790da82fa9f2b317a00247"
-  integrity sha512-W0gnFwEfETOLbidbXhTcvQwBrHY6Uc9VuCmPayrPSopzJsYu6VoqePwTuRlMfKWsvQ7HCzA04aryZqgEwGNpCA==
+tfgrid-api-client@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/tfgrid-api-client/-/tfgrid-api-client-1.8.0.tgz#1c2598877ce59c9dcb8ca05e22b89e5fbb400d1d"
+  integrity sha512-VgxddOlRJHHNj0n8VnsLigldIoIC3fqw9H85XgqLKzZeOgCq2ykEHhbmKUe2eMhqz1Hjp4gH10nE7zGOjZnJYA==
   dependencies:
     "@polkadot/api" "^4.0.3"
     bip39 "^3.0.3"
@@ -4586,10 +4586,10 @@ ts-rmb-client-base@0.0.1, ts-rmb-client-base@^0.0.1:
   resolved "https://registry.yarnpkg.com/ts-rmb-client-base/-/ts-rmb-client-base-0.0.1.tgz#7405aa498a50f34d562caec740bffcc25f15777a"
   integrity sha512-xe7NxHgDyQnHTOFNfuHnhRXSY1xAEyRC/dRmCLI8H3THXLfLr3UcTqNg4Cxli0JEa2oW7s9DQvfZXek91FYo+w==
 
-ts-rmb-http-client@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/ts-rmb-http-client/-/ts-rmb-http-client-1.0.4.tgz#d8ae38e88a9c0cd29fda828a6cdc708fadc81000"
-  integrity sha512-QVAYOQ8jxLd2jsvspK6Y9tAocuzRlW08NQNIuLkNlw4on/c4BhMvbYskaSVMx3W5cEMgc58Kqh8wvR2rbOyh5g==
+ts-rmb-http-client@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/ts-rmb-http-client/-/ts-rmb-http-client-1.0.5.tgz#7131967d9fe95e1ca742b43209fba9bbc5d75da4"
+  integrity sha512-EZfyzH/OjfgKKMXAP/buXuMi2xfUm8uaC7WSfj77BQk3hBXQlIKX5xE9rDor2PS9lsswQpgpuB1yJmpNpzRLXg==
   dependencies:
     "@polkadot/keyring" "^6.11.1"
     "@types/crypto-js" "^4.1.0"

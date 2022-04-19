@@ -277,6 +277,30 @@ class Nodes {
         }
         return true;
     }
+
+    async getDedicatedNodes() {
+        const body = `{
+            farms(where: {dedicatedFarm_eq: true}) {
+              farmID
+            }
+          }`;
+        const response: any = await this.gqlClient.query(body, {});
+        const farmsIDs = response.data.farms.map(f => f.farmID);
+
+        const dNodes = [];
+        for (const farmId of farmsIDs) {
+            const res: any = await this.gqlClient.query(
+                `{
+                nodes(where: {farmID_eq: ${farmId}}) {
+                    nodeID
+                }
+            }`,
+                {},
+            );
+            dNodes.push(...res.data.nodes);
+        }
+        return dNodes;
+    }
 }
 
 export { Nodes, FarmInfo, NodeResources, NodeInfo, PublicIps, PublicConfig };

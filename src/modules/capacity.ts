@@ -68,6 +68,11 @@ class Capacity {
     async getFarmIdFromFarmName(options?: FarmIdFromFarmNameModel): Promise<number> {
         return await this.nodes.getFarmIdFromFarmName(options.farmName);
     }
+    @expose
+    @validateInput
+    async getDedicatedNodes(): Promise<any> {
+        return await this.nodes.getDedicatedNodes();
+    }
 }
 
 export { Capacity as capacity };

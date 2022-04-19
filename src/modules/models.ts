@@ -207,6 +207,16 @@ class NodeContractCreateModel {
 class NameContractCreateModel {
     @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
 }
+class RentContractCreateModel {
+    @Expose() @IsInt() @IsNotEmpty() nodeId: number;
+}
+class RentContractGetModel {
+    @Expose() @IsInt() @IsNotEmpty() nodeId: number;
+}
+
+class RentContractDeleteModel {
+    @Expose() @IsInt() @IsNotEmpty() nodeId: number;
+}
 class ContractGetModel {
     @Expose() @IsInt() @Min(1) id: number;
 }
@@ -370,6 +380,9 @@ export {
     QSFSZDBDeleteModel,
     NodeContractCreateModel,
     NameContractCreateModel,
+    RentContractCreateModel,
+    RentContractGetModel,
+    RentContractDeleteModel,
     ContractGetModel,
     ContractGetByNodeIdAndHashModel,
     NameContractGetModel,

@@ -1,6 +1,6 @@
 export const ErrorsMap = {
     // order same as:
-    // https://github.com/threefoldtech/tfchain_pallets/blob/f0bb8747d7c70769c77cf814d8f02384b211c88d/pallet-smart-contract/src/lib.rs#L59
+    // https://github.com/threefoldtech/tfchain/blob/c60be3b3fff05e1d9a46cfc221689f77876ff626/substrate-node/pallets/pallet-smart-contract/src/lib.rs#L76-L100
     smartContractModule: [
         "TwinNotExists",
         "NodeNotExists",
@@ -20,9 +20,16 @@ export const ErrorsMap = {
         "NameNotValid",
         "InvalidContractType",
         "TFTPriceValueError",
+        "NotEnoughResourcesOnNode",
+        "NodeNotAuthorizedToReportResources",
+        "MethodIsDeprecated",
+        "NodeHasActiveContracts",
+        "NodeHasRentContract",
+        "NodeIsNotDedicated",
+        "NodeNotAvailableToDeploy",
     ],
     // order same as:
-    // https://github.com/threefoldtech/tfchain_pallets/blob/f0bb8747d7c70769c77cf814d8f02384b211c88d/pallet-tfgrid/src/lib.rs#L129
+    // https://github.com/threefoldtech/tfchain/blob/c60be3b3fff05e1d9a46cfc221689f77876ff626/substrate-node/pallets/pallet-tfgrid/src/lib.rs#L227-L273
     tfgridModule: [
         "NoneValue",
         "StorageOverflow",
@@ -65,8 +72,9 @@ export const ErrorsMap = {
         "UserDidNotSignTermsAndConditions",
         "FarmerDidNotSignTermsAndConditions",
         "FarmerNotAuthorized",
+        "InvalidFarmName",
     ],
     // order same as:
-    // https://github.com/threefoldtech/tfchain_pallets/blob/27e82b3e0ca030f40cf63adba6021cc4c359e5c0/pallet-kvstore/src/lib.rs#L43
+    // https://github.com/threefoldtech/tfchain/blob/c60be3b3fff05e1d9a46cfc221689f77876ff626/substrate-node/pallets/pallet-kvstore/src/lib.rs#L42-L44
     tfkvStore: ["NoValueStored", "KeyIsTooLarge", "ValueIsTooLarge"],
 };

@@ -3,6 +3,7 @@ import { GridClientConfig } from "../config";
 import { events, validateInput } from "../helpers";
 import { expose } from "../helpers/expose";
 import { RentContractCreateModel, RentContractDeleteModel, RentContractGetModel } from "./models";
+import { checkBalance } from "./utils";
 
 class Nodes {
     client: TFClient;
@@ -12,11 +13,11 @@ class Nodes {
 
     @expose
     @validateInput
-    async reserve(options: RentContractCreateModel): Promise<any> {
+    @checkBalance
+    async reserve(options: RentContractCreateModel) {
         const rentContract = await this.getRent({ nodeId: options.nodeId });
         if (rentContract.contract_id != 0) {
-            events.emit("logs", `Node Already rented by twin ${rentContract.twin_id}`);
-            return rentContract;
+            throw Error(`Node Already rented by user with twinId ${rentContract.twin_id}`);
         }
         try {
             const res = await this.client.contracts.createRentContract(options.nodeId);
@@ -29,7 +30,8 @@ class Nodes {
 
     @expose
     @validateInput
-    async unreserve(options: RentContractDeleteModel): Promise<any> {
+    @checkBalance
+    async unreserve(options: RentContractDeleteModel) {
         const rentContract = await this.getRent({ nodeId: options.nodeId });
         if (rentContract.contract_id === 0) {
             events.emit("logs", `No rent contract found for node ${options.nodeId}`);
@@ -45,7 +47,8 @@ class Nodes {
     }
 
     @expose
-    async getRent(options: RentContractGetModel): Promise<any> {
+    @validateInput
+    async getRent(options: RentContractGetModel) {
         return await this.client.contracts.activeRentContractForNode(options.nodeId);
     }
 }

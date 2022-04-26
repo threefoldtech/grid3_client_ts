@@ -348,6 +348,8 @@ class FilterOptions {
     @Expose() @IsOptional() @IsString() farmName?: string;
     @Expose() @IsOptional() @IsString() country?: string;
     @Expose() @IsOptional() @IsString() city?: string;
+    @Expose() @IsOptional() @IsBoolean() dedicated?: boolean;
+    @Expose() @IsOptional() @IsInt() availableFor?: number;
 }
 
 export {

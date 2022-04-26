@@ -254,7 +254,9 @@ class Nodes {
             farm_name: options.farmName,
             country: options.country,
             city: options.city,
-            status: "up",
+            dedicated: options.dedicated,
+            available_for: options.availableFor,
+            // status: "up",
         };
         if (options.gateway) {
             params["ipv4"] = true;
@@ -278,28 +280,19 @@ class Nodes {
         return true;
     }
 
-    async getDedicatedNodes() {
-        const body = `{
-            farms(where: {dedicatedFarm_eq: true}) {
-              farmID
-            }
-          }`;
-        const response: any = await this.gqlClient.query(body, {});
-        const farmsIDs = response.data.farms.map(f => f.farmID);
-
-        const dNodes = [];
-        for (const farmId of farmsIDs) {
-            const res: any = await this.gqlClient.query(
-                `{
-                nodes(where: {farmID_eq: ${farmId}}) {
-                    nodeID
-                }
-            }`,
-                {},
-            );
-            dNodes.push(...res.data.nodes);
+    async nodeAvailableForTwinId(nodeId: number, twinId: number): Promise<boolean> {
+        let nodes = [];
+        const url = this.proxyURL;
+        const query = this.getUrlQuery({ availableFor: twinId });
+        try {
+            nodes = await send("GET", `${url}/nodes?${query}`, "", {});
+        } catch {
+            throw Error(`Invalid query: ${query}`);
         }
-        return dNodes;
+        if (nodes.map(n => n.nodeId).includes(nodeId)) {
+            return true;
+        }
+        return false;
     }
 }
 

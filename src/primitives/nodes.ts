@@ -256,7 +256,7 @@ class Nodes {
             city: options.city,
             dedicated: options.dedicated,
             available_for: options.availableFor,
-            // status: "up",
+            status: "up",
         };
         if (options.gateway) {
             params["ipv4"] = true;

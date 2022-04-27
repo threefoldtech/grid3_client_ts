@@ -56,7 +56,7 @@ class VMHL extends HighLevelBase {
         const twinId = this.config.twinId;
         if (!(await nodes.nodeAvailableForTwinId(nodeId, twinId))) {
             throw Error(
-                `Node ${nodeId} is not available for user with twinId: ${twinId}, maybe it's rented by another user or node is not dedicated. use capacity planning with availableFor option.`,
+                `Node ${nodeId} is not available for user with twinId: ${twinId}, maybe it's rented by another user or node is dedicated. use capacity planning with availableFor option.`,
             );
         }
 

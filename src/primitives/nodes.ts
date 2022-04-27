@@ -281,18 +281,12 @@ class Nodes {
     }
 
     async nodeAvailableForTwinId(nodeId: number, twinId: number): Promise<boolean> {
-        let nodes = [];
-        const url = this.proxyURL;
-        const query = this.getUrlQuery({ availableFor: twinId });
-        try {
-            nodes = await send("GET", `${url}/nodes?${query}`, "", {});
-        } catch {
-            throw Error(`Invalid query: ${query}`);
+        const node = await send("GET", `${this.proxyURL}/nodes/${nodeId}`, "", {});
+
+        if (node.dedicated && node.rentedByTwinId != twinId) {
+            return false;
         }
-        if (nodes.map(n => n.nodeId).includes(nodeId)) {
-            return true;
-        }
-        return false;
+        return true;
     }
 }
 

@@ -254,6 +254,8 @@ class Nodes {
             farm_name: options.farmName,
             country: options.country,
             city: options.city,
+            dedicated: options.dedicated,
+            available_for: options.availableFor,
             status: "up",
         };
         if (options.gateway) {
@@ -273,6 +275,15 @@ class Nodes {
             resources.sru < this._g2b(options.sru) ||
             resources.hru < this._g2b(options.hru)
         ) {
+            return false;
+        }
+        return true;
+    }
+
+    async nodeAvailableForTwinId(nodeId: number, twinId: number): Promise<boolean> {
+        const node = await send("GET", `${this.proxyURL}/nodes/${nodeId}`, "", {});
+
+        if (node.dedicated && node.rentedByTwinId != twinId) {
             return false;
         }
         return true;

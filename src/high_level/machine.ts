@@ -53,6 +53,13 @@ class VMHL extends HighLevelBase {
             throw Error(`Node ${nodeId} doesn't have enough resources: sru=${totalDisksSize}, mru=${memory / 1024}`);
         }
 
+        const twinId = this.config.twinId;
+        if (!(await nodes.nodeAvailableForTwinId(nodeId, twinId))) {
+            throw Error(
+                `Node ${nodeId} is not available for user with twinId: ${twinId}, maybe it's rented by another user or node is dedicated. use capacity planning with availableFor option.`,
+            );
+        }
+
         // qsfs disks
         const qsfsPrimitive = new QSFSPrimitive();
         for (const d of qsfsDisks) {

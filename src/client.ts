@@ -21,6 +21,7 @@ class GridClient {
     balance: modules.balance;
     capacity: modules.capacity;
     twinId: number;
+    nodes: modules.nodes;
 
     constructor(
         public network: NetworkEnv,

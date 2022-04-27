@@ -27,6 +27,19 @@ class Contracts {
         );
     }
 
+    async createRentContract(nodeId: number) {
+        return await this.tfclient.applyExtrinsic(
+            this.tfclient.client.createRentContract,
+            [nodeId],
+            "smartContractModule",
+            ["ContractCreated"],
+        );
+    }
+
+    async activeRentContractForNode(nodeId: number) {
+        return await this.tfclient.queryChain(this.tfclient.client.activeRentContractForNode, [nodeId]);
+    }
+
     async updateNode(id: number, data: string, hash: string) {
         return await this.tfclient.applyExtrinsic(
             this.tfclient.client.updateNodeContract,
@@ -44,6 +57,7 @@ class Contracts {
         return await this.tfclient.applyExtrinsic(this.tfclient.client.cancelContract, [id], "smartContractModule", [
             "NodeContractCanceled",
             "NameContractCanceled",
+            "RentContractCanceled",
             "ContractCanceled",
         ]);
     }
@@ -65,6 +79,7 @@ class Contracts {
         const options = `(where: {twinID_eq: ${twinId}, state_eq: Created}, orderBy: twinID_ASC)`;
         const nameContractsCount = await gqlClient.getItemTotalCount("nameContracts", options);
         const nodeContractsCount = await gqlClient.getItemTotalCount("nodeContracts", options);
+        const rentContractsCount = await gqlClient.getItemTotalCount("rentContracts", options);
         const body = `query getContracts($nameContractsCount: Int!, $nodeContractsCount: Int!){
             nameContracts(where: {twinID_eq: ${twinId}, state_eq: Created}, limit: $nameContractsCount) {
               contractID
@@ -72,10 +87,14 @@ class Contracts {
             nodeContracts(where: {twinID_eq: ${twinId}, state_eq: Created}, limit: $nodeContractsCount) {
               contractID
             }
+            rentContracts(where: {twinID_eq: ${twinId}, state_eq: Created}, limit: $rentContractsCount) {
+                contractID
+            }
           }`;
         const response = await gqlClient.query(body, {
             nodeContractsCount: nodeContractsCount,
             nameContractsCount: nameContractsCount,
+            rentContractsCount: rentContractsCount,
         });
         return response["data"];
     }
@@ -119,7 +138,11 @@ class Contracts {
      */
     async cancelMyContracts(graphqlURL: string): Promise<Record<string, number>[]> {
         const allContracts = await this.listMyContracts(graphqlURL);
-        const contracts = [...allContracts["nameContracts"], ...allContracts["nodeContracts"]];
+        const contracts = [
+            ...allContracts["nameContracts"],
+            ...allContracts["nodeContracts"],
+            ...allContracts["rentContracts"],
+        ];
         for (const contract of contracts) {
             await this.cancel(contract["contractID"]);
         }

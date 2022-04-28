@@ -80,7 +80,7 @@ class Contracts {
         const nameContractsCount = await gqlClient.getItemTotalCount("nameContracts", options);
         const nodeContractsCount = await gqlClient.getItemTotalCount("nodeContracts", options);
         const rentContractsCount = await gqlClient.getItemTotalCount("rentContracts", options);
-        const body = `query getContracts($nameContractsCount: Int!, $nodeContractsCount: Int!){
+        const body = `query getContracts($nameContractsCount: Int!, $nodeContractsCount: Int!, $rentContractsCount: Int!){
             nameContracts(where: {twinID_eq: ${twinId}, state_eq: Created}, limit: $nameContractsCount) {
               contractID
             }

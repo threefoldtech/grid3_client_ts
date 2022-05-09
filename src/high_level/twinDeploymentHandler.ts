@@ -44,7 +44,12 @@ class TwinDeploymentHandler {
     async deploy(deployment: Deployment, node_id: number, publicIps: number) {
         let contract;
         try {
-            contract = await this.tfclient.contracts.createNode(node_id, deployment.challenge_hash(), "", publicIps);
+            contract = await this.tfclient.contracts.createNode(
+                node_id,
+                deployment.challenge_hash(),
+                deployment.metadata,
+                publicIps,
+            );
             events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
         } catch (e) {
             throw Error(`Failed to create contract on node: ${node_id} due to ${e}`);

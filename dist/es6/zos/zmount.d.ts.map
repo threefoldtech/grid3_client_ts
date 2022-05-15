@@ -1,0 +1,1 @@
+{"version":3,"file":"zmount.d.ts","sourceRoot":"","sources":["../../../src/zos/zmount.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,YAAY,EAAE,kBAAkB,EAAE,MAAM,iBAAiB,CAAC;AAEnE,cAAM,MAAO,SAAQ,YAAY;IACiC,IAAI,EAAE,MAAM,CAAC;IAE3E,SAAS,IAAI,MAAM;CAGtB;AAED,cAAM,YAAa,SAAQ,kBAAkB;IAC/B,SAAS,EAAE,MAAM,CAAC;CAC/B;AACD,OAAO,EAAE,MAAM,EAAE,YAAY,EAAE,CAAC"}

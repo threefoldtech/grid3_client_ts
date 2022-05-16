@@ -26,6 +26,7 @@ class TFClient {
         public mnemonic: string,
         public storeSecret: string | Uint8Array,
         public keypairType: KeypairType = KeypairType.sr25519,
+        public extSigner = null,
     ) {
         if (!storeSecret) {
             throw new Error("Couldn't create TFClient without store secret");

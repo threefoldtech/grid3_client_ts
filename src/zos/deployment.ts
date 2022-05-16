@@ -1,5 +1,4 @@
 import { Keyring } from "@polkadot/keyring";
-import { stringToHex } from "@polkadot/util";
 import { Expose, Transform, Type } from "class-transformer";
 import { IsBoolean, IsDefined, IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from "class-validator";
 import { default as md5 } from "crypto-js/md5";
@@ -28,10 +27,20 @@ class Signature {
     @Expose() @Transform(({ value }) => KeypairType[value]) @IsEnum(KeypairType) signature_type: KeypairType;
 }
 
+// SignatureStyleDefault default signature style is done by verifying the
+// signature against the computed ChallengeHash of the deployment. In other
+// words the signature results from signing the deployment
+const SignatureStyleDefault = "";
+// SignatureStylePolka signature by polka-wallet surrounds the ChallengeHash with
+// <Bytes>$hash</Bytes> tags. If this signature-style is selected validation is done
+// against the same constructed message.
+const SignatureStylePolka = "polka-wallet";
+
 class SignatureRequirement {
     @Expose() @Type(() => SignatureRequest) @ValidateNested({ each: true }) requests: SignatureRequest[] = [];
     @Expose() @IsInt() @Min(1) weight_required: number;
     @Expose() @Type(() => Signature) @ValidateNested({ each: true }) signatures: Signature[] = [];
+    @Expose() @IsString() signature_style: string = SignatureStyleDefault;
 
     challenge(): string {
         let out = "";
@@ -41,6 +50,7 @@ class SignatureRequirement {
         }
 
         out += this.weight_required;
+        out += this.signature_style;
         return out;
     }
 }
@@ -91,21 +101,26 @@ class Deployment {
         return encoded.join("");
     }
 
-    async sign(twin_id: number, mnemonic: string, keypairType: KeypairType, hash = "", signer = null): Promise<void> {
-        const message = hash || this.challenge_hash();
-        const message_bytes = this.from_hex(message);
+    async sign(
+        twin_id: number,
+        mnemonic: string,
+        keypairType: KeypairType,
+        hash = "",
+        extSigner = null,
+    ): Promise<void> {
         let hex_signed_msg;
-        if (signer) {
-            console.log("signing with the extension");
-            console.log("address:", signer.address);
-            console.log("signer:", signer.signer);
-            const signature = await signer.signer.signRaw({
-                address: signer.address,
-                data: stringToHex(message),
+        if (extSigner) {
+            this.signature_requirement.signature_style = SignatureStylePolka;
+            const message = hash || this.challenge_hash();
+            const { signature } = await extSigner.signer.signRaw({
+                address: extSigner.address,
+                data: message,
                 type: "bytes",
             });
-            hex_signed_msg = signature.signature.slice(2);
+            hex_signed_msg = signature.slice(2);
         } else {
+            const message = hash || this.challenge_hash();
+            const message_bytes = this.from_hex(message);
             const keyr = new Keyring({ type: keypairType });
             const key = keyr.addFromMnemonic(mnemonic);
             const signed_msg = key.sign(message_bytes);

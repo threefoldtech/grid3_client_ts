@@ -49,7 +49,6 @@ async function getClient(): Promise<GridClient> {
         "",
         BackendStorageType.auto,
         KeypairType.sr25519,
-        null,
     );
     await gridClient.connect();
     return gridClient;

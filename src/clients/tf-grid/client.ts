@@ -35,7 +35,7 @@ class TFClient {
         if (Object.keys(TFClient.clients).includes(key)) {
             return TFClient.clients[key];
         }
-        this.client = new Client(url, mnemonic, keypairType);
+        this.client = new Client(url, mnemonic, keypairType, extSigner);
         this.contracts = new Contracts(this);
         this.twins = new Twins(this);
         this.kvStore = new KVStore(this);

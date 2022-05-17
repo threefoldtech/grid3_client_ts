@@ -21,7 +21,7 @@ class GridClientConfig {
     graphqlURL: string;
     substrateURL: string;
     twinId: number;
-    signer;
+    extSigner;
 }
 
 export { GridClientConfig, NetworkEnv };

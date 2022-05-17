@@ -1,1 +1,0 @@
-{"version":3,"file":"localstorage.d.ts","sourceRoot":"","sources":["../../../src/storage/localstorage.ts"],"names":[],"mappings":"AAEA,cAAM,YAAY;IAER,GAAG,CAAC,GAAG,EAAE,MAAM,EAAE,KAAK,EAAE,MAAM;IAQ9B,GAAG,CAAC,GAAG,EAAE,MAAM;IASf,MAAM,CAAC,GAAG,EAAE,MAAM;IAKlB,IAAI,CAAC,GAAG,EAAE,MAAM;CAgBzB;AAED,OAAO,EAAE,YAAY,EAAE,CAAC"}

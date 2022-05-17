@@ -1,1 +1,0 @@
-{"version":3,"file":"filesystem.d.ts","sourceRoot":"","sources":["../../../src/storage/filesystem.ts"],"names":[],"mappings":";AAGA,cAAM,EAAE;IACE,GAAG,CAAC,GAAG,EAAE,MAAM,EAAE,KAAK,EAAE,MAAM;IAU9B,GAAG,CAAC,GAAG,EAAE,MAAM;IAOf,MAAM,CAAC,GAAG,EAAE,MAAM;IAWlB,IAAI,CAAC,GAAG,EAAE,MAAM;CAMzB;AAED,OAAO,EAAE,EAAE,EAAE,CAAC"}

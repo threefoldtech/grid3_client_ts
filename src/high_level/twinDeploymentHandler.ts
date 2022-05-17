@@ -337,7 +337,7 @@ class TwinDeploymentHandler {
                         this.config.mnemonic,
                         this.tfclient.keypairType,
                         "",
-                        this.config.signer,
+                        this.config.extSigner,
                     );
                     events.emit("logs", `Deploying on node_id: ${twinDeployment.nodeId}`);
                     for (const workload of twinDeployment.deployment.workloads) {
@@ -364,7 +364,7 @@ class TwinDeploymentHandler {
                         this.config.mnemonic,
                         this.tfclient.keypairType,
                         "",
-                        this.config.signer,
+                        this.config.extSigner,
                     );
                     events.emit(
                         "logs",

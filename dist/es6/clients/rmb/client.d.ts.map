@@ -1,1 +1,0 @@
-{"version":3,"file":"client.d.ts","sourceRoot":"","sources":["../../../../src/clients/rmb/client.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,yBAAyB,EAAE,MAAM,oBAAoB,CAAC;AAI/D,cAAM,GAAG;IACL,MAAM,EAAE,yBAAyB,CAAC;gBACtB,SAAS,EAAE,yBAAyB;IAI1C,OAAO,CAAC,WAAW,EAAE,MAAM,EAAE,EAAE,GAAG,EAAE,MAAM,EAAE,OAAO,EAAE,MAAM,EAAE,UAAU,SAAI,EAAE,OAAO,SAAI;CA4BjG;AAED,OAAO,EAAE,GAAG,EAAE,CAAC"}

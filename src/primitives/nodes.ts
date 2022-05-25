@@ -191,7 +191,7 @@ class Nodes {
 
                 ret.cru = +node.capacity.total_resources.cru - +node.capacity.used_resources.cru;
                 ret.mru = +node.capacity.total_resources.mru - +node.capacity.used_resources.mru;
-                ret.sru = +node.capacity.total_resources.sru * 2 - +node.capacity.used_resources.sru; // over provisioning
+                ret.sru = +node.capacity.total_resources.sru - +node.capacity.used_resources.sru;
                 ret.hru = +node.capacity.total_resources.hru - +node.capacity.used_resources.hru;
 
                 return ret;

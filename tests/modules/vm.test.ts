@@ -15,7 +15,12 @@ test("Test001 creating a vm", async () => {
     const memory = 1024;
     const rootfsSize = 0;
 
-    const nodes = await gridClient.capacity.filterNodes({ cru: cpu, mru: memory / 1024, sru: 1 } as FilterOptions);
+    const nodes = await gridClient.capacity.filterNodes({
+        cru: cpu,
+        mru: memory / 1024,
+        sru: 1,
+        availableFor: await gridClient.twins.get_my_twin_id(),
+    } as FilterOptions);
     const nodeId = +randomChoice(nodes).nodeId;
     const vms: MachinesModel = {
         name: generateString(15),

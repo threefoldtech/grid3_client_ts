@@ -485,33 +485,35 @@ class Network {
         let endpoint;
         if (result) {
             const ipv4 = result.ipv4;
+            const ipv6 = result.ipv6;
             if (!this.isPrivateIP(ipv4)) {
                 endpoint = ipv4.split("/")[0];
-            }
-            const ipv6 = result.ipv6;
-            if (!this.isPrivateIP(ipv6)) {
+            } else if (!this.isPrivateIP(ipv6)) {
                 endpoint = ipv6.split("/")[0];
             }
         }
-        try {
-            result = await this.rmb.request([node_twin_id], "zos.network.interfaces", "");
-        } catch (e) {
-            throw Error(`Couldn't get the network interfaces for node ${node_id} due to ${e}`);
-        }
-        events.emit("logs", `Node ${node_id} network interfaces: ${JSON.stringify(result)}`);
+        if (!endpoint) {
+            try {
+                result = await this.rmb.request([node_twin_id], "zos.network.interfaces", "");
+            } catch (e) {
+                throw Error(`Couldn't get the network interfaces for node ${node_id} due to ${e}`);
+            }
+            events.emit("logs", `Node ${node_id} network interfaces: ${JSON.stringify(result)}`);
 
-        if (result) {
-            for (const iface of Object.keys(result)) {
-                if (iface !== "zos") {
-                    continue;
-                }
-                for (const ip of result[iface]) {
-                    if (!this.isPrivateIP(ip)) {
-                        endpoint = ip;
+            if (result) {
+                for (const iface of Object.keys(result)) {
+                    if (iface !== "zos") {
+                        continue;
+                    }
+                    for (const ip of result[iface]) {
+                        if (!this.isPrivateIP(ip)) {
+                            endpoint = ip;
+                        }
                     }
                 }
             }
         }
+
         this._endpoints[node_id] = endpoint;
         return endpoint;
     }

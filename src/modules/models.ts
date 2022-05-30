@@ -92,7 +92,7 @@ class KubernetesNodeModel {
     @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
     @Expose() @IsInt() @Min(1) node_id: number;
     @Expose() @IsInt() @Min(1) cpu: number;
-    @Expose() @Min(250) memory: number; // in MB
+    @Expose() @Min(1024) memory: number; // in MB
     @Expose() rootfs_size: number; // in GB
     @Expose() @Min(0.25) disk_size: number; // in GB
     @Expose() @IsOptional() @Type(() => QSFSDiskModel) @ValidateNested({ each: true }) qsfs_disks?: QSFSDiskModel[];

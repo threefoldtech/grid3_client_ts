@@ -12,7 +12,7 @@ n.ip_range = "10.249.0.0/16";
 const disk = new DiskModel();
 disk.name = "wedDisk";
 disk.size = 100;
-disk.mountpoint = "/testdisk";
+disk.mountpoint = "/var/lib/docker";
 
 // create vm node Object
 const vm = new MachineModel();
@@ -29,8 +29,9 @@ vm.entrypoint = "/sbin/zinit init";
 vm.env = {
     PUBLIC_KEY: config.ssh_key,
     SWM_NODE_MODE: "leader",
-    CAPROVER_ROOT_DOMAIN: "rafy.grid.tf",
+    CAPROVER_ROOT_DOMAIN: "rafy.grid.tf", // update me
     DEFAULT_PASSWORD: "captain42",
+    CAPTAIN_IMAGE_VERSION: "v1.2.1",
 };
 
 // create VMs Object
@@ -51,6 +52,8 @@ async function main() {
     // get the deployment
     const l = await grid3.machines.getObj(vms.name);
     log(l);
+
+    log(`You can access Caprover via the browser using: https://captain.${vm.env.CAPROVER_ROOT_DOMAIN}`);
 
     // // delete
     // const d = await grid3.machines.delete({ name: vms.name });

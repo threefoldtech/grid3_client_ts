@@ -12,7 +12,7 @@ n.ip_range = "10.249.0.0/16";
 const disk = new DiskModel();
 disk.name = "wedDisk";
 disk.size = 100;
-disk.mountpoint = "/testdisk"; //update this
+disk.mountpoint = "/var/lib/docker";
 
 // create vm node Object
 const vm = new MachineModel();
@@ -32,6 +32,7 @@ vm.env = {
     SWM_NODE_MODE: "worker",
     SWMTKN: "SWMTKN-1-1eikxeyat4br9t4la1dnln11l1tvlnrngzwh5iq68m2vn7edi1-6lc6xtw3pzd99lrowyuayr5yv",
     LEADER_PUBLIC_IP: "185.206.122.157",
+    CAPTAIN_IMAGE_VERSION: "v1.2.1",
 };
 
 // create VMs Object

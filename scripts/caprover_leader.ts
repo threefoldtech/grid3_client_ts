@@ -53,6 +53,8 @@ async function main() {
     const l = await grid3.machines.getObj(vms.name);
     log(l);
 
+    log(`You can access Caprover via the browser using: https://captain.${vm.env.CAPROVER_ROOT_DOMAIN}`);
+
     // // delete
     // const d = await grid3.machines.delete({ name: vms.name });
     // log(d);

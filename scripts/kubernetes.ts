@@ -6,6 +6,7 @@ import { log } from "./utils";
 const n = new NetworkModel();
 n.name = "monNetwork";
 n.ip_range = "10.238.0.0/16";
+n.addAccess = true;
 
 // create k8s node Object
 const master = new KubernetesNodeModel();

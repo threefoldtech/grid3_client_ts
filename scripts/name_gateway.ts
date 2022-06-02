@@ -1,18 +1,27 @@
-import { GatewayNameModel } from "../src";
+import { FilterOptions, GatewayNameModel } from "../src";
 import { getClient } from "./client_loader";
 import { log } from "./utils";
 
 // read more about the gateway types in this doc: https://github.com/threefoldtech/zos/tree/main/docs/gateway
-
-const gw = new GatewayNameModel();
-gw.name = "test";
-gw.node_id = 1;
-gw.tls_passthrough = false;
-// the backends have to be in this format `http://ip:port` or `https://ip:port`, and the `ip` pingable from the node so using the ygg ip or public ip if available.
-gw.backends = ["http://185.206.122.35:8000"];
-
 async function main() {
     const grid3 = await getClient();
+
+    const server1_options: FilterOptions = {
+        gateway: true,
+        farmId: 1,
+    };
+
+    const gw = new GatewayNameModel();
+    gw.name = "test";
+    try {
+        gw.node_id = +(await grid3.capacity.filterNodes(server1_options))[0].nodeId;
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+    gw.tls_passthrough = false;
+    // the backends have to be in this format `http://ip:port` or `https://ip:port`, and the `ip` pingable from the node so using the ygg ip or public ip if available.
+    gw.backends = ["http://185.206.122.35:8000"];
 
     // deploy
     const res = await grid3.gateway.deploy_name(gw);

@@ -1,72 +1,109 @@
-import { K8SModel, KubernetesNodeModel, NetworkModel } from "../src";
+import { FilterOptions, K8SModel, KubernetesNodeModel, NetworkModel } from "../src";
 import { config, getClient } from "./client_loader";
 import { log } from "./utils";
 
-const qsfs_name = "testQsfsK8sq1";
-
-//create qsfs object
-const qsfs = {
-    name: qsfs_name,
-    count: 8,
-    node_ids: [16, 17],
-    password: "mypassword1",
-    disk_size: 10,
-    description: "my qsfs test",
-    metadata: "",
-};
-
-// create network Object
-const n = new NetworkModel();
-n.name = "k8sqsfsNetwork";
-n.ip_range = "10.238.0.0/16";
-
-// create k8s node Object
-const master = new KubernetesNodeModel();
-master.name = "master";
-master.node_id = 17;
-master.cpu = 1;
-master.memory = 1024 * 2;
-master.rootfs_size = 0;
-master.disk_size = 9;
-master.public_ip = false;
-master.planetary = true;
-master.qsfs_disks = [
-    {
-        qsfs_zdbs_name: qsfs_name,
-        name: "testQsfsK8sd1",
-        minimal_shards: 2,
-        expected_shards: 4,
-        encryption_key: "hamada",
-        prefix: "hamada",
-        cache: 1,
-        mountpoint: "/myqsfsdisk",
-    },
-];
-
-// create k8s node Object
-const worker = new KubernetesNodeModel();
-worker.name = "worker";
-worker.node_id = 17;
-worker.cpu = 2;
-worker.memory = 1024 * 4;
-worker.rootfs_size = 0;
-worker.disk_size = 9;
-worker.public_ip = false;
-worker.planetary = true;
-
-// create k8s Object
-const k = new K8SModel();
-k.name = "testk8sqsfs";
-k.secret = "secret";
-k.network = n;
-k.masters = [master];
-k.workers = [worker];
-k.metadata = "{'testk8s': true}";
-k.description = "test deploying k8s via ts grid3 client";
-k.ssh_key = config.ssh_key;
-
 async function main() {
     const grid3 = await getClient();
+
+    const qsfs_name = "testQsfsK8sq1";
+
+    const server1_options: FilterOptions = {
+        cru: 3,
+        mru: 6, // GB
+        sru: 20,
+        farmId: 1,
+    };
+
+    const server2_options: FilterOptions = {
+        hru: 40,
+        farmId: 1,
+    };
+
+    const qsfsNodes = [];
+
+    try {
+        const allNodes = await grid3.capacity.filterNodes(server2_options);
+        if (allNodes.length >= 2) {
+            qsfsNodes.push(+allNodes[0].nodeId, +allNodes[1].nodeId);
+        } else {
+            throw Error("Couldn't find nodes for qsfs");
+        }
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+
+    //create qsfs object
+    const qsfs = {
+        name: qsfs_name,
+        count: 8,
+        node_ids: qsfsNodes,
+        password: "mypassword1",
+        disk_size: 10,
+        description: "my qsfs test",
+        metadata: "",
+    };
+
+    // create network Object
+    const n = new NetworkModel();
+    n.name = "k8sqsfsNetwork";
+    n.ip_range = "10.238.0.0/16";
+
+    // create k8s node Object
+    const master = new KubernetesNodeModel();
+    master.name = "master";
+    try {
+        master.node_id = +(await grid3.capacity.filterNodes(server1_options))[0].nodeId;
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+    master.cpu = 1;
+    master.memory = 1024 * 2;
+    master.rootfs_size = 0;
+    master.disk_size = 9;
+    master.public_ip = false;
+    master.planetary = true;
+    master.qsfs_disks = [
+        {
+            qsfs_zdbs_name: qsfs_name,
+            name: "testQsfsK8sd1",
+            minimal_shards: 2,
+            expected_shards: 4,
+            encryption_key: "hamada",
+            prefix: "hamada",
+            cache: 1,
+            mountpoint: "/myqsfsdisk",
+        },
+    ];
+
+    // create k8s node Object
+    const worker = new KubernetesNodeModel();
+    worker.name = "worker";
+    try {
+        worker.node_id = +(await grid3.capacity.filterNodes(server1_options))[0].nodeId;
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+    worker.cpu = 2;
+    worker.memory = 1024 * 4;
+    worker.rootfs_size = 0;
+    worker.disk_size = 9;
+    worker.public_ip = false;
+    worker.planetary = true;
+
+    // create k8s Object
+    const k = new K8SModel();
+    k.name = "testk8sqsfs";
+    k.secret = "secret";
+    k.network = n;
+    k.masters = [master];
+    k.workers = [worker];
+    k.metadata = "{'testk8s': true}";
+    k.description = "test deploying k8s via ts grid3 client";
+    k.ssh_key = config.ssh_key;
+
     // deploy qsfs
     const res = await grid3.qsfs_zdbs.deploy(qsfs);
     log(">>>>>>>>>>>>>>>QSFS backend has been created<<<<<<<<<<<<<<<");

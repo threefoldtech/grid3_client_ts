@@ -1,24 +1,29 @@
-import { ZDBModel, ZdbModes, ZDBSModel } from "../src";
+import { FilterOptions, ZDBModel, ZdbModes, ZDBSModel } from "../src";
 import { getClient } from "./client_loader";
 import { log } from "./utils";
 
-// create zdb object
-const zdb = new ZDBModel();
-zdb.name = "hamada";
-zdb.node_id = 16;
-zdb.mode = ZdbModes.user;
-zdb.disk_size = 9;
-zdb.publicNamespace = false;
-zdb.password = "testzdb";
-
-// create zdbs object
-const zdbs = new ZDBSModel();
-zdbs.name = "tttzdbs";
-zdbs.zdbs = [zdb];
-zdbs.metadata = '{"test": "test"}';
-
 async function main() {
     const grid3 = await getClient();
+
+    const zdbQueryOptions: FilterOptions = {
+        hru: 10,
+        farmId: 1,
+    };
+
+    // create zdb object
+    const zdb = new ZDBModel();
+    zdb.name = "hamada";
+    zdb.node_id = +(await grid3.capacity.filterNodes(zdbQueryOptions))[0].nodeId;
+    zdb.mode = ZdbModes.user;
+    zdb.disk_size = 9;
+    zdb.publicNamespace = false;
+    zdb.password = "testzdb";
+
+    // create zdbs object
+    const zdbs = new ZDBSModel();
+    zdbs.name = "tttzdbs";
+    zdbs.zdbs = [zdb];
+    zdbs.metadata = '{"test": "test"}';
 
     // deploy zdb
     const res = await grid3.zdbs.deploy(zdbs);

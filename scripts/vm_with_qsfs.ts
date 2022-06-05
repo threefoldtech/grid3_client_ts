@@ -11,7 +11,7 @@ async function main() {
     const vmQueryOptions: FilterOptions = {
         cru: 2,
         mru: 2, // GB
-        sru: 100,
+        sru: 10,
         farmId: 1,
     };
 
@@ -22,25 +22,14 @@ async function main() {
 
     const qsfsNodes = [];
 
-    try {
-        const allNodes = await grid3.capacity.filterNodes(qsfsQueryOptions);
-        if (allNodes.length >= 2) {
-            qsfsNodes.push(+allNodes[0].nodeId, +allNodes[1].nodeId);
-        } else {
-            throw Error("Couldn't find nodes for qsfs");
-        }
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
+    const allNodes = await grid3.capacity.filterNodes(qsfsQueryOptions);
+    if (allNodes.length >= 2) {
+        qsfsNodes.push(+allNodes[0].nodeId, +allNodes[1].nodeId);
+    } else {
+        throw Error("Couldn't find nodes for qsfs");
     }
 
-    let vmNode;
-    try {
-        vmNode = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
+    const vmNode = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
 
     const qsfs: QSFSZDBSModel = {
         name: qsfs_name,

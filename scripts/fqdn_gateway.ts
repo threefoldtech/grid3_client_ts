@@ -12,12 +12,7 @@ async function main() {
     };
     const gw = new GatewayFQDNModel();
     gw.name = "applyFQDN";
-    try {
-        gw.node_id = +(await grid3.capacity.filterNodes(gatewayQueryOptions))[0].nodeId;
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
+    gw.node_id = +(await grid3.capacity.filterNodes(gatewayQueryOptions))[0].nodeId;
     gw.fqdn = "test.hamada.grid.tf";
     gw.tls_passthrough = false;
     // the backends have to be in this format `http://ip:port` or `https://ip:port`, and the `ip` pingable from the node so using the ygg ip or public ip if available.

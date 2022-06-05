@@ -28,12 +28,7 @@ async function main() {
     // create k8s node Object
     const master = new KubernetesNodeModel();
     master.name = "master";
-    try {
-        master.node_id = +(await grid3.capacity.filterNodes(masterQueryOptions))[0].nodeId;
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
+    master.node_id = +(await grid3.capacity.filterNodes(masterQueryOptions))[0].nodeId;
     master.cpu = 1;
     master.memory = 1024 * 2;
     master.rootfs_size = 0;
@@ -44,12 +39,7 @@ async function main() {
     // create k8s node Object
     const worker = new KubernetesNodeModel();
     worker.name = "worker";
-    try {
-        worker.node_id = +(await grid3.capacity.filterNodes(workerQueryOptions))[0].nodeId;
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
+    worker.node_id = +(await grid3.capacity.filterNodes(workerQueryOptions))[0].nodeId;
     worker.cpu = 2;
     worker.memory = 1024 * 4;
     worker.rootfs_size = 0;

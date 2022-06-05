@@ -25,12 +25,7 @@ async function main() {
     // create vm node Object
     const vm = new MachineModel();
     vm.name = "testvm";
-    try {
-        vm.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId; // TODO: allow random choise
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
+    vm.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId; // TODO: allow random choise
     vm.disks = [disk];
     vm.public_ip = false;
     vm.planetary = true;

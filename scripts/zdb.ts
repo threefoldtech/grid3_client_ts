@@ -6,19 +6,14 @@ async function main() {
     const grid3 = await getClient();
 
     const zdbQueryOptions: FilterOptions = {
-        hru: 20,
+        hru: 10,
         farmId: 1,
     };
 
     // create zdb object
     const zdb = new ZDBModel();
     zdb.name = "hamada";
-    try {
-        zdb.node_id = +(await grid3.capacity.filterNodes(zdbQueryOptions))[0].nodeId;
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
+    zdb.node_id = +(await grid3.capacity.filterNodes(zdbQueryOptions))[0].nodeId;
     zdb.mode = ZdbModes.user;
     zdb.disk_size = 9;
     zdb.publicNamespace = false;

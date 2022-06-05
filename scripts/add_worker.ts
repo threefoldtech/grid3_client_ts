@@ -18,12 +18,7 @@ async function main() {
     const worker = new AddWorkerModel();
     worker.deployment_name = "testk8s";
     worker.name = "worker2";
-    try {
-        worker.node_id = +(await grid3.capacity.filterNodes(workerQueryOptions))[0].nodeId;
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
+    worker.node_id = +(await grid3.capacity.filterNodes(workerQueryOptions))[0].nodeId;
     worker.cpu = 2;
     worker.memory = 1024;
     worker.rootfs_size = 0;

@@ -17,21 +17,16 @@ async function main() {
     disk1.mountpoint = "/newDisk";
 
     const vmQueryOptions: FilterOptions = {
-        cru: 2,
-        mru: 4, // GB
-        sru: 20,
+        cru: 1,
+        mru: 2, // GB
+        sru: 10,
         farmId: 1,
     };
 
     // create vm node Object
     const vm1 = new MachineModel();
     vm1.name = "testvm";
-    try {
-        vm1.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
+    vm1.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
     vm1.disks = [disk1];
     vm1.public_ip = false;
     vm1.planetary = true;
@@ -53,12 +48,7 @@ async function main() {
     // create another vm node Object
     const vm2 = new MachineModel();
     vm2.name = "testvm";
-    try {
-        vm2.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
+    vm2.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
     vm2.disks = [disk2];
     vm2.public_ip = false;
     vm2.planetary = true;

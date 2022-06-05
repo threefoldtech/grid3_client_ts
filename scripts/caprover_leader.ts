@@ -8,7 +8,7 @@ async function main() {
     const vmQueryOptions: FilterOptions = {
         cru: 4,
         mru: 4, // GB
-        sru: 100,
+        sru: 10,
         farmId: 1,
     };
 
@@ -21,18 +21,13 @@ async function main() {
     // create disk Object
     const disk = new DiskModel();
     disk.name = "wedDisk";
-    disk.size = 100;
+    disk.size = 10;
     disk.mountpoint = "/var/lib/docker";
 
     // create vm node Object
     const vm = new MachineModel();
     vm.name = "testvm";
-    try {
-        vm.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
-    } catch (err) {
-        console.log(err);
-        process.exit(1);
-    }
+    vm.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
     vm.disks = [disk];
     vm.public_ip = true;
     vm.planetary = false;

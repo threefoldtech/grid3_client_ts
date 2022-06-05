@@ -6,7 +6,7 @@
 
 ```json
 {
-    "network": "dev", // dev or test  -> 
+    "network": "dev", // dev, qa or test  -> 
     "mnemonic": "", 
     "rmb_proxy": true,
     "storeSecret": "secret",

@@ -257,6 +257,7 @@ class Nodes {
             dedicated: options.dedicated,
             available_for: options.availableFor,
             status: "up",
+            page: options.page,
         };
         if (options.gateway) {
             params["ipv4"] = true;

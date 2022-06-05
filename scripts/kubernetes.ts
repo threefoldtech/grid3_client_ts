@@ -11,10 +11,17 @@ async function main() {
     n.ip_range = "10.238.0.0/16";
     n.addAccess = true;
 
-    const server1_options: FilterOptions = {
-        cru: 3,
-        mru: 6, // GB
-        sru: 20,
+    const masterQueryOptions: FilterOptions = {
+        cru: 1,
+        mru: 2, // GB
+        sru: 10,
+        farmId: 1,
+    };
+
+    const workerQueryOptions: FilterOptions = {
+        cru: 2,
+        mru: 4, // GB
+        sru: 10,
         farmId: 1,
     };
 
@@ -22,7 +29,7 @@ async function main() {
     const master = new KubernetesNodeModel();
     master.name = "master";
     try {
-        master.node_id = +(await grid3.capacity.filterNodes(server1_options))[0].nodeId;
+        master.node_id = +(await grid3.capacity.filterNodes(masterQueryOptions))[0].nodeId;
     } catch (err) {
         console.log(err);
         process.exit(1);
@@ -38,7 +45,7 @@ async function main() {
     const worker = new KubernetesNodeModel();
     worker.name = "worker";
     try {
-        worker.node_id = +(await grid3.capacity.filterNodes(server1_options))[0].nodeId;
+        worker.node_id = +(await grid3.capacity.filterNodes(workerQueryOptions))[0].nodeId;
     } catch (err) {
         console.log(err);
         process.exit(1);

@@ -6,7 +6,7 @@ import { log } from "./utils";
 async function main() {
     const grid3 = await getClient();
 
-    const server1_options: FilterOptions = {
+    const gatewayQueryOptions: FilterOptions = {
         gateway: true,
         farmId: 1,
     };
@@ -14,7 +14,7 @@ async function main() {
     const gw = new GatewayNameModel();
     gw.name = "test";
     try {
-        gw.node_id = +(await grid3.capacity.filterNodes(server1_options))[0].nodeId;
+        gw.node_id = +(await grid3.capacity.filterNodes(gatewayQueryOptions))[0].nodeId;
     } catch (err) {
         console.log(err);
         process.exit(1);

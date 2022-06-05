@@ -16,7 +16,7 @@ async function main() {
     disk1.size = 10;
     disk1.mountpoint = "/newDisk";
 
-    const server1_options: FilterOptions = {
+    const vmQueryOptions: FilterOptions = {
         cru: 2,
         mru: 4, // GB
         sru: 20,
@@ -27,7 +27,7 @@ async function main() {
     const vm1 = new MachineModel();
     vm1.name = "testvm";
     try {
-        vm1.node_id = +(await grid3.capacity.filterNodes(server1_options))[0].nodeId;
+        vm1.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
     } catch (err) {
         console.log(err);
         process.exit(1);
@@ -54,7 +54,7 @@ async function main() {
     const vm2 = new MachineModel();
     vm2.name = "testvm";
     try {
-        vm2.node_id = +(await grid3.capacity.filterNodes(server1_options))[0].nodeId;
+        vm2.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
     } catch (err) {
         console.log(err);
         process.exit(1);

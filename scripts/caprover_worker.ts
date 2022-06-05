@@ -5,7 +5,7 @@ import { log } from "./utils";
 async function main() {
     const grid3 = await getClient();
 
-    const server1_options: FilterOptions = {
+    const vmQueryOptions: FilterOptions = {
         cru: 4,
         mru: 4, // GB
         sru: 100,
@@ -28,7 +28,7 @@ async function main() {
     const vm = new MachineModel();
     vm.name = "capworker1";
     try {
-        vm.node_id = +(await grid3.capacity.filterNodes(server1_options))[0].nodeId;
+        vm.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
     } catch (err) {
         console.log(err);
         process.exit(1);

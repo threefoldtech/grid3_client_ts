@@ -8,14 +8,14 @@ async function main() {
     const qsfs_name = "wed2710q1";
     const machines_name = "wed2710t1";
 
-    const server1_options: FilterOptions = {
+    const vmQueryOptions: FilterOptions = {
         cru: 2,
         mru: 2, // GB
         sru: 100,
         farmId: 1,
     };
 
-    const server2_options: FilterOptions = {
+    const qsfsQueryOptions: FilterOptions = {
         hru: 40,
         farmId: 1,
     };
@@ -23,7 +23,7 @@ async function main() {
     const qsfsNodes = [];
 
     try {
-        const allNodes = await grid3.capacity.filterNodes(server2_options);
+        const allNodes = await grid3.capacity.filterNodes(qsfsQueryOptions);
         if (allNodes.length >= 2) {
             qsfsNodes.push(+allNodes[0].nodeId, +allNodes[1].nodeId);
         } else {
@@ -36,7 +36,7 @@ async function main() {
 
     let vmNode;
     try {
-        vmNode = +(await grid3.capacity.filterNodes(server1_options))[0].nodeId;
+        vmNode = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
     } catch (err) {
         console.log(err);
         process.exit(1);

@@ -7,7 +7,7 @@ import { log } from "./utils";
 async function main() {
     const grid3 = await getClient();
 
-    const server1_options: FilterOptions = {
+    const workerQueryOptions: FilterOptions = {
         cru: 2,
         mru: 1, // GB
         sru: 10,
@@ -19,7 +19,7 @@ async function main() {
     worker.deployment_name = "testk8s";
     worker.name = "worker2";
     try {
-        worker.node_id = +(await grid3.capacity.filterNodes(server1_options))[0].nodeId;
+        worker.node_id = +(await grid3.capacity.filterNodes(workerQueryOptions))[0].nodeId;
     } catch (err) {
         console.log(err);
         process.exit(1);

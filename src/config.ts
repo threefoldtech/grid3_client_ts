@@ -7,6 +7,7 @@ enum NetworkEnv {
     dev = "dev",
     test = "test",
     main = "main",
+    qa = "qa",
 }
 
 class GridClientConfig {

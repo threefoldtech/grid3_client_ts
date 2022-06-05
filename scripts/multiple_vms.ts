@@ -41,9 +41,9 @@ async function main() {
 
     // create disk Object
     const disk2 = new DiskModel();
-    disk2.name = "newDisk";
+    disk2.name = "newDisk1";
     disk2.size = 10;
-    disk2.mountpoint = "/newDisk";
+    disk2.mountpoint = "/newDisk1";
 
     // create another vm node Object
     const vm2 = new MachineModel();

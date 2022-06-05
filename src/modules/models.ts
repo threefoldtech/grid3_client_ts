@@ -350,6 +350,7 @@ class FilterOptions {
     @Expose() @IsOptional() @IsString() city?: string;
     @Expose() @IsOptional() @IsBoolean() dedicated?: boolean;
     @Expose() @IsOptional() @IsInt() availableFor?: number;
+    @Expose() @IsOptional() @IsInt() page?: number;
 }
 
 export {

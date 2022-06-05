@@ -12,9 +12,9 @@ async function main() {
 
     // create disk Object
     const disk1 = new DiskModel();
-    disk1.name = "newDisk";
+    disk1.name = "newDisk1";
     disk1.size = 10;
-    disk1.mountpoint = "/newDisk";
+    disk1.mountpoint = "/newDisk1";
 
     const vmQueryOptions: FilterOptions = {
         cru: 1,
@@ -41,9 +41,9 @@ async function main() {
 
     // create disk Object
     const disk2 = new DiskModel();
-    disk2.name = "newDisk1";
+    disk2.name = "newDisk2";
     disk2.size = 10;
-    disk2.mountpoint = "/newDisk1";
+    disk2.mountpoint = "/newDisk2";
 
     // create another vm node Object
     const vm2 = new MachineModel();

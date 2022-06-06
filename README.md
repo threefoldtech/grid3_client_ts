@@ -56,7 +56,7 @@ yarn install
 
 ### Client configuration
 
-- Network environment: should select dev environment or test.
+- Network environment: should select dev environment, qa, test or main.
 
     ```ts
     import { NetworkEnv } from "grid3_client";

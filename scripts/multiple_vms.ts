@@ -25,7 +25,7 @@ async function main() {
 
     // create vm node Object
     const vm1 = new MachineModel();
-    vm1.name = "testvm";
+    vm1.name = "testvm1";
     vm1.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
     vm1.disks = [disk1];
     vm1.public_ip = false;
@@ -47,8 +47,8 @@ async function main() {
 
     // create another vm node Object
     const vm2 = new MachineModel();
-    vm2.name = "testvm";
-    vm2.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[0].nodeId;
+    vm2.name = "testvm2";
+    vm2.node_id = +(await grid3.capacity.filterNodes(vmQueryOptions))[1].nodeId;
     vm2.disks = [disk2];
     vm2.public_ip = false;
     vm2.planetary = true;

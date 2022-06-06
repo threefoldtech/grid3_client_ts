@@ -13,7 +13,7 @@ Add substrate url and account's mnemonics in `config.json` in [server directory]
 
 ```json
 {
-    "network": "<network environment dev or test>",
+    "network": "<network environment dev, qa or test>",
     "mnemonic": "<your account mnemonics>",
     "rmb_proxy": false, // in case http rmb proxy needs to be used
     "storeSecret": "secret", // secret used for encrypting/decrypting the values in tfkvStore

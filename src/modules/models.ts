@@ -58,7 +58,7 @@ class MachineModel {
     @Expose() @IsOptional() @IsBoolean() public_ip6?: boolean;
     @Expose() @IsBoolean() planetary: boolean;
     @Expose() @IsInt() @Min(1) cpu: number;
-    @Expose() @Min(250) memory: number; // in MB
+    @Expose() @Min(256) memory: number; // in MB
     @Expose() rootfs_size: number; // in GB
     @Expose() @IsUrl() @IsNotEmpty() flist: string;
     @Expose() @IsString() @IsDefined() entrypoint: string;

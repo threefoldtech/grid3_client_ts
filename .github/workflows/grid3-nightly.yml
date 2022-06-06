@@ -10,8 +10,12 @@ on:
 jobs:
   deployment-scripts:
     runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        network: ['dev','test','main']
     env:
-      NETWORK: ${{ secrets.NETWORK }}
+      NETWORK: ${{ matrix.network }}
       RMB_PROXY: true
       STORE_SECRET: secret
       MNEMONIC: ${{ secrets.MNEMONIC }}
@@ -31,11 +35,11 @@ jobs:
           sudo apt-get install -y git libtool tmux redis net-tools
       - name: Install
         run: yarn
-      - name: Run test single vm
-        id: singlevm
+      - name: Run test dynamic single vm
+        id: dynamicsinglevm
         continue-on-error: true
         run: |
-          yarn run ts-node --project tsconfig-node.json scripts/single_vm.ts
+          yarn run ts-node --project tsconfig-node.json scripts/dynamic_single_vm.ts
       - name: Run test multiple vms
         id: multiplevm
         continue-on-error: true
@@ -56,11 +60,6 @@ jobs:
         continue-on-error: true
         run: |
           yarn run ts-node --project tsconfig-node.json scripts/kubernetes_with_qsfs.ts
-      - name: Run test dynamic single vm
-        id: dynamicsinglevm
-        continue-on-error: true
-        run: |
-          yarn run ts-node --project tsconfig-node.json scripts/dynamic_single_vm.ts
       - name: Run test kvstore 
         id: kvstore
         continue-on-error: true
@@ -76,12 +75,11 @@ jobs:
           yarn run ts-node --project tsconfig-node.json scripts/delete_all_contracts.ts
       - name: Check test script status
         if: |
-          steps.singlevm.outcome != 'success' ||
+          steps.dynamicsinglevm.outcome != 'success' ||
           steps.multiplevm.outcome != 'success' ||
           steps.kubernetes.outcome != 'success' ||
           steps.vmqsfs.outcome != 'success' ||
           steps.kubernetesqsfs.outcome != 'success' ||
-          steps.dynamicsinglevm.outcome != 'success' ||
           steps.kvstore.outcome != 'success' ||
           steps.zdb.outcome != 'success'
         run: exit "Test scripts failed, Please check the failed step/s."

@@ -140,9 +140,14 @@ class TwinDeploymentHandler {
                 continue;
             }
             let readyWorkloads = 0;
-            for (let i = 0; i < deployment.workloads.length; i++) {
-                if (this.checkWorkload(deployment.workloads[i], twinDeployment.deployment.workloads[i], node_id)) {
-                    readyWorkloads += 1;
+            for (const workload of deployment.workloads) {
+                for (const w of twinDeployment.deployment.workloads) {
+                    if (w.name === workload.name) {
+                        if (this.checkWorkload(workload, w, node_id)) {
+                            readyWorkloads += 1;
+                        }
+                        break;
+                    }
                 }
             }
             if (readyWorkloads === twinDeployment.deployment.workloads.length) {

@@ -232,6 +232,10 @@ class K8sModule extends BaseModule {
             throw Error(`There is no k8s deployment with the name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
+        if (this.workloadExists(options.name, oldDeployments))
+            throw Error(
+                `There is another worker with the same name "${options.name}" in this cluster ${options.deployment_name}`,
+            );
         const masterWorkloads = await this._getMastersWorkload(options.deployment_name, oldDeployments);
         if (masterWorkloads.length === 0) {
             throw Error("Couldn't get master node");

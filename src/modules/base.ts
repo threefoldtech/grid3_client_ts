@@ -93,6 +93,15 @@ class BaseModule {
         return (await this._list()).includes(name);
     }
 
+    workloadExists(name: string, oldDeployment: Deployment[]): boolean {
+        for (const deployment of oldDeployment) {
+            for (const workload of deployment.workloads) {
+                if (name === workload.name) return true;
+            }
+        }
+        return false;
+    }
+
     async _getDeploymentNodeIds(name: string): Promise<number[]> {
         const nodeIds = [];
         const contracts = await this.getDeploymentContracts(name);

@@ -133,6 +133,10 @@ class MachinesModule extends BaseModule {
             throw Error(`There are no machine deployments with the name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
+        if (this.workloadExists(options.name, oldDeployments))
+            throw Error(
+                `There is another machine with the same name "${options.name}" in the same deployment ${options.deployment_name}`,
+            );
         const workload = (
             await this._getWorkloadsByTypes(options.deployment_name, oldDeployments, [WorkloadTypes.zmachine])
         )[0];

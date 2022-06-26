@@ -94,8 +94,8 @@ class Contracts {
 
     @expose
     @validateInput
-    async listMyContracts() {
-        return await this.client.contracts.listMyContracts(this.config.graphqlURL);
+    async listMyContracts(state?) {
+        return await this.client.contracts.listMyContracts(this.config.graphqlURL, state);
     }
 
     @expose

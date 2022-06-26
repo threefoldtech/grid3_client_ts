@@ -74,21 +74,24 @@ class Contracts {
         return await this.tfclient.queryChain(this.tfclient.client.contractIDByNameRegistration, [name]);
     }
 
-    async listContractsByTwinId(graphqlURL, twinId) {
+    async listContractsByTwinId(graphqlURL, twinId, state = ["Created"]) {
         const gqlClient = new Graphql(graphqlURL);
-        const options = `(where: {twinID_eq: ${twinId}, state_eq: Created}, orderBy: twinID_ASC)`;
+        const options = `(where: {twinID_eq: ${twinId}, state_in: ${state}}, orderBy: twinID_ASC)`;
         const nameContractsCount = await gqlClient.getItemTotalCount("nameContracts", options);
         const nodeContractsCount = await gqlClient.getItemTotalCount("nodeContracts", options);
         const rentContractsCount = await gqlClient.getItemTotalCount("rentContracts", options);
         const body = `query getContracts($nameContractsCount: Int!, $nodeContractsCount: Int!, $rentContractsCount: Int!){
-            nameContracts(where: {twinID_eq: ${twinId}, state_eq: Created}, limit: $nameContractsCount) {
+            nameContracts(where: {twinID_eq: ${twinId}, state_in: ${state}}, limit: $nameContractsCount) {
               contractID
+              state
             }
-            nodeContracts(where: {twinID_eq: ${twinId}, state_eq: Created}, limit: $nodeContractsCount) {
+            nodeContracts(where: {twinID_eq: ${twinId}, state_in: ${state}}, limit: $nodeContractsCount) {
               contractID
+              state
             }
-            rentContracts(where: {twinID_eq: ${twinId}, state_eq: Created}, limit: $rentContractsCount) {
-                contractID
+            rentContracts(where: {twinID_eq: ${twinId}, state_in: ${state}}, limit: $rentContractsCount) {
+              contractID
+              state
             }
           }`;
         const response = await gqlClient.query(body, {
@@ -126,9 +129,9 @@ class Contracts {
         return await this.listContractsByTwinId(graphqlURL, twinId);
     }
 
-    async listMyContracts(graphqlURL) {
+    async listMyContracts(graphqlURL, state?) {
         const twinId = await this.tfclient.twins.getMyTwinId();
-        return await this.listContractsByTwinId(graphqlURL, twinId);
+        return await this.listContractsByTwinId(graphqlURL, twinId, state);
     }
 
     /**

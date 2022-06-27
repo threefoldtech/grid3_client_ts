@@ -74,7 +74,8 @@ class Contracts {
         return await this.tfclient.queryChain(this.tfclient.client.contractIDByNameRegistration, [name]);
     }
 
-    async listContractsByTwinId(graphqlURL, twinId, state = ["Created"]) {
+    async listContractsByTwinId(graphqlURL, twinId, stateList = ["Created", "GracePeriod"]) {
+        const state = `[${stateList.join(", ")}]`;
         const gqlClient = new Graphql(graphqlURL);
         const options = `(where: {twinID_eq: ${twinId}, state_in: ${state}}, orderBy: twinID_ASC)`;
         const nameContractsCount = await gqlClient.getItemTotalCount("nameContracts", options);

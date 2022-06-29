@@ -152,6 +152,22 @@ class Contracts {
         }
         return contracts;
     }
+
+    async getDeletionTime(contractId: number): Promise<number | string> {
+        const contract = await this.get(contractId);
+        if (contract.state.created === null) return "Contract is Active.";
+
+        const blockNumber = contract.state["gracePeriod"];
+
+        const blockHash = await this.tfclient.rpcCall(this.tfclient.client.getBlockHash, [blockNumber]);
+
+        const blockTime = +(await this.tfclient.queryChain(this.tfclient.client.getBlockTime, [blockHash]));
+        console.log(blockTime);
+
+        const TWO_WEEKS = 1657584000;
+
+        return blockTime + TWO_WEEKS;
+    }
 }
 
 export { Contracts };

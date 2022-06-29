@@ -135,6 +135,12 @@ class Contracts {
     async getConsumption(options: ContractConsumption): Promise<number> {
         return await this.client.contracts.getConsumption(options.id, this.config.graphqlURL);
     }
+
+    @expose
+    @validateInput
+    async getDeletionTime(options: ContractGetModel): Promise<string | number> {
+        return await this.client.contracts.getDeletionTime(options.id);
+    }
 }
 
 export { Contracts as contracts };

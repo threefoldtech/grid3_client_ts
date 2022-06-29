@@ -69,6 +69,13 @@ class TFClient {
         return await func.apply(context, args);
     }
 
+    async rpcCall(func: (args: unknown[]) => unknown, args: unknown[]) {
+        const context = this.client;
+        await this.connect();
+        console.log(`Executing method: ${func.name} with args: ${args}`);
+        return await func.apply(context, args);
+    }
+
     private async _applyExtrinsic(
         func: (args: unknown[]) => unknown,
         args: unknown[],

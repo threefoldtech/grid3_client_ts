@@ -16,12 +16,12 @@ class Nodes {
     @checkBalance
     async reserve(options: RentContractCreateModel) {
         const rentContract = await this.getRent({ nodeId: options.nodeId });
-        if (rentContract.contract_id != 0) {
-            throw Error(`Node Already rented by user with twinId ${rentContract.twin_id}`);
+        if (rentContract.contractId != 0) {
+            throw Error(`Node Already rented by user with twinId ${rentContract.twinId}`);
         }
         try {
             const res = await this.client.contracts.createRentContract(options.nodeId);
-            events.emit("logs", `Rent contract with id: ${res["contract_id"]} has been created`);
+            events.emit("logs", `Rent contract with id: ${res["contractId"]} has been created`);
             return res;
         } catch (e) {
             throw Error(`Failed to create rent contract on node ${options.nodeId} due to ${e}`);
@@ -33,7 +33,7 @@ class Nodes {
     @checkBalance
     async unreserve(options: RentContractDeleteModel) {
         const rentContract = await this.getRent({ nodeId: options.nodeId });
-        if (rentContract.contract_id === 0) {
+        if (rentContract.contractId === 0) {
             events.emit("logs", `No rent contract found for node ${options.nodeId}`);
             return rentContract;
         }

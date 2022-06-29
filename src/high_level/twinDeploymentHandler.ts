@@ -22,7 +22,7 @@ class TwinDeploymentHandler {
         if (!c) {
             try {
                 const contract = await this.tfclient.contracts.createName(name);
-                events.emit("logs", `Name contract with id: ${contract["contract_id"]} has been created`);
+                events.emit("logs", `Name contract with id: ${contract["contractId"]} has been created`);
                 return contract;
             } catch (e) {
                 throw Error(`Failed to create name contract ${name} due to ${e}`);
@@ -50,20 +50,20 @@ class TwinDeploymentHandler {
                 deployment.metadata,
                 publicIps,
             );
-            events.emit("logs", `Contract with id: ${contract["contract_id"]} has been created`);
+            events.emit("logs", `Contract with id: ${contract["contractId"]} has been created`);
         } catch (e) {
             throw Error(`Failed to create contract on node: ${node_id} due to ${e}`);
         }
 
         try {
-            deployment.contract_id = contract["contract_id"];
+            deployment.contract_id = contract["contractId"];
             const payload = JSON.stringify(deployment);
             const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
             const node_twin_id = await nodes.getNodeTwinId(node_id);
             await this.rmb.request([node_twin_id], "zos.deployment.deploy", payload);
         } catch (e) {
             await this.rollback([new TwinDeployment(deployment, Operations.delete, publicIps, node_id)], {
-                created: [{ contract_id: contract["contract_id"] }],
+                created: [{ contract_id: contract["contractId"] }],
             });
             throw Error(`Failed to deploy on node ${node_id} due to ${e}`);
         }
@@ -79,11 +79,11 @@ class TwinDeploymentHandler {
                 "",
                 deployment.challenge_hash(),
             );
-            events.emit("logs", `Contract with id: ${contract["contract_id"]} has been updated`);
+            events.emit("logs", `Contract with id: ${contract["contractId"]} has been updated`);
         } catch (e) {
             throw Error(`Failed to update contract ${contract}`);
         }
-        const node_id = contract["contract_type"]["nodeContract"]["node_id"];
+        const node_id = contract["contractType"]["nodeContract"]["nodeId"];
         try {
             const payload = JSON.stringify(deployment);
             const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
@@ -91,7 +91,7 @@ class TwinDeploymentHandler {
             await this.rmb.request([node_twin_id], "zos.deployment.update", payload);
         } catch (e) {
             throw Error(
-                `Failed to update deployment on node ${node_id} with contract ${contract["contract_id"]} due to ${e}`,
+                `Failed to update deployment on node ${node_id} with contract ${contract["contractId"]} due to ${e}`,
             );
         }
         return contract;
@@ -351,11 +351,11 @@ class TwinDeploymentHandler {
                         twinDeployment.nodeId,
                         twinDeployment.publicIps,
                     );
-                    twinDeployment.deployment.contract_id = contract["contract_id"];
+                    twinDeployment.deployment.contract_id = contract["contractId"];
                     contracts.created.push(contract);
                     events.emit(
                         "logs",
-                        `A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contract_id"]}`,
+                        `A deployment has been created on node_id: ${twinDeployment.nodeId} with contract_id: ${contract["contractId"]}`,
                     );
                 } else if (twinDeployment.operation === Operations.update) {
                     twinDeployment.deployment.sign(this.config.twinId, this.config.mnemonic, this.tfclient.keypairType);
@@ -372,8 +372,8 @@ class TwinDeploymentHandler {
                     }
                     const contract = await this.update(twinDeployment.deployment);
                     contracts.updated.push(contract);
-                    twinDeployment.nodeId = contract["contract_type"]["nodeContract"]["node_id"];
-                    events.emit("logs", `Deployment has been updated with contract_id: ${contract["contract_id"]}`);
+                    twinDeployment.nodeId = contract["contractType"]["nodeContract"]["nodeId"];
+                    events.emit("logs", `Deployment has been updated with contract_id: ${contract["contractId"]}`);
                 } else if (twinDeployment.operation === Operations.delete) {
                     events.emit(
                         "logs",

@@ -62,16 +62,16 @@ class BaseModule {
 
         for (const contract of contracts["created"]) {
             StoreContracts.push({
-                contract_id: contract["contract_id"],
-                node_id: contract["contract_type"]["nodeContract"]["node_id"],
+                contract_id: contract["contractId"],
+                node_id: contract["contractType"]["nodeContract"]["nodeId"],
             });
-            const contractPath = PATH.join(this.config.storePath, "contracts", `${contract["contract_id"]}.json`);
+            const contractPath = PATH.join(this.config.storePath, "contracts", `${contract["contractId"]}.json`);
             const contractInfo = { projectName: this.projectName, moduleName: this.moduleName, deploymentName: name };
             this.backendStorage.dump(contractPath, contractInfo);
         }
         for (const contract of contracts["deleted"]) {
-            StoreContracts = StoreContracts.filter(c => c["contract_id"] !== contract["contract_id"]);
-            const contractPath = PATH.join(this.config.storePath, "contracts", `${contract["contract_id"]}.json`);
+            StoreContracts = StoreContracts.filter(c => c["contractId"] !== contract["contractId"]);
+            const contractPath = PATH.join(this.config.storePath, "contracts", `${contract["contractId"]}.json`);
             this.backendStorage.dump(contractPath, "");
         }
         if (wgConfig) {
@@ -364,11 +364,11 @@ class BaseModule {
         }
         const deletedContracts = [];
         for (const c of contracts.deleted) {
-            deletedContracts.push(c["contract_id"]);
+            deletedContracts.push(c["contractId"]);
         }
         const updatedContracts = [];
         for (const c of contracts.updated) {
-            if (!deletedContracts.includes(c["contract_id"])) {
+            if (!deletedContracts.includes(c["contractId"])) {
                 updatedContracts.push(c);
             }
         }

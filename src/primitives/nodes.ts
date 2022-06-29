@@ -110,7 +110,7 @@ class Nodes {
             GridClient.config.keypairType,
         );
         const contract = await tfclient.contracts.get(contractId);
-        return contract["contract_type"]["nodeContract"]["node_id"];
+        return contract["contractType"]["nodeContract"]["nodeId"];
     }
 
     _g2b(GB: number): number {

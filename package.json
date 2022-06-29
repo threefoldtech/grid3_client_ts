@@ -1,7 +1,7 @@
 {
     "name": "grid3_client",
     "author": "Ahmed Hanafy",
-    "version": "1.3.4",
+    "version": "1.3.5",
     "license": "ISC",
     "homepage": "https://github.com/threefoldtech/grid3_client_ts/blob/development/README.md",
     "repository": {
@@ -22,9 +22,9 @@
         "private-ip": "^2.3.3",
         "reflect-metadata": "^0.1.13",
         "stellar-sdk": "^9.1.0",
-        "tfgrid-api-client": "^1.12.1",
+        "tfgrid-api-client": "^1.13.0",
         "ts-rmb-client-base": "^0.0.1",
-        "ts-rmb-http-client": "^1.0.6",
+        "ts-rmb-http-client": "^1.0.7",
         "ts-rmb-redis-client": "^0.0.3",
         "tweetnacl": "^1.0.3",
         "tweetnacl-util": "^0.15.1",

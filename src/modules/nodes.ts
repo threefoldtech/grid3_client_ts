@@ -38,7 +38,7 @@ class Nodes {
             return rentContract;
         }
         try {
-            const res = await this.client.contracts.cancel(rentContract.contract_id);
+            const res = await this.client.contracts.cancel(rentContract.contractId);
             events.emit("logs", `Rent contract for node ${options.nodeId} has been deleted`);
             return res;
         } catch (e) {

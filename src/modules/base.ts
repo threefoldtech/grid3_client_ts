@@ -227,14 +227,14 @@ class BaseModule {
                 this.config.storeSecret,
                 this.config.keypairType,
             );
-            const c = await tfClient.contracts.get(contract["contractId"]);
+            const c = await tfClient.contracts.get(contract["contract_id"]);
             if (Object.keys(c.state).includes("deleted")) {
-                await this.save(name, { created: [], deleted: [{ contract_id: contract["contractId"] }] });
+                await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
                 continue;
             }
             const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
-            const node_twin_id = await nodes.getNodeTwinId(contract["nodeId"]);
-            const payload = JSON.stringify({ contract_id: contract["contractId"] });
+            const node_twin_id = await nodes.getNodeTwinId(contract["node_id"]);
+            const payload = JSON.stringify({ contract_id: contract["contract_id"] });
             let deployment;
             try {
                 deployment = await this.rmb.request([node_twin_id], "zos.deployment.get", payload);
@@ -251,7 +251,7 @@ class BaseModule {
             if (found) {
                 deployments.push(deployment);
             } else {
-                await this.save(name, { created: [], deleted: [{ contract_id: contract["contractId"] }] });
+                await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
             }
         }
         return deployments;

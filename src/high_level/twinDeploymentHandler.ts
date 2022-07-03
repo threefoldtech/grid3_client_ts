@@ -4,6 +4,7 @@ import { GridClientConfig } from "../config";
 import { events } from "../helpers/events";
 import { validateObject } from "../helpers/validator";
 import { Nodes } from "../primitives/index";
+import { Zmount } from "../zos";
 import { Deployment } from "../zos/deployment";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Operations, TwinDeployment } from "./models";
@@ -283,57 +284,46 @@ class TwinDeploymentHandler {
         return deployments;
     }
 
-    isUpdatedVersion(workload: Workload) {
-        return workload.version == 1;
+    isUpdatedVersion(workload: Workload, deployment_version: number) {
+        return workload.version == deployment_version;
     }
 
-    async validate_zmount(twinDeployments: TwinDeployment[]) {
-        const workloadsMap = new Map<string, Workload[]>();
+    async checkNodesCapacity(twinDeployments: TwinDeployment[]) {
         for (const twinDeployment of twinDeployments) {
-            if (twinDeployment.operation == Operations.deploy) {
-                if (Object.keys(workloadsMap).includes(twinDeployment.nodeId.toString())) {
-                    workloadsMap[twinDeployment.nodeId].deployment.workloads = workloadsMap[
-                        twinDeployment.nodeId
-                    ].deployment.workloads.concat(twinDeployment.deployment.workloads);
-                } else {
-                    workloadsMap[twinDeployment.nodeId] = twinDeployment.deployment.workloads;
-                }
-            }
-            if (twinDeployment.operation == Operations.update) {
-                if (Object.keys(workloadsMap).includes(twinDeployment.nodeId.toString())) {
-                    workloadsMap[twinDeployment.nodeId].deployment.workloads = workloadsMap[
-                        twinDeployment.nodeId
-                    ].deployment.workloads.concat(twinDeployment.deployment.workloads.filter(this.isUpdatedVersion));
-                } else {
-                    workloadsMap[twinDeployment.nodeId] = twinDeployment.deployment.workloads.filter(
-                        this.isUpdatedVersion,
-                    );
-                }
-            }
-        }
+            let workloads = twinDeployment.deployment.workloads;
 
-        for (const [nodeID, workloads] of Object.entries(workloadsMap)) {
+            if (twinDeployment.operation == Operations.update) {
+                const deployment_version = twinDeployment.deployment.version;
+                workloads = twinDeployment.deployment.workloads.filter(
+                    workload => workload.version == deployment_version,
+                );
+            }
+
             const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
-            //let hru = 0;
+            let hru = 0;
             let sru = 0;
             let mru = 0;
 
             for (const workload of workloads) {
-                if (workload.type !== WorkloadTypes.network) {
-                    sru += workload.data.size;
+                if (workload.type == WorkloadTypes.zmachine || workload.type == WorkloadTypes.zmount) {
+                    sru += "size" in workload.data ? workload.data["size"] : 0;
+                }
+                if (workload.type == WorkloadTypes.zdb) {
+                    hru += "size" in workload.data ? workload.data["size"] : 0;
                 }
                 if (workload.type == WorkloadTypes.zmachine) {
-                    mru += workload.data.compute_capacity.memory;
+                    mru += "compute_capacity" in workload.data ? workload.data["compute_capacity"].memory : 0;
                 }
             }
 
             if (
-                !(await nodes.nodeHasResources(+nodeID, {
-                    /*hru: disk_size*/ sru: sru / 1024 ** 3,
+                !(await nodes.nodeHasResources(+twinDeployment.nodeId, {
+                    hru: hru / 1024 ** 3,
+                    sru: sru / 1024 ** 3,
                     mru: mru / 1024 ** 3,
                 }))
             ) {
-                throw Error(`Node ${nodeID} doesn't have enough resources: sru=${sru}, mru=${mru}`);
+                throw Error(`Node ${twinDeployment.nodeId} doesn't have enough resources: sru=${sru}, mru=${mru}`);
             }
         }
     }
@@ -371,7 +361,7 @@ class TwinDeploymentHandler {
     async handle(twinDeployments: TwinDeployment[]) {
         events.emit("logs", "Merging workloads");
         twinDeployments = this.merge(twinDeployments);
-        await this.validate_zmount(twinDeployments);
+        await this.checkNodesCapacity(twinDeployments);
         await this.validate(twinDeployments);
         const contracts = { created: [], updated: [], deleted: [] };
         //TODO: check if it can be done to save the deployment here instead of doing this in the module.

@@ -162,7 +162,6 @@ class Contracts {
         const blockHash = await this.tfclient.rpcCall(this.tfclient.client.getBlockHash, [blockNumber]);
 
         const blockTime = +(await this.tfclient.queryChain(this.tfclient.client.getBlockTime, [blockHash]));
-        console.log(blockTime);
 
         const TWO_WEEKS = 1657584000;
 

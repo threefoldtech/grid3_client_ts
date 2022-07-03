@@ -7,7 +7,6 @@ import { Nodes } from "../primitives/index";
 import { Deployment } from "../zos/deployment";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Operations, TwinDeployment } from "./models";
-
 class TwinDeploymentHandler {
     tfclient: TFClient;
     rmb: RMB;
@@ -284,6 +283,61 @@ class TwinDeploymentHandler {
         return deployments;
     }
 
+    isUpdatedVersion(workload: Workload) {
+        return workload.version == 1;
+    }
+
+    async validate_zmount(twinDeployments: TwinDeployment[]) {
+        const workloadsMap = new Map<string, Workload[]>();
+        for (const twinDeployment of twinDeployments) {
+            if (twinDeployment.operation == Operations.deploy) {
+                if (Object.keys(workloadsMap).includes(twinDeployment.nodeId.toString())) {
+                    workloadsMap[twinDeployment.nodeId].deployment.workloads = workloadsMap[
+                        twinDeployment.nodeId
+                    ].deployment.workloads.concat(twinDeployment.deployment.workloads);
+                } else {
+                    workloadsMap[twinDeployment.nodeId] = twinDeployment.deployment.workloads;
+                }
+            }
+            if (twinDeployment.operation == Operations.update) {
+                if (Object.keys(workloadsMap).includes(twinDeployment.nodeId.toString())) {
+                    workloadsMap[twinDeployment.nodeId].deployment.workloads = workloadsMap[
+                        twinDeployment.nodeId
+                    ].deployment.workloads.concat(twinDeployment.deployment.workloads.filter(this.isUpdatedVersion));
+                } else {
+                    workloadsMap[twinDeployment.nodeId] = twinDeployment.deployment.workloads.filter(
+                        this.isUpdatedVersion,
+                    );
+                }
+            }
+        }
+
+        for (const [nodeID, workloads] of Object.entries(workloadsMap)) {
+            const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
+            //let hru = 0;
+            let sru = 0;
+            let mru = 0;
+
+            for (const workload of workloads) {
+                if (workload.type !== WorkloadTypes.network) {
+                    sru += workload.data.size;
+                }
+                if (workload.type == WorkloadTypes.zmachine) {
+                    mru += workload.data.compute_capacity.memory;
+                }
+            }
+
+            if (
+                !(await nodes.nodeHasResources(+nodeID, {
+                    /*hru: disk_size*/ sru: sru / 1024 ** 3,
+                    mru: mru / 1024 ** 3,
+                }))
+            ) {
+                throw Error(`Node ${nodeID} doesn't have enough resources: sru=${sru}, mru=${mru}`);
+            }
+        }
+    }
+
     async validate(twinDeployments: TwinDeployment[]) {
         for (const twinDeployment of twinDeployments) {
             await validateObject(twinDeployment.deployment);
@@ -317,6 +371,7 @@ class TwinDeploymentHandler {
     async handle(twinDeployments: TwinDeployment[]) {
         events.emit("logs", "Merging workloads");
         twinDeployments = this.merge(twinDeployments);
+        await this.validate_zmount(twinDeployments);
         await this.validate(twinDeployments);
         const contracts = { created: [], updated: [], deleted: [] };
         //TODO: check if it can be done to save the deployment here instead of doing this in the module.

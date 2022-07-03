@@ -153,9 +153,9 @@ class Contracts {
         return contracts;
     }
 
-    async getDeletionTime(contractId: number): Promise<number | string> {
+    async getDeletionTime(contractId: number): Promise<number> {
         const contract = await this.get(contractId);
-        if (contract.state.created === null) return "Contract is Active.";
+        if (contract.state.created === null) return 0;
 
         const blockNumber = contract.state["gracePeriod"];
 

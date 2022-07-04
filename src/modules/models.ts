@@ -328,6 +328,9 @@ class FarmHasFreePublicIPsModel {
 
 class NodesByFarmIdModel extends FarmHasFreePublicIPsModel {}
 
+class ContractState {
+    @Expose() @IsString() state: string[];
+}
 class NodeFreeResourcesModel {
     @Expose() @IsInt() @Min(1) nodeId: number;
 }
@@ -420,4 +423,5 @@ export {
     NodeFreeResourcesModel,
     FarmIdFromFarmNameModel,
     FilterOptions,
+    ContractState,
 };

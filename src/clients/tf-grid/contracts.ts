@@ -1,7 +1,10 @@
 import { Decimal } from "decimal.js";
 
+import { ContractState } from "../../modules";
 import { Graphql } from "../graphql/client";
 import { TFClient } from "./client";
+
+const TWO_WEEKS = 1657584000;
 
 class Contracts {
     tfclient: TFClient;
@@ -74,8 +77,8 @@ class Contracts {
         return await this.tfclient.queryChain(this.tfclient.client.contractIDByNameRegistration, [name]);
     }
 
-    async listContractsByTwinId(graphqlURL, twinId, stateList = ["Created", "GracePeriod"]) {
-        const state = `[${stateList.join(", ")}]`;
+    async listContractsByTwinId(graphqlURL, twinId, stateList: ContractState = { state: ["Created", "GracePeriod"] }) {
+        const state = `[${stateList.state.join(", ")}]`;
         const gqlClient = new Graphql(graphqlURL);
         const options = `(where: {twinID_eq: ${twinId}, state_in: ${state}}, orderBy: twinID_ASC)`;
         const nameContractsCount = await gqlClient.getItemTotalCount("nameContracts", options);
@@ -130,7 +133,7 @@ class Contracts {
         return await this.listContractsByTwinId(graphqlURL, twinId);
     }
 
-    async listMyContracts(graphqlURL, state?) {
+    async listMyContracts(graphqlURL, state?: ContractState) {
         const twinId = await this.tfclient.twins.getMyTwinId();
         return await this.listContractsByTwinId(graphqlURL, twinId, state);
     }
@@ -162,8 +165,6 @@ class Contracts {
         const blockHash = await this.tfclient.rpcCall(this.tfclient.client.getBlockHash, [blockNumber]);
 
         const blockTime = +(await this.tfclient.queryChain(this.tfclient.client.getBlockTime, [blockHash]));
-
-        const TWO_WEEKS = 1657584000;
 
         return blockTime + TWO_WEEKS;
     }

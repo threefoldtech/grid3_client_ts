@@ -283,10 +283,6 @@ class TwinDeploymentHandler {
         return deployments;
     }
 
-    isUpdatedVersion(workload: Workload, deployment_version: number) {
-        return workload.version == deployment_version;
-    }
-
     async checkNodesCapacity(twinDeployments: TwinDeployment[]) {
         for (const twinDeployment of twinDeployments) {
             let workloads: Workload[];

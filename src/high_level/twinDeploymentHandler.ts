@@ -289,7 +289,11 @@ class TwinDeploymentHandler {
 
     async checkNodesCapacity(twinDeployments: TwinDeployment[]) {
         for (const twinDeployment of twinDeployments) {
-            let workloads = twinDeployment.deployment.workloads;
+            let workloads: Workload[];
+
+            if (twinDeployment.operation == Operations.deploy) {
+                workloads = twinDeployment.deployment.workloads;
+            }
 
             if (twinDeployment.operation == Operations.update) {
                 const deployment_version = twinDeployment.deployment.version;
@@ -360,8 +364,8 @@ class TwinDeploymentHandler {
     async handle(twinDeployments: TwinDeployment[]) {
         events.emit("logs", "Merging workloads");
         twinDeployments = this.merge(twinDeployments);
-        await this.checkNodesCapacity(twinDeployments);
         await this.validate(twinDeployments);
+        await this.checkNodesCapacity(twinDeployments);
         const contracts = { created: [], updated: [], deleted: [] };
         //TODO: check if it can be done to save the deployment here instead of doing this in the module.
         try {

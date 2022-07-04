@@ -309,13 +309,13 @@ class TwinDeploymentHandler {
 
             for (const workload of workloads) {
                 if (workload.type == WorkloadTypes.zmachine || workload.type == WorkloadTypes.zmount) {
-                    sru += "size" in workload.data ? workload.data["size"] : 0;
+                    sru += workload.data["size"];
                 }
                 if (workload.type == WorkloadTypes.zdb) {
-                    hru += "size" in workload.data ? workload.data["size"] : 0;
+                    hru += workload.data["size"];
                 }
                 if (workload.type == WorkloadTypes.zmachine) {
-                    mru += "compute_capacity" in workload.data ? workload.data["compute_capacity"].memory : 0;
+                    mru += workload.data["compute_capacity"].memory;
                 }
             }
 

@@ -21,6 +21,13 @@ import { ZdbModes } from "../zos/zdb";
 
 const NameLength = 15;
 
+enum ContractStates {
+    Created = "Created",
+    Deleted = "Deleted",
+    OutOfFunds = "OutOfFunds",
+    GracePeriod = "GracePeriod",
+}
+
 //TODO: find a way to validate all fields are passed while casting data to any of these classes.
 class DiskModel {
     @Expose() @IsString() @IsNotEmpty() @IsAlphanumeric() @MaxLength(NameLength) name: string;
@@ -329,8 +336,9 @@ class FarmHasFreePublicIPsModel {
 class NodesByFarmIdModel extends FarmHasFreePublicIPsModel {}
 
 class ContractState {
-    @Expose() @IsString() state: string[];
+    @Expose() @IsEnum(ContractStates, { each: true }) state: ContractStates[];
 }
+
 class NodeFreeResourcesModel {
     @Expose() @IsInt() @Min(1) nodeId: number;
 }
@@ -423,5 +431,6 @@ export {
     NodeFreeResourcesModel,
     FarmIdFromFarmNameModel,
     FilterOptions,
+    ContractStates,
     ContractState,
 };

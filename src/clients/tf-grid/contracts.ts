@@ -1,6 +1,6 @@
 import { Decimal } from "decimal.js";
 
-import { ContractState } from "../../modules";
+import { ContractStates } from "../../modules";
 import { Graphql } from "../graphql/client";
 import { TFClient } from "./client";
 
@@ -77,8 +77,12 @@ class Contracts {
         return await this.tfclient.queryChain(this.tfclient.client.contractIDByNameRegistration, [name]);
     }
 
-    async listContractsByTwinId(graphqlURL, twinId, stateList: ContractState = { state: ["Created", "GracePeriod"] }) {
-        const state = `[${stateList.state.join(", ")}]`;
+    async listContractsByTwinId(
+        graphqlURL,
+        twinId,
+        stateList: ContractStates[] = [ContractStates.Created, ContractStates.GracePeriod],
+    ) {
+        const state = `[${stateList.join(", ")}]`;
         const gqlClient = new Graphql(graphqlURL);
         const options = `(where: {twinID_eq: ${twinId}, state_in: ${state}}, orderBy: twinID_ASC)`;
         const nameContractsCount = await gqlClient.getItemTotalCount("nameContracts", options);
@@ -133,7 +137,7 @@ class Contracts {
         return await this.listContractsByTwinId(graphqlURL, twinId);
     }
 
-    async listMyContracts(graphqlURL, state?: ContractState) {
+    async listMyContracts(graphqlURL, state?: ContractStates[]) {
         const twinId = await this.tfclient.twins.getMyTwinId();
         return await this.listContractsByTwinId(graphqlURL, twinId, state);
     }

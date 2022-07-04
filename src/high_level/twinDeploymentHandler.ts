@@ -4,7 +4,6 @@ import { GridClientConfig } from "../config";
 import { events } from "../helpers/events";
 import { validateObject } from "../helpers/validator";
 import { Nodes } from "../primitives/index";
-import { Zmount } from "../zos";
 import { Deployment } from "../zos/deployment";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Operations, TwinDeployment } from "./models";

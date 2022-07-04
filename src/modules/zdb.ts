@@ -113,6 +113,10 @@ class ZdbsModule extends BaseModule {
             throw Error(`There is no zdb deployment with name: ${options.deployment_name}`);
         }
         const oldDeployments = await this._get(options.deployment_name);
+        if (this.workloadExists(options.name, oldDeployments))
+            throw Error(
+                `There is another zdb with the same name "${options.name}" in this deployment ${options.deployment_name}`,
+            );
         const twinDeployment = await this.zdb.create(
             options.name,
             options.node_id,

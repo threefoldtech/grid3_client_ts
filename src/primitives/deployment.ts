@@ -74,8 +74,7 @@ class DeploymentFactory {
                 if (w.name !== workload.name) {
                     continue;
                 }
-                const oldVersion = workload.version;
-                workload.version = 0;
+                w.version = workload.version;
                 // Don't change the machine ip
                 if (w.type === WorkloadTypes.zmachine) {
                     const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
@@ -91,7 +90,6 @@ class DeploymentFactory {
                     }
                 }
                 if (w.challenge() === workload.challenge()) {
-                    workload.version = oldVersion;
                     continue;
                 }
                 workload.version = deploymentVersion + 1;

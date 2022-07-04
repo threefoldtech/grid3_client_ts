@@ -27,9 +27,9 @@ class RMB {
         } catch (e) {
             events.emit(
                 "logs",
-                `Failed to send request to twinId ${destTwinIds} with command: ${cmd}, payload: ${payload} after ${retires} retries due to ${e}`,
+                `Failed to send request to twinId ${destTwinIds} with command: ${cmd}, payload: ${payload} after ${retires} retries due to ${e.message}`,
             );
-            throw Error(e);
+            throw e;
         }
         if (result[0].dat) {
             return JSON.parse(String(result[0].dat));

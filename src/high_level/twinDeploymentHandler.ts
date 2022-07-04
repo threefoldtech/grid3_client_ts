@@ -7,7 +7,6 @@ import { Nodes } from "../primitives/index";
 import { Deployment } from "../zos/deployment";
 import { Workload, WorkloadTypes } from "../zos/workload";
 import { Operations, TwinDeployment } from "./models";
-
 class TwinDeploymentHandler {
     tfclient: TFClient;
     rmb: RMB;
@@ -289,6 +288,50 @@ class TwinDeploymentHandler {
         return deployments;
     }
 
+    async checkNodesCapacity(twinDeployments: TwinDeployment[]) {
+        for (const twinDeployment of twinDeployments) {
+            let workloads: Workload[];
+
+            if (twinDeployment.operation == Operations.deploy) {
+                workloads = twinDeployment.deployment.workloads;
+            }
+
+            if (twinDeployment.operation == Operations.update) {
+                const deployment_version = twinDeployment.deployment.version;
+                workloads = twinDeployment.deployment.workloads.filter(
+                    workload => workload.version == deployment_version,
+                );
+            }
+
+            const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
+            let hru = 0;
+            let sru = 0;
+            let mru = 0;
+
+            for (const workload of workloads) {
+                if (workload.type == WorkloadTypes.zmachine || workload.type == WorkloadTypes.zmount) {
+                    sru += workload.data["size"];
+                }
+                if (workload.type == WorkloadTypes.zdb) {
+                    hru += workload.data["size"];
+                }
+                if (workload.type == WorkloadTypes.zmachine) {
+                    mru += workload.data["compute_capacity"].memory;
+                }
+            }
+
+            if (
+                !(await nodes.nodeHasResources(+twinDeployment.nodeId, {
+                    hru: hru / 1024 ** 3,
+                    sru: sru / 1024 ** 3,
+                    mru: mru / 1024 ** 3,
+                }))
+            ) {
+                throw Error(`Node ${twinDeployment.nodeId} doesn't have enough resources: sru=${sru}, mru=${mru}`);
+            }
+        }
+    }
+
     async validate(twinDeployments: TwinDeployment[]) {
         for (const twinDeployment of twinDeployments) {
             await validateObject(twinDeployment.deployment);
@@ -323,6 +366,7 @@ class TwinDeploymentHandler {
         events.emit("logs", "Merging workloads");
         twinDeployments = this.merge(twinDeployments);
         await this.validate(twinDeployments);
+        await this.checkNodesCapacity(twinDeployments);
         const contracts = { created: [], updated: [], deleted: [] };
         //TODO: check if it can be done to save the deployment here instead of doing this in the module.
         try {

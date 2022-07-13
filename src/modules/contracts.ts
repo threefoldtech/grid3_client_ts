@@ -14,6 +14,7 @@ import {
     ContractGetModel,
     ContractsByAddress,
     ContractsByTwinId,
+    ContractState,
     NameContractCreateModel,
     NameContractGetModel,
     NodeContractCreateModel,
@@ -94,8 +95,8 @@ class Contracts {
 
     @expose
     @validateInput
-    async listMyContracts() {
-        return await this.client.contracts.listMyContracts(this.config.graphqlURL);
+    async listMyContracts(options?: ContractState) {
+        return await this.client.contracts.listMyContracts(this.config.graphqlURL, options?.state);
     }
 
     @expose
@@ -134,6 +135,12 @@ class Contracts {
     @validateInput
     async getConsumption(options: ContractConsumption): Promise<number> {
         return await this.client.contracts.getConsumption(options.id, this.config.graphqlURL);
+    }
+
+    @expose
+    @validateInput
+    async getDeletionTime(options: ContractGetModel): Promise<string | number> {
+        return await this.client.contracts.getDeletionTime(options.id);
     }
 }
 

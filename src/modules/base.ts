@@ -70,7 +70,7 @@ class BaseModule {
             this.backendStorage.dump(contractPath, contractInfo);
         }
         for (const contract of contracts["deleted"]) {
-            StoreContracts = StoreContracts.filter(c => c["contractId"] !== contract["contractId"]);
+            StoreContracts = StoreContracts.filter(c => c["contract_id"] !== contract["contractId"]);
             const contractPath = PATH.join(this.config.storePath, "contracts", `${contract["contractId"]}.json`);
             this.backendStorage.dump(contractPath, "");
         }
@@ -229,7 +229,7 @@ class BaseModule {
             );
             const c = await tfClient.contracts.get(contract["contract_id"]);
             if (Object.keys(c.state).includes("deleted")) {
-                await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
+                await this.save(name, { created: [], deleted: [{ contractId: contract["contract_id"] }] });
                 continue;
             }
             const nodes = new Nodes(this.config.graphqlURL, this.config.rmbClient["proxyURL"]);
@@ -251,7 +251,7 @@ class BaseModule {
             if (found) {
                 deployments.push(deployment);
             } else {
-                await this.save(name, { created: [], deleted: [{ contract_id: contract["contract_id"] }] });
+                await this.save(name, { created: [], deleted: [{ contractId: contract["contract_id"] }] });
             }
         }
         return deployments;

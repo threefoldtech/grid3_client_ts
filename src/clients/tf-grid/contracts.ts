@@ -95,6 +95,7 @@ class Contracts {
             }
             nodeContracts(where: {twinID_eq: ${twinId}, state_in: ${state}}, limit: $nodeContractsCount) {
               contractID
+              deploymentData
               state
             }
             rentContracts(where: {twinID_eq: ${twinId}, state_in: ${state}}, limit: $rentContractsCount) {

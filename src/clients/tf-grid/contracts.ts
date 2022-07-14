@@ -92,15 +92,20 @@ class Contracts {
             nameContracts(where: {twinID_eq: ${twinId}, state_in: ${state}}, limit: $nameContractsCount) {
               contractID
               state
+              createdAt
             }
             nodeContracts(where: {twinID_eq: ${twinId}, state_in: ${state}}, limit: $nodeContractsCount) {
               contractID
               deploymentData
               state
+              createdAt
+              nodeID
             }
             rentContracts(where: {twinID_eq: ${twinId}, state_in: ${state}}, limit: $rentContractsCount) {
               contractID
               state
+              createdAt
+              nodeID
             }
           }`;
         const response = await gqlClient.query(body, {

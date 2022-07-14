@@ -1,4 +1,5 @@
-import { KeypairType, TFClient } from "../clients/tf-grid/client";
+import { TFClient } from "../clients/tf-grid/client";
+import { KeypairType } from "../zos/deployment";
 import { crop } from "./utils";
 
 const SPLIT_SIZE = 1490;

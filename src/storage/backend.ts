@@ -1,7 +1,7 @@
 import getAppDataPath from "appdata-path";
 import * as PATH from "path";
 
-import { KeypairType } from "../clients/tf-grid/client";
+import { KeypairType } from "../zos/deployment";
 import { TFKVStore } from "./tfkvstore";
 
 const appsPath = getAppDataPath();

@@ -3,8 +3,12 @@ import { Expose, Transform, Type } from "class-transformer";
 import { IsBoolean, IsDefined, IsEnum, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from "class-validator";
 import { default as md5 } from "crypto-js/md5";
 
-import { KeypairType } from "../clients//tf-grid/client";
 import { Workload } from "./workload";
+
+enum KeypairType {
+    sr25519 = "sr25519",
+    ed25519 = "ed25519",
+}
 
 class SignatureRequest {
     @Expose() @IsInt() @Min(1) twin_id: number;
@@ -113,4 +117,4 @@ class Deployment {
     }
 }
 
-export { Deployment, SignatureRequirement, SignatureRequest, Signature };
+export { Deployment, SignatureRequirement, SignatureRequest, Signature, KeypairType };

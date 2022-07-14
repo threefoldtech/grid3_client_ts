@@ -290,7 +290,7 @@ class TwinDeploymentHandler {
 
     async checkNodesCapacity(twinDeployments: TwinDeployment[]) {
         for (const twinDeployment of twinDeployments) {
-            let workloads: Workload[];
+            let workloads: Workload[] = [];
 
             if (twinDeployment.operation == Operations.deploy) {
                 workloads = twinDeployment.deployment.workloads;
@@ -321,6 +321,7 @@ class TwinDeploymentHandler {
             }
 
             if (
+                workloads.length !== 0 &&
                 !(await nodes.nodeHasResources(+twinDeployment.nodeId, {
                     hru: hru / 1024 ** 3,
                     sru: sru / 1024 ** 3,
@@ -431,7 +432,7 @@ class TwinDeploymentHandler {
                         }
                     }
                     const contract = await this.delete(twinDeployment.deployment.contract_id);
-                    contracts.deleted.push({ contract_id: contract });
+                    contracts.deleted.push({ contractId: contract });
                     events.emit("logs", `Deployment has been deleted with contract_id: ${contract}`);
                 }
             }

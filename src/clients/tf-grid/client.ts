@@ -1,16 +1,12 @@
 import AwaitLock from "await-lock";
 import { default as Client } from "tfgrid-api-client";
 
+import { KeypairType } from "../../zos/deployment";
 import { Balance } from "./balance";
 import { Contracts } from "./contracts";
 import { ErrorsMap } from "./errors";
 import { KVStore } from "./kvstore";
 import { Twins } from "./twins";
-
-enum KeypairType {
-    sr25519 = "sr25519",
-    ed25519 = "ed25519",
-}
 
 class TFClient {
     static clients: Record<string, TFClient> = {};
@@ -136,4 +132,4 @@ class TFClient {
         return result;
     }
 }
-export { TFClient, KeypairType };
+export { TFClient };

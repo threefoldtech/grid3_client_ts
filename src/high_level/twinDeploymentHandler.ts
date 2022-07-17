@@ -253,7 +253,7 @@ class TwinDeploymentHandler {
         return d;
     }
 
-    updateMerge(twinDeployments: TwinDeployment[]): TwinDeployment[] {
+    async updateMerge(twinDeployments: TwinDeployment[]): Promise<TwinDeployment[]> {
         const deploymentMap = {};
         for (const twinDeployment of twinDeployments) {
             if (twinDeployment.operation !== Operations.update) {
@@ -264,6 +264,11 @@ class TwinDeploymentHandler {
             } else {
                 deploymentMap[twinDeployment.deployment.contract_id] = [twinDeployment];
             }
+
+            const contract_id = twinDeployment.deployment.contract_id;
+            const contract = await this.tfclient.contracts.get(contract_id);
+            const node_id = contract["contractType"]["nodeContract"]["nodeId"];
+            deploymentMap[contract_id][0].nodeId = node_id;
         }
         const deployments = [];
         for (const key of Object.keys(deploymentMap)) {
@@ -272,7 +277,7 @@ class TwinDeploymentHandler {
         return deployments;
     }
 
-    merge(twinDeployments: TwinDeployment[]): TwinDeployment[] {
+    async merge(twinDeployments: TwinDeployment[]): Promise<TwinDeployment[]> {
         let deployments = [];
         deployments = deployments.concat(this.deployMerge(twinDeployments));
         const deletedDeployments = twinDeployments.filter(d => d.operation === Operations.delete);
@@ -282,7 +287,7 @@ class TwinDeploymentHandler {
         }
         const updatedDeployment = this.updateMerge(twinDeployments);
         deployments = deployments.concat(
-            updatedDeployment.filter(d => !deletedContracts.includes(d.deployment.contract_id)),
+            (await updatedDeployment).filter(d => !deletedContracts.includes(d.deployment.contract_id)),
         );
         deployments = deployments.concat(deletedDeployments);
         return deployments;
@@ -365,7 +370,7 @@ class TwinDeploymentHandler {
 
     async handle(twinDeployments: TwinDeployment[]) {
         events.emit("logs", "Merging workloads");
-        twinDeployments = this.merge(twinDeployments);
+        twinDeployments = await this.merge(twinDeployments);
         await this.validate(twinDeployments);
         await this.checkNodesCapacity(twinDeployments);
         const contracts = { created: [], updated: [], deleted: [] };

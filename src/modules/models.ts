@@ -179,6 +179,8 @@ class GatewayFQDNModel {
     @Expose() @IsInt() @Min(1) node_id: number;
     @Expose() @IsString() @IsNotEmpty() fqdn: string;
     @Expose() @IsBoolean() tls_passthrough: boolean;
+    @Expose() @IsString() @IsOptional() metadata?: string;
+    @Expose() @IsString() @IsOptional() description?: string;
     @Expose() @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
 }
 
@@ -194,6 +196,7 @@ class GatewayNameModel extends BaseGatewayNameModel {
     @Expose() @IsInt() @Min(1) node_id: number;
     @Expose() @IsBoolean() tls_passthrough: boolean;
     @Expose() @IsString() @IsOptional() metadata?: string;
+    @Expose() @IsString() @IsOptional() description?: string;
     @Expose() @ArrayNotEmpty() @IsUrl({ protocols: ["http", "https"] }, { each: true }) backends: string[];
 }
 

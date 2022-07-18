@@ -9,8 +9,8 @@ class GatewayHL extends HighLevelBase {
         tls_passthrough: boolean,
         backends: string[],
         metadata: string,
+        description: string,
         fqdn = "",
-        description = "",
     ): Promise<TwinDeployment[]> {
         const public_ips = 0;
         const gw = new GWPrimitive();

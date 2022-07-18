@@ -37,6 +37,8 @@ class GWModule extends BaseModule {
             options.node_id,
             options.tls_passthrough,
             options.backends,
+            options.metadata,
+            options.description,
             options.fqdn,
         );
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
@@ -57,6 +59,7 @@ class GWModule extends BaseModule {
             options.tls_passthrough,
             options.backends,
             options.metadata,
+            options.description,
         );
         const contracts = await this.twinDeploymentHandler.handle(twinDeployments);
         await this.save(options.name, contracts);

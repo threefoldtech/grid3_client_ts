@@ -92,6 +92,7 @@ class Contracts {
             nameContracts(where: {twinID_eq: ${twinId}, state_in: ${state}}, limit: $nameContractsCount) {
               contractID
               state
+              name
               createdAt
             }
             nodeContracts(where: {twinID_eq: ${twinId}, state_in: ${state}}, limit: $nodeContractsCount) {

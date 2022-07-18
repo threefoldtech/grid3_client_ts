@@ -8,8 +8,8 @@ class GatewayHL extends HighLevelBase {
         node_id: number,
         tls_passthrough: boolean,
         backends: string[],
+        metadata: string,
         fqdn = "",
-        metadata = "",
         description = "",
     ): Promise<TwinDeployment[]> {
         const public_ips = 0;

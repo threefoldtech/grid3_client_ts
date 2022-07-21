@@ -71,11 +71,12 @@ class TwinDeploymentHandler {
 
     async update(deployment: Deployment) {
         // TODO: update the contract with public when it is available
+        const old_contract = await this.tfclient.contracts.get(deployment.contract_id);
         let contract;
         try {
             contract = await this.tfclient.contracts.updateNode(
                 deployment.contract_id,
-                "",
+                old_contract["contractType"]["nodeContract"]["deploymentData"],
                 deployment.challenge_hash(),
             );
             events.emit("logs", `Contract with id: ${contract["contractId"]} has been updated`);
